@@ -13,6 +13,16 @@ export default {
         },
         alabaster: '#F8FAFC',
         line: '#E2E8F0',
+        lavender: {
+          bg: '#F5F3FA',
+          sidebar: '#EDE9F7'
+        },
+        violet: {
+          primary: '#7C3AED',
+          light: '#8B5CF6',
+          dark: '#4C1D95',
+          pale: '#EDE9FE'
+        },
         pass: { text: '#15803D', bg: '#DCFCE7' },
         advisory: { text: '#B45309', bg: '#FEF3C7' },
         critical: { text: '#B91C1C', bg: '#FEE2E2' }
