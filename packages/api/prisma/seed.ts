@@ -17,7 +17,7 @@ const ROLES: RoleSeed[] = [
   { name: 'Owner / CEO', grants: ['ALL'] },
   {
     name: 'System Administrator',
-    grants: ['master:view', 'master:manage', 'master:approve', 'dashboard:view', 'settings:view', 'settings:manage', 'support:view', 'support:create', 'support:manage', 'apimonitor:view', 'apimonitor:manage'],
+    grants: ['ALL'],
   },
   {
     name: 'Quality / Lab Head',
