@@ -10,7 +10,6 @@ import {
   LineChart,
   Pie,
   PieChart,
-  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -24,19 +23,16 @@ import {
   Calendar,
   CheckCircle2,
   ChevronDown,
-  ClipboardList,
   Container,
   CreditCard,
+  Droplets,
   Factory,
   FlaskConical,
-  Gauge,
   Package,
   PackageCheck,
-  Percent,
   ShieldCheck,
   ShoppingCart,
   Sun,
-  Timer,
   Truck,
   Users,
   Warehouse,
@@ -45,7 +41,6 @@ import {
 import { api } from '../lib/api';
 import { E } from '../lib/endpoints';
 import type {
-  APInvoice,
   Capa,
   FlatKpis,
   LabCheck,
@@ -58,13 +53,13 @@ import { SkeletonDashboard } from '../components/Skeleton';
 import { fmtDate, fmtQ } from '../lib/format';
 import {
   SEED_ACTIVITIES,
-  SEED_PILLARS,
+  SEED_KPIS,
+  SEED_PERFORMANCE,
   SEED_PROCUREMENT,
   SEED_PRODUCT_LINES,
   SEED_PRODUCT_OUTPUT,
   SEED_PRODUCTION_CHART,
   SEED_QUALITY_TREND,
-  SEED_SHIFT_MONITOR,
   SEED_STOCK_LEVELS,
   SEED_TOTAL_FLOUR
 } from '../data/dashboardSeed';
@@ -133,41 +128,7 @@ function TrendText({ pct, invert = false }: { pct: number | null; invert?: boole
   );
 }
 
-// ─── Unified card header (spec 4.2) ─────────────────────────────────────────
-
-function CardHeader({
-  icon,
-  title,
-  subtitle,
-  action,
-  demo
-}: {
-  icon: React.ReactNode;
-  title: string;
-  subtitle?: string;
-  action?: React.ReactNode;
-  demo?: boolean;
-}) {
-  return (
-    <div className="mb-4 flex items-center justify-between border-b border-slate-100 pb-4">
-      <div className="flex items-center gap-2.5">
-        <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200/60 bg-slate-50 text-slate-600">
-          {icon}
-        </span>
-        <div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-sm font-bold text-slate-800">{title}</h2>
-            {demo ? <DemoBadge /> : null}
-          </div>
-          {subtitle ? <p className="text-xs text-slate-400">{subtitle}</p> : null}
-        </div>
-      </div>
-      {action ? <div className="flex items-center gap-2">{action}</div> : null}
-    </div>
-  );
-}
-
-// ─── KPI Card (spec 4.1 micro-design) ───────────────────────────────────────
+// ─── KPI Card ─────────────────────────────────────────────────────────────
 
 interface KpiSpec {
   icon: React.ReactNode;
@@ -175,58 +136,34 @@ interface KpiSpec {
   label: string;
   value: string;
   unit: string;
-  /** Bottom-row pill: { text, tone } or trend pct */
-  pill?: { text: string; tone: 'emerald' | 'amber' | 'slate' | 'rose' };
-  trendPct?: number | null;
-  sub?: string;
+  trendPct: number | null;
   demo: boolean;
-  to?: string;
 }
 
-const PILL_TONES: Record<string, string> = {
-  emerald: 'bg-emerald-50 text-emerald-700',
-  amber: 'bg-amber-50 text-amber-700',
-  slate: 'bg-slate-100 text-slate-500',
-  rose: 'bg-rose-50 text-rose-600'
-};
-
 function KpiCard({ spec }: { spec: KpiSpec }) {
-  const inner = (
-    <div className="flex h-full flex-col justify-between rounded-2xl border border-slate-200/70 bg-white p-5 shadow-[0_1px_3px_rgba(15,23,42,0.03),0_4px_12px_rgba(15,23,42,0.03)] transition-all hover:border-slate-300/80 hover:shadow-md">
-      <div className="flex items-start justify-between gap-3">
-        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">{spec.label}</p>
-        <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${spec.iconTone}`}>
+  return (
+    <div
+      className={`${cardShell} flex flex-col justify-between transition-all hover:border-slate-200`}
+    >
+      <div className="flex items-start gap-3.5">
+        <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${spec.iconTone}`}>
           {spec.icon}
-        </span>
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-1.5">
+            <p className="truncate text-xs font-medium text-slate-500">{spec.label}</p>
+            {spec.demo ? <DemoBadge /> : null}
+          </div>
+          <p className="mt-1 truncate text-2xl font-extrabold tabular-nums text-slate-900">
+            {spec.value} <span className="text-sm font-semibold text-slate-500">{spec.unit}</span>
+          </p>
+        </div>
       </div>
-      <p className="mt-2 truncate text-2xl font-extrabold tabular-nums tracking-tight text-slate-900">
-        {spec.value} <span className="text-sm font-semibold text-slate-500">{spec.unit}</span>
-        {spec.demo ? (
-          <span className="ml-2 align-middle">
-            <DemoBadge />
-          </span>
-        ) : null}
-      </p>
-      <div className="mt-3 flex items-center gap-1.5 text-xs">
-        {spec.pill ? (
-          <span
-            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold ${PILL_TONES[spec.pill.tone]}`}
-          >
-            {spec.pill.text}
-          </span>
-        ) : (
-          <TrendText pct={spec.trendPct ?? null} />
-        )}
-        {spec.sub ? <span className="truncate text-[11px] text-slate-400">{spec.sub}</span> : null}
+      <div className="mt-3 flex items-center justify-end gap-1 text-xs">
+        <TrendText pct={spec.trendPct} />
+        <span className="text-[11px] text-slate-400">vs. last week</span>
       </div>
     </div>
-  );
-  return spec.to ? (
-    <Link to={spec.to} className="block h-full">
-      {inner}
-    </Link>
-  ) : (
-    inner
   );
 }
 
@@ -327,32 +264,30 @@ function ProductionOverview({
 }) {
   return (
     <div className={`${cardShell} col-span-12 lg:col-span-5`}>
-      <CardHeader
-        icon={<BarChart3 size={16} />}
-        title="Production Overview"
-        subtitle="Wheat intake vs. flour output"
-        demo={demo}
-        action={
-          <>
-            <div className="hidden items-center gap-3 text-xs font-medium text-slate-600 sm:flex">
-              <span className="inline-flex items-center gap-1.5">
-                <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#7C3AED]" />
-                Flour Produced (Qt)
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#0EA5E9]" />
-                Wheat Received (Qt)
-              </span>
-            </div>
-            <button
-              type="button"
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-600"
-            >
-              Last 7 Days <ChevronDown size={14} />
-            </button>
-          </>
-        }
-      />
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <h2 className="text-sm font-bold text-slate-800">Production Overview</h2>
+          {demo ? <DemoBadge /> : null}
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="hidden items-center gap-3 text-xs font-medium text-slate-600 sm:flex">
+            <span className="inline-flex items-center gap-1.5">
+              <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#7C3AED]" />
+              Flour Produced (Qt)
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#0EA5E9]" />
+              Wheat Received (Qt)
+            </span>
+          </div>
+          <button
+            type="button"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-600"
+          >
+            Last 7 Days <ChevronDown size={14} />
+          </button>
+        </div>
+      </div>
       <div className="h-64 w-full">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 5, right: 5, left: -12, bottom: 0 }}>
@@ -435,25 +370,21 @@ function ProductOutputDonut({
 }) {
   return (
     <div className={`${cardShell} col-span-12 md:col-span-6 lg:col-span-4`}>
-      <CardHeader
-        icon={<Package size={16} />}
-        title="Product Output (Today)"
-        subtitle="Measured in Quintals (1 Qt = 100 kg)"
-        demo={demo}
-      />
+      <div className="mb-4 flex items-center gap-2">
+        <h2 className="text-sm font-bold text-slate-800">Product Output (Today)</h2>
+        {demo ? <DemoBadge /> : null}
+      </div>
       <div className="grid grid-cols-12 items-center gap-2">
-        <div className="relative col-span-12 flex min-h-[190px] items-center justify-center overflow-visible sm:col-span-5">
-          <ResponsiveContainer width="100%" height={190}>
-            <PieChart margin={{ top: 8, right: 8, bottom: 8, left: 8 }}>
+        <div className="relative col-span-5 flex h-48 items-center justify-center">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
               <Pie
                 data={segments}
                 dataKey="value"
                 nameKey="name"
-                cx="50%"
-                cy="50%"
-                innerRadius="62%"
-                outerRadius="85%"
-                paddingAngle={3}
+                innerRadius={52}
+                outerRadius={74}
+                paddingAngle={2}
                 strokeWidth={0}
               >
                 {segments.map((s) => (
@@ -470,16 +401,14 @@ function ProductOutputDonut({
               />
             </PieChart>
           </ResponsiveContainer>
-          <div className="pointer-events-none absolute flex flex-col items-center justify-center">
-            <p className="text-xl font-extrabold tabular-nums text-slate-900">
+          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+            <p className="text-lg font-extrabold tabular-nums text-slate-900">
               {total.toLocaleString('en-US')} Qt
             </p>
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
-              Total Output (Quintals)
-            </p>
+            <p className="text-[11px] font-medium text-slate-400">Total Flour</p>
           </div>
         </div>
-        <div className="col-span-12 space-y-2.5 pl-2 sm:col-span-7">
+        <div className="col-span-7 space-y-2.5">
           {segments.map((s) => (
             <div
               key={s.name}
@@ -516,18 +445,17 @@ interface ActivityItem {
 
 function RecentActivities({ items, demo }: { items: ActivityItem[]; demo: boolean }) {
   return (
-    <div className={`${cardShell} col-span-12 flex flex-col justify-between md:col-span-6 lg:col-span-5`}>
-      <CardHeader
-        icon={<Bell size={16} />}
-        title="Recent Activities"
-        demo={demo}
-        action={
-          <Link to="/audit" className="text-xs font-semibold text-violet-600 hover:text-violet-700">
-            View All
-          </Link>
-        }
-      />
-      <ul className="space-y-3.5">
+    <div className={`${cardShell} col-span-12 flex flex-col justify-between md:col-span-6 lg:col-span-3`}>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <h2 className="text-sm font-bold text-slate-800">Recent Activities</h2>
+          {demo ? <DemoBadge /> : null}
+        </div>
+        <Link to="/audit" className="text-xs font-semibold text-violet-600 hover:text-violet-700">
+          View All
+        </Link>
+      </div>
+      <ul className="mt-3 space-y-3.5">
         {items.map((a, i) => (
           <li key={`${a.title}-${i}`}>
             <Link to={a.to} className="flex items-start gap-3">
@@ -547,73 +475,32 @@ function RecentActivities({ items, demo }: { items: ActivityItem[]; demo: boolea
   );
 }
 
-// ─── Row 4: Quick access + Product catalog (combined card) ──────────────────
-
-const CATALOG_TONES: Record<string, string> = {
-  violet: 'bg-violet-50/70 hover:bg-violet-100/80 border-violet-100',
-  emerald: 'bg-emerald-50/60 hover:bg-emerald-100/70 border-emerald-100',
-  amber: 'bg-amber-50/60 hover:bg-amber-100/70 border-amber-100'
-};
+// ─── Row 4: Quick access ────────────────────────────────────────────────────
 
 const QUICK_LINKS = [
-  { to: '/intake', label: 'New Purchase Order', icon: <ShoppingCart size={18} />, tone: 'bg-violet-50/80 hover:bg-violet-100/80 text-violet-700' },
-  { to: '/batches', label: 'Create Production Batch', icon: <Factory size={18} />, tone: 'bg-sky-50/80 hover:bg-sky-100/80 text-sky-700' },
-  { to: '/qc', label: 'Record Lab Test', icon: <FlaskConical size={18} />, tone: 'bg-emerald-50/80 hover:bg-emerald-100/80 text-emerald-700' },
-  { to: '/reports', label: 'Generate Report', icon: <BarChart3 size={18} />, tone: 'bg-amber-50/80 hover:bg-amber-100/80 text-amber-700' },
-  { to: '/intake', label: 'Manage Suppliers', icon: <Users size={18} />, tone: 'bg-teal-50/80 hover:bg-teal-100/80 text-teal-700' },
-  { to: '/storage', label: 'View Inventory', icon: <Boxes size={18} />, tone: 'bg-purple-50/80 hover:bg-purple-100/80 text-purple-700' }
+  { to: '/intake', label: 'New Purchase Order', icon: <ShoppingCart size={20} />, tone: 'bg-violet-50/80 hover:bg-violet-100/80 text-violet-700' },
+  { to: '/batches', label: 'Create Production Batch', icon: <Factory size={20} />, tone: 'bg-sky-50/80 hover:bg-sky-100/80 text-sky-700' },
+  { to: '/qc', label: 'Record Lab Test', icon: <FlaskConical size={20} />, tone: 'bg-emerald-50/80 hover:bg-emerald-100/80 text-emerald-700' },
+  { to: '/reports', label: 'Generate Report', icon: <BarChart3 size={20} />, tone: 'bg-amber-50/80 hover:bg-amber-100/80 text-amber-700' },
+  { to: '/intake', label: 'Manage Suppliers', icon: <Users size={20} />, tone: 'bg-teal-50/80 hover:bg-teal-100/80 text-teal-700' },
+  { to: '/storage', label: 'View Inventory', icon: <Boxes size={20} />, tone: 'bg-purple-50/80 hover:bg-purple-100/80 text-purple-700' }
 ];
 
-function QuickAccessCatalog() {
+function QuickAccess() {
   return (
-    <div className={`${cardShell} col-span-12 flex flex-col lg:col-span-3`}>
-      <CardHeader icon={<BarChart3 size={16} />} title="Quick Access" />
-      <div className="grid grid-cols-3 gap-2">
+    <div className={`${cardShell} col-span-12 md:col-span-6 lg:col-span-3`}>
+      <h2 className="mb-4 text-sm font-bold text-slate-800">Quick Access</h2>
+      <div className="grid grid-cols-3 gap-2.5">
         {QUICK_LINKS.map((q) => (
           <Link
             key={q.label}
             to={q.to}
-            className={`flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-xl p-2.5 text-center transition-all hover:-translate-y-0.5 hover:shadow-md ${q.tone}`}
+            className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl p-3 text-center transition-all hover:-translate-y-0.5 hover:shadow-md ${q.tone}`}
           >
             {q.icon}
-            <span className="text-[10px] font-semibold leading-tight">{q.label}</span>
+            <span className="text-[11px] font-semibold leading-tight">{q.label}</span>
           </Link>
         ))}
-      </div>
-      <div className="my-4 border-t border-slate-100" />
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Package size={15} className="text-violet-600" />
-          <h3 className="text-[13px] font-bold text-slate-800">Product Lines</h3>
-        </div>
-        <span className="rounded-md bg-violet-50 px-2 py-0.5 text-[10px] font-semibold text-violet-700">
-          5 Active Lines
-        </span>
-      </div>
-      <div className="mt-2.5 grid grid-cols-1 gap-1.5">
-        {SEED_PRODUCT_LINES.map((p) => (
-          <Link
-            key={p.name}
-            to="/products"
-            className={`flex cursor-pointer items-center justify-between rounded-xl border px-3 py-2 text-xs font-semibold text-slate-800 transition ${CATALOG_TONES[p.tone]}`}
-          >
-            <span className="min-w-0">
-              <span className="block truncate">{p.name}</span>
-              <span className="block text-[10px] font-medium text-slate-500">{p.packaging}</span>
-            </span>
-            <span className="ml-2 shrink-0 rounded-md bg-white/70 px-2 py-0.5 font-bold tabular-nums text-slate-700">
-              {p.stock.toLocaleString('en-US')} Qt
-            </span>
-          </Link>
-        ))}
-      </div>
-      <div className="mt-auto pt-3">
-        <Link
-          to="/products"
-          className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-violet-600 px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-violet-200 transition-all hover:bg-violet-700 active:bg-violet-800"
-        >
-          View Products <ArrowRight size={14} />
-        </Link>
       </div>
     </div>
   );
@@ -631,17 +518,16 @@ interface StockRow {
 
 function StockLevels({ rows, demo }: { rows: StockRow[]; demo: boolean }) {
   return (
-    <div className={`${cardShell} col-span-12 md:col-span-6 lg:col-span-3`}>
-      <CardHeader
-        icon={<Warehouse size={16} />}
-        title="Stock Levels"
-        demo={demo}
-        action={
-          <Link to="/storage" className="text-xs font-semibold text-violet-600 hover:text-violet-700">
-            View All
-          </Link>
-        }
-      />
+    <div className={`${cardShell} col-span-12 md:col-span-6 lg:col-span-4`}>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <h2 className="text-sm font-bold text-slate-800">Stock Levels</h2>
+          {demo ? <DemoBadge /> : null}
+        </div>
+        <Link to="/storage" className="text-xs font-semibold text-violet-600 hover:text-violet-700">
+          View All
+        </Link>
+      </div>
       <div className="mt-3 space-y-3.5">
         {rows.map((r) => {
           const pct = r.capacity > 0 ? Math.min(100, (r.balance / r.capacity) * 100) : 0;
@@ -687,13 +573,11 @@ interface ProcRow {
 
 function RecentProcurement({ rows, demo }: { rows: ProcRow[]; demo: boolean }) {
   return (
-    <div className={`${cardShell} col-span-12 lg:col-span-4`}>
-      <CardHeader
-        icon={<Truck size={16} />}
-        title="Recent Procurement"
-        subtitle="Intake gate"
-        demo={demo}
-      />
+    <div className={`${cardShell} col-span-12 lg:col-span-5`}>
+      <div className="mb-3 flex items-center gap-2">
+        <h2 className="text-sm font-bold text-slate-800">Recent Procurement</h2>
+        {demo ? <DemoBadge /> : null}
+      </div>
       <div className="overflow-x-auto">
         <table className="w-full border-collapse text-left">
           <thead>
@@ -743,79 +627,46 @@ function RecentProcurement({ rows, demo }: { rows: ProcRow[]; demo: boolean }) {
   );
 }
 
-// ─── Shift & Milling Operations Live Monitor (replaces Production Performance) ─
+// ─── Row 5: Production performance ──────────────────────────────────────────
 
-interface ShiftMonitorData {
-  shiftName: string;
-  operator: string;
-  nextLabCheck: string;
-  nextLabSub: string;
-  uptime: string;
-  uptimeSub: string;
-  blend: string;
-  blendSub: string;
-  demo: boolean;
+interface PerfTile {
+  label: string;
+  value: string;
+  trendPct: number | null;
+  invert?: boolean;
+  icon: React.ReactNode;
+  tile: string;
+  alert?: boolean;
 }
 
-function ShiftMonitor({ data }: { data: ShiftMonitorData }) {
-  const rows = [
-    {
-      icon: <Timer size={18} />,
-      tile: 'bg-violet-100 text-violet-600',
-      label: 'Active Shift',
-      value: data.shiftName,
-      sub: `Operator: ${data.operator}`
-    },
-    {
-      icon: <FlaskConical size={18} />,
-      tile: 'bg-blue-100 text-blue-600',
-      label: 'Next 2-Hour Lab Check',
-      value: data.nextLabCheck,
-      sub: data.nextLabSub,
-      badge: { text: data.nextLabCheck, tone: 'amber' as const }
-    },
-    {
-      icon: <Gauge size={18} />,
-      tile: 'bg-emerald-100 text-emerald-600',
-      label: 'Mill Uptime / Downtime',
-      value: data.uptime,
-      sub: data.uptimeSub
-    },
-    {
-      icon: <ClipboardList size={18} />,
-      tile: 'bg-amber-100 text-amber-600',
-      label: 'Active Blend Ratio',
-      value: data.blend,
-      sub: data.blendSub
-    }
-  ];
+function ProductionPerformance({ tiles, demo }: { tiles: PerfTile[]; demo: boolean }) {
   return (
-    <div className={`${cardShell} col-span-12 lg:col-span-7`}>
-      <CardHeader
-        icon={<Gauge size={16} />}
-        title="Shift & Milling Operations"
-        subtitle="Live monitor"
-        demo={data.demo}
-        action={
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
-            LIVE
-          </span>
-        }
-      />
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        {rows.map((r) => (
-          <div key={r.label} className="rounded-xl border border-slate-100 bg-slate-50/70 p-3.5">
-            <div className="flex items-center gap-2.5">
-              <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${r.tile}`}>
-                {r.icon}
-              </span>
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{r.label}</p>
+    <div className={`${cardShell} col-span-12 lg:col-span-5`}>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <h2 className="text-sm font-bold text-slate-800">Production Performance</h2>
+          {demo ? <DemoBadge /> : null}
+        </div>
+        <button
+          type="button"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-600"
+        >
+          This Month <ChevronDown size={14} />
+        </button>
+      </div>
+      <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {tiles.map((t) => (
+          <div key={t.label} className="rounded-xl border border-slate-100 bg-slate-50/70 p-3">
+            <div className={`flex h-9 w-9 items-center justify-center rounded-full ${t.tile}`}>
+              {t.icon}
             </div>
-            <p className="mt-2.5 truncate text-[15px] font-extrabold tabular-nums text-slate-900">
-              {r.value}
+            <p className="mt-2 text-xs text-slate-500">{t.label}</p>
+            <p className={`text-lg font-extrabold tabular-nums ${t.alert ? 'text-rose-600' : 'text-slate-900'}`}>
+              {t.value}
             </p>
-            <p className="mt-0.5 truncate text-xs text-slate-500">{r.sub}</p>
+            <p className="mt-0.5 text-xs">
+              <TrendText pct={t.trendPct} invert={t.invert} />
+            </p>
           </div>
         ))}
       </div>
@@ -853,79 +704,23 @@ function qVal(p: QualityPoint, key: (typeof Q_LINES)[number]['key']): number | n
   }
 }
 
-// ─── Quality thresholds (Oyaya standards) ───────────────────────────────────
-
-const Q_THRESHOLDS: Record<string, { label: string; check: string; pass: (v: number) => boolean }> = {
-  gluten: { label: 'Gluten', check: '30–33%', pass: (v) => v >= 30 && v <= 33 },
-  moisture: { label: 'Moisture', check: 'Max ≤ 14.0%', pass: (v) => v <= 14.0 },
-  impurity: { label: 'Impurity', check: 'Max < 3.0%', pass: (v) => v < 3.0 },
-  hectoliter: { label: 'Hectoliter Wt', check: 'Min ≥ 74', pass: (v) => v >= 74 }
-};
-
-function QualityTooltip({
-  active,
-  payload,
-  label
-}: {
-  active?: boolean;
-  payload?: Array<{ dataKey?: string | number; value?: number | string; color?: string }>;
-  label?: string;
-}) {
-  if (!active || !payload || payload.length === 0) return null;
-  return (
-    <div className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs shadow-lg">
-      <p className="mb-1.5 font-bold text-slate-800">{label}</p>
-      <div className="space-y-1">
-        {payload.map((p) => {
-          const key = String(p.dataKey ?? '');
-          const th = Q_THRESHOLDS[key];
-          const v = Number(p.value);
-          if (!th || !Number.isFinite(v)) return null;
-          const ok = th.pass(v);
-          const unit = key === 'hectoliter' ? '' : '%';
-          return (
-            <div key={key} className="flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full" style={{ backgroundColor: p.color }} />
-              <span className="font-medium text-slate-600">{th.label}:</span>
-              <span className="font-bold tabular-nums text-slate-800">
-                {v.toFixed(1)}
-                {unit}
-              </span>
-              <span className="text-slate-400">({th.check})</span>
-              <span
-                className={`rounded-full px-1.5 py-px text-[10px] font-bold ${
-                  ok ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-600'
-                }`}
-              >
-                {ok ? 'PASS' : 'FAIL'}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
 function QualityTrendChart({ data, demo }: { data: QualityPoint[]; demo: boolean }) {
   const visible = Q_LINES.filter((l) => data.some((p) => qVal(p, l.key) != null));
   return (
-    <div className={`${cardShell} col-span-12 lg:col-span-5`}>
-      <CardHeader
-        icon={<FlaskConical size={16} />}
-        title="Quality Trend"
-        subtitle="2-hour lab inspection parameters"
-        demo={demo}
-        action={
-          <button
-            type="button"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-600"
-          >
-            Last 7 Days <ChevronDown size={14} />
-          </button>
-        }
-      />
-      <div className="mb-2 flex flex-wrap gap-3 text-[11px] font-medium text-slate-600">
+    <div className={`${cardShell} col-span-12 md:col-span-7 lg:col-span-4`}>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <h2 className="text-sm font-bold text-slate-800">Quality Trend</h2>
+          {demo ? <DemoBadge /> : null}
+        </div>
+        <button
+          type="button"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-600"
+        >
+          Last 7 Days <ChevronDown size={14} />
+        </button>
+      </div>
+      <div className="my-2 flex flex-wrap gap-3 text-[11px] font-medium text-slate-600">
         {visible.map((l) => (
           <span key={l.key} className="inline-flex items-center gap-1.5">
             <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: l.color }} />
@@ -933,9 +728,9 @@ function QualityTrendChart({ data, demo }: { data: QualityPoint[]; demo: boolean
           </span>
         ))}
       </div>
-      <div className="h-56 w-full">
+      <div className="h-40 w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data} margin={{ top: 5, right: 5, left: -14, bottom: 0 }}>
+          <LineChart data={data} margin={{ top: 5, right: 5, left: -18, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
             <XAxis
               dataKey="label"
@@ -945,71 +740,88 @@ function QualityTrendChart({ data, demo }: { data: QualityPoint[]; demo: boolean
               dy={6}
             />
             <YAxis
-              yAxisId="left"
-              ticks={[0, 10, 20, 30, 40]}
-              domain={[0, 40]}
+              ticks={[0, 25, 50, 75, 100]}
+              domain={[0, 100]}
               tickFormatter={(v: number) => `${v}%`}
               tick={{ fontSize: 11, fill: '#94A3B8' }}
               axisLine={false}
               tickLine={false}
             />
-            <YAxis
-              yAxisId="right"
-              orientation="right"
-              ticks={[60, 65, 70, 75, 80, 85]}
-              domain={[60, 85]}
-              tick={{ fontSize: 11, fill: '#94A3B8' }}
-              axisLine={false}
-              tickLine={false}
+            <Tooltip
+              contentStyle={{
+                borderRadius: 12,
+                border: '1px solid #E2E8F0',
+                fontSize: 12
+              }}
+              formatter={(value, name) => [
+                `${Number(value).toFixed(1)}%`,
+                Q_LINES.find((l) => l.key === String(name))?.label ?? String(name)
+              ]}
             />
-            <Tooltip content={<QualityTooltip />} />
-            <ReferenceLine
-              yAxisId="left"
-              y={14}
-              stroke="#F59E0B"
-              strokeDasharray="5 4"
-              strokeOpacity={0.6}
-              label={{ value: 'Moisture max', fontSize: 10, fill: '#D97706', position: 'insideTopRight' }}
-            />
-            <ReferenceLine
-              yAxisId="right"
-              y={74}
-              stroke="#10B981"
-              strokeDasharray="5 4"
-              strokeOpacity={0.6}
-              label={{ value: 'Hl min', fontSize: 10, fill: '#059669', position: 'insideTopRight' }}
-            />
-            {visible
-              .filter((l) => l.key !== 'hectoliter')
-              .map((l) => (
-                <Line
-                  key={l.key}
-                  yAxisId="left"
-                  type="monotone"
-                  dataKey={l.key}
-                  name={l.key}
-                  stroke={l.color}
-                  strokeWidth={2}
-                  dot={{ r: 3, fill: l.color, strokeWidth: 0 }}
-                  activeDot={{ r: 4.5 }}
-                  connectNulls
-                />
-              ))}
-            {visible.some((l) => l.key === 'hectoliter') ? (
+            {visible.map((l) => (
               <Line
-                yAxisId="right"
+                key={l.key}
                 type="monotone"
-                dataKey="hectoliter"
-                name="hectoliter"
-                stroke="#F59E0B"
+                dataKey={l.key}
+                name={l.key}
+                stroke={l.color}
                 strokeWidth={2}
-                dot={{ r: 3, fill: '#F59E0B', strokeWidth: 0 }}
+                dot={{ r: 3, fill: l.color, strokeWidth: 0 }}
                 activeDot={{ r: 4.5 }}
                 connectNulls
               />
-            ) : null}
+            ))}
           </LineChart>
         </ResponsiveContainer>
+      </div>
+    </div>
+  );
+}
+
+// ─── Row 5: Product lines & catalog card (replaces promo image card) ─────────
+
+const CATALOG_TONES: Record<string, string> = {
+  violet: 'bg-violet-50/70 hover:bg-violet-100/80 border-violet-100',
+  emerald: 'bg-emerald-50/60 hover:bg-emerald-100/70 border-emerald-100',
+  amber: 'bg-amber-50/60 hover:bg-amber-100/70 border-amber-100'
+};
+
+function ProductCatalogCard() {
+  return (
+    <div className={`${cardShell} col-span-12 flex flex-col justify-between md:col-span-5 lg:col-span-3`}>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Package size={16} className="text-violet-600" />
+          <h2 className="text-sm font-bold text-slate-800">Product Lines &amp; Catalog</h2>
+        </div>
+        <span className="rounded-md bg-violet-50 px-2 py-0.5 text-[11px] font-semibold text-violet-700">
+          5 Active Lines
+        </span>
+      </div>
+      <div className="my-auto grid grid-cols-1 gap-1.5 py-3">
+        {SEED_PRODUCT_LINES.map((p) => (
+          <Link
+            key={p.name}
+            to="/products"
+            className={`flex cursor-pointer items-center justify-between rounded-xl border px-3 py-2 text-xs font-semibold text-slate-800 transition ${CATALOG_TONES[p.tone]}`}
+          >
+            <span className="min-w-0">
+              <span className="block truncate">{p.name}</span>
+              <span className="block text-[11px] font-medium text-slate-500">{p.packaging}</span>
+            </span>
+            <span className="ml-2 shrink-0 rounded-md bg-white/70 px-2 py-0.5 font-bold tabular-nums text-slate-700">
+              {p.stock.toLocaleString('en-US')} Qt
+            </span>
+          </Link>
+        ))}
+      </div>
+      <div className="border-t border-slate-100 pt-3">
+        <Link
+          to="/products"
+          className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-violet-600 px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-violet-200 transition-all hover:bg-violet-700 active:bg-violet-800"
+        >
+          View Products <ArrowRight size={14} />
+        </Link>
       </div>
     </div>
   );
@@ -1073,11 +885,6 @@ export function Dashboard() {
     queryFn: async () => (await api.get<Capa[]>(E.capas)).data,
     refetchInterval: REFETCH
   });
-  const apInvoicesQ = useQuery({
-    queryKey: ['dashboard-ap-invoices'],
-    queryFn: async () => (await api.get<APInvoice[]>(E.apInvoices)).data,
-    refetchInterval: REFETCH
-  });
 
   const k = kpisQ.data;
   const intakes = useMemo(() => (Array.isArray(intakesQ.data) ? intakesQ.data : []), [intakesQ.data]);
@@ -1091,11 +898,6 @@ export function Dashboard() {
     () => (Array.isArray(labChecksQ.data) ? labChecksQ.data : []),
     [labChecksQ.data]
   );
-  const apInvoices = useMemo(
-    () => (Array.isArray(apInvoicesQ.data) ? apInvoicesQ.data : []),
-    [apInvoicesQ.data]
-  );
-  const capas = useMemo(() => (Array.isArray(capasQ.data) ? capasQ.data : []), [capasQ.data]);
 
   const nowMs = Date.now();
   const weekAgoMs = nowMs - 7 * 24 * 3600 * 1000;
@@ -1148,137 +950,54 @@ export function Dashboard() {
     return (passed / prev.length) * 100;
   })();
 
-  // ── 5 distinct executive KPI pillars (spec 3.1 — zero overlap) ──────────────
-  const todayKey = dayKey(new Date());
-  const yesterdayKey = dayKey(new Date(nowMs - 24 * 3600 * 1000));
-
-  const intakeToday = intakesQ.isSuccess
-    ? intakes.filter((i) => i.status === 'ACCEPTED' && dayKey(new Date(i.deliveryDate)) === todayKey)
-    : null;
-  const intakeTodayQt = intakeToday !== null ? intakeToday.reduce((s, i) => s + safeNum(i.quintals), 0) : null;
-  const intakeYdayQt = intakesQ.isSuccess
-    ? intakes
-        .filter((i) => i.status === 'ACCEPTED' && dayKey(new Date(i.deliveryDate)) === yesterdayKey)
-        .reduce((s, i) => s + safeNum(i.quintals), 0)
-    : null;
-
-  const outputTodayQt = detailsReady
-    ? details
-        .filter((sh) => dayKey(new Date(sh.shiftDate ?? sh.startedAt)) === todayKey)
-        .reduce((s, sh) => s + shiftFlour(sh), 0)
-    : null;
-  const outputYdayQt = detailsReady
-    ? details
-        .filter((sh) => dayKey(new Date(sh.shiftDate ?? sh.startedAt)) === yesterdayKey)
-        .reduce((s, sh) => s + shiftFlour(sh), 0)
-    : null;
-
-  const wheatMonthQt = detailsReady
-    ? 0 // computed below via batches for extraction denominator
-    : null;
-  void wheatMonthQt;
-  const monthWheatQt = batchesQ.isSuccess
-    ? batches
-        .filter((b) => new Date(b.createdAt).getTime() >= monthStartMs)
-        .reduce((s, b) => s + safeNum(b.wheatWeighedQ), 0)
-    : null;
-  const monthFlourQt = detailsReady
-    ? details
-        .filter((sh) => new Date(sh.shiftDate ?? sh.startedAt).getTime() >= monthStartMs)
-        .reduce((s, sh) => s + shiftFlour(sh), 0)
-    : null;
-  const extractionRate =
-    monthWheatQt !== null && monthFlourQt !== null && monthWheatQt > 0
-      ? (monthFlourQt / monthWheatQt) * 100
-      : null;
-
-  const openCapas = capasQ.isSuccess ? capas.filter((c) => c.status !== 'CLOSED').length : null;
-
-  const pendingPayables = apInvoicesQ.isSuccess
-    ? apInvoices.filter((inv) => inv.status !== 'PAID')
-    : null;
-  const payablesTotal =
-    pendingPayables !== null
-      ? pendingPayables.reduce((s, inv) => {
-          const paid = (inv.payments ?? []).reduce((a, p) => a + safeNum(p.amountBirr), 0);
-          return s + Math.max(0, safeNum(inv.amountBirr) - paid);
-        }, 0)
-      : null;
-
   const kpiSpecs: KpiSpec[] = [
     {
-      icon: <Wheat size={20} />,
-      iconTone: 'bg-violet-100 text-violet-600',
-      label: "Today's Wheat Intake",
-      value: (intakeTodayQt ?? SEED_PILLARS.intakeToday.value).toLocaleString('en-US'),
+      icon: <Wheat size={22} />,
+      iconTone: 'bg-violet-50 text-violet-600',
+      label: 'Total Wheat Received',
+      value: (wheatThisWeek ?? SEED_KPIS.wheat.value).toLocaleString('en-US'),
+      unit: 'Qt',
+      trendPct: wheatThisWeek !== null ? pctChange(wheatThisWeek, wheatPrevWeek ?? 0) : SEED_KPIS.wheat.trendPct,
+      demo: wheatThisWeek === null
+    },
+    {
+      icon: <PackageCheck size={22} />,
+      iconTone: 'bg-blue-50 text-blue-600',
+      label: 'Flour Produced',
+      value: (hasFlourData && flourThisWeek !== null ? flourThisWeek : SEED_KPIS.flour.value).toLocaleString('en-US'),
       unit: 'Qt',
       trendPct:
-        intakeTodayQt !== null && intakeYdayQt !== null
-          ? pctChange(intakeTodayQt, intakeYdayQt)
-          : SEED_PILLARS.intakeToday.trendPct,
-      sub: `${intakeToday !== null ? intakeToday.length : 3} Trucks Accepted • vs. yesterday`,
-      demo: intakeTodayQt === null,
-      to: '/intake'
+        hasFlourData && flourThisWeek !== null
+          ? pctChange(flourThisWeek, flourPrevWeek ?? 0)
+          : SEED_KPIS.flour.trendPct,
+      demo: !(hasFlourData && flourThisWeek !== null)
     },
     {
-      icon: <PackageCheck size={20} />,
-      iconTone: 'bg-blue-100 text-blue-600',
-      label: "Today's Mill Output",
-      value: (outputTodayQt ?? SEED_PILLARS.outputToday.value).toLocaleString('en-US'),
+      icon: <Warehouse size={22} />,
+      iconTone: 'bg-emerald-50 text-emerald-600',
+      label: 'Current Stock (Dry Storage)',
+      value: (dryStock ?? SEED_KPIS.stock.value).toLocaleString('en-US'),
       unit: 'Qt',
-      trendPct:
-        outputTodayQt !== null && outputYdayQt !== null
-          ? pctChange(outputTodayQt, outputYdayQt)
-          : SEED_PILLARS.outputToday.trendPct,
-      sub: 'Duket & Byproducts • vs. yesterday',
-      demo: outputTodayQt === null,
-      to: '/production'
+      trendPct: dryStock !== null ? null : SEED_KPIS.stock.trendPct,
+      demo: dryStock === null
     },
     {
-      icon: <Percent size={20} />,
-      iconTone: 'bg-emerald-100 text-emerald-600',
-      label: 'Net Extraction Rate',
-      value: (extractionRate ?? SEED_PILLARS.extraction.value).toFixed(1),
+      icon: <Droplets size={22} />,
+      iconTone: 'bg-amber-50 text-amber-500',
+      label: 'Active Batches',
+      value: String(activeBatches ?? SEED_KPIS.batches.value),
+      unit: 'Batches',
+      trendPct: activeBatches !== null ? 0 : SEED_KPIS.batches.trendPct,
+      demo: activeBatches === null
+    },
+    {
+      icon: <ShieldCheck size={22} />,
+      iconTone: 'bg-emerald-50 text-emerald-600',
+      label: 'Quality Pass Rate',
+      value: (qcPass ?? SEED_KPIS.quality.value).toFixed(1),
       unit: '%',
-      pill:
-        extractionRate !== null
-          ? extractionRate >= 78
-            ? { text: '✓ Pass', tone: 'emerald' as const }
-            : { text: '⚠ Below target', tone: 'rose' as const }
-          : { text: SEED_PILLARS.extraction.pass ? '✓ Pass' : '⚠ Below target', tone: 'emerald' as const },
-      sub: 'Target ≥ 78.0%',
-      demo: extractionRate === null,
-      to: '/production'
-    },
-    {
-      icon: <ShieldCheck size={20} />,
-      iconTone: 'bg-emerald-100 text-emerald-600',
-      label: 'Lab Quality Pass Rate',
-      value: (qcPass ?? SEED_PILLARS.qualityPass.value).toFixed(1),
-      unit: '%',
-      trendPct:
-        qcPass !== null
-          ? qcPassPrevWeek !== null
-            ? qcPass - qcPassPrevWeek
-            : null
-          : SEED_PILLARS.qualityPass.trendPct,
-      sub: `2-Hr Shift Checks • ${openCapas ?? 0} Open CAPAs`,
-      demo: qcPass === null,
-      to: '/qc'
-    },
-    {
-      icon: <CreditCard size={20} />,
-      iconTone: 'bg-amber-100 text-amber-600',
-      label: 'Pending Vendor Payables',
-      value: (payablesTotal ?? SEED_PILLARS.payables.value).toLocaleString('en-US'),
-      unit: 'ETB',
-      pill:
-        pendingPayables !== null && pendingPayables.length > 0
-          ? { text: `${pendingPayables.length} Vouchers Ready`, tone: 'amber' as const }
-          : { text: '3 Vouchers Ready', tone: 'amber' as const },
-      sub: 'Finance GL',
-      demo: payablesTotal === null,
-      to: '/finance'
+      trendPct: qcPass !== null ? (qcPassPrevWeek !== null ? qcPass - qcPassPrevWeek : null) : SEED_KPIS.quality.trendPct,
+      demo: qcPass === null
     }
   ];
 
@@ -1464,49 +1183,131 @@ export function Dashboard() {
     : liveActivities;
 
   // ── Performance tiles ────────────────────────────────────────────────────
-  // ── Shift & Milling Operations monitor data ─────────────────────────────────
-  const shiftMonitor: ShiftMonitorData = useMemo(() => {
-    const openBatch = batchesQ.isSuccess ? batches.find((b) => b.status === 'OPEN') : null;
-    const todayShifts = detailsReady
-      ? details.filter((sh) => dayKey(new Date(sh.shiftDate ?? sh.startedAt)) === todayKey)
-      : [];
-    const latestShift = todayShifts[0] ?? null;
-    const hasLive = openBatch !== null || latestShift !== null;
-    if (!hasLive) {
-      return { ...SEED_SHIFT_MONITOR, demo: true };
-    }
-    const totalDownMin = todayShifts.reduce((s, sh) => s + safeNum(sh.downtimeMin), 0);
-    let workMin = 0;
-    for (const sh of todayShifts) {
-      const st = new Date(sh.startedAt).getTime();
-      const en = sh.endedAt ? new Date(sh.endedAt).getTime() : nowMs;
-      if (Number.isFinite(st) && en > st) workMin += (en - st) / 60000;
-    }
-    const uptimePct = workMin > 0 ? ((workMin - totalDownMin) / workMin) * 100 : null;
-    const blendParts: string[] = [];
-    if (openBatch) {
-      const hw = safeNum((openBatch as { hardWheatQ?: unknown }).hardWheatQ);
-      const sw = safeNum((openBatch as { softWheatQ?: unknown }).softWheatQ);
-      const fw = safeNum((openBatch as { foreignWheatQ?: unknown }).foreignWheatQ);
-      const tot = hw + sw + fw;
-      if (tot > 0) {
-        blendParts.push(`${Math.round((hw / tot) * 100)}% Hard`, `${Math.round((sw / tot) * 100)}% Soft`, `${Math.round((fw / tot) * 100)}% Foreign`);
+  const perfTiles: PerfTile[] = useMemo(() => {
+    const prevMonthStart = new Date(monthStart);
+    prevMonthStart.setMonth(prevMonthStart.getMonth() - 1);
+    const prevMonthStartMs = prevMonthStart.getTime();
+    const calc = (fromMs: number, toMs: number) => {
+      const shifts = details.filter((sh) => {
+        const t = new Date(sh.shiftDate ?? sh.startedAt).getTime();
+        return t >= fromMs && t < toMs;
+      });
+      const flour = shifts.reduce((s, sh) => s + shiftFlour(sh), 0);
+      const wheat = batchesQ.isSuccess
+        ? batches
+            .filter((b) => {
+              const t = new Date(b.createdAt).getTime();
+              return t >= fromMs && t < toMs;
+            })
+            .reduce((s, b) => s + safeNum(b.wheatWeighedQ), 0)
+        : 0;
+      const duket = shifts.reduce(
+        (s, sh) =>
+          s +
+          (sh.outputs ?? [])
+            .filter((o) => (o.product?.name ?? '').toLowerCase().includes('duket'))
+            .reduce((a, o) => a + safeNum(o.quintals), 0),
+        0
+      );
+      let downMin = 0;
+      let workMin = 0;
+      for (const sh of shifts) {
+        downMin += safeNum(sh.downtimeMin);
+        const st = new Date(sh.startedAt).getTime();
+        const en = sh.endedAt ? new Date(sh.endedAt).getTime() : NaN;
+        if (Number.isFinite(st) && Number.isFinite(en) && en > st) workMin += (en - st) / 60000;
       }
-    }
-    return {
-      shiftName: latestShift ? `Shift ${latestShift.shift} (${latestShift.shift === 'MORNING' ? 'Morning 06:00–14:00' : latestShift.shift === 'NIGHT' ? 'Night 22:00–06:00' : String(latestShift.shift)})` : 'Shift 1 (Morning 06:00–14:00)',
-      operator: latestShift?.operators?.[0] ?? 'Abebe K.',
-      nextLabCheck: 'In 24 Mins',
-      nextLabSub: '10:00 AM Sample Passed',
-      uptime: uptimePct !== null ? `${uptimePct.toFixed(1)}% Uptime` : '95.8% Uptime',
-      uptimeSub:
-        totalDownMin > 0 ? `${Math.round(totalDownMin)}m downtime logged today` : '18m Power Fluctuation logged',
-      blend: blendParts.length > 0 ? blendParts.join(' • ') : '50% Hard • 30% Soft • 20% Foreign',
-      blendSub: openBatch ? `Batch ${openBatch.batchNo}` : 'Batch PB-2025-0087',
-      demo: false
+      return {
+        flour,
+        extraction: wheat > 0 ? (flour / wheat) * 100 : null,
+        duketYield: flour > 0 ? (duket / flour) * 100 : null,
+        downtimePct: workMin > 0 ? (downMin / workMin) * 100 : null,
+        hasData: shifts.length > 0 || flour > 0
+      };
     };
+    const cur = calc(monthStartMs, nowMs);
+    const prev = calc(prevMonthStartMs, monthStartMs);
+    const live =
+      cur.hasData || prev.hasData
+        ? [
+            {
+              label: 'Total Production',
+              value: `${cur.flour.toLocaleString('en-US')} Qt`,
+              trendPct: pctChange(cur.flour, prev.flour),
+              icon: <PackageCheck size={18} />,
+              tile: 'bg-emerald-100 text-emerald-600'
+            },
+            {
+              label: 'Extraction Rate',
+              value: cur.extraction !== null ? `${cur.extraction.toFixed(1)}%` : '—',
+              trendPct:
+                cur.extraction !== null && prev.extraction !== null
+                  ? pctChange(cur.extraction, prev.extraction)
+                  : null,
+              icon: <BarChart3 size={18} />,
+              tile: 'bg-violet-100 text-violet-600'
+            },
+            {
+              label: 'Duket Yield',
+              value: cur.duketYield !== null ? `${cur.duketYield.toFixed(1)}%` : '—',
+              trendPct:
+                cur.duketYield !== null && prev.duketYield !== null
+                  ? pctChange(cur.duketYield, prev.duketYield)
+                  : null,
+              icon: <Sun size={18} />,
+              tile: 'bg-amber-100 text-amber-600',
+              alert: cur.duketYield !== null && cur.duketYield < 78
+            },
+            {
+              label: 'Downtime',
+              value: cur.downtimePct !== null ? `${cur.downtimePct.toFixed(1)}%` : '—',
+              trendPct:
+                cur.downtimePct !== null && prev.downtimePct !== null
+                  ? pctChange(cur.downtimePct, prev.downtimePct)
+                  : null,
+              invert: true,
+              icon: <Bell size={18} />,
+              tile: 'bg-rose-100 text-rose-600'
+            }
+          ]
+        : null;
+    if (live) return live;
+    return [
+      {
+        label: 'Total Production',
+        value: `${SEED_PERFORMANCE.totalProduction.value.toLocaleString('en-US')} Qt`,
+        trendPct: SEED_PERFORMANCE.totalProduction.trendPct,
+        icon: <PackageCheck size={18} />,
+        tile: 'bg-emerald-100 text-emerald-600'
+      },
+      {
+        label: 'Extraction Rate',
+        value: `${SEED_PERFORMANCE.extractionRate.value.toFixed(1)}%`,
+        trendPct: SEED_PERFORMANCE.extractionRate.trendPct,
+        icon: <BarChart3 size={18} />,
+        tile: 'bg-violet-100 text-violet-600'
+      },
+      {
+        label: 'Duket Yield',
+        value: `${SEED_PERFORMANCE.duketYield.value.toFixed(1)}%`,
+        trendPct: SEED_PERFORMANCE.duketYield.trendPct,
+        icon: <Sun size={18} />,
+        tile: 'bg-amber-100 text-amber-600'
+      },
+      {
+        label: 'Downtime',
+        value: `${SEED_PERFORMANCE.downtime.value.toFixed(1)}%`,
+        trendPct: SEED_PERFORMANCE.downtime.trendPct,
+        invert: true,
+        icon: <Bell size={18} />,
+        tile: 'bg-rose-100 text-rose-600'
+      }
+    ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [batchesQ.isSuccess, batches, detailsReady, details, todayKey, nowMs]);
+  }, [details, batchesQ.isSuccess, batches, monthStartMs, nowMs]);
+  const perfDemo =
+    perfTiles[0].value ===
+    `${SEED_PERFORMANCE.totalProduction.value.toLocaleString('en-US')} Qt`;
 
   // ── Quality trend points ─────────────────────────────────────────────────
   const liveQuality: QualityPoint[] = useMemo(() => {
@@ -1545,31 +1346,32 @@ export function Dashboard() {
         <WeatherCard />
       </div>
 
-      {/* ── Row 2: 5 distinct executive KPI pillars ── */}
+      {/* ── Row 2: KPIs ── */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
         {kpiSpecs.map((s) => (
           <KpiCard key={s.label} spec={s} />
         ))}
       </div>
 
-      {/* ── Row 3: production chart + donut + storage levels ── */}
+      {/* ── Row 3: production chart + donut + activities ── */}
       <div className="grid grid-cols-12 gap-4">
         <ProductionOverview data={chartData} demo={!hasProdData} />
         <ProductOutputDonut segments={donutSegments} total={donutTotal} demo={donutDemo} />
-        <StockLevels rows={stockRows} demo={stockDemo} />
-      </div>
-
-      {/* ── Row 4: quality trend + procurement + quick access/catalog ── */}
-      <div className="grid grid-cols-12 gap-4">
-        <QualityTrendChart data={qualityData} demo={!hasLiveQuality} />
-        <RecentProcurement rows={procRows} demo={procDemo} />
-        <QuickAccessCatalog />
-      </div>
-
-      {/* ── Row 5: shift monitor + recent activities ── */}
-      <div className="grid grid-cols-12 gap-4">
-        <ShiftMonitor data={shiftMonitor} />
         <RecentActivities items={activities} demo={actDemo} />
+      </div>
+
+      {/* ── Row 4: quick access + stock + procurement ── */}
+      <div className="grid grid-cols-12 gap-4">
+        <QuickAccess />
+        <StockLevels rows={stockRows} demo={stockDemo} />
+        <RecentProcurement rows={procRows} demo={procDemo} />
+      </div>
+
+      {/* ── Row 5: performance + quality trend + product catalog ── */}
+      <div className="grid grid-cols-12 gap-4">
+        <ProductionPerformance tiles={perfTiles} demo={perfDemo} />
+        <QualityTrendChart data={qualityData} demo={!hasLiveQuality} />
+        <ProductCatalogCard />
       </div>
     </div>
   );
