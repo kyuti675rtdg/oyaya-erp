@@ -90,50 +90,6 @@ function WheatPattern() {
   );
 }
 
-function WheatIntakeIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FBBF24" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
-      <line x1="12" y1="22" x2="12" y2="8" />
-      {[14, 18].map((gy) => (
-        <g key={gy}>
-          <ellipse cx="8.5" cy={gy} rx="3" ry="5" transform="rotate(-30 8.5 18)" />
-          <ellipse cx="15.5" cy={gy} rx="3" ry="5" transform="rotate(30 15.5 18)" />
-        </g>
-      ))}
-      <ellipse cx="12" cy="5" rx="3" ry="5" />
-    </svg>
-  );
-}
-
-function MillIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FBBF24" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M2 20h20" />
-      <path d="M4 20V9l5-4v15" />
-      <path d="M9 20V5l5 4v11" />
-      <path d="M14 20v-8l6-3v11" />
-      <circle cx="17" cy="5" r="1.6" />
-    </svg>
-  );
-}
-
-function FinanceIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FBBF24" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <line x1="18" y1="20" x2="18" y2="10" />
-      <line x1="12" y1="20" x2="12" y2="4" />
-      <line x1="6" y1="20" x2="6" y2="14" />
-      <line x1="2" y1="20" x2="22" y2="20" />
-    </svg>
-  );
-}
-
-const FEATURES = [
-  { icon: <WheatIntakeIcon />, title: 'Wheat Intake & Grading', text: 'Truck intake, lab grading, and dry-pool inventory in one flow.' },
-  { icon: <MillIcon />, title: 'Production & Quality Control', text: 'Conditioning, milling shifts, lab checks, and CAPA tracking.' },
-  { icon: <FinanceIcon />, title: 'Sales & Finance', text: 'Dispatches, invoicing, payroll, and live financial reports.' }
-];
-
 /* ---------- Page ---------- */
 
 export function Login() {
@@ -193,36 +149,9 @@ export function Login() {
               <p className="text-sm font-medium tracking-wide text-amber-200/80">Enterprise Resource Planning</p>
             </div>
           </div>
-
-          <h1 className="mt-14 max-w-md text-4xl font-extrabold leading-tight xl:text-[2.75rem]">
-            Mill operations, quality, and commerce —{' '}
-            <span className="bg-gradient-to-r from-amber-300 to-amber-500 bg-clip-text text-transparent">
-              unified in one system.
-            </span>
-          </h1>
-          <p className="mt-4 max-w-md text-[15px] leading-relaxed text-stone-300">
-            From wheat intake to flour dispatch, Oyaya ERP keeps every shift,
-            lab check, and ledger entry connected and accountable.
-          </p>
-
-          <ul className="mt-10 space-y-6">
-            {FEATURES.map((f) => (
-              <li key={f.title} className="flex items-start gap-4">
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-amber-500/25 bg-amber-500/10">
-                  {f.icon}
-                </span>
-                <span>
-                  <span className="block text-[15px] font-bold text-white">{f.title}</span>
-                  <span className="mt-0.5 block text-sm leading-relaxed text-stone-400">{f.text}</span>
-                </span>
-              </li>
-            ))}
-          </ul>
         </div>
 
-        <p className="relative mt-10 border-t border-white/10 pt-5 text-xs font-medium tracking-wide text-stone-500">
-          Trusted by mill operators across Ethiopia
-        </p>
+        <div className="relative" aria-hidden="true" />
       </aside>
 
       {/* ── Right form panel ──────────────────────────────────────── */}
