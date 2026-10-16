@@ -2,11 +2,13 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../store/auth';
+import { isNetworkError } from '../lib/api';
 import { Button, Field, TextInput } from '../components/ui';
 
 export function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const login = useAuth((s) => s.login);
@@ -22,8 +24,12 @@ export function Login() {
       // Trim both fields: phone keyboards often add invisible trailing spaces.
       await login(username.trim(), password.trim());
       navigate(from, { replace: true });
-    } catch {
-      setError('Invalid username or password. Please try again.');
+    } catch (err) {
+      if (isNetworkError(err)) {
+        setError('Could not reach the server. Check your connection and try again.');
+      } else {
+        setError('Invalid username or password. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -57,14 +63,25 @@ export function Login() {
               />
             </Field>
             <Field label="Password" required>
-              <TextInput
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
-                autoComplete="current-password"
-                required
-              />
+              <div className="relative">
+                <TextInput
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Password"
+                  autoComplete="current-password"
+                  required
+                  className="pr-12"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-sm font-medium text-slate-500"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? 'Hide' : 'Show'}
+                </button>
+              </div>
             </Field>
           </div>
 
