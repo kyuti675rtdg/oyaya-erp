@@ -17,7 +17,8 @@ function ah(fn: AsyncFn) {
 }
 
 const loginSchema = z.object({
-  email: z.string().email(),
+  // Accepts a username or email — matched against the user's login identifier.
+  email: z.string().min(1),
   password: z.string().min(1),
 });
 

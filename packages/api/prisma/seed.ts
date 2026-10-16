@@ -297,12 +297,14 @@ async function main(): Promise<void> {
   // ── Admin user ───────────────────────────────────────────────────
   const adminRole = await prisma.role.findUnique({ where: { name: 'System Administrator' } });
   if (!adminRole) throw new Error('Seed failed: System Administrator role not found');
+  // Retire the legacy email-based admin account if it exists.
+  await prisma.user.deleteMany({ where: { email: 'admin@oyaya.local' } });
   await prisma.user.upsert({
-    where: { email: 'admin@oyaya.local' },
-    update: {},
+    where: { email: 'admin' },
+    update: { passwordHash: hashSync('admin', 10) },
     create: {
-      email: 'admin@oyaya.local',
-      passwordHash: hashSync('ChangeMe123!', 10),
+      email: 'admin',
+      passwordHash: hashSync('admin', 10),
       name: 'System Administrator',
       roleId: adminRole.id,
       companyId: company.id,
