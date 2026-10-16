@@ -124,6 +124,19 @@
   }
 }
 
+@keyframes bg-scale-in {
+  from {
+    transform: scale(1.07);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.animate-bg-scale-in {
+  animation: bg-scale-in 1.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 @keyframes fade-in-up {
   from {
     opacity: 0;
@@ -162,6 +175,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-in-up,
+  .animate-bg-scale-in,
   .bar-grow,
   .pulse-dot,
   .skeleton-shimmer::after,

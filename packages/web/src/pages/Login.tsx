@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { CSSProperties, FormEvent, ReactNode } from 'react';
+import type { FormEvent, ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { setAuthPersistence, useAuth } from '../store/auth';
 import { isNetworkError } from '../lib/api';
@@ -72,106 +72,44 @@ function CheckIcon() {
   );
 }
 
-function ArrowIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
-      <line x1="5" y1="12" x2="19" y2="12" />
-      <path d="M12 5l7 7-7 7" />
-    </svg>
-  );
-}
+/* ---------- Labelled input (reference style) ---------- */
 
-function ShieldIcon() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M12 22s8-3.6 8-10V5l-8-3-8 3v7c0 6.4 8 10 8 10z" />
-    </svg>
-  );
-}
-
-/** Single wheat grain kernel, used for the floating particle field. */
-function GrainIcon({ size = 14 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="#D97706" aria-hidden="true">
-      <ellipse cx="12" cy="12" rx="6" ry="10" />
-      <ellipse cx="12" cy="12" rx="2.4" ry="7" fill="#F59E0B" opacity="0.65" />
-    </svg>
-  );
-}
-
-/** Stylised wheat ear used as a low-opacity decorative pattern. */
-function WheatPattern() {
-  const stalk = (x: number, y: number, s: number, o: number) => (
-    <g key={`${x}-${y}`} transform={`translate(${x} ${y}) scale(${s})`} opacity={o}>
-      <line x1="0" y1="0" x2="0" y2="120" stroke="#D97706" strokeWidth="2.5" />
-      {[-8, 8, 24, 40, 56, 72].map((gy, i) => (
-        <g key={gy}>
-          <ellipse cx={i % 2 === 0 ? -9 : 9} cy={gy} rx="8" ry="13" fill="#D97706" transform={`rotate(${i % 2 === 0 ? -32 : 32} ${i % 2 === 0 ? -9 : 9} ${gy})`} />
-        </g>
-      ))}
-      <ellipse cx="0" cy="-14" rx="8" ry="14" fill="#D97706" />
-    </g>
-  );
-  return (
-    <svg className="pointer-events-none absolute inset-0 h-full w-full" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
-      {stalk(60, 40, 1.1, 0.10)}
-      {stalk(300, 180, 1.5, 0.07)}
-      {stalk(120, 420, 0.9, 0.09)}
-      {stalk(420, 60, 1.2, 0.06)}
-      {stalk(240, 560, 1.3, 0.08)}
-      {stalk(480, 380, 0.8, 0.09)}
-    </svg>
-  );
-}
-
-/** Slow-drifting grain particles for the branding panel. */
-const PARTICLES: Array<{ left: string; size: number; duration: string; delay: string; opacity: number }> = [
-  { left: '10%', size: 14, duration: '11s', delay: '0s', opacity: 0.22 },
-  { left: '26%', size: 10, duration: '14s', delay: '3s', opacity: 0.16 },
-  { left: '44%', size: 18, duration: '12s', delay: '6s', opacity: 0.2 },
-  { left: '60%', size: 11, duration: '15s', delay: '1.5s', opacity: 0.18 },
-  { left: '76%', size: 15, duration: '10s', delay: '4.5s', opacity: 0.22 },
-  { left: '88%', size: 9, duration: '13s', delay: '8s', opacity: 0.15 },
-];
-
-/* ---------- Floating-label input ---------- */
-
-interface FloatFieldProps {
+interface FieldProps {
   id: string;
   label: string;
   type?: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string;
   autoComplete?: string;
   required?: boolean;
   icon: ReactNode;
   trailing?: ReactNode;
 }
 
-function FloatField({ id, label, type = 'text', value, onChange, autoComplete, required, icon, trailing }: FloatFieldProps) {
+function Field({ id, label, type = 'text', value, onChange, placeholder, autoComplete, required, icon, trailing }: FieldProps) {
   return (
-    <div className="relative">
-      <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-stone-400">
-        {icon}
-      </span>
-      <input
-        id={id}
-        type={type}
-        value={value}
-        onChange={onChange}
-        autoComplete={autoComplete}
-        required={required}
-        placeholder=" "
-        className="peer h-14 w-full rounded-xl border border-stone-200 bg-stone-100 pl-11 pr-4 pt-6 text-[15px] font-medium text-stone-900 shadow-[inset_0_2px_4px_rgba(0,0,0,0.04)] transition-all duration-200 placeholder:text-transparent hover:border-stone-300 focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-amber-500/20"
-      />
-      <label
-        htmlFor={id}
-        className="pointer-events-none absolute left-11 top-1/2 -translate-y-1/2 text-[15px] text-stone-400 transition-all duration-200 peer-focus:top-2 peer-focus:translate-y-0 peer-focus:text-[11px] peer-focus:font-bold peer-focus:uppercase peer-focus:tracking-wider peer-focus:text-amber-700 peer-[:not(:placeholder-shown)]:top-2 peer-[:not(:placeholder-shown)]:translate-y-0 peer-[:not(:placeholder-shown)]:text-[11px] peer-[:not(:placeholder-shown)]:font-bold peer-[:not(:placeholder-shown)]:uppercase peer-[:not(:placeholder-shown)]:tracking-wider peer-[:not(:placeholder-shown)]:text-stone-500"
-      >
+    <div>
+      <label htmlFor={id} className="mb-1.5 block text-xs font-semibold text-stone-600">
         {label}
-        {required ? <span className="ml-0.5 text-amber-600">*</span> : null}
+        {required ? <span className="ml-0.5 text-stone-400">*</span> : null}
       </label>
-      {trailing}
+      <div className="relative">
+        <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-stone-400">
+          {icon}
+        </span>
+        <input
+          id={id}
+          type={type}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          autoComplete={autoComplete}
+          required={required}
+          className="h-12 w-full rounded-lg border border-stone-200 bg-white pl-11 pr-4 text-[15px] text-stone-900 shadow-sm transition-all duration-200 placeholder:text-stone-400 hover:border-stone-300 focus:border-stone-900 focus:outline-none focus:ring-2 focus:ring-stone-900/15"
+        />
+        {trailing}
+      </div>
     </div>
   );
 }
@@ -214,232 +152,156 @@ export function Login() {
   };
 
   return (
-    <div className="flex min-h-dvh bg-stone-100">
-      {/* ── Left branding panel (desktop) ─────────────────────────── */}
-      <aside className="relative hidden overflow-hidden bg-stone-950 lg:block lg:w-[45%]">
-        {/* multi-stop deep gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-stone-950 via-amber-950/40 to-stone-900" aria-hidden="true" />
-        {/* large radial amber glow behind the logo */}
-        <div className="absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_42%,rgba(217,119,6,0.30),transparent_70%)]" aria-hidden="true" />
-        {/* wheat pattern: crisp layer + blurred depth layer for parallax feel */}
-        <WheatPattern />
-        <div className="absolute inset-0 scale-125 opacity-50 blur-[2px]" aria-hidden="true">
-          <WheatPattern />
-        </div>
-        {/* drifting grain particles */}
-        <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
-          {PARTICLES.map((p, i) => (
-            <span
-              key={i}
-              className="wheat-particle pointer-events-none absolute -bottom-8"
-              style={
-                {
-                  left: p.left,
-                  animationDuration: p.duration,
-                  animationDelay: p.delay,
-                  '--wp-o': p.opacity,
-                } as CSSProperties
-              }
-            >
-              <GrainIcon size={p.size} />
-            </span>
-          ))}
-        </div>
-        {/* vignette */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_50%,rgba(0,0,0,0.5)_100%)]" aria-hidden="true" />
+    <div className="relative flex min-h-dvh items-center justify-center overflow-hidden px-4 py-10 lg:justify-end lg:pr-[9vw]">
+      {/* ── Full-bleed photographic background ────────────────────── */}
+      <div
+        aria-hidden="true"
+        className="animate-bg-scale-in absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${import.meta.env.BASE_URL}login-bg.jpg)` }}
+      />
+      {/* Dark gradient overlay for legibility */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/30"
+      />
 
-        {/* centered logo lockup (text-free per request: logo + name only) */}
-        <div className="animate-fade-in-up relative flex h-full flex-col items-center justify-center p-10 text-center">
-          <div className="relative">
-            <svg className="spin-slow absolute -inset-4 h-32 w-32 text-amber-500/50" viewBox="0 0 128 128" fill="none" aria-hidden="true">
-              <circle cx="64" cy="64" r="60" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 10" strokeLinecap="round" />
-            </svg>
-            <div className="relative flex h-24 w-24 items-center justify-center rounded-3xl bg-gradient-to-br from-amber-400 via-amber-500 to-amber-700 text-5xl font-extrabold text-white ring-4 ring-amber-400/25 shadow-[0_0_60px_rgba(217,119,6,0.55)]">
-              O
-            </div>
-          </div>
-          <p className="mt-8 text-2xl font-extrabold tracking-tight text-white">Oyaya Flour Factory</p>
-          <p className="mt-2 text-xs font-semibold uppercase tracking-[0.28em] text-amber-200/70">
-            Enterprise Resource Planning
-          </p>
-        </div>
+      {/* ── White sign-in card ────────────────────────────────────── */}
+      <div className="animate-fade-in-up relative z-10 w-full max-w-sm">
+        <div className="rounded-2xl bg-white p-8 shadow-2xl">
+          <h1 className="text-2xl font-extrabold tracking-tight text-stone-900">
+            Hi there, welcome back
+          </h1>
+          <p className="mt-1 text-sm text-stone-500">Sign in to Oyaya Flour Factory ERP</p>
 
-        {/* bottom amber accent line */}
-        <div className="absolute inset-x-0 bottom-0 h-[3px] bg-gradient-to-r from-transparent via-amber-500 to-transparent" aria-hidden="true" />
-      </aside>
-
-      {/* ── Right form panel ──────────────────────────────────────── */}
-      <main className="relative flex flex-1 items-center justify-center overflow-y-auto px-4 py-10 sm:px-8">
-        {/* rich warm backdrop */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-amber-50/70 via-white to-stone-100" aria-hidden="true" />
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_40%_at_80%_0%,rgba(217,119,6,0.09),transparent_70%)]" aria-hidden="true" />
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(50%_35%_at_10%_100%,rgba(217,119,6,0.06),transparent_70%)]" aria-hidden="true" />
-
-        <div className="relative w-full max-w-md">
-          {/* Compact brand banner (mobile / tablet) */}
-          <div className="mb-6 flex items-center justify-center gap-3 lg:hidden">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 text-2xl font-extrabold text-white shadow-md shadow-amber-600/30">
-              O
-            </div>
-            <div>
-              <p className="text-lg font-extrabold leading-tight text-stone-900">Oyaya Flour Factory</p>
-              <p className="text-xs font-medium tracking-wide text-stone-500">Enterprise Resource Planning</p>
-            </div>
-          </div>
-
-          {/* Glassmorphism form card */}
-          <div className="animate-fade-in-up rounded-3xl border border-white/60 bg-white/95 p-6 shadow-[0_24px_70px_-16px_rgba(120,53,15,0.28)] backdrop-blur-xl sm:p-9">
-            <h2 className="text-3xl font-extrabold tracking-tight text-stone-900">Welcome back</h2>
-            <p className="mt-1.5 text-[15px] text-stone-500">Sign in to your mill workspace</p>
-
-            <form onSubmit={submit} className="mt-7">
-              <div className="space-y-4">
-                <FloatField
-                  id="login-username"
-                  label="Username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  autoComplete="username"
-                  required
-                  icon={<UserIcon />}
-                />
-                <FloatField
-                  id="login-password"
-                  label="Password"
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  autoComplete="current-password"
-                  required
-                  icon={<LockIcon />}
-                  trailing={
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword((v) => !v)}
-                      className="focus-ring-violet absolute inset-y-0 right-0 flex items-center rounded-r-xl pr-4 text-stone-400 transition-colors hover:text-amber-600"
-                      aria-label={showPassword ? 'Hide password' : 'Show password'}
-                      aria-pressed={showPassword}
-                    >
-                      {showPassword ? <EyeOffIcon /> : <EyeIcon />}
-                    </button>
-                  }
-                />
-              </div>
-
-              <div className="mt-5 flex items-center justify-between">
-                <label className="group flex cursor-pointer select-none items-center gap-2.5 text-sm font-medium text-stone-600">
-                  <input
-                    type="checkbox"
-                    checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
-                    className="peer sr-only"
-                  />
-                  <span
-                    aria-hidden="true"
-                    className={`flex h-5 w-5 items-center justify-center rounded-md border-2 shadow-sm transition-all duration-200 group-hover:border-amber-400 peer-focus-visible:ring-4 peer-focus-visible:ring-amber-500/30 ${
-                      rememberMe
-                        ? 'border-amber-600 bg-amber-600 shadow-md shadow-amber-600/30'
-                        : 'border-stone-300 bg-white'
-                    }`}
+          <form onSubmit={submit} className="mt-6">
+            <div className="space-y-4">
+              <Field
+                id="login-username"
+                label="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="e.g. operator1"
+                autoComplete="username"
+                required
+                icon={<UserIcon />}
+              />
+              <Field
+                id="login-password"
+                label="Password"
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                autoComplete="current-password"
+                required
+                icon={<LockIcon />}
+                trailing={
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="absolute inset-y-0 right-0 flex items-center rounded-r-lg pr-3.5 text-stone-400 transition-colors hover:text-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-900/30"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    aria-pressed={showPassword}
                   >
-                    <span
-                      className={`text-white transition-all duration-200 ${
-                        rememberMe ? 'scale-100 opacity-100' : 'scale-50 opacity-0'
-                      }`}
-                    >
-                      <CheckIcon />
-                    </span>
-                  </span>
-                  Remember me
-                </label>
-                <button
-                  type="button"
-                  onClick={() => setShowForgotInfo((v) => !v)}
-                  className="focus-ring-violet rounded text-sm font-semibold text-amber-700 transition-colors hover:text-amber-800 hover:underline"
-                  aria-expanded={showForgotInfo}
-                >
-                  Forgot password?
-                </button>
-              </div>
+                    {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+                  </button>
+                }
+              />
+            </div>
 
-              {/* Forgot-password info (collapsible) */}
-              <div
-                className={`grid transition-all duration-300 ease-out ${
-                  showForgotInfo ? 'mt-4 grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
-                }`}
-              >
-                <div className="overflow-hidden">
-                  <div role="status" className="relative flex items-start gap-3 overflow-hidden rounded-xl border border-amber-200/80 bg-amber-50 py-3 pl-4 pr-4 text-sm text-amber-900 shadow-sm">
-                    <span aria-hidden="true" className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-amber-400 to-amber-600" />
-                    <span className="pl-1.5 text-amber-600"><InfoIcon /></span>
-                    <p className="pl-1">Contact your system administrator to reset your password.</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Error (collapsible, accent bar) */}
-              <div
-                className={`grid transition-all duration-300 ease-out ${
-                  error ? 'mt-4 grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
-                }`}
-              >
-                <div className="overflow-hidden">
-                  <div role="alert" aria-live="assertive" className="relative flex items-start gap-3 overflow-hidden rounded-xl border border-red-200/80 bg-red-50 py-3 pl-4 pr-4 text-sm font-medium text-red-800 shadow-sm">
-                    <span aria-hidden="true" className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-red-500 to-red-600" />
-                    <span className="pl-1.5 text-red-500"><AlertIcon /></span>
-                    <p className="pl-1">{error ?? ''}</p>
-                  </div>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="focus-ring-violet group relative mt-6 h-14 w-full overflow-hidden rounded-xl bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 bg-[length:200%_100%] bg-left text-[16px] font-semibold text-white shadow-lg shadow-amber-600/30 transition-all duration-300 hover:bg-right hover:shadow-xl hover:shadow-amber-600/40 active:scale-[0.99] disabled:cursor-wait disabled:opacity-80"
-              >
+            <div className="mt-4 flex items-center justify-between">
+              <label className="group flex cursor-pointer select-none items-center gap-2 text-sm text-stone-600">
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="peer sr-only"
+                />
                 <span
                   aria-hidden="true"
-                  className="pointer-events-none absolute inset-y-0 left-0 w-1/3 -translate-x-[150%] -skew-x-12 bg-gradient-to-r from-transparent via-white/40 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-[450%]"
-                />
-                <span className="relative flex items-center justify-center gap-2.5">
-                  {loading ? (
-                    <>
-                      <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" className="opacity-25" />
-                        <path d="M22 12a10 10 0 0 0-10-10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-                      </svg>
-                      Signing in…
-                    </>
-                  ) : (
-                    <>
-                      Sign in
-                      <ArrowIcon />
-                    </>
-                  )}
+                  className={`flex h-[18px] w-[18px] items-center justify-center rounded border transition-all duration-200 group-hover:border-stone-500 peer-focus-visible:ring-2 peer-focus-visible:ring-stone-900/30 peer-focus-visible:ring-offset-1 ${
+                    rememberMe ? 'border-stone-900 bg-stone-900' : 'border-stone-300 bg-white'
+                  }`}
+                >
+                  <span
+                    className={`text-white transition-all duration-200 ${
+                      rememberMe ? 'scale-100 opacity-100' : 'scale-50 opacity-0'
+                    }`}
+                  >
+                    <CheckIcon />
+                  </span>
                 </span>
+                Remember me
+              </label>
+              <button
+                type="button"
+                onClick={() => setShowForgotInfo((v) => !v)}
+                className="rounded text-sm font-medium text-stone-600 transition-colors hover:text-stone-900 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-900/30"
+                aria-expanded={showForgotInfo}
+              >
+                Forgot password?
               </button>
+            </div>
 
-              {/* Secure sign-in divider */}
-              <div className="mt-6 flex items-center gap-3" aria-hidden="true">
-                <span className="h-px flex-1 bg-gradient-to-r from-transparent to-stone-200" />
-                <span className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-stone-400">
-                  <ShieldIcon />
-                  Secure sign-in
-                </span>
-                <span className="h-px flex-1 bg-gradient-to-l from-transparent to-stone-200" />
+            {/* Forgot-password info (collapsible) */}
+            <div
+              className={`grid transition-all duration-300 ease-out ${
+                showForgotInfo ? 'mt-4 grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+              }`}
+            >
+              <div className="overflow-hidden">
+                <div role="status" className="flex items-start gap-2.5 rounded-lg border border-stone-200 bg-stone-50 px-3.5 py-3 text-sm text-stone-700">
+                  <span className="text-stone-500"><InfoIcon /></span>
+                  <p>Contact your system administrator to reset your password.</p>
+                </div>
               </div>
+            </div>
 
-              <p className="mt-4 text-center text-xs leading-relaxed text-stone-500">
-                Works offline — queued entries sync when connectivity returns.
-              </p>
-            </form>
-          </div>
+            {/* Error (collapsible) */}
+            <div
+              className={`grid transition-all duration-300 ease-out ${
+                error ? 'mt-4 grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+              }`}
+            >
+              <div className="overflow-hidden">
+                <div role="alert" aria-live="assertive" className="flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-3.5 py-3 text-sm font-medium text-red-800">
+                  <span className="text-red-500"><AlertIcon /></span>
+                  <p>{error ?? ''}</p>
+                </div>
+              </div>
+            </div>
 
-          <p className="mt-6 text-center text-xs text-stone-400">
-            Oyaya Flour Production Company PLC · Secure sign-in
-          </p>
+            <button
+              type="submit"
+              disabled={loading}
+              className="mt-6 h-12 w-full rounded-lg bg-stone-900 text-[15px] font-semibold text-white shadow-md transition-all duration-200 hover:bg-stone-800 hover:shadow-lg active:scale-[0.99] disabled:cursor-wait disabled:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-900/40 focus-visible:ring-offset-2"
+            >
+              <span className="flex items-center justify-center gap-2.5">
+                {loading ? (
+                  <>
+                    <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" className="opacity-25" />
+                      <path d="M22 12a10 10 0 0 0-10-10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                    </svg>
+                    Signing in…
+                  </>
+                ) : (
+                  'Sign in'
+                )}
+              </span>
+            </button>
+
+            <p className="mt-5 text-center text-xs leading-relaxed text-stone-400">
+              Works offline — queued entries sync when connectivity returns.
+            </p>
+          </form>
         </div>
-      </main>
+      </div>
+
+      {/* ── Page footer ───────────────────────────────────────────── */}
+      <p className="absolute inset-x-0 bottom-5 z-10 text-center text-xs font-medium tracking-wide text-white/60">
+        Oyaya Flour Production Company PLC
+      </p>
     </div>
   );
 }
