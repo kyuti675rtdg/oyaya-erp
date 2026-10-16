@@ -15,9 +15,14 @@ export async function ensureDatabase(): Promise<void> {
   if (!dbName) throw new Error('DATABASE_URL must include a database name');
 
   // Connect to the maintenance database to check/create the target.
+  // Render Postgres requires SSL (self-signed on the private network).
   const adminUrl = new URL(raw);
   adminUrl.pathname = '/postgres';
-  const client = new Client({ connectionString: adminUrl.toString() });
+  const client = new Client({
+    connectionString: adminUrl.toString(),
+    ssl: { rejectUnauthorized: false },
+    connectionTimeoutMillis: 15000,
+  });
   await client.connect();
   try {
     const { rows } = await client.query('SELECT 1 FROM pg_database WHERE datname = $1', [dbName]);
