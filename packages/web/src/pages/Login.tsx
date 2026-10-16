@@ -19,7 +19,8 @@ export function Login() {
     setError(null);
     setLoading(true);
     try {
-      await login(username.trim(), password);
+      // Trim both fields: phone keyboards often add invisible trailing spaces.
+      await login(username.trim(), password.trim());
       navigate(from, { replace: true });
     } catch {
       setError('Invalid username or password. Please try again.');
