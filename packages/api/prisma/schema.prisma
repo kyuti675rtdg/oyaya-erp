@@ -1,0 +1,862 @@
+// Oyaya Flour Factory ERP — Prisma schema (PostgreSQL 16)
+// Covers all 17 SRS modules: master data, procurement, storage/conditioning,
+// production/blending, QC, CAPA, hygiene, pest, maintenance, FG, warehouse,
+// traceability, sales, Peachtree finance, tri-mode payroll, fleet, dashboards.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Identity & RBAC ──────────────────────────────────────────────
+
+model Company {
+  id        String   @id @default(cuid())
+  name      String
+  address   String?
+  taxId     String?
+  logoUrl   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  users     User[]
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  name         String
+  phone        String?
+  isActive     Boolean   @default(true)
+  companyId    String
+  company      Company   @relation(fields: [companyId], references: [id])
+  roleId       String
+  role         Role      @relation(fields: [roleId], references: [id])
+  employee     Employee?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  auditLogs    AuditLog[]
+}
+
+model Role {
+  id          String           @id @default(cuid())
+  name        String           @unique // e.g. "Owner / CEO", "Quality / Lab Head"
+  description String?
+  isSystem    Boolean          @default(false)
+  createdAt   DateTime         @default(now())
+  permissions RolePermission[]
+  users       User[]
+}
+
+// Granular claim: module:action:scope, e.g. "procurement:intake:approve"
+model Permission {
+  id        String           @id @default(cuid())
+  code      String           @unique
+  module    String
+  action    String
+  scope     String           @default("all") // all | own | department
+  roles     RolePermission[]
+}
+
+model RolePermission {
+  roleId       String
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permissionId String
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+}
+
+// ─── Master Data (Module 1) ──────────────────────────────────────
+
+enum SupplierType {
+  INDIVIDUAL_FARMER
+  ASSOCIATION
+  TRADER
+}
+
+enum WheatCategory {
+  SOFT
+  HARD
+  FOREIGN
+}
+
+model Supplier {
+  id           String       @id @default(cuid())
+  name         String
+  type         SupplierType
+  phone        String?
+  address      String?
+  paymentTerms String?
+  isActive     Boolean      @default(true)
+  createdAt    DateTime     @default(now())
+  intakes      WheatIntake[]
+}
+
+model Customer {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String?
+  address   String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  prices    CustomerPrice[]
+  orders    SalesOrder[]
+  advances  AdvancePayment[]
+  receipts  CashReceipt[]
+}
+
+model CustomerPrice {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id])
+  priceBirr  Decimal  @db.Decimal(18, 2)
+
+  @@unique([customerId, productId])
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String   @unique // Duket (Normal), Duket (Special), Furishka, Fino, Fernacho
+  kind        String   // flour | silage | feed
+  uom         String   @default("quintal")
+  isActive    Boolean  @default(true)
+  prices      CustomerPrice[]
+  shiftOutput ShiftOutput[]
+  packRuns    PackagingRun[]
+  dispatch    DispatchLine[]
+  fgStock     FinishedGoodsStock[]
+}
+
+model PackagingSize {
+  id       String  @id @default(cuid())
+  label    String  @unique // 50kg, 25kg, 10kg, 5kg
+  kg       Decimal @db.Decimal(10, 2)
+  isActive Boolean @default(true)
+}
+
+// Storage topology: single dry pool + conditioning tanks + FG warehouses
+enum StorageKind {
+  DRY_POOL
+  CONDITIONING_TANK
+  FG_WAREHOUSE
+}
+
+model StorageLocation {
+  id        String      @id @default(cuid())
+  code      String      @unique // DRY_POOL, TANK_A, TANK_B, TANK_C, FG_WH_1...
+  name      String
+  kind      StorageKind
+  capacityQ Decimal     @db.Decimal(12, 2) // quintals, editable without code change
+  isActive  Boolean     @default(true)
+}
+
+// ─── Procurement (Module 2) ─────────────────────────────────────
+
+enum IntakeStatus {
+  PENDING_LAB
+  FLAGGED
+  ACCEPTED
+  REJECTED
+}
+
+model WheatIntake {
+  id             String        @id @default(cuid())
+  intakeNo       String        @unique
+  deliveryDate   DateTime
+  supplierId     String
+  supplier       Supplier      @relation(fields: [supplierId], references: [id])
+  truckPlate     String
+  wheatCategory  WheatCategory
+  wheatOrigin    String?       // e.g. Ukraine / Russia for FOREIGN
+  bagCount       Int           // 1 bag = 1 quintal; no weighbridge at intake
+  quintals       Decimal       @db.Decimal(12, 2)
+  // Lab gate — five parameters
+  glutenPct      Decimal?      @db.Decimal(6, 2)
+  moisturePct    Decimal?      @db.Decimal(6, 2)
+  impurityPct    Decimal?      @db.Decimal(6, 2)
+  hectoliterPct  Decimal?      @db.Decimal(6, 2)
+  germinationPct Decimal?      @db.Decimal(6, 2)
+  labTestedAt    DateTime?
+  labTestedById  String?
+  status         IntakeStatus  @default(PENDING_LAB)
+  flaggedReasons String[]      @default([])
+  // Executive override — explicit decision, never automatic
+  decision       String?       // ACCEPT | REJECT
+  decidedById    String?
+  decidedAt      DateTime?
+  decisionNote   String?
+  createdById    String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  unloadingLabor UnloadingLabor[]
+  apInvoice      APInvoice?
+  tankFills      TankFill[]
+  batchSources   BatchIntakeSource[]
+}
+
+model UnloadingLabor {
+  id         String      @id @default(cuid())
+  intakeId   String
+  intake     WheatIntake @relation(fields: [intakeId], references: [id], onDelete: Cascade)
+  laborer    String      // name or crew identifier
+  quintals   Decimal     @db.Decimal(12, 2)
+  truckPlate String
+  loggedAt   DateTime    @default(now())
+  loggedById String?
+}
+
+model APInvoice {
+  id          String      @id @default(cuid())
+  invoiceNo   String      @unique
+  intakeId    String      @unique
+  intake      WheatIntake @relation(fields: [intakeId], references: [id])
+  supplierId  String
+  amountBirr  Decimal     @db.Decimal(18, 2)
+  status      String      @default("OPEN") // OPEN | PARTIAL | PAID
+  issuedAt    DateTime    @default(now())
+  payments    APPayment[]
+}
+
+model APPayment {
+  id           String      @id @default(cuid())
+  voucherNo    String      @unique // auto Payment Voucher
+  apInvoiceId  String
+  apInvoice    APInvoice   @relation(fields: [apInvoiceId], references: [id])
+  amountBirr   Decimal     @db.Decimal(18, 2)
+  method       String      // BANK_TRANSFER | CHEQUE
+  reference    String?
+  paidAt       DateTime    @default(now())
+  paidById     String?
+}
+
+// ─── Storage & Conditioning (Module 3) ──────────────────────────
+
+model StorageMovement {
+  id           String          @id @default(cuid())
+  locationCode String          // DRY_POOL etc.
+  direction    String          // IN | OUT
+  quintals     Decimal         @db.Decimal(12, 2)
+  reference    String?         // intakeNo / wash batch
+  movedAt      DateTime        @default(now())
+  movedById    String?
+}
+
+model TankFill {
+  id           String          @id @default(cuid())
+  tankCode     String          // TANK_A | TANK_B | TANK_C
+  intakeId     String?
+  intake       WheatIntake?    @relation(fields: [intakeId], references: [id])
+  quintals     Decimal         @db.Decimal(12, 2)
+  blendRatio   Json?           // { soft: 40, hard: 60, foreign: 0 }
+  filledAt     DateTime        @default(now())
+  filledById   String?
+}
+
+model TankEvent {
+  id         String   @id @default(cuid())
+  tankCode   String
+  event      String   // PARTIAL_EMPTY | EMPTIED | MARKED_READY
+  quintals   Decimal? @db.Decimal(12, 2)
+  note       String?
+  occurredAt DateTime @default(now())
+  byId       String?
+}
+
+model WashingLog {
+  id              String   @id @default(cuid())
+  tankOrSilo      String
+  startedAt       DateTime
+  endedAt         DateTime?
+  durationMin     Int?
+  downtimeMin     Int?     @default(0)
+  equipmentChange String?
+  operators       String[] @default([])
+  batchId         String?
+  batch           ProductionBatch? @relation(fields: [batchId], references: [id])
+  createdById     String?
+}
+
+// ─── Production & Blending (Module 4) ───────────────────────────
+
+enum BatchProductType {
+  HARD_FLOUR
+  SOFT_FLOUR
+}
+
+model ProductionBatch {
+  id            String           @id @default(cuid())
+  batchNo       String           @unique
+  productType   BatchProductType
+  // Per-batch blend, set fresh by lab and locked permanently
+  blendSoftPct  Decimal          @db.Decimal(5, 2)
+  blendHardPct  Decimal          @db.Decimal(5, 2)
+  blendForeignPct Decimal        @db.Decimal(5, 2)
+  blendSoftQ    Decimal          @db.Decimal(12, 2)
+  blendHardQ    Decimal          @db.Decimal(12, 2)
+  blendForeignQ Decimal          @db.Decimal(12, 2)
+  wheatWeighedQ Decimal          @db.Decimal(12, 2)
+  status        String           @default("OPEN") // OPEN | MILLING | QC_HOLD | APPROVED | CLOSED
+  createdAt     DateTime         @default(now())
+  createdById   String?
+  sources       BatchIntakeSource[]
+  shifts        ShiftRun[]
+  labChecks     LabCheck[]
+  capas         CAPA[]
+  packRuns      PackagingRun[]
+  washing       WashingLog[]
+}
+
+// Which intake deliveries fed a batch (lot continuity)
+model BatchIntakeSource {
+  batchId  String
+  batch    ProductionBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  intakeId String
+  intake   WheatIntake     @relation(fields: [intakeId], references: [id])
+  quintals Decimal         @db.Decimal(12, 2)
+
+  @@id([batchId, intakeId])
+}
+
+enum ShiftType {
+  MORNING
+  NIGHT
+}
+
+model ShiftRun {
+  id          String    @id @default(cuid())
+  batchId     String
+  batch       ProductionBatch @relation(fields: [batchId], references: [id])
+  shift       ShiftType
+  shiftDate   DateTime  @db.Date
+  startedAt   DateTime
+  endedAt     DateTime?
+  operators   String[]  @default([])
+  downtimeMin Int?      @default(0)
+  downtimeReason String?
+  outputs     ShiftOutput[]
+  labChecks   LabCheck[]
+  createdById String?
+}
+
+model ShiftOutput {
+  id          String   @id @default(cuid())
+  shiftRunId  String
+  shiftRun    ShiftRun @relation(fields: [shiftRunId], references: [id], onDelete: Cascade)
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id])
+  quintals    Decimal  @db.Decimal(12, 2)
+  // Extraction snapshot: Duket quintals / total quintals * 100 for the shift
+  extractionPct Decimal? @db.Decimal(6, 2)
+  belowYieldFlag Boolean @default(false)
+  loggedAt    DateTime @default(now())
+  loggedById  String?
+}
+
+// ─── Quality Control (Module 5) ─────────────────────────────────
+
+model QcThreshold {
+  id        String  @id @default(cuid())
+  code      String  @unique // e.g. "intake.gluten.min", "flour.moisture.max"
+  category  String  // intake | inprocess
+  param     String
+  minValue  Decimal? @db.Decimal(8, 3)
+  maxValue  Decimal? @db.Decimal(8, 3)
+  unit      String?
+  isActive  Boolean @default(true)
+}
+
+model LabCheck {
+  id                 String          @id @default(cuid())
+  shiftRunId         String
+  shiftRun           ShiftRun        @relation(fields: [shiftRunId], references: [id], onDelete: Cascade)
+  batchId            String
+  batch              ProductionBatch @relation(fields: [batchId], references: [id])
+  sampleTime         DateTime
+  impurityPct        Decimal? @db.Decimal(6, 2)
+  wheatMoistureBefore Decimal? @db.Decimal(6, 2)
+  wheatMoistureAfter  Decimal? @db.Decimal(6, 2)
+  flourMoisturePct   Decimal? @db.Decimal(6, 2)
+  wetGlutenPct       Decimal? @db.Decimal(6, 2)
+  glutenElasticity   String?  // strong | medium
+  dryGlutenPct       Decimal? @db.Decimal(6, 2)
+  ashPct             Decimal? @db.Decimal(6, 2)
+  colorScore         Decimal? @db.Decimal(6, 2)
+  granulationPct     Decimal? @db.Decimal(6, 2)
+  outOfRange         String[] @default([])
+  checkedById        String?
+  createdAt          DateTime @default(now())
+}
+
+// ─── CAPA (Module 6) ────────────────────────────────────────────
+
+enum CAPAStatus {
+  OPEN
+  IN_PROGRESS
+  CLOSED
+}
+
+enum Disposition {
+  BLENDED_ELSEWHERE
+  FULLY_RECYCLED
+}
+
+model CAPA {
+  id               String       @id @default(cuid())
+  capaNo           String       @unique
+  batchId          String
+  batch            ProductionBatch @relation(fields: [batchId], references: [id])
+  dateIdentified   DateTime     @default(now())
+  issueDescription String
+  identifiedById   String?
+  correctionType   String?
+  correctionDetail String?
+  performedBy      String?
+  disposition      Disposition?
+  qualitySignById  String?
+  qualitySignedAt  DateTime?
+  productionSignById String?
+  productionSignedAt DateTime?
+  status           CAPAStatus   @default(OPEN)
+  closedAt         DateTime?
+}
+
+// ─── Hygiene (Module 7) & Pest (Module 8) ───────────────────────
+
+enum CleaningGrade {
+  NOT_PERFORMED
+  NOT_SATISFACTORY
+  SATISFACTORY
+  GOOD
+}
+
+model EquipmentCleaning {
+  id            String         @id @default(cuid())
+  checkMonth    DateTime       @db.Date
+  section       String         // pre-cleaning | cleaning | milling
+  equipment     String
+  grade         CleaningGrade
+  nonconformity String?
+  actionTaken   String?
+  checkedById   String?
+}
+
+model DailyCleaningReport {
+  id             String   @id @default(cuid())
+  reportDate     DateTime @db.Date
+  area           String   // office | changing room | production room | ...
+  dryCleaned     Boolean  @default(false)
+  wetCleaned     Boolean  @default(false)
+  janitor        String?
+  overallStatus  String?
+  supervisorSign String?
+  qualitySign    String?
+  createdById    String?
+
+  @@unique([reportDate, area])
+}
+
+model PestInspection {
+  id             String   @id @default(cuid())
+  area           String   // wheat store | dumping area | pre-cleaning | production room | cleaning section
+  inspectedAt    DateTime @default(now())
+  signsObserved  String?
+  evidenceFound  String?
+  correctiveAction String? // e.g. fumigation with insecticide
+  followUpDate   DateTime?
+  followUpDone   Boolean  @default(false)
+  inspectorId    String?
+}
+
+// ─── Maintenance (Module 9) ─────────────────────────────────────
+
+model MaintenanceLog {
+  id             String   @id @default(cuid())
+  equipment      String
+  inspectionDate DateTime @db.Date
+  inspector      String?
+  outcome        String?
+  followUpAction String?
+  partReplaced   String?
+  signOffById    String?
+  isOverdue      Boolean  @default(false)
+}
+
+model SparePartCheck {
+  id          String   @id @default(cuid())
+  partName    String
+  equipment   String?
+  checkType   String   // STOCK_LEVEL | PHYSICAL_CONDITION (configurable)
+  condition   String?
+  checkedAt   DateTime @default(now())
+  checkedById String?
+}
+
+// ─── Finished Goods & Warehouse (Modules 10–11) ─────────────────
+
+model PackagingRun {
+  id              String         @id @default(cuid())
+  batchId         String
+  batch           ProductionBatch @relation(fields: [batchId], references: [id])
+  productId       String
+  product         Product        @relation(fields: [productId], references: [id])
+  packagingSizeId String
+  bags            Int
+  quintals        Decimal        @db.Decimal(12, 2)
+  productionDate  DateTime       @db.Date
+  packedAt        DateTime       @default(now())
+  packedById      String?
+}
+
+model FinishedGoodsStock {
+  id              String   @id @default(cuid())
+  productId       String
+  product         Product  @relation(fields: [productId], references: [id])
+  batchNo         String
+  packagingSizeId String?
+  locationCode    String   // FG warehouse code
+  bags            Int      @default(0)
+  quintals        Decimal  @db.Decimal(12, 2)
+  receivedAt      DateTime @default(now())
+
+  @@unique([productId, batchNo, packagingSizeId, locationCode])
+}
+
+model WarehouseTransfer {
+  id           String   @id @default(cuid())
+  productId    String
+  batchNo      String
+  fromLocation String
+  toLocation   String
+  quintals     Decimal  @db.Decimal(12, 2)
+  laborer      String?
+  movedAt      DateTime @default(now())
+  movedById    String?
+}
+
+// ─── Sales & Distribution (Module 13) ───────────────────────────
+
+model SalesOrder {
+  id            String   @id @default(cuid())
+  orderNo       String   @unique
+  customerId    String
+  customer      Customer @relation(fields: [customerId], references: [id])
+  orderDate     DateTime @default(now())
+  requestedDate DateTime?
+  productId     String
+  quintals      Decimal  @db.Decimal(12, 2)
+  priceBirr     Decimal  @db.Decimal(18, 2) // customer-specific price
+  status        String   @default("OPEN") // OPEN | LOADED | INVOICED | CLOSED
+  createdById   String?
+  dispatchLines DispatchLine[]
+}
+
+model AdvancePayment {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id])
+  amountBirr Decimal  @db.Decimal(18, 2)
+  paidAt     DateTime @default(now())
+  receivedById String?
+}
+
+model Vehicle {
+  id         String  @id @default(cuid())
+  plateNo    String  @unique
+  vehicleType String?
+  ownership  String  // OWNED | RENTED
+  isActive   Boolean @default(true)
+  trips      Trip[]
+  dispatches Dispatch[]
+}
+
+// Fixed trip rule: one trip per vehicle + destination area + departure,
+// regardless of stop count or quantity.
+model Trip {
+  id            String   @id @default(cuid())
+  vehicleId     String
+  vehicle       Vehicle  @relation(fields: [vehicleId], references: [id])
+  driverName    String?
+  area          String   // destination area
+  departureDate DateTime @db.Date
+  stops         Int      @default(1)
+  totalQuintals Decimal  @db.Decimal(12, 2)
+  tripPayBirr   Decimal? @db.Decimal(18, 2)
+  createdAt     DateTime @default(now())
+
+  @@unique([vehicleId, area, departureDate])
+}
+
+model Dispatch {
+  id            String   @id @default(cuid())
+  exitNoteNo    String   @unique
+  vehicleId     String
+  vehicle       Vehicle  @relation(fields: [vehicleId], references: [id])
+  area          String
+  dispatchedAt  DateTime @default(now())
+  loadingLabor  String?  // piece-rate crew reference
+  tripId        String?
+  status        String   @default("DISPATCHED") // DISPATCHED | IN_TRANSIT | DELIVERED
+  createdById   String?
+  lines         DispatchLine[]
+  invoice       SalesInvoice?
+}
+
+model DispatchLine {
+  id              String     @id @default(cuid())
+  dispatchId      String
+  dispatch        Dispatch   @relation(fields: [dispatchId], references: [id], onDelete: Cascade)
+  orderId         String?
+  order           SalesOrder? @relation(fields: [orderId], references: [id])
+  productId       String
+  product         Product    @relation(fields: [productId], references: [id])
+  batchNo         String?
+  packagingSizeId String?
+  bags            Int        @default(0)
+  quintals        Decimal    @db.Decimal(12, 2)
+}
+
+enum RevenueStatus {
+  PLACEMENT   // in-transit with agent, not yet revenue
+  INVOICED    // formal receipt/invoice cut — recognized revenue
+  PAID
+}
+
+model SalesInvoice {
+  id           String        @id @default(cuid())
+  invoiceNo    String        @unique
+  dispatchId   String        @unique
+  dispatch     Dispatch      @relation(fields: [dispatchId], references: [id])
+  customerId   String
+  amountBirr   Decimal       @db.Decimal(18, 2)
+  status       RevenueStatus @default(PLACEMENT)
+  invoicedAt   DateTime?
+  createdAt    DateTime      @default(now())
+  receipts     CashReceipt[]
+}
+
+model CashReceipt {
+  id          String   @id @default(cuid())
+  receiptNo   String   @unique
+  customerId  String
+  customer    Customer @relation(fields: [customerId], references: [id])
+  invoiceId   String?
+  invoice     SalesInvoice? @relation(fields: [invoiceId], references: [id])
+  amountBirr  Decimal   @db.Decimal(18, 2)
+  // "The company" as ledger node for indirect settlements
+  settledVia  String?   // e.g. "COMPANY" when customer pays a vendor on company's behalf
+  receivedAt  DateTime  @default(now())
+  receivedById String?
+}
+
+// ─── Finance — Peachtree GL (Module 14) ─────────────────────────
+
+enum AccountType {
+  ASSET
+  LIABILITY
+  EQUITY
+  REVENUE
+  EXPENSE
+}
+
+model ChartOfAccount {
+  id        String      @id @default(cuid())
+  code      String      @unique // Peachtree-style codes
+  name      String
+  type      AccountType
+  parentId  String?
+  isActive  Boolean     @default(true)
+  lines     JournalLine[]
+}
+
+model JournalEntry {
+  id            String   @id @default(cuid())
+  entryNo       String   @unique
+  entryDate     DateTime @db.Date
+  memo          String?
+  module        String   // procurement | sales | payroll | general
+  referenceType String?  // WheatIntake | APPayment | SalesInvoice | ...
+  referenceId   String?
+  createdById   String?
+  createdAt     DateTime @default(now())
+  lines         JournalLine[]
+}
+
+model JournalLine {
+  id        String         @id @default(cuid())
+  entryId   String
+  entry     JournalEntry   @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  accountId String
+  account   ChartOfAccount @relation(fields: [accountId], references: [id])
+  debit     Decimal        @db.Decimal(18, 2) @default(0)
+  credit    Decimal        @db.Decimal(18, 2) @default(0)
+  memo      String?
+}
+
+// ─── HR & Payroll (Module 15) ────────────────────────────────────
+
+enum PayrollMode {
+  FIXED
+  PIECE_RATE
+  TRIP_BASED
+}
+
+model Employee {
+  id           String      @id @default(cuid())
+  employeeNo   String      @unique
+  name         String
+  phone        String?
+  jobTitle     String      // lab technician | machine operator | floor laborer | driver | ...
+  department   String?
+  payrollMode  PayrollMode @default(FIXED)
+  baseSalary   Decimal?    @db.Decimal(18, 2)
+  zkPin        String?     @unique // ZKTeco biometric PIN
+  isActive     Boolean     @default(true)
+  userId       String?     @unique
+  user         User?       @relation(fields: [userId], references: [id])
+  hiredAt      DateTime    @default(now())
+  payrollLines PayrollLine[]
+}
+
+enum PieceStage {
+  UNLOADING
+  GRANARY_DUMPING
+  STORE_MOVEMENT
+  TRUCK_LOADING
+}
+
+model PieceRateConfig {
+  id            String     @id @default(cuid())
+  stage         PieceStage @unique
+  rateBirrPerQ  Decimal    @db.Decimal(12, 2)
+  effectiveFrom DateTime   @default(now())
+  isActive      Boolean    @default(true)
+}
+
+model PieceRateLog {
+  id         String     @id @default(cuid())
+  stage      PieceStage
+  laborer    String
+  quintals   Decimal    @db.Decimal(12, 2)
+  truckPlate String?
+  loggedAt   DateTime   @default(now())
+  loggedById String?
+}
+
+model DriverTripRate {
+  id           String   @id @default(cuid())
+  rateBirrPerTrip Decimal @db.Decimal(12, 2)
+  effectiveFrom DateTime @default(now())
+  isActive     Boolean  @default(true)
+}
+
+model PayrollRun {
+  id          String   @id @default(cuid())
+  periodYear  Int
+  periodMonth Int
+  status      String   @default("DRAFT") // DRAFT | POSTED
+  createdAt   DateTime @default(now())
+  createdById String?
+  lines       PayrollLine[]
+
+  @@unique([periodYear, periodMonth])
+}
+
+model PayrollLine {
+  id            String     @id @default(cuid())
+  payrollRunId  String
+  payrollRun    PayrollRun @relation(fields: [payrollRunId], references: [id], onDelete: Cascade)
+  employeeId    String
+  employee      Employee   @relation(fields: [employeeId], references: [id])
+  mode          PayrollMode
+  baseBirr      Decimal    @db.Decimal(18, 2) @default(0)
+  overtimeHours Decimal    @db.Decimal(8, 2)  @default(0)
+  overtimeBirr  Decimal    @db.Decimal(18, 2) @default(0)
+  pieceQuintals Decimal    @db.Decimal(12, 2) @default(0)
+  pieceBirr     Decimal    @db.Decimal(18, 2) @default(0)
+  trips         Int        @default(0)
+  tripBirr      Decimal    @db.Decimal(18, 2) @default(0)
+  grossBirr     Decimal    @db.Decimal(18, 2)
+}
+
+// ─── ZKTeco attendance ──────────────────────────────────────────
+
+model ZKTecoDevice {
+  id        String   @id @default(cuid())
+  serialNo  String   @unique // SN from ADMS handshake
+  name      String?
+  location  String?
+  ipAddress String?
+  lastSeen  DateTime?
+  isActive  Boolean  @default(true)
+}
+
+enum PunchStatus {
+  CHECK_IN
+  CHECK_OUT
+}
+
+model AttendancePunch {
+  id         String      @id @default(cuid())
+  zkPin      String
+  employeeId String?
+  punchTime  DateTime
+  status     PunchStatus
+  verifyMode String?     // Fingerprint | Face | Card | Password
+  workCode   String?
+  deviceSn   String?
+  syncedAt   DateTime    @default(now())
+
+  @@unique([zkPin, punchTime, deviceSn])
+  @@index([zkPin, punchTime])
+}
+
+// ─── SMS (AfroMessage) ──────────────────────────────────────────
+
+enum SmsStatus {
+  QUEUED
+  SENT
+  FAILED
+  DELIVERED
+}
+
+model SmsLog {
+  id         String    @id @default(cuid())
+  to         String
+  message    String
+  trigger    String?   // e.g. INTAKE_FLAGGED, LOW_YIELD, LAB_OVERDUE
+  status     SmsStatus @default(QUEUED)
+  attempts   Int       @default(0)
+  providerId String?
+  sentAt     DateTime?
+  createdAt  DateTime  @default(now())
+}
+
+// ─── Offline sync & audit ───────────────────────────────────────
+
+model IdempotencyLedger {
+  clientUuid  String   @id // UUIDv7 from the device
+  entityType  String
+  entityId    String?
+  deviceId    String?
+  receivedAt  DateTime @default(now())
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
+  action     String   // CREATE | UPDATE | APPROVE | REJECT | SYNC | ...
+  entityType String
+  entityId   String?
+  changes    Json?
+  createdAt  DateTime @default(now())
+
+  @@index([entityType, entityId])
+}

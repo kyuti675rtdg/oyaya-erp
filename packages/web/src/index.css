@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-alabaster text-slate-900 font-sans antialiased;
+  }
+  input,
+  select,
+  textarea,
+  button {
+    @apply text-base;
+  }
+}
+
+@layer components {
+  /* Tabular numerals for weights, percentages, timers, money (JetBrains Mono) */
+  .tnum {
+    @apply font-mono;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Minimum touch target for shop-floor tablet use */
+  .touch {
+    min-height: 48px;
+    min-width: 48px;
+  }
+
+  /* Sticky table header for dense data grids */
+  .grid-table thead th {
+    @apply sticky top-0 z-10 bg-white border-b-2 border-line;
+  }
+
+  .badge-critical-pulse {
+    animation: pulse-border 1.6s ease-in-out infinite;
+  }
+}
+
+/* ---------- Print: Exit Note & Payment Voucher (A4) ---------- */
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+
+  body {
+    background: #ffffff !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-sheet {
+    box-shadow: none !important;
+    border: 1px solid #000;
+    border-radius: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .print-sheet table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+
+  .print-sheet th,
+  .print-sheet td {
+    border: 1px solid #334155;
+    padding: 6px 8px;
+    text-align: left;
+  }
+
+  .print-sheet thead th {
+    position: static;
+    background: #f1f5f9 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
