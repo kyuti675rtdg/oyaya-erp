@@ -11,6 +11,8 @@ interface DonutChartProps {
   centerValue: string;
   centerLabel: string;
   size?: number;
+  /** Hide the built-in bottom legend (use when rendering a custom side legend). */
+  hideLegend?: boolean;
 }
 
 /**
@@ -18,7 +20,7 @@ interface DonutChartProps {
  * Segments draw in on mount (staggered), soft drop shadow,
  * center value/label, dot legend below.
  */
-export function DonutChart({ segments, centerValue, centerLabel, size = 190 }: DonutChartProps) {
+export function DonutChart({ segments, centerValue, centerLabel, size = 190, hideLegend = false }: DonutChartProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -97,6 +99,7 @@ export function DonutChart({ segments, centerValue, centerLabel, size = 190 }: D
       </svg>
 
       {/* Legend */}
+      {hideLegend ? null : (
       <div className="mt-3 w-full space-y-1.5">
         {segments.map((s, i) => (
           <div key={i} className="flex items-center justify-between text-xs">
@@ -113,6 +116,7 @@ export function DonutChart({ segments, centerValue, centerLabel, size = 190 }: D
           </div>
         ))}
       </div>
+      )}
     </div>
   );
 }

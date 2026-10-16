@@ -16,7 +16,7 @@ import { KpiCard } from '../components/KpiCard';
 import { DonutChart } from '../components/charts/DonutChart';
 import { SkeletonDashboard } from '../components/Skeleton';
 import { ErrorBox } from '../components/ui';
-import { fmtDate, fmtDateTime, fmtQ } from '../lib/format';
+import { fmtDate, fmtQ } from '../lib/format';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -25,10 +25,10 @@ function dayKey(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
-function last7Days(): { key: string; label: string }[] {
+function lastNDays(n: number): { key: string; label: string }[] {
   const out: { key: string; label: string }[] = [];
   const now = new Date();
-  for (let i = 6; i >= 0; i--) {
+  for (let i = n - 1; i >= 0; i--) {
     const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
     out.push({
       key: dayKey(d),
@@ -43,27 +43,27 @@ function safeNum(v: unknown): number {
   return Number.isFinite(n) ? n : 0;
 }
 
+/** Percent change; null when the base is zero/unknown. */
+function pctChange(cur: number, prev: number): number | null {
+  if (!Number.isFinite(cur) || !Number.isFinite(prev) || prev <= 0) return null;
+  return ((cur - prev) / prev) * 100;
+}
+
 function tankShort(code: string): string {
   const c = code.replace('TANK_', '');
   return c.length === 1 ? `Tank ${c}` : c;
 }
 
-function greetingForHour(h: number): string {
-  if (h < 12) return 'Good morning';
-  if (h < 17) return 'Good afternoon';
-  return 'Good evening';
-}
-
 const INTAKE_PILL: Record<string, string> = {
-  ACCEPTED: 'bg-pass-bg text-pass-text',
-  PENDING_LAB: 'bg-advisory-bg text-advisory-text',
-  FLAGGED: 'bg-critical-bg text-critical-text',
+  ACCEPTED: 'bg-emerald-100 text-emerald-700',
+  PENDING_LAB: 'bg-amber-100 text-amber-700',
+  FLAGGED: 'bg-red-100 text-red-600',
   REJECTED: 'bg-slate-100 text-slate-500'
 };
 
 const INTAKE_LABEL: Record<string, string> = {
-  ACCEPTED: 'Accepted',
-  PENDING_LAB: 'Pending Lab',
+  ACCEPTED: 'Received',
+  PENDING_LAB: 'Pending',
   FLAGGED: 'Flagged',
   REJECTED: 'Rejected'
 };
@@ -113,6 +113,13 @@ const ShieldCheckIcon = (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className={iconCls}>
     <path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" strokeLinejoin="round" />
     <path d="M9 12l2.2 2.2L15.5 10" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const SunIcon = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className={iconCls}>
+    <circle cx="12" cy="12" r="4" />
+    <path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8" strokeLinecap="round" />
   </svg>
 );
 
@@ -179,6 +186,19 @@ const AlertSmIcon = (
   </svg>
 );
 
+const CalendarSmIcon = (
+  <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-4 w-4" aria-hidden="true">
+    <rect x="3" y="4.5" width="14" height="12" rx="2" />
+    <path d="M3 8.5h14M7 3v3M13 3v3" strokeLinecap="round" />
+  </svg>
+);
+
+const ChevronDownSm = (
+  <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={2} className="h-3.5 w-3.5" aria-hidden="true">
+    <path d="M5 7.5l5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
 // ─── Inline SVG line/area chart (Production Overview) ────────────────────────
 
 interface TrendPoint {
@@ -190,15 +210,15 @@ interface TrendPoint {
 function TrendChart({ data }: { data: TrendPoint[] }) {
   const W = 640;
   const H = 250;
-  const padL = 46;
-  const padR = 14;
-  const padT = 14;
-  const padB = 32;
+  const padL = 44;
+  const padR = 12;
+  const padT = 12;
+  const padB = 30;
   const innerW = W - padL - padR;
   const innerH = H - padT - padB;
 
   const maxV = Math.max(1, ...data.map((d) => Math.max(d.wheat, d.flour)));
-  const nice = Math.ceil(maxV / 100) * 100 || 100;
+  const nice = Math.ceil(maxV / 300) * 300 || 300;
   const n = data.length;
   const x = (i: number) => padL + (n <= 1 ? innerW / 2 : (i / (n - 1)) * innerW);
   const y = (v: number) => padT + innerH - (Math.min(v, nice) / nice) * innerH;
@@ -208,84 +228,141 @@ function TrendChart({ data }: { data: TrendPoint[] }) {
   const areaFor = (get: (d: TrendPoint) => number) =>
     `${lineFor(get)} L${x(n - 1).toFixed(1)},${(padT + innerH).toFixed(1)} L${x(0).toFixed(1)},${(padT + innerH).toFixed(1)} Z`;
 
-  const ticks = [0, 0.25, 0.5, 0.75, 1].map((f) => nice * f);
-  const fmtTick = (v: number) => (v >= 1000 ? `${(v / 1000).toFixed(v % 1000 === 0 ? 0 : 1)}k` : `${v}`);
+  const ticks = [0, 0.2, 0.4, 0.6, 0.8, 1].map((f) => nice * f);
 
   return (
-    <div className="w-full">
-      <svg
-        viewBox={`0 0 ${W} ${H}`}
-        className="w-full"
-        role="img"
-        aria-label="Daily wheat received vs flour produced over the last 7 days"
-      >
-        <defs>
-          <linearGradient id="trendFlourGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#5B35D5" stopOpacity={0.22} />
-            <stop offset="100%" stopColor="#5B35D5" stopOpacity={0.02} />
-          </linearGradient>
-          <linearGradient id="trendWheatGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#3B82F6" stopOpacity={0.14} />
-            <stop offset="100%" stopColor="#3B82F6" stopOpacity={0.02} />
-          </linearGradient>
-        </defs>
+    <svg
+      viewBox={`0 0 ${W} ${H}`}
+      className="w-full"
+      role="img"
+      aria-label="Daily wheat received vs flour produced over the last 7 days"
+    >
+      <defs>
+        <linearGradient id="trendFlourGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#5B35D5" stopOpacity={0.25} />
+          <stop offset="100%" stopColor="#5B35D5" stopOpacity={0.03} />
+        </linearGradient>
+      </defs>
 
-        {ticks.map((v) => (
-          <g key={v}>
-            <line x1={padL} y1={y(v)} x2={W - padR} y2={y(v)} stroke="#E2E7F0" strokeWidth={1} />
-            <text x={padL - 8} y={y(v) + 4} textAnchor="end" fontSize={11} fill="#667085">
-              {fmtTick(v)}
-            </text>
+      {ticks.map((v) => (
+        <g key={v}>
+          <line x1={padL} y1={y(v)} x2={W - padR} y2={y(v)} stroke="#EDEFF5" strokeWidth={1} />
+          <text x={padL - 8} y={y(v) + 4} textAnchor="end" fontSize={11} fill="#98A0B3">
+            {v.toLocaleString('en-US')}
+          </text>
+        </g>
+      ))}
+
+      <path d={areaFor((d) => d.flour)} fill="url(#trendFlourGrad)" />
+      <path d={lineFor((d) => d.wheat)} fill="none" stroke="#2563EB" strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" />
+      <path d={lineFor((d) => d.flour)} fill="none" stroke="#5B35D5" strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" />
+
+      {data.map((d, i) => (
+        <g key={d.label}>
+          <circle cx={x(i)} cy={y(d.wheat)} r={3.5} fill="#2563EB" stroke="#fff" strokeWidth={1.5}>
+            <title>{`${d.label} — Wheat received: ${fmtQ(d.wheat)} Qt`}</title>
+          </circle>
+          <circle cx={x(i)} cy={y(d.flour)} r={3.5} fill="#5B35D5" stroke="#fff" strokeWidth={1.5}>
+            <title>{`${d.label} — Flour produced: ${fmtQ(d.flour)} Qt`}</title>
+          </circle>
+          <text x={x(i)} y={H - 8} textAnchor="middle" fontSize={11} fill="#98A0B3">
+            {d.label}
+          </text>
+        </g>
+      ))}
+    </svg>
+  );
+}
+
+// ─── Quality trend multi-line chart ─────────────────────────────────────────
+
+interface QualityPoint {
+  label: string;
+  gluten: number | null;
+  moisture: number | null;
+  impurity: number | null;
+}
+
+const QLINES = [
+  { key: 'gluten', color: '#22C55E', label: 'Gluten' },
+  { key: 'moisture', color: '#2563EB', label: 'Moisture' },
+  { key: 'impurity', color: '#F59E0B', label: 'Impurity' }
+] as const;
+
+function QualityTrendChart({ data }: { data: QualityPoint[] }) {
+  const W = 560;
+  const H = 230;
+  const padL = 40;
+  const padR = 10;
+  const padT = 10;
+  const padB = 28;
+  const innerW = W - padL - padR;
+  const innerH = H - padT - padB;
+  const n = data.length;
+  const x = (i: number) => padL + (n <= 1 ? innerW / 2 : (i / (n - 1)) * innerW);
+  const y = (v: number) => padT + innerH - (Math.min(100, Math.max(0, v)) / 100) * innerH;
+
+  const lineFor = (key: 'gluten' | 'moisture' | 'impurity') => {
+    const pts = data
+      .map((d, i) => ({ v: d[key], i }))
+      .filter((p) => p.v !== null) as { v: number; i: number }[];
+    if (pts.length === 0) return '';
+    return pts.map((p, j) => `${j === 0 ? 'M' : 'L'}${x(p.i).toFixed(1)},${y(p.v).toFixed(1)}`).join(' ');
+  };
+
+  return (
+    <svg
+      viewBox={`0 0 ${W} ${H}`}
+      className="w-full"
+      role="img"
+      aria-label="Quality parameters trend over the last 7 days"
+    >
+      {[0, 25, 50, 75, 100].map((v) => (
+        <g key={v}>
+          <line x1={padL} y1={y(v)} x2={W - padR} y2={y(v)} stroke="#EDEFF5" strokeWidth={1} />
+          <text x={padL - 8} y={y(v) + 4} textAnchor="end" fontSize={11} fill="#98A0B3">
+            {v}%
+          </text>
+        </g>
+      ))}
+      {QLINES.map((l) => {
+        const d = lineFor(l.key);
+        if (!d) return null;
+        return (
+          <g key={l.key}>
+            <path d={d} fill="none" stroke={l.color} strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
+            {data.map((pt, i) =>
+              pt[l.key] !== null ? (
+                <circle key={i} cx={x(i)} cy={y(pt[l.key] as number)} r={3} fill={l.color} stroke="#fff" strokeWidth={1.5}>
+                  <title>{`${pt.label} — ${l.label}: ${(pt[l.key] as number).toFixed(1)}%`}</title>
+                </circle>
+              ) : null
+            )}
           </g>
-        ))}
-
-        <path d={areaFor((d) => d.wheat)} fill="url(#trendWheatGrad)" />
-        <path d={areaFor((d) => d.flour)} fill="url(#trendFlourGrad)" />
-        <path d={lineFor((d) => d.wheat)} fill="none" stroke="#3B82F6" strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" />
-        <path d={lineFor((d) => d.flour)} fill="none" stroke="#5B35D5" strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" />
-
-        {data.map((d, i) => (
-          <g key={d.label}>
-            <circle cx={x(i)} cy={y(d.wheat)} r={3.5} fill="#3B82F6" stroke="#fff" strokeWidth={1.5}>
-              <title>{`${d.label} — Wheat received: ${fmtQ(d.wheat)} Qt`}</title>
-            </circle>
-            <circle cx={x(i)} cy={y(d.flour)} r={3.5} fill="#5B35D5" stroke="#fff" strokeWidth={1.5}>
-              <title>{`${d.label} — Flour produced: ${fmtQ(d.flour)} Qt`}</title>
-            </circle>
-            <text x={x(i)} y={H - 10} textAnchor="middle" fontSize={11} fill="#667085" fontWeight={500}>
-              {d.label}
-            </text>
-          </g>
-        ))}
-      </svg>
-
-      <div className="mt-2 flex items-center justify-center gap-5 text-xs font-medium text-slate-600">
-        <span className="inline-flex items-center gap-1.5">
-          <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#3B82F6]" />
-          Wheat Received (Qt)
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#5B35D5]" />
-          Flour Produced (Qt)
-        </span>
-      </div>
-    </div>
+        );
+      })}
+      {data.map((d, i) => (
+        <text key={d.label} x={x(i)} y={H - 6} textAnchor="middle" fontSize={11} fill="#98A0B3">
+          {d.label}
+        </text>
+      ))}
+    </svg>
   );
 }
 
 // ─── Quick access tiles ─────────────────────────────────────────────────────
 
 const QUICK_LINKS = [
-  { to: '/intake', label: 'New Purchase Order', icon: CartIcon, tile: 'bg-violet-100 text-violet-700' },
-  { to: '/batches', label: 'Create Production Batch', icon: FactoryIcon, tile: 'bg-blue-100 text-blue-700' },
-  { to: '/qc', label: 'Record Lab Test', icon: FlaskIcon, tile: 'bg-emerald-100 text-emerald-700' },
-  { to: '/finance', label: 'Generate Report', icon: ChartIcon, tile: 'bg-amber-100 text-amber-700' },
-  { to: '/intake', label: 'Manage Suppliers', icon: UsersIcon, tile: 'bg-sky-100 text-sky-700' },
-  { to: '/tanks', label: 'View Inventory', icon: BoxIcon, tile: 'bg-indigo-100 text-indigo-700' }
+  { to: '/intake', label: 'New Purchase Order', icon: CartIcon, tile: 'bg-violet-100 text-violet-600' },
+  { to: '/batches', label: 'Create Production Batch', icon: FactoryIcon, tile: 'bg-blue-100 text-blue-600' },
+  { to: '/qc', label: 'Record Lab Test', icon: FlaskIcon, tile: 'bg-emerald-100 text-emerald-600' },
+  { to: '/finance', label: 'Generate Report', icon: ChartIcon, tile: 'bg-amber-100 text-amber-600' },
+  { to: '/intake', label: 'Manage Suppliers', icon: UsersIcon, tile: 'bg-sky-100 text-sky-600' },
+  { to: '/tanks', label: 'View Inventory', icon: BoxIcon, tile: 'bg-indigo-100 text-indigo-600' }
 ];
 
-const DONUT_COLORS = ['#5B35D5', '#3B82F6', '#22C55E', '#F59E0B', '#14B8A6'];
-const STOCK_COLORS = ['#5B35D5', '#3B82F6', '#22C55E', '#F59E0B'];
+const DONUT_COLORS = ['#5B35D5', '#2563EB', '#22C55E', '#F59E0B', '#14B8A6'];
+const STOCK_COLORS = ['#5B35D5', '#2563EB', '#22C55E', '#F59E0B'];
 
 interface FeedItem {
   ts: number;
@@ -327,16 +404,16 @@ export function Dashboard() {
   });
 
   // Shift outputs only come from the detail endpoint — fetch details for the
-  // last 7 days of shifts (bounded, capped at 15) so flour figures stay real.
+  // last 35 days of shifts (bounded, capped at 25) for trends + monthly stats.
   const recentShiftIds = useMemo(() => {
     const list = Array.isArray(shiftsQ.data) ? shiftsQ.data : [];
-    const cutoff = Date.now() - 7 * 24 * 3600 * 1000;
+    const cutoff = Date.now() - 35 * 24 * 3600 * 1000;
     return list
       .filter((s) => {
         const t = new Date(s.shiftDate ?? s.startedAt).getTime();
         return Number.isFinite(t) && t >= cutoff;
       })
-      .slice(0, 15)
+      .slice(0, 25)
       .map((s) => s.id);
   }, [shiftsQ.data]);
 
@@ -352,7 +429,7 @@ export function Dashboard() {
 
   const labChecksQ = useQuery({
     queryKey: ['dashboard-lab-checks'],
-    queryFn: async () => (await api.get<LabCheck[]>(`${E.labChecks}?pageSize=20`)).data,
+    queryFn: async () => (await api.get<LabCheck[]>(`${E.labChecks}?pageSize=50`)).data,
     refetchInterval: REFETCH
   });
 
@@ -371,27 +448,68 @@ export function Dashboard() {
   );
   const detailsReady = shiftsQ.isSuccess && (recentShiftIds.length === 0 || shiftDetailsQ.isSuccess);
 
-  // ── KPIs (all real or honest "—") ──────────────────────────────────────────
-  const wheatReceived = useMemo(
+  const nowMs = Date.now();
+  const weekAgoMs = nowMs - 7 * 24 * 3600 * 1000;
+  const twoWeeksAgoMs = nowMs - 14 * 24 * 3600 * 1000;
+  const monthStart = new Date();
+  monthStart.setDate(1);
+  monthStart.setHours(0, 0, 0, 0);
+  const monthStartMs = monthStart.getTime();
+
+  const shiftFlour = (sh: ShiftRun) => (sh.outputs ?? []).reduce((a, o) => a + safeNum(o.quintals), 0);
+
+  // ── KPIs ───────────────────────────────────────────────────────────────────
+  const wheatThisWeek = useMemo(
     () =>
       intakesQ.isSuccess
-        ? intakes.filter((i) => i.status === 'ACCEPTED').reduce((s, i) => s + safeNum(i.quintals), 0)
+        ? intakes
+            .filter((i) => {
+              const t = new Date(i.deliveryDate).getTime();
+              return i.status === 'ACCEPTED' && t >= weekAgoMs;
+            })
+            .reduce((s, i) => s + safeNum(i.quintals), 0)
         : null,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [intakesQ.isSuccess, intakes]
+  );
+  const wheatPrevWeek = useMemo(
+    () =>
+      intakesQ.isSuccess
+        ? intakes
+            .filter((i) => {
+              const t = new Date(i.deliveryDate).getTime();
+              return i.status === 'ACCEPTED' && t >= twoWeeksAgoMs && t < weekAgoMs;
+            })
+            .reduce((s, i) => s + safeNum(i.quintals), 0)
+        : null,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [intakesQ.isSuccess, intakes]
   );
 
-  const flourProduced = useMemo(
+  const flourThisWeek = useMemo(
     () =>
       detailsReady
-        ? details.reduce(
-            (s, sh) => s + (sh.outputs ?? []).reduce((a, o) => a + safeNum(o.quintals), 0),
-            0
-          )
+        ? details
+            .filter((sh) => new Date(sh.shiftDate ?? sh.startedAt).getTime() >= weekAgoMs)
+            .reduce((s, sh) => s + shiftFlour(sh), 0)
         : null,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [detailsReady, details]
   );
-  const hasFlourData =
-    detailsReady && details.some((sh) => (sh.outputs ?? []).length > 0);
+  const flourPrevWeek = useMemo(
+    () =>
+      detailsReady
+        ? details
+            .filter((sh) => {
+              const t = new Date(sh.shiftDate ?? sh.startedAt).getTime();
+              return t >= twoWeeksAgoMs && t < weekAgoMs;
+            })
+            .reduce((s, sh) => s + shiftFlour(sh), 0)
+        : null,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [detailsReady, details]
+  );
+  const hasFlourData = detailsReady && details.some((sh) => (sh.outputs ?? []).length > 0);
 
   const dryStock = k ? safeNum(k.dryPool.balanceQ) : null;
 
@@ -402,9 +520,25 @@ export function Dashboard() {
 
   const qcPass = k && k.qcCompliancePct !== null && k.qcCompliancePct !== undefined ? k.qcCompliancePct : null;
 
+  const labChecks = useMemo(
+    () => (Array.isArray(labChecksQ.data) ? labChecksQ.data : []),
+    [labChecksQ.data]
+  );
+  const qcPassPrevWeek = useMemo(() => {
+    if (!labChecksQ.isSuccess || labChecks.length === 0) return null;
+    const prev = labChecks.filter((c) => {
+      const t = new Date(c.sampleTime).getTime();
+      return t >= twoWeeksAgoMs && t < weekAgoMs;
+    });
+    if (prev.length === 0) return null;
+    const passed = prev.filter((c) => (c.outOfRange ?? []).length === 0).length;
+    return (passed / prev.length) * 100;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [labChecksQ.isSuccess, labChecks]);
+
   // ── Production overview: last-7-day series ─────────────────────────────────
   const trend = useMemo<TrendPoint[]>(() => {
-    const days = last7Days();
+    const days = lastNDays(7);
     const byKey = new Map(days.map((d) => [d.key, { label: d.label, wheat: 0, flour: 0 } as TrendPoint]));
     if (intakesQ.isSuccess) {
       for (const i of intakes) {
@@ -418,7 +552,7 @@ export function Dashboard() {
       const t = new Date(sh.shiftDate ?? sh.startedAt).getTime();
       if (!Number.isFinite(t)) continue;
       const row = byKey.get(dayKey(new Date(t)));
-      if (row) row.flour += (sh.outputs ?? []).reduce((a, o) => a + safeNum(o.quintals), 0);
+      if (row) row.flour += shiftFlour(sh);
     }
     return [...byKey.values()];
   }, [intakesQ.isSuccess, intakes, details]);
@@ -428,16 +562,79 @@ export function Dashboard() {
   const productSegments = useMemo(() => {
     const byName = new Map<string, number>();
     for (const sh of details) {
+      const t = new Date(sh.shiftDate ?? sh.startedAt).getTime();
+      if (t < weekAgoMs) continue;
       for (const o of sh.outputs ?? []) {
         const name = o.product?.name?.trim() || 'Unnamed product';
         byName.set(name, (byName.get(name) ?? 0) + safeNum(o.quintals));
       }
     }
+    const total = [...byName.values()].reduce((s, v) => s + v, 0);
     return [...byName.entries()]
-      .map(([label, value], i) => ({ label, value, color: DONUT_COLORS[i % DONUT_COLORS.length] }))
+      .map(([label, value], i) => ({
+        label,
+        value,
+        pct: total > 0 ? (value / total) * 100 : 0,
+        color: DONUT_COLORS[i % DONUT_COLORS.length]
+      }))
       .sort((a, b) => b.value - a.value);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [details]);
-  const totalFlour = productSegments.reduce((s, seg) => s + seg.value, 0);
+  const totalFlourWeek = productSegments.reduce((s, seg) => s + seg.value, 0);
+
+  // ── Production performance (this month) ────────────────────────────────────
+  const perf = useMemo(() => {
+    const monthShifts = details.filter((sh) => new Date(sh.shiftDate ?? sh.startedAt).getTime() >= monthStartMs);
+    const flour = monthShifts.reduce((s, sh) => s + shiftFlour(sh), 0);
+    const wheat = batchesQ.isSuccess
+      ? batches
+          .filter((b) => new Date(b.createdAt).getTime() >= monthStartMs)
+          .reduce((s, b) => s + safeNum(b.wheatWeighedQ), 0)
+      : 0;
+    const duket = monthShifts.reduce(
+      (s, sh) =>
+        s +
+        (sh.outputs ?? [])
+          .filter((o) => (o.product?.name ?? '').toLowerCase().includes('duket'))
+          .reduce((a, o) => a + safeNum(o.quintals), 0),
+      0
+    );
+    let downMin = 0;
+    let workMin = 0;
+    for (const sh of monthShifts) {
+      downMin += safeNum(sh.downtimeMin);
+      const st = new Date(sh.startedAt).getTime();
+      const en = sh.endedAt ? new Date(sh.endedAt).getTime() : NaN;
+      if (Number.isFinite(st) && Number.isFinite(en) && en > st) workMin += (en - st) / 60000;
+    }
+    return {
+      flour,
+      extraction: wheat > 0 ? (flour / wheat) * 100 : null,
+      duketYield: flour > 0 ? (duket / flour) * 100 : null,
+      downtimePct: workMin > 0 ? (downMin / workMin) * 100 : null,
+      hasData: monthShifts.length > 0 || flour > 0
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [details, batchesQ.isSuccess, batches]);
+
+  // ── Quality trend (last 7 days, daily averages) ────────────────────────────
+  const qualityTrend = useMemo<QualityPoint[]>(() => {
+    const days = lastNDays(7);
+    return days.map((d) => {
+      const checks = labChecks.filter((c) => dayKey(new Date(c.sampleTime)) === d.key);
+      const avg = (get: (c: LabCheck) => number | null) => {
+        const vals = checks.map(get).filter((v): v is number => v !== null && Number.isFinite(v));
+        return vals.length > 0 ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
+      };
+      return {
+        label: d.label,
+        gluten: avg((c) => (c.wetGlutenPct !== null ? safeNum(c.wetGlutenPct) : null)),
+        moisture: avg((c) => (c.flourMoisturePct !== null ? safeNum(c.flourMoisturePct) : null)),
+        impurity: avg((c) => (c.impurityPct !== null ? safeNum(c.impurityPct) : null))
+      };
+    });
+  }, [labChecks]);
+  const hasQualityTrend = qualityTrend.some((p) => p.gluten !== null || p.moisture !== null || p.impurity !== null);
 
   // ── Stock level bars ───────────────────────────────────────────────────────
   const stockBars = useMemo(() => {
@@ -476,7 +673,6 @@ export function Dashboard() {
       if (Number.isFinite(ts)) items.push({ ...item, ts });
     };
 
-    const labChecks = Array.isArray(labChecksQ.data) ? labChecksQ.data : [];
     const capas = Array.isArray(capasQ.data) ? capasQ.data : [];
 
     const sortedIntakes = [...intakes].sort(
@@ -488,7 +684,7 @@ export function Dashboard() {
         sub: `${i.supplier?.name ?? 'Unknown supplier'} · ${fmtQ(i.quintals)} Qt · ${categoryLabel(i.wheatCategory)}`,
         to: '/intake',
         icon: TruckIcon,
-        tile: 'bg-emerald-100 text-emerald-700'
+        tile: 'bg-emerald-100 text-emerald-600'
       });
     }
 
@@ -501,7 +697,7 @@ export function Dashboard() {
         sub: `Batch ${b.batchNo} · ${fmtQ(b.wheatWeighedQ)} Qt weighed`,
         to: `/batches/${b.id}`,
         icon: FactoryIcon,
-        tile: 'bg-violet-100 text-violet-700'
+        tile: 'bg-violet-100 text-violet-600'
       });
     }
 
@@ -517,7 +713,7 @@ export function Dashboard() {
             : 'All parameters within range',
         to: '/qc',
         icon: FlaskIcon,
-        tile: 'bg-blue-100 text-blue-700'
+        tile: 'bg-blue-100 text-blue-600'
       });
     }
 
@@ -530,12 +726,27 @@ export function Dashboard() {
         sub: c.issueDescription.length > 70 ? `${c.issueDescription.slice(0, 70)}…` : c.issueDescription,
         to: '/capa',
         icon: AlertSmIcon,
-        tile: 'bg-amber-100 text-amber-700'
+        tile: 'bg-amber-100 text-amber-600'
       });
     }
 
     return items.sort((a, b) => b.ts - a.ts).slice(0, 6);
-  }, [intakes, batches, labChecksQ.data, capasQ.data]);
+  }, [intakes, batches, labChecks, capasQ.data]);
+
+  // ── Relative time for feed ─────────────────────────────────────────────────
+  const relTime = (ts: number) => {
+    const diff = nowMs - ts;
+    if (diff < 3600000) {
+      const m = Math.max(1, Math.floor(diff / 60000));
+      return `${m} min ago`;
+    }
+    if (diff < 86400000) {
+      const d = new Date(ts);
+      return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    }
+    const days = Math.floor(diff / 86400000);
+    return days === 1 ? 'Yesterday' : `${days} days ago`;
+  };
 
   if (kpisQ.isLoading) return <SkeletonDashboard />;
   if (kpisQ.isError)
@@ -547,296 +758,496 @@ export function Dashboard() {
     );
 
   const firstName = (user?.name ?? '').split(' ')[0] || user?.email || 'there';
-  const greeting = greetingForHour(new Date().getHours());
 
-  const kpi = (value: React.ReactNode, noData: boolean, label: string) => ({
-    value: noData ? <span className="text-slate-300">—</span> : value,
-    label: noData ? `${label} · No data` : label
-  });
+  const dash = (v: number | null, unit: string) =>
+    v === null ? (
+      <span className="text-slate-300">—</span>
+    ) : (
+      <>
+        {fmtQ(v)} <span className="text-lg font-bold text-slate-400">{unit}</span>
+      </>
+    );
 
-  const wheatKpi = kpi(
-    <>
-      {fmtQ(wheatReceived)} <span className="text-xl font-bold text-slate-400">Qt</span>
-    </>,
-    wheatReceived === null,
-    'Total Wheat Received'
-  );
-  const flourKpi = kpi(
-    <>
-      {fmtQ(flourProduced)} <span className="text-xl font-bold text-slate-400">Qt</span>
-    </>,
-    flourProduced === null || !hasFlourData,
-    'Flour Produced'
-  );
-  const stockKpi = kpi(
-    <>
-      {fmtQ(dryStock)} <span className="text-xl font-bold text-slate-400">Qt</span>
-    </>,
-    dryStock === null,
-    'Current Stock (Dry Storage)'
-  );
-  const batchKpi = kpi(
-    <>
-      {activeBatches} <span className="text-xl font-bold text-slate-400">Batches</span>
-    </>,
-    activeBatches === null,
-    'Active Batches'
-  );
-  const qcKpi = kpi(<>{qcPass?.toFixed(1)}%</>, qcPass === null, 'Quality Pass Rate');
+  const productionActive = (activeBatches ?? 0) > 0;
 
   return (
-    <div className="space-y-6">
-      {/* 1 — Welcome banner */}
-      <div className={`${cardShell} animate-fade-in-up flex items-center justify-between gap-4 overflow-hidden`}>
-        <div className="min-w-0">
-          <h1 className="text-xl font-bold text-ink">Welcome back, {firstName}!</h1>
-          <p className="mt-1 text-sm text-slate-500">
-            {greeting} — here&rsquo;s what&rsquo;s happening at Oyaya Flour Mill today.
-          </p>
+    <div className="space-y-4">
+      {/* ── Row 1: Welcome banner + status cards ── */}
+      <div className="grid grid-cols-12 gap-4">
+        <div
+          className="animate-fade-in-up relative col-span-12 overflow-hidden rounded-xl border border-line bg-white shadow-sm xl:col-span-8"
+        >
+          <img
+            src={`${import.meta.env.BASE_URL}login-bg.jpg`}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-y-0 right-0 h-full w-2/3 object-cover"
+            loading="lazy"
+          />
+          <div
+            className="absolute inset-0"
+            style={{ background: 'linear-gradient(90deg, #fff 30%, rgba(255,255,255,0.85) 55%, rgba(255,255,255,0) 100%)' }}
+            aria-hidden="true"
+          />
+          <div className="relative p-6 md:p-7">
+            <h1 className="text-2xl font-extrabold tracking-tight text-ink">
+              Welcome back, {firstName}!
+            </h1>
+            <p className="mt-1.5 max-w-md text-sm text-slate-500">
+              Here&rsquo;s what&rsquo;s happening at Oyaya Flour Mill today.
+            </p>
+          </div>
         </div>
-        <img
-          src={`${import.meta.env.BASE_URL}login-bg.jpg`}
-          alt="Wheat and flour"
-          className="hidden h-24 w-56 shrink-0 rounded-xl object-cover md:block"
-          loading="lazy"
+
+        <div className="col-span-12 grid grid-cols-2 gap-4 xl:col-span-4">
+          <div className="animate-fade-in-up rounded-xl border border-line bg-white p-4 shadow-sm" style={{ animationDelay: '60ms' }}>
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-violet-600 text-white">
+                {SackIcon}
+              </div>
+              <div className="min-w-0">
+                <p className={`truncate text-sm font-bold ${productionActive ? 'text-emerald-600' : 'text-slate-500'}`}>
+                  {productionActive ? 'Production Active' : 'Production Idle'}
+                </p>
+                <p className="truncate text-xs text-slate-500">
+                  Main Mill · {activeBatches ?? '—'} open batch{(activeBatches ?? 0) === 1 ? '' : 'es'}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="animate-fade-in-up rounded-xl border border-line bg-white p-4 shadow-sm" style={{ animationDelay: '120ms' }}>
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-500">
+                {SunIcon}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="tnum text-lg font-extrabold leading-tight text-ink">22°C</p>
+                <p className="flex items-center gap-1 truncate text-xs text-slate-500">
+                  Addis Ababa {ChevronDownSm}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Row 2: KPI cards ── */}
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-5">
+        <KpiCard
+          index={0}
+          icon={WheatIcon}
+          tone="violet"
+          label="Total Wheat Received"
+          value={dash(wheatThisWeek, 'Qt')}
+          trendPct={wheatThisWeek !== null && wheatPrevWeek !== null ? pctChange(wheatThisWeek, wheatPrevWeek) : null}
+        />
+        <KpiCard
+          index={1}
+          icon={SackIcon}
+          tone="blue"
+          label="Flour Produced"
+          value={hasFlourData ? dash(flourThisWeek, 'Qt') : <span className="text-slate-300">—</span>}
+          trendPct={hasFlourData && flourThisWeek !== null && flourPrevWeek !== null ? pctChange(flourThisWeek, flourPrevWeek) : null}
+        />
+        <KpiCard
+          index={2}
+          icon={WarehouseIcon}
+          tone="green"
+          label="Current Stock (Dry Storage)"
+          value={dash(dryStock, 'Qt')}
+        />
+        <KpiCard
+          index={3}
+          icon={LayersIcon}
+          tone="amber"
+          label="Active Batches"
+          value={
+            activeBatches === null ? (
+              <span className="text-slate-300">—</span>
+            ) : (
+              <>
+                {activeBatches} <span className="text-lg font-bold text-slate-400">Batches</span>
+              </>
+            )
+          }
+        />
+        <KpiCard
+          index={4}
+          icon={ShieldCheckIcon}
+          tone="green"
+          label="Quality Pass Rate"
+          value={qcPass === null ? <span className="text-slate-300">—</span> : <>{qcPass.toFixed(1)}%</>}
+          trendPct={qcPass !== null && qcPassPrevWeek !== null ? qcPass - qcPassPrevWeek : null}
         />
       </div>
 
-      {/* 2 — KPI row */}
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-5">
-        <KpiCard index={0} icon={WheatIcon} tone="violet" label={wheatKpi.label} value={wheatKpi.value} />
-        <KpiCard index={1} icon={SackIcon} tone="blue" label={flourKpi.label} value={flourKpi.value} />
-        <KpiCard index={2} icon={WarehouseIcon} tone="green" label={stockKpi.label} value={stockKpi.value} />
-        <KpiCard index={3} icon={LayersIcon} tone="amber" label={batchKpi.label} value={batchKpi.value} />
-        <KpiCard index={4} icon={ShieldCheckIcon} tone="green" label={qcKpi.label} value={qcKpi.value} />
-      </div>
-
-      {/* 3 — Production overview + product output */}
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
-        <div className={`${cardShell} animate-fade-in-up xl:col-span-2`} style={{ animationDelay: '120ms' }}>
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-base font-bold text-ink">Production Overview</h2>
-            <span className="rounded-full bg-lavender-bg px-3 py-1 text-xs font-semibold text-slate-500">
-              Last 7 Days
-            </span>
-          </div>
-          {!intakesQ.isSuccess && !detailsReady ? (
-            <div className="py-12 text-center">
-              <p className="font-semibold text-slate-700">No production data yet</p>
-              <p className="mt-1 text-sm text-slate-500">
-                Wheat receipts and flour output will appear here once production data exists.
-              </p>
-            </div>
-          ) : hasTrendData ? (
-            <TrendChart data={trend} />
-          ) : (
-            <div className="py-12 text-center">
-              <p className="font-semibold text-slate-700">No production data yet</p>
-              <p className="mt-1 text-sm text-slate-500">
-                No wheat receipts or flour output recorded in the last 7 days.
-              </p>
-            </div>
-          )}
-        </div>
-
-        <div className={`${cardShell} animate-fade-in-up`} style={{ animationDelay: '180ms' }}>
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-base font-bold text-ink">Product Output</h2>
-            <span className="rounded-full bg-lavender-bg px-3 py-1 text-xs font-semibold text-slate-500">
-              Last 7 Days
-            </span>
-          </div>
-          {hasFlourData && totalFlour > 0 ? (
-            <DonutChart
-              segments={productSegments}
-              centerValue={`${fmtQ(totalFlour)}`}
-              centerLabel="Total flour (Qt)"
-              size={180}
-            />
-          ) : (
-            <div className="py-12 text-center">
-              <p className="font-semibold text-slate-700">No product output data yet</p>
-              <p className="mt-1 text-sm text-slate-500">
-                Flour output by product will appear here once shift outputs are recorded.
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* 4 — Quick access + stock levels + recent procurement */}
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
-        {/* Quick access */}
-        <div className={`${cardShell} animate-fade-in-up`} style={{ animationDelay: '240ms' }}>
-          <h2 className="mb-4 text-base font-bold text-ink">Quick Access</h2>
-          <div className="grid grid-cols-3 gap-3">
-            {QUICK_LINKS.map((q) => (
-              <Link
-                key={q.label}
-                to={q.to}
-                className="group flex flex-col items-center gap-2 rounded-xl border border-transparent p-3 text-center transition-all duration-200 hover:-translate-y-0.5 hover:border-line hover:bg-lavender-bg"
-              >
-                <span
-                  className={`flex h-10 w-10 items-center justify-center rounded-xl ${q.tile} transition-transform duration-200 group-hover:scale-110`}
+      {/* ── Rows 3–4: charts + activities ── */}
+      <div className="grid grid-cols-12 gap-4">
+        <div className="col-span-12 grid grid-cols-12 gap-4 xl:col-span-9">
+          {/* Production Overview */}
+          <div className={`${cardShell} animate-fade-in-up col-span-12 xl:col-span-7`} style={{ animationDelay: '120ms' }}>
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="flex items-center gap-2 text-[15px] font-bold text-ink">
+                <span className="text-slate-400">{CalendarSmIcon}</span>
+                Production Overview
+              </h2>
+              <div className="flex items-center gap-4">
+                <div className="hidden items-center gap-3 text-xs font-medium text-slate-500 sm:flex">
+                  <span className="inline-flex items-center gap-1.5">
+                    <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#5B35D5]" />
+                    Flour Produced (Qt)
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#2563EB]" />
+                    Wheat Received (Qt)
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-[#F7F8FC] px-2.5 py-1.5 text-xs font-semibold text-slate-600"
                 >
-                  {q.icon}
-                </span>
-                <span className="text-xs font-semibold leading-tight text-slate-600">{q.label}</span>
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* Stock levels */}
-        <div className={`${cardShell} animate-fade-in-up`} style={{ animationDelay: '300ms' }}>
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-base font-bold text-ink">Stock Levels</h2>
-            <Link to="/tanks" className="text-xs font-semibold text-violet-primary hover:underline">
-              View All
-            </Link>
-          </div>
-          {stockBars.length === 0 ? (
-            <div className="py-8 text-center">
-              <p className="font-semibold text-slate-700">No stock data</p>
-              <p className="mt-1 text-sm text-slate-500">Storage levels will appear here.</p>
+                  {CalendarSmIcon} Last 7 Days {ChevronDownSm}
+                </button>
+              </div>
             </div>
-          ) : (
-            <div className="space-y-4">
-              {stockBars.map((s) => {
-                const pct = s.capacity > 0 ? Math.min(100, (s.balance / s.capacity) * 100) : 0;
-                return (
-                  <div key={s.label}>
-                    <div className="mb-1.5 flex items-center justify-between text-xs">
-                      <span className="font-semibold text-slate-700">{s.label}</span>
-                      <span className="font-medium tabular-nums text-slate-500">
-                        {fmtQ(s.balance)} / {fmtQ(s.capacity)} Qt ·{' '}
-                        <span className="font-bold text-ink">{pct.toFixed(0)}%</span>
+            {hasTrendData ? (
+              <TrendChart data={trend} />
+            ) : (
+              <div className="py-12 text-center">
+                <p className="font-semibold text-slate-700">No production data yet</p>
+                <p className="mt-1 text-sm text-slate-500">
+                  Wheat receipts and flour output will appear here once production data exists.
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Product Output donut */}
+          <div className={`${cardShell} animate-fade-in-up col-span-12 xl:col-span-5`} style={{ animationDelay: '180ms' }}>
+            <h2 className="mb-4 text-[15px] font-bold text-ink">Product Output (Today)</h2>
+            {hasFlourData && totalFlourWeek > 0 ? (
+              <div className="flex items-center gap-2">
+                <DonutChart
+                  segments={productSegments}
+                  centerValue={fmtQ(totalFlourWeek)}
+                  centerLabel="Total Flour"
+                  size={150}
+                  hideLegend
+                />
+                <div className="min-w-0 flex-1 space-y-2">
+                  {productSegments.map((s) => (
+                    <div key={s.label} className="flex items-center gap-2 text-xs">
+                      <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: s.color }} />
+                      <span className="min-w-0 flex-1 truncate font-medium text-slate-600">{s.label}</span>
+                      <span className="shrink-0 font-semibold tabular-nums text-slate-800">{fmtQ(s.value)} Qt</span>
+                      <span className="w-11 shrink-0 text-right tabular-nums text-slate-400">
+                        {s.pct.toFixed(1)}%
                       </span>
                     </div>
-                    <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-                      <div
-                        className="h-full rounded-full transition-all duration-700"
-                        style={{ width: `${pct}%`, backgroundColor: s.color }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="py-12 text-center">
+                <p className="font-semibold text-slate-700">No product output data yet</p>
+                <p className="mt-1 text-sm text-slate-500">
+                  Flour output by product will appear here once shift outputs are recorded.
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Quick Access */}
+          <div className={`${cardShell} animate-fade-in-up col-span-12 sm:col-span-6 xl:col-span-4`} style={{ animationDelay: '240ms' }}>
+            <h2 className="mb-4 text-[15px] font-bold text-ink">Quick Access</h2>
+            <div className="grid grid-cols-3 gap-2.5">
+              {QUICK_LINKS.map((q) => (
+                <Link
+                  key={q.label}
+                  to={q.to}
+                  className="group flex flex-col items-center gap-2 rounded-xl bg-[#F7F8FC] p-3 text-center transition-colors hover:bg-violet-50"
+                >
+                  <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${q.tile}`}>
+                    {q.icon}
+                  </span>
+                  <span className="text-[11px] font-semibold leading-tight text-slate-600">{q.label}</span>
+                </Link>
+              ))}
             </div>
-          )}
+          </div>
+
+          {/* Stock Levels */}
+          <div className={`${cardShell} animate-fade-in-up col-span-12 sm:col-span-6 xl:col-span-4`} style={{ animationDelay: '300ms' }}>
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-[15px] font-bold text-ink">Stock Levels</h2>
+              <Link to="/tanks" className="text-xs font-semibold text-[#5B35D5] hover:underline">
+                View All
+              </Link>
+            </div>
+            {stockBars.length === 0 ? (
+              <div className="py-8 text-center">
+                <p className="font-semibold text-slate-700">No stock data</p>
+                <p className="mt-1 text-sm text-slate-500">Storage levels will appear here.</p>
+              </div>
+            ) : (
+              <div className="space-y-3.5">
+                {stockBars.map((s) => {
+                  const pct = s.capacity > 0 ? Math.min(100, (s.balance / s.capacity) * 100) : 0;
+                  return (
+                    <div key={s.label}>
+                      <div className="mb-1 flex items-center justify-between text-xs">
+                        <span className="font-semibold text-slate-700">{s.label}</span>
+                        <span className="font-medium tabular-nums text-slate-500">
+                          {fmtQ(s.balance)} / {fmtQ(s.capacity)} Qt
+                          <span className="ml-2 font-bold text-ink">{pct.toFixed(0)}%</span>
+                        </span>
+                      </div>
+                      <div className="h-1.5 overflow-hidden rounded-full bg-slate-100">
+                        <div
+                          className="h-full rounded-full transition-all duration-700"
+                          style={{ width: `${pct}%`, backgroundColor: s.color }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Recent Procurement */}
+          <div className={`${cardShell} animate-fade-in-up col-span-12 xl:col-span-4`} style={{ animationDelay: '360ms' }}>
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-[15px] font-bold text-ink">Recent Procurement</h2>
+            </div>
+            {intakesQ.isLoading ? (
+              <div className="space-y-2.5 py-2" role="status" aria-label="Loading procurement">
+                {[0, 1, 2, 3].map((i) => (
+                  <div key={i} className="skeleton-shimmer h-9 w-full rounded-lg" />
+                ))}
+              </div>
+            ) : intakesQ.isError ? (
+              <div className="py-8 text-center">
+                <p className="font-semibold text-slate-700">Could not load procurement</p>
+                <button
+                  type="button"
+                  onClick={() => intakesQ.refetch()}
+                  className="mt-2 text-sm font-semibold text-[#5B35D5] hover:underline"
+                >
+                  Retry
+                </button>
+              </div>
+            ) : recentIntakes.length === 0 ? (
+              <div className="py-8 text-center">
+                <p className="font-semibold text-slate-700">No procurement yet</p>
+                <p className="mt-1 text-sm text-slate-500">Recent wheat intakes will appear here.</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[380px] text-sm">
+                  <thead>
+                    <tr className="text-left text-[11px] font-semibold text-slate-400">
+                      <th className="pb-2 pr-2 font-medium">Date</th>
+                      <th className="pb-2 pr-2 font-medium">Supplier</th>
+                      <th className="pb-2 pr-2 font-medium">Wheat Type</th>
+                      <th className="pb-2 pr-2 text-right font-medium">Qty (Qt)</th>
+                      <th className="pb-2 text-right font-medium">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {recentIntakes.map((i) => (
+                      <tr key={i.id} className="border-t border-line/60 hover:bg-[#F7F8FC]">
+                        <td className="whitespace-nowrap py-2.5 pr-2 text-xs text-slate-500">{fmtDate(i.deliveryDate)}</td>
+                        <td className="max-w-[110px] truncate py-2.5 pr-2 text-xs font-medium text-ink">
+                          {i.supplier?.name ?? '—'}
+                        </td>
+                        <td className="py-2.5 pr-2 text-xs text-slate-500">{categoryLabel(i.wheatCategory)}</td>
+                        <td className="py-2.5 pr-2 text-right text-xs font-semibold tabular-nums text-ink">
+                          {fmtQ(i.quintals)}
+                        </td>
+                        <td className="py-2.5 text-right">
+                          <span
+                            className={`inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-bold ${
+                              INTAKE_PILL[i.status] ?? 'bg-slate-100 text-slate-500'
+                            }`}
+                          >
+                            {INTAKE_LABEL[i.status] ?? i.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Recent procurement */}
-        <div className={`${cardShell} animate-fade-in-up`} style={{ animationDelay: '360ms' }}>
+        {/* Recent Activities — tall right column */}
+        <div className={`${cardShell} animate-fade-in-up col-span-12 xl:col-span-3`} style={{ animationDelay: '200ms' }}>
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-base font-bold text-ink">Recent Procurement</h2>
-            <Link to="/intake" className="text-xs font-semibold text-violet-primary hover:underline">
+            <h2 className="text-[15px] font-bold text-ink">Recent Activities</h2>
+            <Link to="/batches" className="text-xs font-semibold text-[#5B35D5] hover:underline">
               View All
             </Link>
           </div>
-          {intakesQ.isLoading ? (
-            <div className="space-y-2.5 py-2" role="status" aria-label="Loading procurement">
-              {[0, 1, 2, 3].map((i) => (
-                <div key={i} className="skeleton-shimmer h-9 w-full rounded-lg" />
-              ))}
-            </div>
-          ) : intakesQ.isError ? (
+          {feed.length === 0 ? (
             <div className="py-8 text-center">
-              <p className="font-semibold text-slate-700">Could not load procurement</p>
-              <button
-                type="button"
-                onClick={() => intakesQ.refetch()}
-                className="mt-2 text-sm font-semibold text-violet-primary hover:underline"
-              >
-                Retry
-              </button>
-            </div>
-          ) : recentIntakes.length === 0 ? (
-            <div className="py-8 text-center">
-              <p className="font-semibold text-slate-700">No procurement yet</p>
-              <p className="mt-1 text-sm text-slate-500">Recent wheat intakes will appear here.</p>
+              <p className="font-semibold text-slate-700">No recent activity</p>
+              <p className="mt-1 text-sm text-slate-500">
+                Deliveries, lab tests, batches and CAPAs will appear here.
+              </p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[420px] text-sm">
-                <thead>
-                  <tr className="border-b border-line text-left text-[11px] font-bold uppercase tracking-[0.08em] text-slate-400">
-                    <th className="pb-2 pr-3">Date</th>
-                    <th className="pb-2 pr-3">Supplier</th>
-                    <th className="pb-2 pr-3">Type</th>
-                    <th className="pb-2 pr-3 text-right">Qty (Qt)</th>
-                    <th className="pb-2 text-right">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {recentIntakes.map((i) => (
-                    <tr key={i.id} className="border-b border-line/60 last:border-0 hover:bg-lavender-bg/60">
-                      <td className="whitespace-nowrap py-2.5 pr-3 text-slate-600">{fmtDate(i.deliveryDate)}</td>
-                      <td className="max-w-[140px] truncate py-2.5 pr-3 font-medium text-ink">
-                        {i.supplier?.name ?? '—'}
-                      </td>
-                      <td className="py-2.5 pr-3 text-slate-600">{categoryLabel(i.wheatCategory)}</td>
-                      <td className="py-2.5 pr-3 text-right font-semibold tabular-nums text-ink">
-                        {fmtQ(i.quintals)}
-                      </td>
-                      <td className="py-2.5 text-right">
-                        <span
-                          className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-bold ${
-                            INTAKE_PILL[i.status] ?? 'bg-slate-100 text-slate-500'
-                          }`}
-                        >
-                          {INTAKE_LABEL[i.status] ?? i.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <ul className="space-y-1">
+              {feed.map((f, idx) => (
+                <li key={`${f.to}-${f.ts}-${idx}`}>
+                  <Link
+                    to={f.to}
+                    className="flex items-start gap-3 rounded-lg px-1 py-2.5 transition-colors hover:bg-[#F7F8FC]"
+                  >
+                    <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${f.tile}`}>
+                      {f.icon}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-[13px] font-semibold text-ink">{f.title}</span>
+                      <span className="block truncate text-xs text-slate-500">{f.sub}</span>
+                    </span>
+                    <span className="shrink-0 pt-0.5 text-[11px] text-slate-400">{relTime(f.ts)}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
           )}
         </div>
       </div>
 
-      {/* 5 — Recent activities */}
-      <div className={`${cardShell} animate-fade-in-up`} style={{ animationDelay: '420ms' }}>
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-base font-bold text-ink">Recent Activities</h2>
-          <Link to="/batches" className="text-xs font-semibold text-violet-primary hover:underline">
-            View All
-          </Link>
-        </div>
-        {feed.length === 0 ? (
-          <div className="py-8 text-center">
-            <p className="font-semibold text-slate-700">No recent activity</p>
-            <p className="mt-1 text-sm text-slate-500">
-              Deliveries, lab tests, batches and CAPAs will appear here.
-            </p>
+      {/* ── Row 5: Performance + Quality trend + Promo ── */}
+      <div className="grid grid-cols-12 gap-4">
+        {/* Production Performance */}
+        <div className={`${cardShell} animate-fade-in-up col-span-12 xl:col-span-4`} style={{ animationDelay: '420ms' }}>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-[15px] font-bold text-ink">Production Performance</h2>
+            <button
+              type="button"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-[#F7F8FC] px-2.5 py-1.5 text-xs font-semibold text-slate-600"
+            >
+              This Month {ChevronDownSm}
+            </button>
           </div>
-        ) : (
-          <ul className="divide-y divide-line/60">
-            {feed.map((f, idx) => (
-              <li key={`${f.to}-${f.ts}-${idx}`}>
-                <Link
-                  to={f.to}
-                  className="flex items-center gap-3 rounded-lg px-2 py-3 transition-colors hover:bg-lavender-bg/70"
-                >
-                  <span
-                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${f.tile}`}
-                  >
-                    {f.icon}
+          {!perf.hasData ? (
+            <div className="py-8 text-center">
+              <p className="font-semibold text-slate-700">No production data this month</p>
+              <p className="mt-1 text-sm text-slate-500">Monthly performance will appear here.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-xl bg-[#F7F8FC] p-3.5">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+                  {SackIcon}
+                </div>
+                <p className="mt-2 text-xs text-slate-500">Total Production</p>
+                <p className="tnum text-lg font-extrabold text-ink">{fmtQ(perf.flour)} Qt</p>
+              </div>
+              <div className="rounded-xl bg-[#F7F8FC] p-3.5">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-violet-100 text-violet-600">
+                  {ChartIcon}
+                </div>
+                <p className="mt-2 text-xs text-slate-500">Extraction Rate</p>
+                <p className="tnum text-lg font-extrabold text-ink">
+                  {perf.extraction !== null ? `${perf.extraction.toFixed(1)}%` : '—'}
+                </p>
+              </div>
+              <div className="rounded-xl bg-[#F7F8FC] p-3.5">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-amber-100 text-amber-500">
+                  {SunIcon}
+                </div>
+                <p className="mt-2 text-xs text-slate-500">Duket Yield</p>
+                <p className="tnum text-lg font-extrabold text-ink">
+                  {perf.duketYield !== null ? `${perf.duketYield.toFixed(1)}%` : '—'}
+                </p>
+              </div>
+              <div className="rounded-xl bg-[#F7F8FC] p-3.5">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-red-100 text-red-500">
+                  {AlertSmIcon}
+                </div>
+                <p className="mt-2 text-xs text-slate-500">Downtime</p>
+                <p className="tnum text-lg font-extrabold text-ink">
+                  {perf.downtimePct !== null ? `${perf.downtimePct.toFixed(1)}%` : '—'}
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Quality Trend */}
+        <div className={`${cardShell} animate-fade-in-up col-span-12 xl:col-span-5`} style={{ animationDelay: '480ms' }}>
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-[15px] font-bold text-ink">Quality Trend</h2>
+            <div className="flex items-center gap-4">
+              <div className="hidden items-center gap-3 text-xs font-medium text-slate-500 sm:flex">
+                {QLINES.map((l) => (
+                  <span key={l.key} className="inline-flex items-center gap-1.5">
+                    <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: l.color }} />
+                    {l.label}
                   </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-semibold text-ink">{f.title}</span>
-                    <span className="block truncate text-xs text-slate-500">{f.sub}</span>
-                  </span>
-                  <span className="shrink-0 text-xs font-medium text-slate-400">
-                    {fmtDateTime(new Date(f.ts).toISOString())}
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
+                ))}
+              </div>
+              <button
+                type="button"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-[#F7F8FC] px-2.5 py-1.5 text-xs font-semibold text-slate-600"
+              >
+                {CalendarSmIcon} Last 7 Days {ChevronDownSm}
+              </button>
+            </div>
+          </div>
+          {hasQualityTrend ? (
+            <QualityTrendChart data={qualityTrend} />
+          ) : (
+            <div className="py-12 text-center">
+              <p className="font-semibold text-slate-700">No quality data yet</p>
+              <p className="mt-1 text-sm text-slate-500">
+                Lab test trends will appear here once quality checks are recorded.
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Promo card */}
+        <div
+          className="animate-fade-in-up relative col-span-12 overflow-hidden rounded-xl shadow-sm xl:col-span-3"
+          style={{ animationDelay: '540ms' }}
+        >
+          <img
+            src={`${import.meta.env.BASE_URL}login-bg.jpg`}
+            alt="Wheat and flour"
+            className="absolute inset-0 h-full w-full object-cover"
+            loading="lazy"
+          />
+          <div
+            className="absolute inset-0"
+            style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.55) 45%, rgba(0,0,0,0.15) 100%)' }}
+            aria-hidden="true"
+          />
+          <div className="relative flex h-full min-h-[220px] flex-col p-5">
+            <p className="text-xs font-medium text-slate-500">Oyaya Flour Mill</p>
+            <h3 className="mt-2 text-xl font-extrabold leading-tight text-ink">
+              Premium Quality Flour
+            </h3>
+            <p className="mt-1 text-sm text-slate-600">From our mill to your table.</p>
+            <div className="mt-auto pt-4">
+              <Link
+                to="/sales"
+                className="inline-flex items-center gap-2 rounded-lg bg-[#5B35D5] px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-[#4a2bb5]"
+              >
+                View Products
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={2} className="h-4 w-4" aria-hidden="true">
+                  <path d="M4 10h12m0 0l-4-4m4 4l-4 4" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
