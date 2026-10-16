@@ -13,9 +13,23 @@ interface BarChartProps {
   height?: number;
 }
 
+/** Lighten a hex color by mixing with white. */
+function lighten(hex: string, amt: number): string {
+  const n = hex.replace('#', '');
+  const num = parseInt(n.length === 3 ? n.split('').map((c) => c + c).join('') : n, 16);
+  const r = Math.min(255, ((num >> 16) & 255) + Math.round(255 * amt));
+  const g = Math.min(255, ((num >> 8) & 255) + Math.round(255 * amt));
+  const b = Math.min(255, (num & 255) + Math.round(255 * amt));
+  return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, '0')}`;
+}
+
+const fmtVal = (v: number) =>
+  v.toLocaleString('en-US', { maximumFractionDigits: 1 });
+
 /**
  * Custom SVG grouped bar chart — no external dependency.
- * Rounded bar tops, horizontal gridlines, x-axis labels. Responsive via viewBox.
+ * Gradient fills, rounded tops, gridlines, x-axis labels, grow-on-mount
+ * animation, and native tooltips. Responsive via viewBox.
  */
 export function BarChart({
   data,
@@ -52,9 +66,28 @@ export function BarChart({
 
   const fmtTick = (v: number) => (v >= 1000 ? `${(v / 1000).toFixed(v % 1000 === 0 ? 0 : 1)}k` : `${v}`);
 
+  const gradA = lighten(colorA, 0.25);
+  const gradB = lighten(colorB, 0.2);
+
   return (
     <div className="w-full">
-      <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label={`${seriesALabel} vs ${seriesBLabel} bar chart`}>
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        className="w-full"
+        role="img"
+        aria-label={`${seriesALabel} vs ${seriesBLabel} bar chart`}
+      >
+        <defs>
+          <linearGradient id="barGradA" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={gradA} />
+            <stop offset="100%" stopColor={colorA} />
+          </linearGradient>
+          <linearGradient id="barGradB" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={gradB} />
+            <stop offset="100%" stopColor={colorB} />
+          </linearGradient>
+        </defs>
+
         {/* Gridlines */}
         {gridlines.map(({ v, yy }) => (
           <g key={v}>
@@ -77,27 +110,32 @@ export function BarChart({
             <g key={d.label}>
               {/* Series A */}
               {aH > 0 && (
-                <rect
-                  x={aX}
-                  y={y(d.seriesA)}
-                  width={barW}
-                  height={aH}
-                  rx={r}
-                  fill={colorA}
-                />
+                <g className="bar-grow" style={{ animationDelay: `${i * 70}ms` }}>
+                  <rect x={aX} y={y(d.seriesA)} width={barW} height={aH} rx={r} fill="url(#barGradA)">
+                    <title>
+                      {d.label} — {seriesALabel}: {fmtVal(d.seriesA)}
+                    </title>
+                  </rect>
+                </g>
               )}
               {/* Series B */}
               {bH > 0 && (
-                <rect
-                  x={bX}
-                  y={y(d.seriesB)}
-                  width={barW}
-                  height={bH}
-                  rx={r}
-                  fill={colorB}
-                />
+                <g className="bar-grow" style={{ animationDelay: `${i * 70 + 35}ms` }}>
+                  <rect x={bX} y={y(d.seriesB)} width={barW} height={bH} rx={r} fill="url(#barGradB)">
+                    <title>
+                      {d.label} — {seriesBLabel}: {fmtVal(d.seriesB)}
+                    </title>
+                  </rect>
+                </g>
               )}
-              <text x={gx} y={H - 10} textAnchor="middle" fontSize={12} fill="#64748B" fontWeight={500}>
+              <text
+                x={gx}
+                y={H - 10}
+                textAnchor="middle"
+                fontSize={12}
+                fill="#64748B"
+                fontWeight={500}
+              >
                 {d.label}
               </text>
             </g>
@@ -108,11 +146,17 @@ export function BarChart({
       {/* Legend */}
       <div className="mt-2 flex items-center justify-center gap-5 text-xs font-medium text-slate-600">
         <span className="inline-flex items-center gap-1.5">
-          <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ backgroundColor: colorA }} />
+          <span
+            className="inline-block h-2.5 w-2.5 rounded-full"
+            style={{ backgroundColor: colorA }}
+          />
           {seriesALabel}
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ backgroundColor: colorB }} />
+          <span
+            className="inline-block h-2.5 w-2.5 rounded-full"
+            style={{ backgroundColor: colorB }}
+          />
           {seriesBLabel}
         </span>
       </div>

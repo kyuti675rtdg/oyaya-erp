@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 interface DonutSegment {
   label: string;
   value: number;
@@ -13,9 +15,17 @@ interface DonutChartProps {
 
 /**
  * Custom SVG donut chart — no external dependency.
- * Renders segments as arcs with a center label/value and a dot legend below.
+ * Segments draw in on mount (staggered), soft drop shadow,
+ * center value/label, dot legend below.
  */
 export function DonutChart({ segments, centerValue, centerLabel, size = 190 }: DonutChartProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => requestAnimationFrame(() => setMounted(true)));
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
   const total = segments.reduce((s, seg) => s + Math.max(0, seg.value), 0);
   const r = 70;
   const cx = 100;
@@ -42,6 +52,7 @@ export function DonutChart({ segments, centerValue, centerLabel, size = 190 }: D
         height={size}
         role="img"
         aria-label={`${centerLabel}: ${centerValue}`}
+        style={{ filter: 'drop-shadow(0 6px 14px rgba(76, 29, 149, 0.16))' }}
       >
         {/* Track */}
         <circle cx={cx} cy={cy} r={r} fill="none" stroke="#EDE9F7" strokeWidth={strokeW} />
@@ -56,15 +67,28 @@ export function DonutChart({ segments, centerValue, centerLabel, size = 190 }: D
               fill="none"
               stroke={a.color}
               strokeWidth={strokeW}
-              strokeDasharray={`${(a.frac * C).toFixed(2)} ${C.toFixed(2)}`}
-              strokeDashoffset={(-a.start * C).toFixed(2)}
               strokeLinecap="butt"
               transform={`rotate(${rot} ${cx} ${cy})`}
+              strokeDasharray={`${(a.frac * C).toFixed(2)} ${C.toFixed(2)}`}
+              strokeDashoffset={
+                mounted ? (-a.start * C).toFixed(2) : (-(a.start + a.frac) * C).toFixed(2)
+              }
+              style={{
+                transition: `stroke-dashoffset 0.9s cubic-bezier(0.22,1,0.36,1) ${i * 120}ms`
+              }}
             />
           ) : null
         )}
         {/* Center text */}
-        <text x={cx} y={cy - 4} textAnchor="middle" fontSize={26} fontWeight={800} fill="#1E1B2E">
+        <text
+          x={cx}
+          y={cy - 4}
+          textAnchor="middle"
+          fontSize={26}
+          fontWeight={800}
+          fill="#1E1B2E"
+          className="tabular-nums"
+        >
           {centerValue}
         </text>
         <text x={cx} y={cy + 20} textAnchor="middle" fontSize={12} fill="#8B8AA3">
@@ -77,10 +101,15 @@ export function DonutChart({ segments, centerValue, centerLabel, size = 190 }: D
         {segments.map((s, i) => (
           <div key={i} className="flex items-center justify-between text-xs">
             <span className="inline-flex items-center gap-2 font-medium text-slate-600">
-              <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ backgroundColor: s.color }} />
+              <span
+                className="inline-block h-2.5 w-2.5 rounded-full"
+                style={{ backgroundColor: s.color }}
+              />
               {s.label}
             </span>
-            <span className="font-semibold tabular-nums text-slate-800">{s.value.toLocaleString('en-US', { maximumFractionDigits: 1 })}</span>
+            <span className="font-semibold tabular-nums text-slate-800">
+              {s.value.toLocaleString('en-US', { maximumFractionDigits: 1 })}
+            </span>
           </div>
         ))}
       </div>

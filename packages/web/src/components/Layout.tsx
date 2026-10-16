@@ -180,10 +180,10 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                     end={item.to === '/'}
                     onClick={onNavigate}
                     className={({ isActive }) =>
-                      `touch flex items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-medium transition-colors ${
+                      `touch focus-ring-violet flex items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-medium transition-all duration-200 ease-out ${
                         isActive
                           ? 'bg-violet-primary text-white shadow-[0_4px_12px_rgba(124,58,237,0.35)]'
-                          : 'text-slate-600 hover:bg-violet-pale/60 hover:text-violet-dark'
+                          : 'text-slate-600 hover:translate-x-0.5 hover:bg-violet-pale/60 hover:text-violet-dark'
                       }`
                     }
                   >
@@ -279,7 +279,7 @@ export function Layout() {
         <header className="no-print sticky top-0 z-30 flex items-center gap-3 bg-lavender-bg/90 px-4 py-3 backdrop-blur md:px-6">
           <button
             onClick={() => setMenuOpen(true)}
-            className="touch rounded-xl bg-white p-2.5 text-slate-600 shadow-sm md:hidden"
+            className="touch focus-ring-violet rounded-xl bg-white p-2.5 text-slate-600 shadow-sm transition-all duration-200 hover:text-violet-primary hover:shadow-md md:hidden"
             aria-label="Open menu"
           >
             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5">
@@ -297,7 +297,7 @@ export function Layout() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search anything…"
-              className="w-full rounded-xl border-0 bg-white py-2.5 pl-10 pr-4 text-sm text-ink shadow-sm outline-none ring-violet-primary/30 placeholder:text-slate-400 focus:ring-2"
+              className="w-full rounded-xl border-0 bg-white py-2.5 pl-10 pr-4 text-sm text-ink shadow-sm outline-none transition-all duration-200 ring-violet-primary/30 placeholder:text-slate-400 hover:shadow-md focus:shadow-md focus:ring-2"
               aria-label="Search"
             />
           </div>
@@ -316,14 +316,14 @@ export function Layout() {
 
             {/* Notification bell */}
             <button
-              className="touch relative rounded-xl bg-white p-2.5 text-slate-500 shadow-sm hover:text-violet-primary"
+              className="touch focus-ring-violet relative rounded-xl bg-white p-2.5 text-slate-500 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:text-violet-primary hover:shadow-md active:translate-y-0"
               aria-label="Notifications"
             >
               <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5">
                 <path d="M10 3a4.5 4.5 0 00-4.5 4.5c0 3-1 4-1.5 4.5h12C15.5 11.5 14.5 10.5 14.5 7.5A4.5 4.5 0 0010 3z" strokeLinejoin="round" />
                 <path d="M8 15a2 2 0 004 0" strokeLinecap="round" />
               </svg>
-              <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-critical-text ring-2 ring-white" />
+              <span className="pulse-dot absolute right-2 top-2 h-2 w-2 rounded-full bg-critical-text ring-2 ring-white" />
             </button>
 
             {/* Avatar */}

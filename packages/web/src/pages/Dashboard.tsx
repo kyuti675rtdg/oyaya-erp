@@ -8,7 +8,8 @@ import { useAuth } from '../store/auth';
 import { KpiCard } from '../components/KpiCard';
 import { BarChart } from '../components/charts/BarChart';
 import { DonutChart } from '../components/charts/DonutChart';
-import { EmptyState, ErrorBox, Spinner } from '../components/ui';
+import { SkeletonDashboard } from '../components/Skeleton';
+import { ErrorBox } from '../components/ui';
 import { fmtBirr, fmtDateTime, fmtQ } from '../lib/format';
 
 // ─── Inline SVG icons for KPI cards ──────────────────────────────────────────
@@ -43,11 +44,29 @@ const CheckIcon = (
   </svg>
 );
 
+/** Friendly mill-themed empty-state illustration (inline SVG). */
+const BatchEmptyIcon = (
+  <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth={2.5} className="h-14 w-14 text-violet-light">
+    <circle cx="24" cy="24" r="12" />
+    <circle cx="44" cy="42" r="12" />
+    <path d="M32 24h8a4 4 0 014 4v6" strokeLinecap="round" />
+  </svg>
+);
+
 const DONUT_COLORS = ['#7C3AED', '#8B5CF6', '#C4B5FD', '#4C1D95'];
+
+const cardShell =
+  'rounded-2xl bg-white p-5 shadow-[0_1px_3px_rgba(76,29,149,0.06),0_4px_16px_rgba(76,29,149,0.05)]';
 
 function tankShort(code: string): string {
   const c = code.replace('TANK_', '');
   return c.length === 1 ? `Tank ${c}` : c;
+}
+
+function greetingForHour(h: number): string {
+  if (h < 12) return 'Good morning';
+  if (h < 17) return 'Good afternoon';
+  return 'Good evening';
 }
 
 export function Dashboard() {
@@ -107,7 +126,7 @@ export function Dashboard() {
     return list.filter((b) => b.batchNo.toLowerCase().includes(q));
   }, [batchesQ.data, batchSearch]);
 
-  if (kpisQ.isLoading) return <Spinner label="Loading dashboard..." />;
+  if (kpisQ.isLoading) return <SkeletonDashboard />;
   if (kpisQ.isError)
     return (
       <ErrorBox
@@ -117,13 +136,14 @@ export function Dashboard() {
     );
 
   const firstName = (user?.name ?? '').split(' ')[0] || user?.email || 'there';
+  const greeting = greetingForHour(new Date().getHours());
 
   return (
     <div className="space-y-6">
       {/* Greeting */}
-      <div>
+      <div className="animate-fade-in-up">
         <h1 className="text-2xl font-extrabold tracking-tight text-ink md:text-[28px]">
-          Hi, {firstName}
+          {greeting}, {firstName}
         </h1>
         <p className="mt-1 text-sm text-slate-500">Here&rsquo;s your mill operations overview</p>
       </div>
@@ -131,24 +151,28 @@ export function Dashboard() {
       {/* KPI cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <KpiCard
+          index={0}
           icon={WheatIcon}
           tone="violet"
           label="Wheat in stock"
           value={wheatStockQ === null ? '—' : `${fmtQ(wheatStockQ)} q`}
         />
         <KpiCard
+          index={1}
           icon={CurrencyIcon}
           tone="green"
           label="Month revenue"
           value={k ? fmtBirr(k.monthRevenue) : '—'}
         />
         <KpiCard
+          index={2}
           icon={AlertIcon}
           tone="amber"
           label="Open CAPAs"
           value={k ? k.openCapas : '—'}
         />
         <KpiCard
+          index={3}
           icon={CheckIcon}
           tone="blue"
           label="QC compliance (7d)"
@@ -159,28 +183,27 @@ export function Dashboard() {
       {/* Charts row */}
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
         {/* Storage levels bar chart */}
-        <div className="rounded-2xl bg-white p-5 shadow-[0_1px_3px_rgba(76,29,149,0.06),0_4px_16px_rgba(76,29,149,0.05)] xl:col-span-2">
+        <div
+          className={`${cardShell} animate-fade-in-up xl:col-span-2`}
+          style={{ animationDelay: '240ms' }}
+        >
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-base font-bold text-ink">Storage Levels</h2>
             <span className="rounded-full bg-lavender-bg px-3 py-1 text-xs font-semibold text-slate-500">
               Quintals
             </span>
           </div>
-          {storageBars.length > 0 ? (
-            <BarChart
-              data={storageBars}
-              seriesALabel="Stock"
-              seriesBLabel="Capacity"
-              colorA="#7C3AED"
-              colorB="#DDD3F8"
-            />
-          ) : (
-            <EmptyState title="No storage data" sub="Storage levels will appear here." />
-          )}
+          <BarChart
+            data={storageBars}
+            seriesALabel="Stock"
+            seriesBLabel="Capacity"
+            colorA="#7C3AED"
+            colorB="#DDD3F8"
+          />
         </div>
 
         {/* Wheat distribution donut */}
-        <div className="rounded-2xl bg-white p-5 shadow-[0_1px_3px_rgba(76,29,149,0.06),0_4px_16px_rgba(76,29,149,0.05)]">
+        <div className={`${cardShell} animate-fade-in-up`} style={{ animationDelay: '300ms' }}>
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-base font-bold text-ink">Wheat Distribution</h2>
             <span className="rounded-full bg-lavender-bg px-3 py-1 text-xs font-semibold text-slate-500">
@@ -194,13 +217,16 @@ export function Dashboard() {
               centerLabel="Total quintals"
             />
           ) : (
-            <EmptyState title="No wheat data" sub="Distribution will appear here." />
+            <div className="flex flex-col items-center px-6 py-10 text-center">
+              <p className="font-semibold text-slate-700">No wheat data yet</p>
+              <p className="mt-1 text-sm text-slate-500">Distribution will appear here.</p>
+            </div>
           )}
         </div>
       </div>
 
       {/* Recent batches table */}
-      <div className="rounded-2xl bg-white p-5 shadow-[0_1px_3px_rgba(76,29,149,0.06),0_4px_16px_rgba(76,29,149,0.05)]">
+      <div className={`${cardShell} animate-fade-in-up`} style={{ animationDelay: '360ms' }}>
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-base font-bold text-ink">Recent Batches</h2>
           <div className="relative w-full sm:max-w-xs">
@@ -212,29 +238,51 @@ export function Dashboard() {
               value={batchSearch}
               onChange={(e) => setBatchSearch(e.target.value)}
               placeholder="Search batches…"
-              className="w-full rounded-xl border border-line bg-lavender-bg py-2 pl-9 pr-3 text-sm text-ink outline-none placeholder:text-slate-400 focus:border-violet-light focus:ring-2 focus:ring-violet-primary/20"
+              className="w-full rounded-xl border border-line bg-lavender-bg py-2 pl-9 pr-3 text-sm text-ink outline-none transition-all duration-200 placeholder:text-slate-400 focus:border-violet-light focus:bg-white focus:ring-2 focus:ring-violet-primary/20"
               aria-label="Search batches"
             />
           </div>
         </div>
 
         {batchesQ.isLoading ? (
-          <Spinner label="Loading batches..." />
+          <div className="space-y-2.5 py-2" role="status" aria-label="Loading batches">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="skeleton-shimmer h-10 w-full rounded-lg" />
+            ))}
+          </div>
         ) : batchesQ.isError ? (
           <ErrorBox
             message={batchesQ.error instanceof Error ? batchesQ.error.message : 'Could not load batches.'}
             onRetry={() => batchesQ.refetch()}
           />
         ) : filteredBatches.length === 0 ? (
-          <EmptyState
-            title="No batches yet"
-            sub={batchSearch ? 'No batches match your search.' : 'Create one from Shift Milling.'}
-          />
+          <div className="flex flex-col items-center px-6 py-12 text-center">
+            {BatchEmptyIcon}
+            <p className="mt-4 text-base font-bold text-ink">
+              {batchSearch ? 'No matching batches' : 'No batches yet'}
+            </p>
+            <p className="mt-1 max-w-xs text-sm text-slate-500">
+              {batchSearch
+                ? 'Try a different search term.'
+                : 'Your milling batches will appear here once production begins.'}
+            </p>
+            {!batchSearch && (
+              <Link
+                to="/shifts"
+                className="focus-ring-violet mt-5 inline-flex items-center gap-2 rounded-xl bg-violet-primary px-5 py-2.5 text-sm font-semibold text-white shadow-[0_4px_12px_rgba(124,58,237,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-violet-dark hover:shadow-[0_8px_20px_rgba(124,58,237,0.4)] active:translate-y-0"
+              >
+                Go to Shift Milling
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={2} className="h-4 w-4">
+                  <path d="M7 4l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </Link>
+            )}
+          </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[560px] text-sm">
               <thead>
-                <tr className="border-b border-line text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
+                <tr className="border-b border-line text-left text-[11px] font-bold uppercase tracking-[0.08em] text-slate-400">
                   <th className="pb-3 pr-4">Batch #</th>
                   <th className="pb-3 pr-4">Status</th>
                   <th className="pb-3 pr-4">Created</th>
@@ -243,9 +291,15 @@ export function Dashboard() {
               </thead>
               <tbody>
                 {filteredBatches.map((b) => (
-                  <tr key={b.id} className="border-b border-line/60 last:border-0 hover:bg-lavender-bg/50">
+                  <tr
+                    key={b.id}
+                    className="border-b border-line/60 transition-colors duration-150 last:border-0 hover:bg-violet-pale/40"
+                  >
                     <td className="py-3 pr-4">
-                      <Link to={`/batches/${b.id}`} className="font-semibold text-violet-dark hover:underline">
+                      <Link
+                        to={`/batches/${b.id}`}
+                        className="focus-ring-violet rounded font-semibold text-violet-dark hover:underline"
+                      >
                         {b.batchNo}
                       </Link>
                     </td>
@@ -263,7 +317,7 @@ export function Dashboard() {
                       </span>
                     </td>
                     <td className="py-3 pr-4 text-slate-500">{fmtDateTime(b.createdAt)}</td>
-                    <td className="tnum py-3 text-right font-semibold text-ink">
+                    <td className="tnum py-3 text-right font-semibold tabular-nums text-ink">
                       {fmtQ(b.wheatWeighedQ)} q
                     </td>
                   </tr>
