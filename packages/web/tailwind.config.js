@@ -4,24 +4,27 @@ export default {
   theme: {
     extend: {
       colors: {
-        navy: '#1E3A8A',
-        ink: '#0F172A',
+        navy: '#171A3B',
+        ink: '#172033',
+        slate: {
+          DEFAULT: '#667085'
+        },
         harvest: {
           DEFAULT: '#D97706',
           dark: '#B45309',
           light: '#FEF3C7'
         },
         alabaster: '#F8FAFC',
-        line: '#E2E8F0',
+        line: '#E2E7F0',
         lavender: {
-          bg: '#F5F3FA',
+          bg: '#F4F6FA',
           sidebar: '#EDE9F7'
         },
         violet: {
-          primary: '#7C3AED',
-          light: '#8B5CF6',
-          dark: '#4C1D95',
-          pale: '#EDE9FE'
+          primary: '#5B35D5',
+          light: '#7C5CE0',
+          dark: '#4527A8',
+          pale: '#ECE7FA'
         },
         pass: { text: '#15803D', bg: '#DCFCE7' },
         advisory: { text: '#B45309', bg: '#FEF3C7' },
