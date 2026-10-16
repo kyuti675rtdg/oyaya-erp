@@ -26,7 +26,14 @@ export function App() {
       <Route path="/login" element={<Login />} />
 
       <Route element={<Layout />}>
-        <Route path="/" element={<Dashboard />} />
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="/intake"
@@ -157,7 +164,14 @@ export function App() {
           }
         />
 
-        <Route path="*" element={<Dashboard />} />
+        <Route
+          path="*"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
       </Route>
     </Routes>
   );

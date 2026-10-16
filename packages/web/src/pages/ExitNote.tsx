@@ -20,6 +20,15 @@ export function ExitNote() {
 
   if (dispatchQ.isLoading) return <Spinner label="Loading exit note..." />;
   const d = dispatchQ.data;
+  if (dispatchQ.isError)
+    return (
+      <div>
+        <Link to="/sales" className="font-semibold text-navy hover:underline">
+          Back to sales
+        </Link>
+        <p className="mt-4 text-red-600">Could not load exit note. Check your connection and try again.</p>
+      </div>
+    );
   if (!d)
     return (
       <div>

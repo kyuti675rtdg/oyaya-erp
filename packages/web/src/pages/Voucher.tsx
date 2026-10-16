@@ -32,6 +32,15 @@ export function Voucher() {
 
   if (voucherQ.isLoading) return <Spinner label="Loading voucher..." />;
   const found = voucherQ.data;
+  if (voucherQ.isError)
+    return (
+      <div>
+        <Link to="/finance" className="font-semibold text-navy hover:underline">
+          Back to finance
+        </Link>
+        <p className="mt-4 text-red-600">Could not load voucher. Check your connection and try again.</p>
+      </div>
+    );
   if (!found)
     return (
       <div>
