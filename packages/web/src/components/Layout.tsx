@@ -370,6 +370,7 @@ export function Layout() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
   const now = useNow();
 
   const handleLogout = () => {
@@ -439,19 +440,54 @@ export function Layout() {
           </div>
 
           <div className="ml-auto flex items-center gap-2 sm:gap-3">
-            {/* Notification bell */}
-            <button
-              className="touch relative rounded-xl p-2.5 text-[#667085] transition-colors hover:bg-[#F4F6FA] hover:text-[#5B35D5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B35D5]"
-              aria-label="Notifications"
-            >
-              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5" aria-hidden="true">
-                <path d="M10 3a4.5 4.5 0 00-4.5 4.5c0 3-1 4-1.5 4.5h12C15.5 11.5 14.5 10.5 14.5 7.5A4.5 4.5 0 0010 3z" strokeLinejoin="round" />
-                <path d="M8 15a2 2 0 004 0" strokeLinecap="round" />
-              </svg>
-              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white ring-2 ring-white">
-                4
-              </span>
-            </button>
+            {/* Notification bell + popover */}
+            <div className="relative">
+              <button
+                onClick={() => setNotifOpen((v) => !v)}
+                className="touch relative rounded-xl p-2.5 text-[#667085] transition-colors hover:bg-[#F4F6FA] hover:text-[#5B35D5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B35D5]"
+                aria-label="Notifications"
+                aria-expanded={notifOpen}
+                aria-haspopup="true"
+              >
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5" aria-hidden="true">
+                  <path d="M10 3a4.5 4.5 0 00-4.5 4.5c0 3-1 4-1.5 4.5h12C15.5 11.5 14.5 10.5 14.5 7.5A4.5 4.5 0 0010 3z" strokeLinejoin="round" />
+                  <path d="M8 15a2 2 0 004 0" strokeLinecap="round" />
+                </svg>
+                <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white ring-2 ring-white">
+                  3
+                </span>
+              </button>
+              {notifOpen ? (
+                <>
+                  <button
+                    className="fixed inset-0 z-40 cursor-default"
+                    onClick={() => setNotifOpen(false)}
+                    aria-label="Close notifications"
+                    tabIndex={-1}
+                  />
+                  <div
+                    className="absolute right-0 z-50 mt-2 w-80 rounded-2xl border border-slate-100 bg-white p-2 shadow-[0_8px_30px_-6px_rgba(15,23,42,0.15)]"
+                    role="menu"
+                    aria-label="Notifications"
+                  >
+                    <p className="px-3 pb-1 pt-2 text-sm font-bold text-slate-800">Notifications</p>
+                    {[
+                      { dot: 'bg-amber-500', title: 'QC sample flagged', sub: 'Moisture above threshold — review required' },
+                      { dot: 'bg-rose-500', title: 'CAPA overdue', sub: 'Corrective action past due date' },
+                      { dot: 'bg-violet-500', title: 'Duket yield alert', sub: 'Yield below 78% on latest shift' }
+                    ].map((n) => (
+                      <div key={n.title} className="flex items-start gap-3 rounded-xl px-3 py-2.5 hover:bg-slate-50">
+                        <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${n.dot}`} />
+                        <div className="min-w-0">
+                          <p className="text-[13px] font-semibold text-slate-800">{n.title}</p>
+                          <p className="truncate text-xs text-slate-500">{n.sub}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : null}
+            </div>
 
             {/* App grid */}
             <button
