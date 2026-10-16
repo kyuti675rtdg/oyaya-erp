@@ -84,6 +84,44 @@
   .focus-ring-violet {
     @apply outline-none focus-visible:ring-2 focus-visible:ring-violet-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-white;
   }
+
+  /* Slow-drifting grain particles (login branding panel) */
+  .wheat-particle {
+    animation-name: wheat-drift;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  /* Slow rotating dashed ring around the login logo */
+  .spin-slow {
+    animation: rotate-360 28s linear infinite;
+  }
+}
+
+@keyframes wheat-drift {
+  0% {
+    transform: translateY(0) rotate(-8deg);
+    opacity: 0;
+  }
+  12% {
+    opacity: var(--wp-o, 0.2);
+  }
+  88% {
+    opacity: var(--wp-o, 0.2);
+  }
+  100% {
+    transform: translateY(-108vh) rotate(14deg);
+    opacity: 0;
+  }
+}
+
+@keyframes rotate-360 {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes fade-in-up {
@@ -127,7 +165,9 @@
   .bar-grow,
   .pulse-dot,
   .skeleton-shimmer::after,
-  .badge-critical-pulse {
+  .badge-critical-pulse,
+  .wheat-particle,
+  .spin-slow {
     animation: none !important;
   }
   .card-lift {
