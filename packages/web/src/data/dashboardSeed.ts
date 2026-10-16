@@ -15,6 +15,27 @@ export const SEED_KPIS = {
   quality: { value: 98.5, unit: '%', trendPct: 2 }
 };
 
+/** New 5-pillar executive KPI seed (distinct, non-overlapping). */
+export const SEED_PILLARS = {
+  intakeToday: { value: 1250, unit: 'Qt', sub: '3 Trucks Accepted', trendPct: 12 },
+  outputToday: { value: 980, unit: 'Qt', sub: 'Duket & Byproducts', trendPct: 8 },
+  extraction: { value: 78.6, unit: '%', sub: 'Target ≥ 78.0%', pass: true },
+  qualityPass: { value: 98.5, unit: '%', sub: '2-Hr Shift Checks • 0 Open CAPAs', trendPct: 2 },
+  payables: { value: 148250, unit: 'ETB', sub: '3 Vouchers Ready • Finance GL' }
+};
+
+/** Seed for the Shift & Milling Operations Live Monitor. */
+export const SEED_SHIFT_MONITOR = {
+  shiftName: 'Shift 1 (Morning 06:00–14:00)',
+  operator: 'Abebe K.',
+  nextLabCheck: 'In 24 Mins',
+  nextLabSub: '10:00 AM Sample Passed',
+  uptime: '95.8% Uptime',
+  uptimeSub: '18m Power Fluctuation logged',
+  blend: '50% Hard • 30% Soft • 20% Foreign',
+  blendSub: 'Batch PB-2025-0087'
+};
+
 export const SEED_PRODUCTION_CHART = {
   labels: ['Apr 6', 'Apr 7', 'Apr 8', 'Apr 9', 'Apr 10', 'Apr 11', 'Apr 12'],
   wheatReceived: [780, 920, 990, 930, 1120, 1060, 1250],
@@ -84,13 +105,13 @@ export interface SeedQualityPoint {
 }
 
 export const SEED_QUALITY_TREND: SeedQualityPoint[] = [
-  { label: 'Apr 6', gluten: 28, moisture: 72, impurity: 18, hectoliter: 12 },
-  { label: 'Apr 7', gluten: 30, moisture: 68, impurity: 20, hectoliter: 14 },
-  { label: 'Apr 8', gluten: 29, moisture: 70, impurity: 17, hectoliter: 13 },
-  { label: 'Apr 9', gluten: 31, moisture: 66, impurity: 19, hectoliter: 15 },
-  { label: 'Apr 10', gluten: 30, moisture: 69, impurity: 16, hectoliter: 14 },
-  { label: 'Apr 11', gluten: 32, moisture: 67, impurity: 18, hectoliter: 16 },
-  { label: 'Apr 12', gluten: 31, moisture: 65, impurity: 17, hectoliter: 15 }
+  { label: 'Apr 6', gluten: 31.2, moisture: 13.1, impurity: 2.3, hectoliter: 76.2 },
+  { label: 'Apr 7', gluten: 30.8, moisture: 13.4, impurity: 2.1, hectoliter: 75.8 },
+  { label: 'Apr 8', gluten: 31.5, moisture: 12.9, impurity: 2.4, hectoliter: 76.8 },
+  { label: 'Apr 9', gluten: 32.1, moisture: 13.2, impurity: 1.9, hectoliter: 77.1 },
+  { label: 'Apr 10', gluten: 30.5, moisture: 13.6, impurity: 2.2, hectoliter: 76.0 },
+  { label: 'Apr 11', gluten: 31.8, moisture: 13.0, impurity: 2.0, hectoliter: 76.5 },
+  { label: 'Apr 12', gluten: 31.4, moisture: 13.3, impurity: 2.1, hectoliter: 76.4 }
 ];
 
 export const SEED_PRODUCT_LINES = [
