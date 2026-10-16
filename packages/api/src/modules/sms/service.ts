@@ -4,7 +4,7 @@ import type { SmsLog } from '@prisma/client';
 import { config } from '../../config';
 import { audit } from '../../lib/audit';
 import { prisma } from '../../lib/prisma';
-import { smsQueue } from '../../lib/queues';
+import { smsQueue, tryEnqueue } from '../../lib/queues';
 
 const AFROMESSAGE_SEND_URL = 'https://api.afromessage.com/api/send';
 const AFROMESSAGE_BULK_SEND_URL = 'https://api.afromessage.com/api/bulk_send';
@@ -42,20 +42,9 @@ export async function queueSms(input: QueueSmsInput): Promise<SmsLog> {
     return created;
   });
 
-  await queueAdd('send', { smsLogId: log.id });
+  const enqueued = await tryEnqueue(smsQueue, 'send', { smsLogId: log.id });
+  if (!enqueued) console.warn('[sms] Redis unavailable — SMS left QUEUED:', log.id);
   return log;
-}
-
-/**
- * Best-effort enqueue: without Redis the SMS stays QUEUED in Postgres and the
- * request still succeeds. A worker with Redis drains the backlog later.
- */
-async function queueAdd(name: 'send' | 'bulk', data: Record<string, unknown>): Promise<void> {
-  try {
-    await smsQueue.add(name, data, { attempts: 3, backoff: { type: 'exponential', delay: 5000 } });
-  } catch (err) {
-    console.warn(`[sms] queue unavailable, SMS left QUEUED:`, (err as Error).message);
-  }
 }
 
 /** Queue one SMS per unique recipient. Delivered by a single bulk provider call. */
@@ -85,7 +74,8 @@ export async function queueBulkSms(input: QueueBulkSmsInput): Promise<SmsLog[]> 
     return created;
   });
 
-  await queueAdd('bulk', { smsLogIds: logs.map((l) => l.id) });
+  const enqueued = await tryEnqueue(smsQueue, 'bulk', { smsLogIds: logs.map((l) => l.id) });
+  if (!enqueued) console.warn('[sms] Redis unavailable — bulk SMS left QUEUED:', logs.length);
   return logs;
 }
 

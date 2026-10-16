@@ -3,21 +3,20 @@ import app from './app';
 import { config } from './config';
 import { prisma } from './lib/prisma';
 import { ensureDatabase } from './lib/ensureDatabase';
-import { redisConnection } from './lib/redis';
+import { pingRedis, redisConnection } from './lib/redis';
 import { initSocket } from './lib/socket';
 
 async function main(): Promise<void> {
   await ensureDatabase();
   await prisma.$connect();
   console.log('[api] connected to PostgreSQL');
-  try {
-    await redisConnection.ping();
-    console.log('[api] connected to Redis');
-  } catch (err) {
-    // Degraded mode (e.g. Render free tier without Redis): the API still serves;
-    // SMS jobs stay QUEUED in Postgres until a worker with Redis drains them.
-    console.warn('[api] Redis unavailable — running in degraded mode:', (err as Error).message);
-  }
+  // pingRedis races a timeout: a bare ping() hangs forever when Redis is down.
+  const redisOk = await pingRedis(5000);
+  console.log(
+    redisOk
+      ? '[api] connected to Redis'
+      : '[api] Redis unavailable — running in degraded mode (SMS stays QUEUED)',
+  );
 
   const server = http.createServer(app);
   initSocket(server);
