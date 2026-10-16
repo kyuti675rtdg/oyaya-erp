@@ -24,6 +24,9 @@ import { router as dashboardRouter } from './modules/dashboard/router';
 import { router as syncRouter } from './modules/sync/router';
 import { router as smsRouter, webhookRouter as afromessageWebhookRouter } from './modules/sms/router';
 import { router as attendanceRouter } from './modules/zkteco/router';
+import { router as moduleManagerRouter } from './modules/module-manager/router';
+import { router as apiMonitorRouter } from './modules/api-monitor/router';
+import { router as supportRouter } from './modules/support/router';
 import { admsRouter } from './modules/zkteco/adms';
 
 const app = express();
@@ -68,6 +71,9 @@ v1.use('/dashboard', dashboardRouter);
 v1.use('/sync', syncRouter);
 v1.use('/sms', smsRouter);
 v1.use('/attendance', attendanceRouter);
+v1.use('/module-manager', moduleManagerRouter);
+v1.use('/api-monitor', apiMonitorRouter);
+v1.use('/support', supportRouter);
 
 app.use('/api/v1', v1);
 

@@ -16,6 +16,9 @@ import { Finance } from './pages/Finance';
 import { Voucher } from './pages/Voucher';
 import { Payroll } from './pages/Payroll';
 import { Settings } from './pages/Settings';
+import { ModuleManager } from './pages/ModuleManager';
+import { ApiMonitor } from './pages/ApiMonitor';
+import { Support } from './pages/Support';
 
 export function App() {
   return (
@@ -126,6 +129,30 @@ export function App() {
           element={
             <ProtectedRoute claim="settings:read">
               <Settings />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/module-manager"
+          element={
+            <ProtectedRoute claim="settings:read">
+              <ModuleManager />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/api-monitor"
+          element={
+            <ProtectedRoute claim="settings:read">
+              <ApiMonitor />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/support"
+          element={
+            <ProtectedRoute claim="support:read">
+              <Support />
             </ProtectedRoute>
           }
         />

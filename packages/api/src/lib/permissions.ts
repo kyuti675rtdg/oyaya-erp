@@ -22,6 +22,9 @@ export const MODULES = [
   'sync',
   'sms',
   'attendance',
+  'settings',
+  'support',
+  'apimonitor',
 ] as const;
 
 export type ModuleName = (typeof MODULES)[number];

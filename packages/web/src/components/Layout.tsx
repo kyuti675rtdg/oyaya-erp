@@ -49,7 +49,12 @@ const NAV: NavSection[] = [
   },
   {
     title: 'System',
-    items: [{ to: '/settings', label: 'Settings', claim: ['settings:read'] }]
+    items: [
+      { to: '/settings', label: 'Settings', claim: ['settings:read'] },
+      { to: '/module-manager', label: 'Module Manager', claim: ['settings:read'] },
+      { to: '/api-monitor', label: 'API Monitor', claim: ['settings:read'] },
+      { to: '/support', label: 'Support & Docs', claim: ['support:read'] },
+    ]
   }
 ];
 

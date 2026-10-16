@@ -13,6 +13,7 @@ const TABLES = {
   salesInvoice: 'SalesInvoice',
   cashReceipt: 'CashReceipt',
   journalEntry: 'JournalEntry',
+  supportTicket: 'SupportTicket',
 } as const;
 
 export type DocTable = keyof typeof TABLES;

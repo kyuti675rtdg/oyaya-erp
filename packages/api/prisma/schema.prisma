@@ -40,6 +40,12 @@ model User {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   auditLogs    AuditLog[]
+  reportedTickets SupportTicket[] @relation("TicketReporter")
+  assignedTickets SupportTicket[] @relation("TicketAssignee")
+  ticketComments  TicketComment[]
+  // Module 18: MFA (TOTP)
+  mfaEnabled   Boolean   @default(false)
+  mfaSecret    String?
 }
 
 model Role {
@@ -859,4 +865,86 @@ model AuditLog {
   createdAt  DateTime @default(now())
 
   @@index([entityType, entityId])
+}
+
+// ─── Module 19: Module Manager (Feature Toggles) ────────────────────
+model ModuleToggle {
+  id          String   @id @default(cuid())
+  moduleKey   String   @unique // e.g. 'procurement', 'fleet', 'maintenance'
+  name        String
+  description String?
+  enabled     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ─── Module 20: API Management & Monitoring ─────────────────────────
+model ApiIntegration {
+  id            String   @id @default(cuid())
+  name          String   // 'AfroMessage SMS', 'ZKTeco ADMS'
+  type          String   // 'sms' | 'biometric' | 'webhook' | 'custom'
+  baseUrl       String?
+  status        String   @default("unknown") // 'online' | 'offline' | 'degraded' | 'unknown'
+  lastCheckedAt DateTime?
+  latencyMs     Int?
+  uptimePct     Float?   // rolling uptime percentage
+  config        Json?    // non-secret config: rate limits, webhook settings
+  enabled       Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  healthLogs    ApiHealthLog[]
+}
+
+model ApiHealthLog {
+  id            String         @id @default(cuid())
+  integrationId String
+  integration   ApiIntegration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+  status        String         // 'online' | 'offline' | 'degraded'
+  latencyMs     Int?
+  message       String?
+  createdAt     DateTime       @default(now())
+
+  @@index([integrationId, createdAt])
+}
+
+// ─── Module 21: Support & Documentation ─────────────────────────────
+model SupportTicket {
+  id          String   @id @default(cuid())
+  ticketNo    String   @unique
+  title       String
+  description String
+  category    String   // 'technical' | 'hardware' | 'operational'
+  priority    String   @default("medium") // 'low' | 'medium' | 'high' | 'urgent'
+  status      String   @default("open")   // 'open' | 'in_progress' | 'resolved' | 'closed'
+  reporterId  String
+  reporter    User     @relation("TicketReporter", fields: [reporterId], references: [id])
+  assigneeId  String?
+  assignee    User?    @relation("TicketAssignee", fields: [assigneeId], references: [id])
+  comments    TicketComment[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status, priority])
+}
+
+model TicketComment {
+  id        String        @id @default(cuid())
+  ticketId  String
+  ticket    SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User          @relation(fields: [authorId], references: [id])
+  body      String
+  createdAt DateTime      @default(now())
+}
+
+model DocArticle {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     String
+  content   String   // markdown SOP content
+  module    String?  // ERP module key this doc belongs to
+  role      String?  // role name filter, null = all roles
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

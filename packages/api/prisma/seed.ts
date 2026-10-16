@@ -17,7 +17,7 @@ const ROLES: RoleSeed[] = [
   { name: 'Owner / CEO', grants: ['ALL'] },
   {
     name: 'System Administrator',
-    grants: ['master:view', 'master:manage', 'master:approve', 'dashboard:view'],
+    grants: ['master:view', 'master:manage', 'master:approve', 'dashboard:view', 'settings:view', 'settings:manage', 'support:view', 'support:create', 'support:manage', 'apimonitor:view', 'apimonitor:manage'],
   },
   {
     name: 'Quality / Lab Head',
@@ -310,6 +310,85 @@ async function main(): Promise<void> {
       companyId: company.id,
     },
   });
+
+  // ── Module 19: Module toggles (all 21 modules) ────────────────────
+  const MODULE_TOGGLES = [
+    { moduleKey: 'master', name: 'Master Data Management', description: 'Company info, users, roles, products, suppliers, customers', enabled: true },
+    { moduleKey: 'procurement', name: 'Procurement & Vendor Management', description: 'Wheat intake, quality gate, vendor payables', enabled: true },
+    { moduleKey: 'storage', name: 'Storage & Conditioning', description: 'Dry storage pool and wet conditioning tanks', enabled: true },
+    { moduleKey: 'production', name: 'Production & Blending', description: 'Batches, shifts, washing, output tracking', enabled: true },
+    { moduleKey: 'qc', name: 'Quality Control', description: 'Lab checks, thresholds, approvals', enabled: true },
+    { moduleKey: 'capa', name: 'Nonconformity & CAPA', description: 'Corrective actions and dual sign-off', enabled: true },
+    { moduleKey: 'hygiene', name: 'Sanitation & Hygiene', description: 'Equipment and area cleaning checklists', enabled: true },
+    { moduleKey: 'pest', name: 'Pest & Termite Control', description: 'Inspections, treatments, alerts', enabled: true },
+    { moduleKey: 'maintenance', name: 'Maintenance & Spare Parts', description: 'Machine checklists and spare parts', enabled: true },
+    { moduleKey: 'fg', name: 'Finished Goods', description: 'Multi-grade inventory and packaging', enabled: true },
+    { moduleKey: 'warehouse', name: 'Warehouse Management', description: 'Stock movements and transfers', enabled: true },
+    { moduleKey: 'traceability', name: 'Traceability', description: 'Farm-to-bag genealogy lookup', enabled: true },
+    { moduleKey: 'sales', name: 'Sales & Distribution', description: 'Orders, dispatch, invoices, receipts', enabled: true },
+    { moduleKey: 'finance', name: 'Finance & Accounting', description: 'GL, payables, receivables, reports', enabled: true },
+    { moduleKey: 'payroll', name: 'HR & Payroll', description: 'Employees, piece-rate, driver trips, payroll runs', enabled: true },
+    { moduleKey: 'fleet', name: 'Fleet & Logistics', description: 'Vehicle registry and trip tracking', enabled: true },
+    { moduleKey: 'dashboard', name: 'Dashboards & Reporting', description: 'KPI cockpits and custom reports', enabled: true },
+    { moduleKey: 'settings', name: 'System Settings & Governance', description: 'RBAC, users, audit log, MFA', enabled: true },
+    { moduleKey: 'apimonitor', name: 'API Management & Monitoring', description: 'Integration health and status', enabled: true },
+    { moduleKey: 'support', name: 'Support & Documentation', description: 'Helpdesk tickets and SOP library', enabled: true },
+  ];
+  for (const m of MODULE_TOGGLES) {
+    await prisma.moduleToggle.upsert({
+      where: { moduleKey: m.moduleKey },
+      update: { name: m.name, description: m.description },
+      create: m,
+    });
+  }
+
+  // ── Module 20: API integrations ──────────────────────────────────
+  const API_INTEGRATIONS = [
+    { name: 'AfroMessage SMS Gateway', type: 'sms', baseUrl: 'https://api.afromessage.com', enabled: true },
+    { name: 'ZKTeco Biometric ADMS', type: 'biometric', baseUrl: null, enabled: true },
+  ];
+  for (const a of API_INTEGRATIONS) {
+    await prisma.apiIntegration.upsert({
+      where: { id: `seed-${a.type}` },
+      update: { name: a.name, baseUrl: a.baseUrl },
+      create: { id: `seed-${a.type}`, name: a.name, type: a.type, baseUrl: a.baseUrl, enabled: a.enabled },
+    });
+  }
+
+  // ── Module 21: Starter documentation ─────────────────────────────
+  const DOCS = [
+    {
+      slug: 'getting-started',
+      title: 'Getting Started with Oyaya ERP',
+      module: null, role: null, sortOrder: 0,
+      content: '# Getting Started\n\nWelcome to the Oyaya Flour Factory ERP system.\n\n## Sign In\nUse the username and password provided by your administrator.\n\n## Navigation\nUse the sidebar to access modules. Your visible modules depend on your role.\n\n## Offline Mode\nThe app works offline. Entries you create while offline are queued and synced automatically when connectivity returns.',
+    },
+    {
+      slug: 'procurement-sop',
+      title: 'Wheat Intake SOP',
+      module: 'procurement', role: null, sortOrder: 10,
+      content: '# Wheat Intake Standard Operating Procedure\n\n## Steps\n1. Record truck plate number, supplier, and wheat category.\n2. Count bags (1 bag = 1 quintal).\n3. Take a lab sample and record gluten, moisture, impurity, hectoliter weight, and germination.\n4. The Quality Head reviews flagged intakes and issues the final Accept/Reject decision.\n5. On acceptance, an Accounts Payable entry is generated automatically.',
+    },
+    {
+      slug: 'production-sop',
+      title: 'Production Batch SOP',
+      module: 'production', role: null, sortOrder: 20,
+      content: '# Production Batch SOP\n\n## Steps\n1. Define the batch ID and target product before milling.\n2. Enter the wheat blend ratio (soft / hard / foreign percentages).\n3. Log shift start/end times and any downtime with reasons.\n4. Record output quantities per product grade each shift.\n5. The system computes extraction rate and flags Duket output below 78%.',
+    },
+    {
+      slug: 'qc-sop',
+      title: 'Quality Control SOP',
+      module: 'qc', role: null, sortOrder: 30,
+      content: '# Quality Control SOP\n\n## In-Process Checks\nLab technicians perform flour quality checks every 2 hours during active shifts.\n\n## Parameters\nImpurity, wheat moisture (before/after conditioning), flour moisture, wet/dry gluten, elasticity, ash, color, granulation.\n\n## Approval Gate\nBatches require quality approval before entering finished-goods inventory.',
+    },
+  ];
+  for (const d of DOCS) {
+    await prisma.docArticle.upsert({
+      where: { slug: d.slug },
+      update: { title: d.title, content: d.content },
+      create: d,
+    });
+  }
 
   // ── QC thresholds ────────────────────────────────────────────────
   for (const t of QC_THRESHOLDS) {

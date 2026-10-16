@@ -58,5 +58,22 @@ export const E = {
 
   vehicles: '/fleet/vehicles',
 
-  syncBatch: '/sync/batch'
+  syncBatch: '/sync/batch',
+
+  // Module 19: Module Manager
+  moduleToggles: '/module-manager',
+  moduleToggle: (id: string) => `/module-manager/${id}/toggle`,
+
+  // Module 20: API Monitor
+  apiIntegrations: '/api-monitor',
+  apiIntegration: (id: string) => `/api-monitor/${id}`,
+  apiHealthCheck: (id: string) => `/api-monitor/${id}/check`,
+  apiHealthHistory: (id: string) => `/api-monitor/${id}/health`,
+
+  // Module 21: Support & Docs
+  tickets: '/support/tickets',
+  ticket: (id: string) => `/support/tickets/${id}`,
+  ticketComments: (id: string) => `/support/tickets/${id}/comments`,
+  docs: '/support/docs',
+  doc: (slug: string) => `/support/docs/${slug}`,
 } as const;
