@@ -247,7 +247,7 @@ function TrendChart({ data }: { data: TrendPoint[] }) {
       {ticks.map((v) => (
         <g key={v}>
           <line x1={padL} y1={y(v)} x2={W - padR} y2={y(v)} stroke="#EDEFF5" strokeWidth={1} />
-          <text x={padL - 8} y={y(v) + 4} textAnchor="end" fontSize={11} fill="#98A0B3">
+          <text x={padL - 8} y={y(v) + 4} textAnchor="end" fontSize={11} fill="#98A0B3" style={{ fontVariantNumeric: 'tabular-nums' }}>
             {v.toLocaleString('en-US')}
           </text>
         </g>
@@ -320,7 +320,7 @@ function QualityTrendChart({ data }: { data: QualityPoint[] }) {
       {[0, 25, 50, 75, 100].map((v) => (
         <g key={v}>
           <line x1={padL} y1={y(v)} x2={W - padR} y2={y(v)} stroke="#EDEFF5" strokeWidth={1} />
-          <text x={padL - 8} y={y(v) + 4} textAnchor="end" fontSize={11} fill="#98A0B3">
+          <text x={padL - 8} y={y(v) + 4} textAnchor="end" fontSize={11} fill="#98A0B3" style={{ fontVariantNumeric: 'tabular-nums' }}>
             {v}%
           </text>
         </g>
@@ -374,6 +374,19 @@ interface FeedItem {
 }
 
 // ─── Dashboard ──────────────────────────────────────────────────────────────
+
+/** Month-over-month trend indicator for performance tiles. Omitted when no comparison data. */
+function PerfTrend({ value, invert = false }: { value: number | null; invert?: boolean }) {
+  if (value === null || !Number.isFinite(value)) return null;
+  const up = value >= 0;
+  // For "lower is better" metrics (downtime), invert the color semantics.
+  const good = invert ? !up : up;
+  return (
+    <p className={`tnum mt-1 text-xs font-bold ${good ? 'text-emerald-600' : 'text-red-500'}`}>
+      {up ? '↑' : '↓'} {Math.abs(value).toFixed(0)}%
+    </p>
+  );
+}
 
 export function Dashboard() {
   const { user } = useAuth();
@@ -582,40 +595,71 @@ export function Dashboard() {
   }, [details]);
   const totalFlourWeek = productSegments.reduce((s, seg) => s + seg.value, 0);
 
-  // ── Production performance (this month) ────────────────────────────────────
+  // ── Production performance (this month vs previous month) ────────────────────
   const perf = useMemo(() => {
-    const monthShifts = details.filter((sh) => new Date(sh.shiftDate ?? sh.startedAt).getTime() >= monthStartMs);
-    const flour = monthShifts.reduce((s, sh) => s + shiftFlour(sh), 0);
-    const wheat = batchesQ.isSuccess
-      ? batches
-          .filter((b) => new Date(b.createdAt).getTime() >= monthStartMs)
-          .reduce((s, b) => s + safeNum(b.wheatWeighedQ), 0)
-      : 0;
-    const duket = monthShifts.reduce(
-      (s, sh) =>
-        s +
-        (sh.outputs ?? [])
-          .filter((o) => (o.product?.name ?? '').toLowerCase().includes('duket'))
-          .reduce((a, o) => a + safeNum(o.quintals), 0),
-      0
-    );
-    let downMin = 0;
-    let workMin = 0;
-    for (const sh of monthShifts) {
-      downMin += safeNum(sh.downtimeMin);
-      const st = new Date(sh.startedAt).getTime();
-      const en = sh.endedAt ? new Date(sh.endedAt).getTime() : NaN;
-      if (Number.isFinite(st) && Number.isFinite(en) && en > st) workMin += (en - st) / 60000;
-    }
+    const prevMonthStart = new Date(monthStart);
+    prevMonthStart.setMonth(prevMonthStart.getMonth() - 1);
+    const prevMonthStartMs = prevMonthStart.getTime();
+
+    const calc = (fromMs: number, toMs: number) => {
+      const shifts = details.filter((sh) => {
+        const t = new Date(sh.shiftDate ?? sh.startedAt).getTime();
+        return t >= fromMs && t < toMs;
+      });
+      const flour = shifts.reduce((s, sh) => s + shiftFlour(sh), 0);
+      const wheat = batchesQ.isSuccess
+        ? batches
+            .filter((b) => {
+              const t = new Date(b.createdAt).getTime();
+              return t >= fromMs && t < toMs;
+            })
+            .reduce((s, b) => s + safeNum(b.wheatWeighedQ), 0)
+        : 0;
+      const duket = shifts.reduce(
+        (s, sh) =>
+          s +
+          (sh.outputs ?? [])
+            .filter((o) => (o.product?.name ?? '').toLowerCase().includes('duket'))
+            .reduce((a, o) => a + safeNum(o.quintals), 0),
+        0
+      );
+      let downMin = 0;
+      let workMin = 0;
+      for (const sh of shifts) {
+        downMin += safeNum(sh.downtimeMin);
+        const st = new Date(sh.startedAt).getTime();
+        const en = sh.endedAt ? new Date(sh.endedAt).getTime() : NaN;
+        if (Number.isFinite(st) && Number.isFinite(en) && en > st) workMin += (en - st) / 60000;
+      }
+      return {
+        flour,
+        extraction: wheat > 0 ? (flour / wheat) * 100 : null,
+        duketYield: flour > 0 ? (duket / flour) * 100 : null,
+        downtimePct: workMin > 0 ? (downMin / workMin) * 100 : null,
+        hasData: shifts.length > 0 || flour > 0
+      };
+    };
+
+    const cur = calc(monthStartMs, nowMs);
+    const prev = calc(prevMonthStartMs, monthStartMs);
     return {
-      flour,
-      extraction: wheat > 0 ? (flour / wheat) * 100 : null,
-      duketYield: flour > 0 ? (duket / flour) * 100 : null,
-      downtimePct: workMin > 0 ? (downMin / workMin) * 100 : null,
-      hasData: monthShifts.length > 0 || flour > 0
+      ...cur,
+      flourTrend: pctChange(cur.flour, prev.flour),
+      extractionTrend:
+        cur.extraction !== null && prev.extraction !== null
+          ? pctChange(cur.extraction, prev.extraction)
+          : null,
+      duketYieldTrend:
+        cur.duketYield !== null && prev.duketYield !== null
+          ? pctChange(cur.duketYield, prev.duketYield)
+          : null,
+      downtimeTrend:
+        cur.downtimePct !== null && prev.downtimePct !== null
+          ? pctChange(cur.downtimePct, prev.downtimePct)
+          : null
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [details, batchesQ.isSuccess, batches]);
+  }, [details, batchesQ.isSuccess, batches, monthStartMs, nowMs]);
 
   // ── Quality trend (last 7 days, daily averages) ────────────────────────────
   const qualityTrend = useMemo<QualityPoint[]>(() => {
@@ -789,8 +833,8 @@ export function Dashboard() {
             style={{ background: 'linear-gradient(90deg, #fff 30%, rgba(255,255,255,0.85) 55%, rgba(255,255,255,0) 100%)' }}
             aria-hidden="true"
           />
-          <div className="relative p-6 md:p-7">
-            <h1 className="text-2xl font-extrabold tracking-tight text-ink">
+          <div className="relative p-5 md:p-6">
+            <h1 className="text-[22px] font-extrabold tracking-tight text-ink">
               Welcome back, {firstName}!
             </h1>
             <p className="mt-1.5 max-w-md text-sm text-slate-500">
@@ -1002,7 +1046,7 @@ export function Dashboard() {
                           <span className="ml-2 font-bold text-ink">{pct.toFixed(0)}%</span>
                         </span>
                       </div>
-                      <div className="h-1.5 overflow-hidden rounded-full bg-slate-100">
+                      <div className="h-2 overflow-hidden rounded-full bg-slate-100">
                         <div
                           className="h-full rounded-full transition-all duration-700"
                           style={{ width: `${pct}%`, backgroundColor: s.color }}
@@ -1046,7 +1090,7 @@ export function Dashboard() {
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[380px] text-sm">
                   <thead>
-                    <tr className="text-left text-[11px] font-semibold text-slate-400">
+                    <tr className="text-left text-[10px] font-semibold uppercase tracking-wide text-slate-400">
                       <th className="pb-2 pr-2 font-medium">Date</th>
                       <th className="pb-2 pr-2 font-medium">Supplier</th>
                       <th className="pb-2 pr-2 font-medium">Wheat Type</th>
@@ -1148,6 +1192,7 @@ export function Dashboard() {
                 </div>
                 <p className="mt-2 text-xs text-slate-500">Total Production</p>
                 <p className="tnum text-lg font-extrabold text-ink">{fmtQ(perf.flour)} Qt</p>
+                <PerfTrend value={perf.flourTrend} />
               </div>
               <div className="rounded-xl bg-[#F7F8FC] p-3.5">
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-violet-100 text-violet-600">
@@ -1157,6 +1202,7 @@ export function Dashboard() {
                 <p className="tnum text-lg font-extrabold text-ink">
                   {perf.extraction !== null ? `${perf.extraction.toFixed(1)}%` : '—'}
                 </p>
+                <PerfTrend value={perf.extractionTrend} />
               </div>
               <div className="rounded-xl bg-[#F7F8FC] p-3.5">
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-amber-100 text-amber-500">
@@ -1166,6 +1212,7 @@ export function Dashboard() {
                 <p className="tnum text-lg font-extrabold text-ink">
                   {perf.duketYield !== null ? `${perf.duketYield.toFixed(1)}%` : '—'}
                 </p>
+                <PerfTrend value={perf.duketYieldTrend} />
               </div>
               <div className="rounded-xl bg-[#F7F8FC] p-3.5">
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-red-100 text-red-500">
@@ -1175,6 +1222,7 @@ export function Dashboard() {
                 <p className="tnum text-lg font-extrabold text-ink">
                   {perf.downtimePct !== null ? `${perf.downtimePct.toFixed(1)}%` : '—'}
                 </p>
+                <PerfTrend value={perf.downtimeTrend} invert />
               </div>
             </div>
           )}

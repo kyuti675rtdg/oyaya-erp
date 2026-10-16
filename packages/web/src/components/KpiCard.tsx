@@ -50,7 +50,7 @@ export function KpiCard({
         </div>
         <div className="min-w-0 flex-1">
           <p className="truncate text-[13px] font-medium text-slate-500">{label}</p>
-          <p className="tnum mt-1 truncate text-[26px] font-extrabold leading-none tracking-tight text-ink">
+          <p className="tnum mt-1 truncate text-[28px] font-extrabold leading-none tracking-tight text-ink">
             {value}
           </p>
         </div>
