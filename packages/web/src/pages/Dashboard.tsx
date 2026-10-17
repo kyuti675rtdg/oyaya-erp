@@ -110,7 +110,7 @@ function categoryLabel(c: string): string {
 }
 
 const cardShell =
-  'bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-700 shadow-[0_2px_12px_-4px_rgba(15,23,42,0.05)]';
+  'bg-[#FAF9FF] dark:bg-[#2A2640] rounded-2xl p-5 border border-violet-100/60 dark:border-white/5 shadow-[0_2px_12px_-4px_rgba(124,58,237,0.08)]';
 
 function DemoBadge() {
   return (
@@ -125,9 +125,14 @@ function TrendText({ pct, invert = false }: { pct: number | null; invert?: boole
   const up = pct >= 0;
   const good = invert ? !up : up;
   const flat = pct === 0;
+  const tone = flat
+    ? 'bg-violet-100 text-violet-700 dark:bg-white/10 dark:text-slate-300'
+    : good
+      ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400'
+      : 'bg-rose-100 text-rose-600 dark:bg-rose-500/15 dark:text-rose-400';
   return (
     <span
-      className={`font-bold tabular-nums ${flat ? 'text-slate-500' : good ? 'text-emerald-600' : 'text-rose-500'}`}
+      className={`inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-[11px] font-bold tabular-nums ${tone}`}
     >
       {flat ? '→' : up ? '↑' : '↓'} {Math.abs(pct).toFixed(0)}%
     </span>
@@ -150,14 +155,14 @@ function CardHeader({
   demo?: boolean;
 }) {
   return (
-    <div className="mb-4 flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-4">
+    <div className="mb-4 flex items-center justify-between border-b border-violet-100/60 dark:border-white/5 pb-4">
       <div className="flex items-center gap-2.5">
-        <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200/60 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+        <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-violet-100 dark:bg-white/10 text-violet-700 dark:text-violet-300">
           {icon}
         </span>
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-sm font-bold text-slate-800 dark:text-slate-100">{title}</h2>
+            <h2 className="text-sm font-bold text-slate-900 dark:text-white">{title}</h2>
             {demo ? <DemoBadge /> : null}
           </div>
           {subtitle ? <p className="text-xs text-slate-500 dark:text-slate-400">{subtitle}</p> : null}
@@ -185,41 +190,39 @@ interface KpiSpec {
 }
 
 const PILL_TONES: Record<string, string> = {
-  emerald: 'bg-emerald-50 text-emerald-700',
-  amber: 'bg-amber-50 text-amber-700',
-  slate: 'bg-slate-100 text-slate-500',
-  rose: 'bg-rose-50 text-rose-600'
+  emerald: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400',
+  amber: 'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400',
+  slate: 'bg-violet-100 text-violet-700 dark:bg-white/10 dark:text-slate-300',
+  rose: 'bg-rose-100 text-rose-600 dark:bg-rose-500/15 dark:text-rose-400'
 };
 
 function KpiCard({ spec }: { spec: KpiSpec }) {
   const inner = (
-    <div className="flex h-full flex-col justify-between rounded-2xl border border-slate-200/70 bg-white dark:bg-slate-800 p-5 shadow-[0_1px_3px_rgba(15,23,42,0.03),0_4px_12px_rgba(15,23,42,0.03)] transition-all hover:border-slate-300/80 hover:shadow-md">
+    <div className="flex h-full flex-col rounded-2xl border border-violet-100/60 dark:border-white/5 bg-violet-50/70 dark:bg-white/5 p-5 shadow-[0_2px_12px_-4px_rgba(124,58,237,0.08)] transition-all hover:border-violet-200 dark:hover:border-white/10 hover:shadow-md">
       <div className="flex items-start justify-between gap-3">
-        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">{spec.label}</p>
-        <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${spec.iconTone}`}>
+        <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${spec.iconTone}`}>
           {spec.icon}
         </span>
+        <div className="flex shrink-0 items-center gap-1.5">
+          {spec.demo ? <DemoBadge /> : null}
+          {spec.pill ? (
+            <span
+              className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-bold tabular-nums ${PILL_TONES[spec.pill.tone]}`}
+            >
+              {spec.pill.text}
+            </span>
+          ) : (
+            <TrendText pct={spec.trendPct ?? null} />
+          )}
+        </div>
       </div>
-      <p className="mt-2 truncate text-2xl font-extrabold tabular-nums tracking-tight text-slate-900 dark:text-slate-100">
+      <p className="mt-3 truncate text-3xl font-extrabold tabular-nums tracking-tight text-slate-900 dark:text-white">
         {spec.value} <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">{spec.unit}</span>
-        {spec.demo ? (
-          <span className="ml-2 align-middle">
-            <DemoBadge />
-          </span>
-        ) : null}
       </p>
-      <div className="mt-3 flex items-center gap-1.5 text-xs">
-        {spec.pill ? (
-          <span
-            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold ${PILL_TONES[spec.pill.tone]}`}
-          >
-            {spec.pill.text}
-          </span>
-        ) : (
-          <TrendText pct={spec.trendPct ?? null} />
-        )}
-        {spec.sub ? <span className="truncate text-[11px] text-slate-500 dark:text-slate-400">{spec.sub}</span> : null}
-      </div>
+      <p className="mt-1 text-xs font-medium text-violet-900/60 dark:text-slate-400">{spec.label}</p>
+      {spec.sub ? (
+        <p className="mt-1 truncate text-[11px] text-slate-500 dark:text-slate-400">{spec.sub}</p>
+      ) : null}
     </div>
   );
   return spec.to ? (
@@ -261,34 +264,13 @@ function displayFirstName(user: { name?: string | null; email?: string | null } 
 
 function WelcomeBanner({ firstName }: { firstName: string | null }) {
   return (
-    <div
-      className={`${cardShell} relative col-span-12 flex min-h-[110px] flex-col justify-center overflow-hidden !p-6 lg:col-span-7`}
-    >
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            'radial-gradient(ellipse 60% 90% at 88% 50%, rgba(245,158,11,0.18) 0%, rgba(245,158,11,0.05) 45%, transparent 70%), linear-gradient(90deg, #F8FAFC 0%, #FEF9EC 55%, #FFFDF7 100%)'
-        }}
-        aria-hidden="true"
-      />
-      <svg
-        className="pointer-events-none absolute -right-6 top-1/2 h-40 w-40 -translate-y-1/2 text-amber-200/40"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-        aria-hidden="true"
-      >
-        <path d="M12 22V9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-        <path d="M12 9C12 5.5 9.5 3 6 3c0 3.5 2.5 6 6 6zM12 9c0-3.5 2.5-6 6-6 0 3.5-2.5 6-6 6zM12 14c0-3.5-2.5-6-6-6 0 3.5 2.5 6 6 6zM12 14c0-3.5 2.5-6 6-6 0 3.5-2.5 6-6 6z" />
-      </svg>
-      <div className="relative">
-        <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">
-          Welcome back{firstName ? `, ${firstName}` : ''}!
-        </h1>
-        <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
-          Here&rsquo;s what&rsquo;s happening at Oyaya Flour Mill today.
-        </p>
-      </div>
+    <div className="col-span-12 px-1 py-1 lg:col-span-7">
+      <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+        Hi{firstName ? `, ${firstName}` : ' there'}!
+      </h1>
+      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        This is your flour mill overview so far
+      </p>
     </div>
   );
 }
@@ -298,7 +280,7 @@ function ProductionStatusCard({ activeBatches, demo }: { activeBatches: number |
   return (
     <Link
       to="/production"
-      className={`${cardShell} col-span-12 flex items-center gap-4 !p-5 transition-all hover:border-slate-200 sm:col-span-6 lg:col-span-3`}
+      className={`${cardShell} col-span-12 flex items-center gap-4 !p-5 transition-all hover:border-violet-200 dark:hover:border-white/10 sm:col-span-6 lg:col-span-3`}
     >
       <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-violet-600 text-white shadow-md shadow-violet-200">
         <Package size={22} strokeWidth={2} />
@@ -364,17 +346,17 @@ function ProductionOverview({
           <>
             <div className="hidden items-center gap-3 text-xs font-medium text-slate-600 dark:text-slate-300 sm:flex">
               <span className="inline-flex items-center gap-1.5">
-                <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#7C3AED]" />
+                <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#A78BFA]" />
                 Flour Produced (Qt)
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#0EA5E9]" />
+                <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#4C1D95]" />
                 Wheat Received (Qt)
               </span>
             </div>
             <button
               type="button"
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-2.5 py-1 text-xs font-semibold text-slate-600 dark:text-slate-300"
+              className="inline-flex items-center gap-1.5 rounded-full border border-violet-200 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-1 text-xs font-semibold text-violet-900 dark:text-slate-300"
             >
               Last 7 Days <ChevronDown size={14} />
             </button>
@@ -422,11 +404,11 @@ function ProductionOverview({
             <Area
               type="monotone"
               dataKey="wheat"
-              stroke="#0EA5E9"
+              stroke="#A78BFA"
               strokeWidth={2}
               fill="none"
               fillOpacity={0}
-              dot={{ r: 3.5, fill: '#0EA5E9', strokeWidth: 0 }}
+              dot={{ r: 3.5, fill: '#A78BFA', strokeWidth: 0 }}
               activeDot={{ r: 5 }}
             />
             <Area
@@ -470,6 +452,11 @@ function ProductOutputDonut({
         title="Product Output (Today)"
         subtitle="Measured in Quintals (1 Qt = 100 kg)"
         demo={demo}
+        action={
+          <span className="rounded-full border border-violet-200 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-1 text-xs font-semibold text-violet-900 dark:text-slate-300">
+            All Products
+          </span>
+        }
       />
       <div className="grid grid-cols-12 items-center gap-2">
         <div className="relative col-span-12 flex min-h-[190px] items-center justify-center overflow-visible sm:col-span-5">
@@ -501,10 +488,10 @@ function ProductOutputDonut({
             </PieChart>
           </ResponsiveContainer>
           <div className="pointer-events-none absolute flex max-w-[110px] flex-col items-center justify-center text-center">
-            <p className="text-lg font-extrabold tabular-nums text-slate-900 dark:text-slate-100">
+            <p className="text-2xl font-extrabold tabular-nums tracking-tight text-slate-900 dark:text-white">
               {total.toLocaleString('en-US')} Qt
             </p>
-            <p className="text-[10px] font-semibold uppercase leading-tight tracking-wider text-slate-500 dark:text-slate-400">
+            <p className="text-[11px] font-medium leading-tight text-violet-900/50 dark:text-slate-400">
               Total Output
             </p>
           </div>
@@ -513,7 +500,7 @@ function ProductOutputDonut({
           {segments.map((s) => (
             <div
               key={s.name}
-              className="flex items-center justify-between border-b border-slate-50 pb-1.5 text-xs last:border-0"
+              className="flex items-center justify-between border-b border-violet-100/60 dark:border-white/5 pb-1.5 text-xs last:border-0"
             >
               <span className="inline-flex min-w-0 items-center gap-2">
                 <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: s.color }} />
@@ -610,7 +597,7 @@ function QuickAccessCatalog() {
           </Link>
         ))}
       </div>
-      <div className="my-4 border-t border-slate-100 dark:border-slate-700" />
+      <div className="my-4 border-t border-violet-100/60 dark:border-white/5" />
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Package size={15} className="text-violet-600" />
@@ -690,10 +677,10 @@ function StockLevels({ rows, demo }: { rows: StockRow[]; demo: boolean }) {
                     <span className="ml-2 font-bold text-slate-800 dark:text-slate-100">{pct.toFixed(0)}%</span>
                   </span>
                 </div>
-                <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
+                <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-violet-100/70 dark:bg-white/10">
                   <div
                     className="h-full rounded-full transition-all duration-700"
-                    style={{ width: `${pct}%`, backgroundColor: r.color }}
+                    style={{ width: `${pct}%`, background: 'linear-gradient(90deg, #4C1D95, #7C3AED 55%, #A78BFA)' }}
                   />
                 </div>
               </div>
@@ -727,38 +714,38 @@ function RecentProcurement({ rows, demo }: { rows: ProcRow[]; demo: boolean }) {
       <div className="overflow-x-auto">
         <table className="w-full border-collapse text-left">
           <thead>
-            <tr className="border-y border-slate-100 dark:border-slate-700 bg-slate-50/70">
+            <tr className="border-y border-violet-100/60 dark:border-white/5 bg-violet-50/50 dark:bg-white/5">
               {['Date', 'Supplier', 'Wheat Type', 'Qty (Qt)', 'Status'].map((h) => (
                 <th
                   key={h}
-                  className="px-2.5 py-2 text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400"
+                  className="px-2.5 py-2 text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500"
                 >
                   {h}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-50">
+          <tbody className="divide-y divide-violet-100/60 dark:divide-white/5">
             {rows.map((r, i) => (
-              <tr key={`${r.supplier}-${i}`} className="transition-colors hover:bg-slate-50/60">
-                <td className="whitespace-nowrap px-2.5 py-2.5 text-xs tabular-nums text-slate-500 dark:text-slate-400">
+              <tr key={`${r.supplier}-${i}`} className="transition-colors hover:bg-violet-50/50 dark:hover:bg-white/5">
+                <td className="whitespace-nowrap px-2.5 py-3 text-xs tabular-nums text-slate-500 dark:text-slate-400">
                   {r.date}
                 </td>
-                <td className="max-w-[150px] truncate px-2.5 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-200">
+                <td className="max-w-[150px] truncate px-2.5 py-3 text-xs font-semibold text-slate-700 dark:text-slate-200">
                   {r.supplier}
                 </td>
-                <td className="px-2.5 py-2.5 text-xs text-slate-500 dark:text-slate-400">{r.wheatType}</td>
-                <td className="px-2.5 py-2.5 text-xs font-semibold tabular-nums text-slate-700 dark:text-slate-200">
+                <td className="px-2.5 py-3 text-xs text-slate-500 dark:text-slate-400">{r.wheatType}</td>
+                <td className="px-2.5 py-3 text-xs font-semibold tabular-nums text-slate-700 dark:text-slate-200">
                   {r.qty.toLocaleString('en-US')}
                 </td>
-                <td className="px-2.5 py-2.5">
+                <td className="px-2.5 py-3">
                   <span
-                    className={`inline-flex rounded-md px-2.5 py-0.5 text-[11px] font-semibold ${
+                    className={`inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
                       r.status === 'Received'
-                        ? 'bg-emerald-50 text-emerald-600'
+                        ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400'
                         : r.status === 'Pending'
-                          ? 'bg-amber-50 text-amber-600'
-                          : 'bg-slate-100 text-slate-500'
+                          ? 'bg-amber-50 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400'
+                          : 'bg-slate-100 text-slate-500 dark:bg-white/10 dark:text-slate-400'
                     }`}
                   >
                     {r.status}
@@ -842,7 +829,7 @@ function ShiftMonitor({ data }: { data: ShiftMonitorData }) {
       />
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {rows.map((r) => (
-          <div key={r.label} className="rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/70 p-3.5">
+          <div key={r.label} className="rounded-2xl border border-violet-100/60 dark:border-white/5 bg-white/60 dark:bg-white/5 p-3.5">
             <div className="flex items-center gap-2.5">
               <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${r.tile}`}>
                 {r.icon}
@@ -878,10 +865,10 @@ interface QualityPoint {
 }
 
 const Q_LINES = [
-  { key: 'gluten', label: 'Gluten', color: '#10B981' },
-  { key: 'moisture', label: 'Moisture', color: '#3B82F6' },
-  { key: 'impurity', label: 'Impurity', color: '#7C3AED' },
-  { key: 'hectoliter', label: 'Hectoliter Weight', color: '#F59E0B' }
+  { key: 'gluten', label: 'Gluten', color: '#7C3AED' },
+  { key: 'moisture', label: 'Moisture', color: '#A78BFA' },
+  { key: 'impurity', label: 'Impurity', color: '#4C1D95' },
+  { key: 'hectoliter', label: 'Hectoliter Weight', color: '#8B5CF6' }
 ] as const;
 
 function qVal(p: QualityPoint, key: (typeof Q_LINES)[number]['key']): number | null {
@@ -917,7 +904,7 @@ function QualityTooltip({
 }) {
   if (!active || !payload || payload.length === 0) return null;
   return (
-    <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-xs shadow-lg">
+    <div className="rounded-xl border border-violet-100 dark:border-white/10 bg-white dark:bg-[#2A2640] px-3 py-2 text-xs shadow-lg">
       <p className="mb-1.5 font-bold text-slate-800 dark:text-slate-100">{label}</p>
       <div className="space-y-1">
         {payload.map((p) => {
@@ -964,7 +951,7 @@ function QualityTrendChart({ data, demo }: { data: QualityPoint[]; demo: boolean
         action={
           <button
             type="button"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-2.5 py-1 text-xs font-semibold text-slate-600 dark:text-slate-300"
+            className="inline-flex items-center gap-1.5 rounded-full border border-violet-200 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-1 text-xs font-semibold text-violet-900 dark:text-slate-300"
           >
             Last 7 Days <ChevronDown size={14} />
           </button>
@@ -1046,9 +1033,9 @@ function QualityTrendChart({ data, demo }: { data: QualityPoint[]; demo: boolean
                 type="monotone"
                 dataKey="hectoliter"
                 name="hectoliter"
-                stroke="#F59E0B"
+                stroke="#8B5CF6"
                 strokeWidth={2}
-                dot={{ r: 3, fill: '#F59E0B', strokeWidth: 0 }}
+                dot={{ r: 3, fill: '#8B5CF6', strokeWidth: 0 }}
                 activeDot={{ r: 4.5 }}
                 connectNulls
               />
@@ -1324,7 +1311,7 @@ export function Dashboard() {
   ];
 
   // ── Production chart data ────────────────────────────────────────────────
-  const DONUT_COLORS = ['#7C3AED', '#3B82F6', '#10B981', '#F59E0B', '#14B8A6'];
+  const DONUT_COLORS = ['#4C1D95', '#7C3AED', '#A78BFA', '#C4B5FD', '#DDD6FE'];
   const prodData: ProdPoint[] = useMemo(() => {
     const days = lastNDays(7);
     const byKey = new Map(days.map((d) => [d.key, { name: d.label, wheat: 0, flour: 0 } as ProdPoint]));

@@ -431,7 +431,7 @@ function itemMatches(item: NavItem, pathname: string): boolean {
 function Logo() {
   return (
     <div className="flex items-center gap-3 px-5 pb-5 pt-5">
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#5B35D5] text-white">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-600 text-white">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-6 w-6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
           <path d="M12 21V7" />
           <path d="M12 10C9 10 6.5 7.5 6.5 4.5 9.5 4.5 12 7 12 10z" />
@@ -443,16 +443,28 @@ function Logo() {
         </svg>
       </div>
       <div className="min-w-0">
-        <p className="truncate text-sm font-bold leading-tight text-white">Oyaya Flour Mill ERP</p>
-        <p className="truncate text-[11px] text-white/50">Quality Flour · Better Lives</p>
+        <p className="truncate text-sm font-bold leading-tight text-slate-900 dark:text-white">Oyaya ERP</p>
+        <p className="truncate text-[11px] text-slate-400 dark:text-slate-500">Flour Mill</p>
       </div>
     </div>
   );
 }
 
 function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
-  const { hasAnyClaim } = useAuth();
+  const { user, logout, hasAnyClaim } = useAuth();
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+
+  const handleSidebarLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  const visibleHelp = hasAnyClaim(['support:read']);
+  const visibleSettings = hasAnyClaim(['settings:read']);
+  const profileInitial = (user?.name ?? user?.email ?? 'U').trim().charAt(0).toUpperCase();
+  const profileName = user?.name ?? user?.email ?? 'User';
+  const profileRole = user?.role ?? '';
 
   const visible = (item: NavItem) =>
     !item.claim || hasAnyClaim(Array.isArray(item.claim) ? item.claim : [item.claim]);
@@ -479,8 +491,10 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           to="/"
           end
           onClick={onNavigate}
-          className={`touch mb-2 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors ${
-            dashActive ? 'bg-[#5B35D5] text-white' : 'text-white/70 hover:bg-white/5 hover:text-white'
+          className={`touch mb-2 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors ${
+            dashActive
+              ? 'bg-violet-100 text-violet-800 dark:bg-white/10 dark:text-violet-200'
+              : 'text-slate-600 hover:bg-violet-50 hover:text-violet-800 dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-white'
           }`}
         >
           <span className="shrink-0">{svgIcon('dashboard', 'h-5 w-5')}</span>
@@ -495,10 +509,10 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                 type="button"
                 onClick={() => setOpenGroup(isOpen ? null : group.title)}
                 aria-expanded={isOpen}
-                className="touch flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left transition-colors hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B35D5]"
+                className="touch flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left transition-colors hover:bg-violet-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:hover:bg-white/5"
               >
-                <span className="shrink-0 text-[#8F7BF0]">{svgIcon(group.icon, 'h-[18px] w-[18px]')}</span>
-                <span className="min-w-0 flex-1 truncate text-[10px] font-semibold uppercase tracking-wider text-white/40">
+                <span className="shrink-0 text-violet-500 dark:text-violet-400">{svgIcon(group.icon, 'h-[18px] w-[18px]')}</span>
+                <span className="min-w-0 flex-1 truncate text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                   {group.title}
                 </span>
                 <svg
@@ -506,7 +520,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                   fill="none"
                   stroke="currentColor"
                   strokeWidth={2}
-                  className={`h-3.5 w-3.5 shrink-0 text-white/40 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+                  className={`h-3.5 w-3.5 shrink-0 text-slate-400 transition-transform duration-200 dark:text-slate-500 ${isOpen ? 'rotate-180' : ''}`}
                   aria-hidden="true"
                 >
                   <path d="M5 7.5l5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
@@ -521,14 +535,14 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                         end={item.to === '/'}
                         onClick={onNavigate}
                         className={({ isActive }) =>
-                          `touch flex items-center gap-2.5 rounded-lg py-1.5 pl-10 pr-3 text-[13px] transition-colors duration-150 ${
+                          `touch flex items-center gap-2.5 rounded-xl py-1.5 pl-10 pr-3 text-[13px] transition-colors duration-150 ${
                             isActive
-                              ? 'bg-[#5B35D5] font-semibold text-white'
-                              : 'text-white/55 hover:bg-white/5 hover:text-white'
+                              ? 'bg-violet-100 font-semibold text-violet-800 dark:bg-white/10 dark:text-violet-200'
+                              : 'text-slate-500 hover:bg-violet-50 hover:text-violet-700 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white'
                           }`
                         }
                       >
-                        <span className="text-[10px] text-white/30" aria-hidden="true">›</span>
+                        <span className="text-[10px] text-slate-300 dark:text-slate-600" aria-hidden="true">›</span>
                         <span className="truncate">{item.label}</span>
                       </NavLink>
                     </li>
@@ -541,21 +555,21 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
         {/* Bottom standalone items */}
         {visibleBottom.length > 0 ? (
-          <div className="mt-3 border-t border-white/10 pt-3">
+          <div className="mt-3 border-t border-violet-100 pt-3 dark:border-white/10">
             {visibleBottom.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 onClick={onNavigate}
                 className={({ isActive }) =>
-                  `touch mb-0.5 flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium transition-colors ${
+                  `touch mb-0.5 flex items-center gap-3 rounded-xl px-3 py-2 text-[13px] font-medium transition-colors ${
                     isActive
-                      ? 'bg-[#5B35D5] text-white'
-                      : 'text-white/70 hover:bg-white/5 hover:text-white'
+                      ? 'bg-violet-100 text-violet-800 dark:bg-white/10 dark:text-violet-200'
+                      : 'text-slate-600 hover:bg-violet-50 hover:text-violet-800 dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-white'
                   }`
                 }
               >
-                <span className="shrink-0 text-white/50">{svgIcon(item.icon, 'h-[18px] w-[18px]')}</span>
+                <span className="shrink-0 text-slate-400 dark:text-slate-500">{svgIcon(item.icon, 'h-[18px] w-[18px]')}</span>
                 <span className="truncate">{item.label}</span>
               </NavLink>
             ))}
@@ -563,13 +577,55 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
         ) : null}
       </nav>
 
-      {/* Version footer */}
-      <div className="border-t border-white/10 px-5 py-3">
-        <p className="text-[11px] text-white/40">v2.1.0 &nbsp;|&nbsp; Oyaya Flour Mill ERP</p>
-        <p className="mt-1 flex items-center gap-1.5 text-[11px] font-medium text-white/60">
-          <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400" />
-          System Online
-        </p>
+      {/* Help / Settings / Logout + user profile (reference bottom section) */}
+      <div className="border-t border-violet-100 px-3 py-3 dark:border-white/10">
+        {visibleHelp ? (
+          <NavLink
+            to="/support"
+            onClick={onNavigate}
+            className="touch mb-0.5 flex items-center gap-3 rounded-xl px-3 py-2 text-[13px] font-medium text-slate-600 transition-colors hover:bg-violet-50 hover:text-violet-800 dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-white"
+          >
+            <span className="shrink-0 text-slate-400 dark:text-slate-500">{svgIcon('support', 'h-[18px] w-[18px]')}</span>
+            <span className="truncate">Help Center</span>
+          </NavLink>
+        ) : null}
+        {visibleSettings ? (
+          <NavLink
+            to="/settings"
+            onClick={onNavigate}
+            className="touch mb-0.5 flex items-center gap-3 rounded-xl px-3 py-2 text-[13px] font-medium text-slate-600 transition-colors hover:bg-violet-50 hover:text-violet-800 dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-white"
+          >
+            <span className="shrink-0 text-slate-400 dark:text-slate-500">{svgIcon('settings', 'h-[18px] w-[18px]')}</span>
+            <span className="truncate">Settings</span>
+          </NavLink>
+        ) : null}
+        <button
+          type="button"
+          onClick={() => {
+            handleSidebarLogout();
+            onNavigate?.();
+          }}
+          className="touch flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-[13px] font-medium text-slate-600 transition-colors hover:bg-violet-50 hover:text-violet-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-white"
+        >
+          <span className="shrink-0 text-slate-400 dark:text-slate-500">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-[18px] w-[18px]" aria-hidden="true">
+              <path d="M8 3.5H5.5A1.5 1.5 0 004 5v10a1.5 1.5 0 001.5 1.5H8" strokeLinecap="round" />
+              <path d="M13 6.5l3 3.5-3 3.5M16 10H8" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
+          <span className="truncate">Logout</span>
+        </button>
+
+        {/* User profile card */}
+        <div className="mt-3 flex items-center gap-3 rounded-2xl bg-violet-50 p-3 dark:bg-white/5">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-violet-600 text-sm font-bold text-white">
+            {profileInitial}
+          </div>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold leading-tight text-slate-900 dark:text-white">{profileName}</p>
+            <p className="truncate text-xs leading-tight text-slate-500 dark:text-slate-400">{profileRole}</p>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -605,9 +661,9 @@ export function Layout() {
   const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
 
   return (
-    <div className="flex min-h-screen bg-[#F4F6FA] text-[#172033]">
+    <div className="flex min-h-screen bg-[#F5F3FF] text-slate-900 dark:bg-[#1E1B2E] dark:text-slate-100">
       {/* Desktop sidebar */}
-      <aside className="no-print sticky top-0 hidden h-screen w-[228px] shrink-0 flex-col bg-[#171A3B] md:flex">
+      <aside className="no-print sticky top-0 hidden h-screen w-[248px] shrink-0 flex-col border-r border-violet-100/70 bg-white dark:border-white/5 dark:bg-[#1E1B2E] md:flex">
         <Logo />
         <SidebarContent />
       </aside>
@@ -616,12 +672,12 @@ export function Layout() {
       {menuOpen ? (
         <div className="no-print fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setMenuOpen(false)} />
-          <aside className="absolute inset-y-0 left-0 flex w-72 flex-col bg-[#171A3B]">
+          <aside className="absolute inset-y-0 left-0 flex w-72 flex-col bg-white dark:bg-[#1E1B2E]">
             <div className="flex items-center justify-between pr-4">
               <Logo />
               <button
                 onClick={() => setMenuOpen(false)}
-                className="touch rounded-lg px-3 py-2 text-sm font-semibold text-white/60 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                className="touch rounded-lg px-3 py-2 text-sm font-semibold text-slate-500 hover:bg-violet-50 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-white"
                 aria-label="Close menu"
               >
                 ✕
@@ -634,10 +690,10 @@ export function Layout() {
 
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Topbar */}
-        <header className="no-print sticky top-0 z-30 flex items-center gap-3 border-b border-[#E2E7F0] bg-white px-4 py-3 dark:border-slate-700 dark:bg-slate-800 md:px-6">
+        <header className="no-print sticky top-0 z-30 flex items-center gap-3 border-b border-violet-100/70 bg-[#FAF9FF]/90 px-4 py-3 backdrop-blur dark:border-white/5 dark:bg-[#1E1B2E]/90 md:px-6">
           <button
             onClick={() => setMenuOpen(true)}
-            className="touch rounded-lg p-2.5 text-[#172033] transition-colors hover:bg-[#F4F6FA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B35D5] dark:text-slate-200 dark:hover:bg-slate-700"
+            className="touch rounded-xl p-2.5 text-slate-600 transition-colors hover:bg-violet-100 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:text-slate-300 dark:hover:bg-white/10 md:hidden"
             aria-label="Open menu"
           >
             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5" aria-hidden="true">
@@ -645,26 +701,28 @@ export function Layout() {
             </svg>
           </button>
 
-          {/* Search */}
-          <div className="relative hidden w-full max-w-md sm:block">
-            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#667085] dark:text-slate-400" aria-hidden="true">
-              <circle cx="9" cy="9" r="5.5" />
-              <path d="M13.5 13.5L17 17" strokeLinecap="round" />
-            </svg>
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search anything... (e.g. supplier, batch, product, report)"
-              className="w-full rounded-xl border border-[#E2E7F0] bg-[#F7F8FC] py-2.5 pl-10 pr-4 text-sm text-[#172033] outline-none transition-shadow placeholder:text-[#667085]/70 focus-visible:ring-2 focus-visible:ring-[#5B35D5]/50 dark:border-slate-700 dark:bg-slate-700 dark:text-slate-100 dark:placeholder:text-slate-400"
-              aria-label="Search"
-            />
+          {/* Search — centered pill like reference */}
+          <div className="flex flex-1 justify-center">
+            <div className="relative hidden w-full max-w-md sm:block">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" aria-hidden="true">
+                <circle cx="9" cy="9" r="5.5" />
+                <path d="M13.5 13.5L17 17" strokeLinecap="round" />
+              </svg>
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search anything"
+                className="w-full rounded-full border border-violet-100 bg-[#F5F3FF] py-2.5 pl-11 pr-4 text-sm text-slate-900 outline-none transition-shadow placeholder:text-slate-400 focus-visible:ring-2 focus-visible:ring-violet-500/50 dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500"
+                aria-label="Search"
+              />
+            </div>
           </div>
 
           <div className="ml-auto flex items-center gap-2 sm:gap-3">
             {/* Theme toggle */}
             <button
               onClick={toggleTheme}
-              className="touch rounded-xl p-2.5 text-[#667085] transition-colors hover:bg-[#F4F6FA] hover:text-[#5B35D5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B35D5] dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-amber-400"
+              className="touch rounded-xl p-2.5 text-slate-500 transition-colors hover:bg-violet-100 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-amber-400"
               aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
             >
               {theme === 'dark' ? (
@@ -683,7 +741,7 @@ export function Layout() {
             <div className="relative">
               <button
                 onClick={() => setNotifOpen((v) => !v)}
-                className="touch relative rounded-xl p-2.5 text-[#667085] transition-colors hover:bg-[#F4F6FA] hover:text-[#5B35D5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B35D5] dark:text-slate-300 dark:hover:bg-slate-700"
+                className="touch relative rounded-xl p-2.5 text-slate-500 transition-colors hover:bg-violet-100 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:text-slate-300 dark:hover:bg-white/10"
                 aria-label="Notifications"
                 aria-expanded={notifOpen}
                 aria-haspopup="true"
@@ -705,7 +763,7 @@ export function Layout() {
                     tabIndex={-1}
                   />
                   <div
-                    className="absolute right-0 z-50 mt-2 w-80 rounded-2xl border border-slate-100 bg-white p-2 shadow-[0_8px_30px_-6px_rgba(15,23,42,0.15)] dark:border-slate-700 dark:bg-slate-800"
+                    className="absolute right-0 z-50 mt-2 w-80 rounded-2xl border border-violet-100 bg-white p-2 shadow-[0_8px_30px_-6px_rgba(124,58,237,0.15)] dark:border-white/10 dark:bg-[#2A2640]"
                     role="menu"
                     aria-label="Notifications"
                   >
@@ -715,7 +773,7 @@ export function Layout() {
                       { dot: 'bg-rose-500', title: 'CAPA overdue', sub: 'Corrective action past due date' },
                       { dot: 'bg-violet-500', title: 'Duket yield alert', sub: 'Yield below 78% on latest shift' }
                     ].map((n) => (
-                      <div key={n.title} className="flex items-start gap-3 rounded-xl px-3 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-700">
+                      <div key={n.title} className="flex items-start gap-3 rounded-xl px-3 py-2.5 hover:bg-violet-50 dark:hover:bg-white/5">
                         <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${n.dot}`} />
                         <div className="min-w-0">
                           <p className="text-[13px] font-semibold text-slate-800 dark:text-slate-100">{n.title}</p>
@@ -730,7 +788,7 @@ export function Layout() {
 
             {/* App grid */}
             <button
-              className="touch rounded-xl p-2.5 text-[#667085] transition-colors hover:bg-[#F4F6FA] hover:text-[#5B35D5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B35D5] dark:text-slate-300 dark:hover:bg-slate-700"
+              className="touch rounded-xl p-2.5 text-slate-500 transition-colors hover:bg-violet-100 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:text-slate-300 dark:hover:bg-white/10"
               aria-label="All modules"
             >
               <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5" aria-hidden="true">
@@ -741,17 +799,17 @@ export function Layout() {
               </svg>
             </button>
 
-            <div className="hidden h-8 w-px bg-[#E2E7F0] dark:bg-slate-700 sm:block" aria-hidden="true" />
+            <div className="hidden h-8 w-px bg-violet-100 dark:bg-white/10 sm:block" aria-hidden="true" />
 
             {/* Date / time */}
             <div className="hidden items-center gap-2 lg:flex" aria-label="Current date and time">
-              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5 text-[#667085] dark:text-slate-400" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5 text-slate-400 dark:text-slate-500" aria-hidden="true">
                 <rect x="3" y="4.5" width="14" height="12" rx="2" />
                 <path d="M3 8.5h14M7 3v3M13 3v3" strokeLinecap="round" />
               </svg>
               <div className="text-left">
-                <p className="text-sm font-semibold leading-tight text-[#172033] dark:text-slate-100">{dateStr}</p>
-                <p className="tnum text-xs leading-tight text-[#667085] dark:text-slate-400">{timeStr}</p>
+                <p className="text-sm font-semibold leading-tight text-slate-900 dark:text-white">{dateStr}</p>
+                <p className="tnum text-xs leading-tight text-slate-400 dark:text-slate-500">{timeStr}</p>
               </div>
             </div>
 
@@ -759,26 +817,26 @@ export function Layout() {
             <div className="relative">
               <button
                 onClick={() => setUserMenuOpen((v) => !v)}
-                className="touch flex items-center gap-2 rounded-lg p-1 transition-colors hover:bg-[#F4F6FA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B35D5] dark:hover:bg-slate-700"
+                className="touch flex items-center gap-2 rounded-lg p-1 transition-colors hover:bg-violet-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:hover:bg-white/10"
                 aria-label="Account menu"
                 aria-haspopup="menu"
                 aria-expanded={userMenuOpen}
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#5B35D5] text-sm font-bold text-white">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-600 text-sm font-bold text-white">
                   {initial}
                 </div>
                 <div className="hidden text-left md:block">
-                  <p className="max-w-32 truncate text-sm font-semibold leading-tight text-[#172033] dark:text-slate-100">
+                  <p className="max-w-32 truncate text-sm font-semibold leading-tight text-slate-900 dark:text-white">
                     {user?.name ?? user?.email}
                   </p>
-                  <p className="max-w-32 truncate text-xs leading-tight text-[#667085] dark:text-slate-400">{user?.role}</p>
+                  <p className="max-w-32 truncate text-xs leading-tight text-slate-400 dark:text-slate-500">{user?.role}</p>
                 </div>
                 <svg
                   viewBox="0 0 20 20"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth={2}
-                  className={`hidden h-4 w-4 text-[#667085] transition-transform duration-200 dark:text-slate-400 md:block ${userMenuOpen ? 'rotate-180' : ''}`}
+                  className={`hidden h-4 w-4 text-slate-400 transition-transform duration-200 dark:text-slate-500 md:block ${userMenuOpen ? 'rotate-180' : ''}`}
                   aria-hidden="true"
                 >
                   <path d="M5 7.5l5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
@@ -793,14 +851,14 @@ export function Layout() {
                     tabIndex={-1}
                   />
                   <div
-                    className="absolute right-0 z-50 mt-2 w-48 rounded-xl border border-[#E2E7F0] bg-white py-1 shadow-lg dark:border-slate-700 dark:bg-slate-800"
+                    className="absolute right-0 z-50 mt-2 w-48 rounded-xl border border-violet-100 bg-white py-1 shadow-lg dark:border-white/10 dark:bg-[#2A2640]"
                     role="menu"
                     aria-label="Account"
                   >
                     <button
                       onClick={handleLogout}
                       role="menuitem"
-                      className="touch flex w-full items-center px-4 py-2 text-left text-sm font-semibold text-[#172033] transition-colors hover:bg-[#F4F6FA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#5B35D5] dark:text-slate-100 dark:hover:bg-slate-700"
+                      className="touch flex w-full items-center px-4 py-2 text-left text-sm font-semibold text-slate-900 transition-colors hover:bg-violet-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-violet-500 dark:text-slate-100 dark:hover:bg-white/5"
                       aria-label="Log out"
                     >
                       Log out
