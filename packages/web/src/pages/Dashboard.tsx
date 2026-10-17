@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -36,7 +36,8 @@ import {
   Truck,
   Users,
   Warehouse,
-  Wheat
+  Wheat,
+  Zap
 } from 'lucide-react';
 import { api } from '../lib/api';
 import { E } from '../lib/endpoints';
@@ -114,6 +115,58 @@ function DemoBadge() {
   );
 }
 
+// ─── Unified card header: 32×32 icon box + bold title + optional subtitle ────
+
+function CardHeader({
+  icon,
+  title,
+  subtitle,
+  right
+}: {
+  icon: ReactNode;
+  title: string;
+  subtitle?: string;
+  right?: ReactNode;
+}) {
+  return (
+    <div className="mb-4 flex items-start justify-between gap-2">
+      <div className="flex min-w-0 items-center gap-2.5">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-slate-200/60 bg-slate-50 text-slate-500">
+          {icon}
+        </span>
+        <span className="min-w-0">
+          <h2 className="truncate text-sm font-bold text-slate-800">{title}</h2>
+          {subtitle ? <p className="mt-0.5 truncate text-xs text-slate-400">{subtitle}</p> : null}
+        </span>
+      </div>
+      {right ? <div className="flex shrink-0 items-center gap-2">{right}</div> : null}
+    </div>
+  );
+}
+
+// ─── Display name: skip generic/role-like names ("System Administrator") ─────
+
+const GENERIC_NAME_WORDS = new Set([
+  'system',
+  'admin',
+  'administrator',
+  'user',
+  'manager',
+  'operator',
+  'staff',
+  'employee'
+]);
+
+function displayFirstName(user: { name?: string | null; email?: string | null } | null): string | null {
+  const first = (user?.name ?? '').trim().split(/\s+/)[0] ?? '';
+  if (first.length > 1 && !GENERIC_NAME_WORDS.has(first.toLowerCase())) return first;
+  const emailLocal = (user?.email ?? '').split('@')[0]?.trim() ?? '';
+  if (emailLocal.length > 1 && !GENERIC_NAME_WORDS.has(emailLocal.toLowerCase())) {
+    return emailLocal.charAt(0).toUpperCase() + emailLocal.slice(1);
+  }
+  return null;
+}
+
 function TrendText({ pct, invert = false }: { pct: number | null; invert?: boolean }) {
   if (pct === null || !Number.isFinite(pct)) return null;
   const up = pct >= 0;
@@ -169,7 +222,7 @@ function KpiCard({ spec }: { spec: KpiSpec }) {
 
 // ─── Row 1: Hero ────────────────────────────────────────────────────────────
 
-function WelcomeBanner({ firstName }: { firstName: string }) {
+function WelcomeBanner({ firstName }: { firstName: string | null }) {
   return (
     <div
       className={`${cardShell} relative col-span-12 flex min-h-[110px] flex-col justify-center overflow-hidden !p-6 lg:col-span-7`}
@@ -193,7 +246,7 @@ function WelcomeBanner({ firstName }: { firstName: string }) {
       </svg>
       <div className="relative">
         <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">
-          Welcome back, {firstName}!
+          Welcome back{firstName ? `, ${firstName}` : ''}!
         </h1>
         <p className="mt-1 text-sm text-slate-600">
           Here&rsquo;s what&rsquo;s happening at Oyaya Flour Mill today.
@@ -264,29 +317,31 @@ function ProductionOverview({
 }) {
   return (
     <div className={`${cardShell} col-span-12 lg:col-span-5`}>
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <h2 className="text-sm font-bold text-slate-800">Production Overview</h2>
-          {demo ? <DemoBadge /> : null}
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="hidden items-center gap-3 text-xs font-medium text-slate-600 sm:flex">
-            <span className="inline-flex items-center gap-1.5">
-              <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#7C3AED]" />
-              Flour Produced (Qt)
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#0EA5E9]" />
-              Wheat Received (Qt)
-            </span>
-          </div>
-          <button
-            type="button"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-600"
-          >
-            Last 7 Days <ChevronDown size={14} />
-          </button>
-        </div>
+      <CardHeader
+        icon={<BarChart3 size={16} />}
+        title="Production Overview"
+        subtitle="Wheat intake vs. flour output"
+        right={
+          <>
+            {demo ? <DemoBadge /> : null}
+            <button
+              type="button"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-600"
+            >
+              Last 7 Days <ChevronDown size={14} />
+            </button>
+          </>
+        }
+      />
+      <div className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs font-medium text-slate-600">
+        <span className="inline-flex items-center gap-1.5">
+          <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#7C3AED]" />
+          Flour Produced (Qt)
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#0EA5E9]" />
+          Wheat Received (Qt)
+        </span>
       </div>
       <div className="h-64 w-full">
         <ResponsiveContainer width="100%" height="100%">
@@ -370,21 +425,25 @@ function ProductOutputDonut({
 }) {
   return (
     <div className={`${cardShell} col-span-12 md:col-span-6 lg:col-span-4`}>
-      <div className="mb-4 flex items-center gap-2">
-        <h2 className="text-sm font-bold text-slate-800">Product Output (Today)</h2>
-        {demo ? <DemoBadge /> : null}
-      </div>
+      <CardHeader
+        icon={<Package size={16} />}
+        title="Product Output (Today)"
+        subtitle="Measured in Quintals (1 Qt = 100 kg)"
+        right={demo ? <DemoBadge /> : null}
+      />
       <div className="grid grid-cols-12 items-center gap-2">
-        <div className="relative col-span-5 flex h-48 items-center justify-center">
+        <div className="relative col-span-5 flex h-48 min-h-[190px] items-center justify-center overflow-visible">
           <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
+            <PieChart margin={{ top: 8, right: 8, bottom: 8, left: 8 }}>
               <Pie
                 data={segments}
                 dataKey="value"
                 nameKey="name"
-                innerRadius={52}
-                outerRadius={74}
-                paddingAngle={2}
+                cx="50%"
+                cy="50%"
+                innerRadius="65%"
+                outerRadius="88%"
+                paddingAngle={3}
                 strokeWidth={0}
               >
                 {segments.map((s) => (
@@ -401,11 +460,11 @@ function ProductOutputDonut({
               />
             </PieChart>
           </ResponsiveContainer>
-          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-            <p className="text-lg font-extrabold tabular-nums text-slate-900">
+          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-2 text-center">
+            <p className="text-lg font-extrabold tabular-nums leading-tight text-slate-900">
               {total.toLocaleString('en-US')} Qt
             </p>
-            <p className="text-[11px] font-medium text-slate-400">Total Flour</p>
+            <p className="mt-0.5 text-[11px] font-medium text-slate-400">Total Output</p>
           </div>
         </div>
         <div className="col-span-7 space-y-2.5">
@@ -446,15 +505,18 @@ interface ActivityItem {
 function RecentActivities({ items, demo }: { items: ActivityItem[]; demo: boolean }) {
   return (
     <div className={`${cardShell} col-span-12 flex flex-col justify-between md:col-span-6 lg:col-span-3`}>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <h2 className="text-sm font-bold text-slate-800">Recent Activities</h2>
-          {demo ? <DemoBadge /> : null}
-        </div>
-        <Link to="/audit" className="text-xs font-semibold text-violet-600 hover:text-violet-700">
-          View All
-        </Link>
-      </div>
+      <CardHeader
+        icon={<Bell size={16} />}
+        title="Recent Activities"
+        right={
+          <>
+            {demo ? <DemoBadge /> : null}
+            <Link to="/audit" className="text-xs font-semibold text-violet-600 hover:text-violet-700">
+              View All
+            </Link>
+          </>
+        }
+      />
       <ul className="mt-3 space-y-3.5">
         {items.map((a, i) => (
           <li key={`${a.title}-${i}`}>
@@ -489,7 +551,7 @@ const QUICK_LINKS = [
 function QuickAccess() {
   return (
     <div className={`${cardShell} col-span-12 md:col-span-6 lg:col-span-3`}>
-      <h2 className="mb-4 text-sm font-bold text-slate-800">Quick Access</h2>
+      <CardHeader icon={<Zap size={16} />} title="Quick Access" />
       <div className="grid grid-cols-3 gap-2.5">
         {QUICK_LINKS.map((q) => (
           <Link
@@ -519,15 +581,18 @@ interface StockRow {
 function StockLevels({ rows, demo }: { rows: StockRow[]; demo: boolean }) {
   return (
     <div className={`${cardShell} col-span-12 md:col-span-6 lg:col-span-4`}>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <h2 className="text-sm font-bold text-slate-800">Stock Levels</h2>
-          {demo ? <DemoBadge /> : null}
-        </div>
-        <Link to="/storage" className="text-xs font-semibold text-violet-600 hover:text-violet-700">
-          View All
-        </Link>
-      </div>
+      <CardHeader
+        icon={<Warehouse size={16} />}
+        title="Stock Levels"
+        right={
+          <>
+            {demo ? <DemoBadge /> : null}
+            <Link to="/storage" className="text-xs font-semibold text-violet-600 hover:text-violet-700">
+              View All
+            </Link>
+          </>
+        }
+      />
       <div className="mt-3 space-y-3.5">
         {rows.map((r) => {
           const pct = r.capacity > 0 ? Math.min(100, (r.balance / r.capacity) * 100) : 0;
@@ -574,10 +639,11 @@ interface ProcRow {
 function RecentProcurement({ rows, demo }: { rows: ProcRow[]; demo: boolean }) {
   return (
     <div className={`${cardShell} col-span-12 lg:col-span-5`}>
-      <div className="mb-3 flex items-center gap-2">
-        <h2 className="text-sm font-bold text-slate-800">Recent Procurement</h2>
-        {demo ? <DemoBadge /> : null}
-      </div>
+      <CardHeader
+        icon={<Truck size={16} />}
+        title="Recent Procurement"
+        right={demo ? <DemoBadge /> : null}
+      />
       <div className="overflow-x-auto">
         <table className="w-full border-collapse text-left">
           <thead>
@@ -642,18 +708,21 @@ interface PerfTile {
 function ProductionPerformance({ tiles, demo }: { tiles: PerfTile[]; demo: boolean }) {
   return (
     <div className={`${cardShell} col-span-12 lg:col-span-5`}>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <h2 className="text-sm font-bold text-slate-800">Production Performance</h2>
-          {demo ? <DemoBadge /> : null}
-        </div>
-        <button
-          type="button"
-          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-600"
-        >
-          This Month <ChevronDown size={14} />
-        </button>
-      </div>
+      <CardHeader
+        icon={<Factory size={16} />}
+        title="Production Performance"
+        right={
+          <>
+            {demo ? <DemoBadge /> : null}
+            <button
+              type="button"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-600"
+            >
+              This Month <ChevronDown size={14} />
+            </button>
+          </>
+        }
+      />
       <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {tiles.map((t) => (
           <div key={t.label} className="rounded-xl border border-slate-100 bg-slate-50/70 p-3">
@@ -708,18 +777,21 @@ function QualityTrendChart({ data, demo }: { data: QualityPoint[]; demo: boolean
   const visible = Q_LINES.filter((l) => data.some((p) => qVal(p, l.key) != null));
   return (
     <div className={`${cardShell} col-span-12 md:col-span-7 lg:col-span-4`}>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <h2 className="text-sm font-bold text-slate-800">Quality Trend</h2>
-          {demo ? <DemoBadge /> : null}
-        </div>
-        <button
-          type="button"
-          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-600"
-        >
-          Last 7 Days <ChevronDown size={14} />
-        </button>
-      </div>
+      <CardHeader
+        icon={<FlaskConical size={16} />}
+        title="Quality Trend"
+        right={
+          <>
+            {demo ? <DemoBadge /> : null}
+            <button
+              type="button"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-600"
+            >
+              Last 7 Days <ChevronDown size={14} />
+            </button>
+          </>
+        }
+      />
       <div className="my-2 flex flex-wrap gap-3 text-[11px] font-medium text-slate-600">
         {visible.map((l) => (
           <span key={l.key} className="inline-flex items-center gap-1.5">
@@ -789,15 +861,15 @@ const CATALOG_TONES: Record<string, string> = {
 function ProductCatalogCard() {
   return (
     <div className={`${cardShell} col-span-12 flex flex-col justify-between md:col-span-5 lg:col-span-3`}>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Package size={16} className="text-violet-600" />
-          <h2 className="text-sm font-bold text-slate-800">Product Lines &amp; Catalog</h2>
-        </div>
-        <span className="rounded-md bg-violet-50 px-2 py-0.5 text-[11px] font-semibold text-violet-700">
-          5 Active Lines
-        </span>
-      </div>
+      <CardHeader
+        icon={<Boxes size={16} />}
+        title="Product Lines & Catalog"
+        right={
+          <span className="rounded-md bg-violet-50 px-2 py-0.5 text-[11px] font-semibold text-violet-700">
+            5 Active Lines
+          </span>
+        }
+      />
       <div className="my-auto grid grid-cols-1 gap-1.5 py-3">
         {SEED_PRODUCT_LINES.map((p) => (
           <Link
@@ -1331,7 +1403,7 @@ export function Dashboard() {
   );
   const qualityData: QualityPoint[] = hasLiveQuality ? liveQuality : SEED_QUALITY_TREND;
 
-  const firstName = (user?.name ?? '').split(' ')[0] || user?.email || 'there';
+  const firstName = displayFirstName(user);
 
   if (kpisQ.isLoading && intakesQ.isLoading && shiftsQ.isLoading) {
     return <SkeletonDashboard />;
