@@ -572,7 +572,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
             type="button"
             onClick={() => setOpenGroup(isOpen ? null : group.title)}
             aria-expanded={isOpen}
-            aria-controls={`nav-group-${group.title}`}
+            aria-controls={`nav-group-${group.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
             className={`${modBase} h-10 flex-1 ${active ? modActive : modIdle}`}
           >
             {hasActive ? activeBar() : null}
@@ -585,7 +585,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
         </div>
         {isOpen ? (
-          <ul id={`nav-group-${group.title}`} className="mb-1 ml-[26px] mt-1 space-y-px border-l border-gray-200 pl-3 dark:border-slate-700" aria-label={`${group.title} pages`}>
+          <ul id={`nav-group-${group.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} className="mb-1 ml-[26px] mt-1 space-y-px border-l border-gray-200 pl-3 dark:border-slate-700" aria-label={`${group.title} pages`}>
             {group.items.map((it) => {
               if (isSubGroup(it)) {
                 const subKey = `${group.title}/${it.title}`;
@@ -597,7 +597,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                       type="button"
                       onClick={() => setOpenSub(subOpen ? null : subKey)}
                       aria-expanded={subOpen}
-                      aria-controls={`nav-sub-${subKey}`}
+                      aria-controls={`nav-sub-${subKey.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
                       className={`${leafBase} h-10 text-[13px] font-semibold ${subOpen || subActive ? 'text-gray-900 dark:text-white' : leafIdle}`}
                     >
                       {subActive ? activeBar('h-4') : null}
@@ -605,7 +605,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                       {chevron(subOpen, 'h-3.5 w-3.5')}
                     </button>
                     {subOpen ? (
-                      <ul id={`nav-sub-${subKey}`} className="mb-0.5 ml-2 mt-px space-y-px border-l border-gray-100 pl-2 dark:border-slate-700/60" aria-label={`${it.title} pages`}>
+                      <ul id={`nav-sub-${subKey.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} className="mb-0.5 ml-2 mt-px space-y-px border-l border-gray-100 pl-2 dark:border-slate-700/60" aria-label={`${it.title} pages`}>
                         {it.items.map((leaf) => renderLeafItem(leaf))}
                       </ul>
                     ) : null}
