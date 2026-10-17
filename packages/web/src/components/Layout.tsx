@@ -12,10 +12,19 @@ interface NavItem {
   icon: string;
 }
 
+interface NavSubGroup {
+  title: string;
+  items: NavItem[];
+}
+
 interface NavGroup {
   title: string;
   icon: string;
-  items: NavItem[];
+  items: (NavItem | NavSubGroup)[];
+}
+
+function isSubGroup(item: NavItem | NavSubGroup): item is NavSubGroup {
+  return (item as NavSubGroup).items !== undefined && (item as NavItem).to === undefined;
 }
 
 // Inner SVG paths (stroke style, 20x20 viewBox); sized via the svgIcon helper
@@ -146,6 +155,20 @@ function svgIcon(name: string, className: string): ReactNode {
 
 const NAV: NavGroup[] = [
   {
+    title: 'Dashboard & BI',
+    icon: 'dashboard',
+    items: [
+      { to: '/', label: 'Dashboard', icon: 'dashboard' },
+      { to: '/bi/production', label: 'Production', claim: ['production:view'], icon: 'factory' },
+      { to: '/bi/quality', label: 'Quality', claim: ['qc:view'], icon: 'qc' },
+      { to: '/bi/procurement', label: 'Procurement', claim: ['procurement:view'], icon: 'truck' },
+      { to: '/bi/inventory', label: 'Inventory', claim: ['storage:view'], icon: 'package' },
+      { to: '/bi/sales', label: 'Sales', claim: ['sales:view'], icon: 'sales' },
+      { to: '/bi/finance', label: 'Finance', claim: ['finance:view'], icon: 'finance' },
+      { to: '/bi/hr', label: 'HR', claim: ['payroll:view'], icon: 'payroll' }
+    ]
+  },
+  {
     title: 'Procurement',
     icon: 'truck',
     items: [
@@ -158,17 +181,38 @@ const NAV: NavGroup[] = [
     ]
   },
   {
-    title: 'Storage',
-    icon: 'tanks',
+    title: 'Inventory',
+    icon: 'package',
     items: [
-      { to: '/dry-storage', label: 'Dry Storage', claim: ['tanks:read'], icon: 'package' },
-      { to: '/tanks', label: 'Tanks', claim: ['tanks:read'], icon: 'tanks' },
-      { to: '/tank-filling', label: 'Filling', claim: ['tanks:read'], icon: 'intake' },
-      { to: '/blend-tracking', label: 'Blends', claim: ['tanks:read'], icon: 'batches' },
-      { to: '/conditioning-monitor', label: 'Monitor', claim: ['tanks:read'], icon: 'shifts' },
-      { to: '/tank-release', label: 'Release', claim: ['tanks:read'], icon: 'qc' },
-      { to: '/stock-movement', label: 'Movements', claim: ['tanks:read'], icon: 'dashboard' },
-      { to: '/storage-reports', label: 'Storage Reports', claim: ['tanks:read'], icon: 'finance' }
+      { title: 'Storage', items: [
+        { to: '/dry-storage', label: 'Dry Storage', claim: ['tanks:read'], icon: 'package' },
+        { to: '/tanks', label: 'Tanks', claim: ['tanks:read'], icon: 'tanks' },
+        { to: '/tank-filling', label: 'Filling', claim: ['tanks:read'], icon: 'intake' },
+        { to: '/blend-tracking', label: 'Blends', claim: ['tanks:read'], icon: 'batches' },
+        { to: '/conditioning-monitor', label: 'Monitor', claim: ['tanks:read'], icon: 'shifts' },
+        { to: '/tank-release', label: 'Release', claim: ['tanks:read'], icon: 'qc' },
+        { to: '/stock-movement', label: 'Movements', claim: ['tanks:read'], icon: 'dashboard' },
+        { to: '/storage-reports', label: 'Storage Reports', claim: ['tanks:read'], icon: 'finance' }
+      ] },
+      { title: 'Finished Goods', items: [
+        { to: '/fg', label: 'FG Stock', claim: ['fg:view'], icon: 'package' },
+        { to: '/fg/grades', label: 'Grades', claim: ['fg:view'], icon: 'qc' },
+        { to: '/fg/packaging', label: 'Packaging', claim: ['fg:view'], icon: 'batches' },
+        { to: '/fg/labels', label: 'Labels', claim: ['fg:view'], icon: 'intake' },
+        { to: '/fg/byproducts', label: 'Byproducts', claim: ['fg:view'], icon: 'dashboard' },
+        { to: '/fg/aging', label: 'Aging', claim: ['fg:view'], icon: 'shifts' },
+        { to: '/fg/reports', label: 'FG Reports', claim: ['fg:view'], icon: 'finance' }
+      ] },
+      { title: 'Warehouse', items: [
+        { to: '/warehouse/locations', label: 'Locations', claim: ['warehouse:view'], icon: 'package' },
+        { to: '/warehouse/putaway', label: 'Put-Away', claim: ['warehouse:view'], icon: 'intake' },
+        { to: '/warehouse/transfers', label: 'Transfers', claim: ['warehouse:view'], icon: 'truck' },
+        { to: '/warehouse/adjustments', label: 'Adjustments', claim: ['warehouse:view'], icon: 'settings' },
+        { to: '/warehouse/reservations', label: 'Reservations', claim: ['warehouse:view'], icon: 'shifts' },
+        { to: '/warehouse/dispatch', label: 'Dispatch', claim: ['warehouse:view'], icon: 'sales' },
+        { to: '/warehouse/stocktaking', label: 'Stocktaking', claim: ['warehouse:view'], icon: 'qc' },
+        { to: '/warehouse/reports', label: 'WH Reports', claim: ['warehouse:view'], icon: 'finance' }
+      ] }
     ]
   },
   {
@@ -196,47 +240,49 @@ const NAV: NavGroup[] = [
       { to: '/quality/flour-tests', label: 'Flour Tests', claim: ['qc:view'], icon: 'qc' },
       { to: '/quality/sampling', label: 'Sampling', claim: ['qc:view'], icon: 'shifts' },
       { to: '/quality/approval', label: 'Approval', claim: ['qc:view'], icon: 'intake' },
-      { to: '/quality/reports', label: 'Quality Reports', claim: ['qc:view'], icon: 'finance' }
+      { to: '/quality/reports', label: 'Quality Reports', claim: ['qc:view'], icon: 'finance' },
+      { title: 'CAPA', items: [
+        { to: '/capa', label: 'CAPA', claim: ['capa:read'], icon: 'capa' },
+        { to: '/nc-register', label: 'NC Register', claim: ['capa:view'], icon: 'capa' },
+        { to: '/nc-root-cause', label: 'Root Cause', claim: ['capa:view'], icon: 'dashboard' },
+        { to: '/nc-actions', label: 'NC Actions', claim: ['capa:view'], icon: 'shifts' },
+        { to: '/nc-disposition', label: 'Disposition', claim: ['capa:view'], icon: 'package' },
+        { to: '/nc-signoff', label: 'Sign-Off', claim: ['capa:view'], icon: 'intake' },
+        { to: '/nc-reports', label: 'NC Reports', claim: ['capa:view'], icon: 'finance' }
+      ] }
     ]
   },
   {
-    title: 'CAPA',
-    icon: 'capa',
+    title: 'Sanitation',
+    icon: 'shifts',
     items: [
-      { to: '/capa', label: 'CAPA', claim: ['capa:read'], icon: 'capa' },
-      { to: '/nc-register', label: 'NC Register', claim: ['capa:view'], icon: 'capa' },
-      { to: '/nc-root-cause', label: 'Root Cause', claim: ['capa:view'], icon: 'dashboard' },
-      { to: '/nc-actions', label: 'NC Actions', claim: ['capa:view'], icon: 'shifts' },
-      { to: '/nc-disposition', label: 'Disposition', claim: ['capa:view'], icon: 'package' },
-      { to: '/nc-signoff', label: 'Sign-Off', claim: ['capa:view'], icon: 'intake' },
-      { to: '/nc-reports', label: 'NC Reports', claim: ['capa:view'], icon: 'finance' }
+      { to: '/hygiene/checklists', label: 'Hygiene Lists', claim: ['hygiene:view'], icon: 'shifts' },
+      { to: '/hygiene/area-cleaning', label: 'Cleaning', claim: ['hygiene:view'], icon: 'intake' },
+      { to: '/hygiene/inspections', label: 'Inspections', claim: ['hygiene:view'], icon: 'qc' },
+      { to: '/hygiene/actions', label: 'Actions', claim: ['hygiene:view'], icon: 'capa' },
+      { to: '/hygiene/approvals', label: 'Hygiene Approvals', claim: ['hygiene:view'], icon: 'finance' },
+      { to: '/hygiene/reports', label: 'Hygiene Reports', claim: ['hygiene:view'], icon: 'dashboard' },
+      { title: 'Pest Control', items: [
+        { to: '/pest/schedule', label: 'Schedule', claim: ['pest:view'], icon: 'shifts' },
+        { to: '/pest/risk-inspections', label: 'Risk Areas', claim: ['pest:view'], icon: 'qc' },
+        { to: '/pest/treatments', label: 'Treatments', claim: ['pest:view'], icon: 'intake' },
+        { to: '/pest/follow-ups', label: 'Follow-Ups', claim: ['pest:view'], icon: 'capa' },
+        { to: '/pest/alerts', label: 'Alerts', claim: ['pest:view'], icon: 'monitor' },
+        { to: '/pest/reports', label: 'Pest Reports', claim: ['pest:view'], icon: 'finance' }
+      ] }
     ]
   },
   {
-    title: 'Finished Goods',
-    icon: 'package',
+    title: 'Maintenance',
+    icon: 'factory',
     items: [
-      { to: '/fg', label: 'FG Stock', claim: ['fg:view'], icon: 'package' },
-      { to: '/fg/grades', label: 'Grades', claim: ['fg:view'], icon: 'qc' },
-      { to: '/fg/packaging', label: 'Packaging', claim: ['fg:view'], icon: 'batches' },
-      { to: '/fg/labels', label: 'Labels', claim: ['fg:view'], icon: 'intake' },
-      { to: '/fg/byproducts', label: 'Byproducts', claim: ['fg:view'], icon: 'dashboard' },
-      { to: '/fg/aging', label: 'Aging', claim: ['fg:view'], icon: 'shifts' },
-      { to: '/fg/reports', label: 'FG Reports', claim: ['fg:view'], icon: 'finance' }
-    ]
-  },
-  {
-    title: 'Warehouse',
-    icon: 'dashboard',
-    items: [
-      { to: '/warehouse/locations', label: 'Locations', claim: ['warehouse:view'], icon: 'package' },
-      { to: '/warehouse/putaway', label: 'Put-Away', claim: ['warehouse:view'], icon: 'intake' },
-      { to: '/warehouse/transfers', label: 'Transfers', claim: ['warehouse:view'], icon: 'truck' },
-      { to: '/warehouse/adjustments', label: 'Adjustments', claim: ['warehouse:view'], icon: 'settings' },
-      { to: '/warehouse/reservations', label: 'Reservations', claim: ['warehouse:view'], icon: 'shifts' },
-      { to: '/warehouse/dispatch', label: 'Dispatch', claim: ['warehouse:view'], icon: 'sales' },
-      { to: '/warehouse/stocktaking', label: 'Stocktaking', claim: ['warehouse:view'], icon: 'qc' },
-      { to: '/warehouse/reports', label: 'WH Reports', claim: ['warehouse:view'], icon: 'finance' }
+      { to: '/maintenance/planning', label: 'Maintenance Plans', claim: ['maintenance:view'], icon: 'factory' },
+      { to: '/maintenance/pm-checklists', label: 'PM Checklists', claim: ['maintenance:view'], icon: 'shifts' },
+      { to: '/maintenance/breakdowns', label: 'Breakdowns', claim: ['maintenance:view'], icon: 'capa' },
+      { to: '/maintenance/spare-parts', label: 'Spare Parts', claim: ['maintenance:view'], icon: 'package' },
+      { to: '/maintenance/work-orders', label: 'Work Orders', claim: ['maintenance:view'], icon: 'intake' },
+      { to: '/maintenance/repair-approval', label: 'Repairs', claim: ['maintenance:view'], icon: 'finance' },
+      { to: '/maintenance/reports', label: 'Maint Reports', claim: ['maintenance:view'], icon: 'dashboard' }
     ]
   },
   {
@@ -271,8 +317,7 @@ const NAV: NavGroup[] = [
       { to: '/finance/trial-balance', label: 'Trial Balance', claim: ['finance:read'], icon: 'finance' },
       { to: '/finance/income-statement', label: 'Income Stmt', claim: ['finance:read'], icon: 'finance' },
       { to: '/finance/balance-sheet', label: 'Balance Sheet', claim: ['finance:read'], icon: 'finance' },
-      { to: '/finance/reports', label: 'Fin Reports', claim: ['finance:read'], icon: 'finance' },
-      { to: '/payroll', label: 'Payroll', claim: ['payroll:read'], icon: 'payroll' }
+      { to: '/finance/reports', label: 'Fin Reports', claim: ['finance:read'], icon: 'finance' }
     ]
   },
   {
@@ -290,44 +335,7 @@ const NAV: NavGroup[] = [
     ]
   },
   {
-    title: 'Maintenance',
-    icon: 'factory',
-    items: [
-      { to: '/maintenance/planning', label: 'Maintenance Plans', claim: ['maintenance:view'], icon: 'factory' },
-      { to: '/maintenance/pm-checklists', label: 'PM Checklists', claim: ['maintenance:view'], icon: 'shifts' },
-      { to: '/maintenance/breakdowns', label: 'Breakdowns', claim: ['maintenance:view'], icon: 'capa' },
-      { to: '/maintenance/spare-parts', label: 'Spare Parts', claim: ['maintenance:view'], icon: 'package' },
-      { to: '/maintenance/work-orders', label: 'Work Orders', claim: ['maintenance:view'], icon: 'intake' },
-      { to: '/maintenance/repair-approval', label: 'Repairs', claim: ['maintenance:view'], icon: 'finance' },
-      { to: '/maintenance/reports', label: 'Maint Reports', claim: ['maintenance:view'], icon: 'dashboard' }
-    ]
-  },
-  {
-    title: 'Sanitation',
-    icon: 'shifts',
-    items: [
-      { to: '/hygiene/checklists', label: 'Hygiene Lists', claim: ['hygiene:view'], icon: 'shifts' },
-      { to: '/hygiene/area-cleaning', label: 'Cleaning', claim: ['hygiene:view'], icon: 'intake' },
-      { to: '/hygiene/inspections', label: 'Inspections', claim: ['hygiene:view'], icon: 'qc' },
-      { to: '/hygiene/actions', label: 'Actions', claim: ['hygiene:view'], icon: 'capa' },
-      { to: '/hygiene/approvals', label: 'Hygiene Approvals', claim: ['hygiene:view'], icon: 'finance' },
-      { to: '/hygiene/reports', label: 'Hygiene Reports', claim: ['hygiene:view'], icon: 'dashboard' }
-    ]
-  },
-  {
-    title: 'Pest Control',
-    icon: 'monitor',
-    items: [
-      { to: '/pest/schedule', label: 'Schedule', claim: ['pest:view'], icon: 'shifts' },
-      { to: '/pest/risk-inspections', label: 'Risk Areas', claim: ['pest:view'], icon: 'qc' },
-      { to: '/pest/treatments', label: 'Treatments', claim: ['pest:view'], icon: 'intake' },
-      { to: '/pest/follow-ups', label: 'Follow-Ups', claim: ['pest:view'], icon: 'capa' },
-      { to: '/pest/alerts', label: 'Alerts', claim: ['pest:view'], icon: 'monitor' },
-      { to: '/pest/reports', label: 'Pest Reports', claim: ['pest:view'], icon: 'finance' }
-    ]
-  },
-  {
-    title: 'HR',
+    title: 'HR & Payroll',
     icon: 'payroll',
     items: [
       { to: '/hr/employees', label: 'Employees', claim: ['hr:read'], icon: 'payroll' },
@@ -338,7 +346,8 @@ const NAV: NavGroup[] = [
       { to: '/hr/driver-payroll', label: 'Driver Pay', claim: ['hr:read'], icon: 'truck' },
       { to: '/hr/allowances', label: 'Allowances', claim: ['hr:read'], icon: 'sales' },
       { to: '/hr/payroll-run', label: 'Payroll Run', claim: ['hr:read'], icon: 'monitor' },
-      { to: '/hr/payslips', label: 'Payslips', claim: ['hr:read'], icon: 'qc' }
+      { to: '/hr/payslips', label: 'Payslips', claim: ['hr:read'], icon: 'qc' },
+      { to: '/payroll', label: 'Payroll', claim: ['payroll:read'], icon: 'payroll' }
     ]
   },
   {
@@ -355,26 +364,7 @@ const NAV: NavGroup[] = [
     ]
   },
   {
-    title: 'BI',
-    icon: 'monitor',
-    items: [
-      { to: '/bi/production', label: 'Production', claim: ['production:view'], icon: 'factory' },
-      { to: '/bi/quality', label: 'Quality', claim: ['qc:view'], icon: 'qc' },
-      { to: '/bi/procurement', label: 'Procurement', claim: ['procurement:view'], icon: 'truck' },
-      { to: '/bi/inventory', label: 'Inventory', claim: ['storage:view'], icon: 'package' },
-      { to: '/bi/sales', label: 'Sales', claim: ['sales:view'], icon: 'sales' },
-      { to: '/bi/finance', label: 'Finance', claim: ['finance:view'], icon: 'finance' },
-      { to: '/bi/hr', label: 'HR', claim: ['payroll:view'], icon: 'payroll' },
-      {
-        to: '/bi/report-builder',
-        label: 'Builder',
-        claim: ['production:view', 'qc:view', 'procurement:view', 'storage:view', 'sales:view', 'finance:view', 'payroll:view'],
-        icon: 'dashboard'
-      }
-    ]
-  },
-  {
-    title: 'Admin',
+    title: 'Settings',
     icon: 'settings',
     items: [
       { to: '/settings', label: 'Settings', claim: ['settings:read'], icon: 'settings' },
@@ -478,9 +468,17 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const visible = (item: NavItem) =>
     !item.claim || hasAnyClaim(Array.isArray(item.claim) ? item.claim : [item.claim]);
 
+  // Flatten helper: all leaf NavItems in a group (including nested sub-groups)
+  const leafItems = (group: NavGroup): NavItem[] =>
+    group.items.flatMap((it) => (isSubGroup(it) ? it.items.filter(visible) : [it].filter(visible)));
+
   const visibleGroups = NAV.map((group) => ({
     ...group,
-    items: group.items.filter(visible)
+    items: group.items
+      .map((it) =>
+        isSubGroup(it) ? { ...it, items: it.items.filter(visible) } : it
+      )
+      .filter((it) => (isSubGroup(it) ? it.items.length > 0 : visible(it as NavItem)))
   })).filter((group) => group.items.length > 0);
 
   const visibleBottom = BOTTOM_NAV.filter(visible);
@@ -512,7 +510,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
     }
   });
   useEffect(() => {
-    const match = visibleGroups.find((g) => g.items.some((i) => itemMatches(i, pathname)));
+    const match = visibleGroups.find((g) => leafItems(g).some((i) => itemMatches(i, pathname)));
     if (match) {
       setRecents((prev) => {
         const next = [match.title, ...prev.filter((t) => t !== match.title)].slice(0, 4);
@@ -532,9 +530,23 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
     ? visibleGroups
         .map((g) => ({
           ...g,
-          items: g.items.filter(
-            (i) => g.title.toLowerCase().includes(q) || i.label.toLowerCase().includes(q)
-          )
+          items: g.items
+            .map((it) =>
+              isSubGroup(it)
+                ? {
+                    ...it,
+                    items: it.items.filter(
+                      (i) =>
+                        it.title.toLowerCase().includes(q) || i.label.toLowerCase().includes(q)
+                    )
+                  }
+                : it
+            )
+            .filter((it) =>
+              isSubGroup(it)
+                ? it.items.length > 0 || it.title.toLowerCase().includes(q)
+                : g.title.toLowerCase().includes(q) || (it as NavItem).label.toLowerCase().includes(q)
+            )
         }))
         .filter((g) => g.items.length > 0 || g.title.toLowerCase().includes(q))
     : visibleGroups;
@@ -553,8 +565,16 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   }, []);
 
   const [openGroup, setOpenGroup] = useState<string | null>(() => {
-    const active = visibleGroups.find((g) => g.items.some((i) => itemMatches(i, pathname)));
+    const active = visibleGroups.find((g) => leafItems(g).some((i) => itemMatches(i, pathname)));
     return active ? active.title : null;
+  });
+  const [openSub, setOpenSub] = useState<string | null>(() => {
+    for (const g of visibleGroups) {
+      for (const it of g.items) {
+        if (isSubGroup(it) && it.items.some((i) => itemMatches(i, pathname))) return `${g.title}/${it.title}`;
+      }
+    }
+    return null;
   });
   useEffect(() => {
     if (q && filteredGroups.length > 0) setOpenGroup(filteredGroups[0].title);
@@ -567,9 +587,27 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const itemActive =
     'bg-violet-50 font-semibold text-violet-900 dark:bg-violet-500/15 dark:text-violet-200';
 
+  const renderLeafItem = (item: NavItem, depth: number) => {
+    const active = itemMatches(item, pathname);
+    return (
+      <li key={item.to}>
+        <NavLink
+          to={item.to} end={item.to === '/'} onClick={onNavigate}
+          aria-current={active ? 'page' : undefined}
+          className={`${itemBase} ${depth === 2 ? 'pl-9' : 'pl-7'} text-[13px] ${active ? itemActive : 'text-gray-600 hover:bg-gray-100 dark:text-slate-400 dark:hover:bg-slate-700/60'}`}
+        >
+          {active ? (
+            <span className="absolute left-0 top-1/2 h-4 w-1 -translate-y-1/2 rounded-r-full bg-violet-600" aria-hidden="true" />
+          ) : null}
+          <span className="truncate pl-1">{item.label}</span>
+        </NavLink>
+      </li>
+    );
+  };
+
   const renderGroup = (group: (typeof visibleGroups)[number], showFav = true) => {
     const isOpen = openGroup === group.title || !!q;
-    const hasActive = group.items.some((i) => itemMatches(i, pathname));
+    const hasActive = leafItems(group).some((i) => itemMatches(i, pathname));
     const isFav = favorites.includes(group.title);
     return (
       <div key={group.title} className="mb-px">
@@ -608,22 +646,39 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
         </div>
         {isOpen ? (
           <ul id={`nav-group-${group.title}`} className="mb-0.5 mt-px space-y-px" aria-label={`${group.title} submodules`}>
-            {group.items.map((item) => {
-              const active = itemMatches(item, pathname);
-              return (
-                <li key={item.to}>
-                  <NavLink
-                    to={item.to} end={item.to === '/'} onClick={onNavigate}
-                    aria-current={active ? 'page' : undefined}
-                    className={`${itemBase} pl-7 text-[13px] ${active ? itemActive : 'text-gray-600 hover:bg-gray-100 dark:text-slate-400 dark:hover:bg-slate-700/60'}`}
-                  >
-                    {active ? (
-                      <span className="absolute left-0 top-1/2 h-4 w-1 -translate-y-1/2 rounded-r-full bg-violet-600" aria-hidden="true" />
+            {group.items.map((it) => {
+              if (isSubGroup(it)) {
+                const subKey = `${group.title}/${it.title}`;
+                const subOpen = openSub === subKey || !!q;
+                const subActive = it.items.some((i) => itemMatches(i, pathname));
+                return (
+                  <li key={subKey}>
+                    <button
+                      type="button"
+                      onClick={() => setOpenSub(subOpen && !q ? null : subKey)}
+                      aria-expanded={subOpen}
+                      aria-controls={`nav-sub-${subKey}`}
+                      className={`${itemBase} pl-6 text-[13px] font-medium ${subOpen || subActive ? 'text-gray-900 dark:text-white' : 'text-gray-600 hover:bg-gray-100 dark:text-slate-400 dark:hover:bg-slate-700/60'}`}
+                    >
+                      {subActive ? (
+                        <span className="absolute left-0 top-1/2 h-4 w-1 -translate-y-1/2 rounded-r-full bg-violet-600" aria-hidden="true" />
+                      ) : null}
+                      <span className="min-w-0 flex-1 truncate pl-1">{it.title}</span>
+                      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={2}
+                        className={`h-3 w-3 shrink-0 text-gray-400 transition-transform duration-200 dark:text-slate-500 ${subOpen ? 'rotate-90' : ''}`}
+                        aria-hidden="true">
+                        <path d="M7.5 5l5 5-5 5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </button>
+                    {subOpen ? (
+                      <ul id={`nav-sub-${subKey}`} className="mt-px space-y-px" aria-label={`${it.title} pages`}>
+                        {it.items.map((leaf) => renderLeafItem(leaf, 2))}
+                      </ul>
                     ) : null}
-                    <span className="truncate pl-1">{item.label}</span>
-                  </NavLink>
-                </li>
-              );
+                  </li>
+                );
+              }
+              return renderLeafItem(it as NavItem, 1);
             })}
           </ul>
         ) : null}
@@ -674,15 +729,6 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           </>
         ) : (
           <>
-            <NavLink to="/" end onClick={onNavigate}
-              aria-current={pathname === '/' ? 'page' : undefined}
-              className={`${itemBase} mb-0.5 ${pathname === '/' ? itemActive : itemIdle}`}>
-              {pathname === '/' ? (
-                <span className="absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-violet-600" aria-hidden="true" />
-              ) : null}
-              <span className="truncate pl-1">Dashboard</span>
-            </NavLink>
-
             {favGroups.length > 0 ? (
               <><p className={sectionLabel}>Favorites</p>{favGroups.map((g) => renderGroup(g))}</>
             ) : null}
@@ -694,10 +740,12 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                   {recents.map((t) => {
                     const group = visibleGroups.find((g) => g.title === t);
                     if (!group) return null;
-                    const hasActive = group.items.some((i) => itemMatches(i, pathname));
+                    const leaves = leafItems(group);
+                    if (leaves.length === 0) return null;
+                    const hasActive = leaves.some((i) => itemMatches(i, pathname));
                     return (
                       <li key={group.title}>
-                        <NavLink to={group.items[0].to} onClick={onNavigate}
+                        <NavLink to={leaves[0].to} onClick={onNavigate}
                           className={`${itemBase} ${hasActive ? itemActive : itemIdle}`}>
                           {hasActive ? (
                             <span className="absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-violet-600" aria-hidden="true" />
@@ -711,15 +759,13 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
               </>
             ) : null}
 
-            <p className={sectionLabel}>All modules</p>
+            <p className={sectionLabel}>Modules</p>
             {visibleGroups.map((g) => renderGroup(g))}
 
-            <p className={sectionLabel}>Account</p>
+            <p className={sectionLabel}>Quick access</p>
             {[
-              { to: '/admin/notifications', label: 'Notification' },
+              { to: '/admin/notifications', label: 'Notifications' },
               { to: '/support/tickets', label: 'Chat' },
-              ...(visibleSettings ? [{ to: '/settings', label: 'Settings' }] : []),
-              ...(visibleHelp ? [{ to: '/support', label: 'Support' }] : []),
             ].map((a) => (
               <NavLink key={a.to} to={a.to} onClick={onNavigate}
                 aria-current={acctActive(a.to) ? 'page' : undefined}
