@@ -143,7 +143,7 @@ function TrendLine({ pct, suffix }: { pct: number | null; suffix: string }) {
         up ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'
       }`}
     >
-      {up ? <ArrowUp size={14} aria-hidden="true" /> : <ArrowDown size={14} aria-hidden="true" />}
+      {up ? <Check size={14} strokeWidth={3} aria-hidden="true" /> : <ArrowDown size={14} aria-hidden="true" />}
       <span className="tabular-nums">
         {Math.abs(pct).toFixed(1)}% {up ? 'more' : 'less'} than {suffix}
       </span>
@@ -216,11 +216,14 @@ function KpiCard({ spec }: { spec: KpiSpec }) {
 
 type Period = 'today' | 'yesterday';
 type ProcFilter = 'all' | 'Received' | 'Pending';
+type ShiftSel = 'all' | 'Day' | 'Night';
 
 function PageHeader({
   firstName,
   period,
   setPeriod,
+  shift,
+  setShift,
   procFilter,
   setProcFilter,
   onExport
@@ -228,11 +231,14 @@ function PageHeader({
   firstName: string | null;
   period: Period;
   setPeriod: (p: Period) => void;
+  shift: ShiftSel;
+  setShift: (s: ShiftSel) => void;
   procFilter: ProcFilter;
   setProcFilter: (f: ProcFilter) => void;
   onExport: () => void;
 }) {
   const [periodOpen, setPeriodOpen] = useState(false);
+  const [shiftOpen, setShiftOpen] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
   const todayStr = new Date().toLocaleDateString('en-GB', {
     weekday: 'long',
@@ -249,9 +255,64 @@ function PageHeader({
         <h1 className="text-xl font-extrabold tracking-tight text-gray-900 dark:text-white">
           Welcome{firstName ? ` ${firstName}` : ''}
         </h1>
-        <p className="mt-0.5 text-sm text-gray-500 dark:text-slate-400">Today&apos;s {todayStr}</p>
+        <p className="mt-0.5 text-sm text-gray-500 dark:text-slate-400">Today is {todayStr}</p>
       </div>
       <div className="flex flex-wrap items-center gap-2">
+        {/* Shift dropdown (Orlando "Staff ID" position) */}
+        <div className="relative">
+          <button
+            type="button"
+            className={btn}
+            aria-haspopup="listbox"
+            aria-expanded={shiftOpen}
+            aria-label="Select shift"
+            onClick={() => {
+              setShiftOpen((v) => !v);
+              setPeriodOpen(false);
+              setFilterOpen(false);
+            }}
+          >
+            <Clock size={15} aria-hidden="true" />
+            {shift === 'all' ? 'All Shifts' : `${shift} Shift`}
+            <ChevronDown size={14} aria-hidden="true" />
+          </button>
+          {shiftOpen ? (
+            <>
+              <button
+                type="button"
+                className="fixed inset-0 z-30 cursor-default"
+                onClick={() => setShiftOpen(false)}
+                aria-label="Close shift menu"
+                tabIndex={-1}
+              />
+              <div
+                role="listbox"
+                aria-label="Shift"
+                className="absolute right-0 z-40 mt-2 w-44 rounded-xl border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800 py-1 shadow-lg"
+              >
+                {(['all', 'Day', 'Night'] as ShiftSel[]).map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    role="option"
+                    aria-selected={shift === s}
+                    onClick={() => {
+                      setShift(s);
+                      setShiftOpen(false);
+                    }}
+                    className={`flex w-full items-center justify-between px-4 py-2 text-left text-sm capitalize transition-colors hover:bg-gray-50 dark:hover:bg-slate-700 ${
+                      shift === s ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-600 dark:text-slate-300'
+                    }`}
+                  >
+                    {s === 'all' ? 'All Shifts' : `${s} Shift`}
+                    {shift === s ? <Check size={14} className="text-violet-600" aria-hidden="true" /> : null}
+                  </button>
+                ))}
+              </div>
+            </>
+          ) : null}
+        </div>
+
         {/* Period dropdown */}
         <div className="relative">
           <button
@@ -262,6 +323,7 @@ function PageHeader({
             aria-label="Select period"
             onClick={() => {
               setPeriodOpen((v) => !v);
+              setShiftOpen(false);
               setFilterOpen(false);
             }}
           >
@@ -317,6 +379,7 @@ function PageHeader({
             onClick={() => {
               setFilterOpen((v) => !v);
               setPeriodOpen(false);
+              setShiftOpen(false);
             }}
           >
             <SlidersHorizontal size={15} aria-hidden="true" />
@@ -758,6 +821,18 @@ const SEED_PAYABLES: PayableRow[] = [
 function PayablesTable({ rows, demo }: { rows: PayableRow[]; demo: boolean }) {
   const visible = rows.length > 0 ? rows : SEED_PAYABLES;
   const showDemo = rows.length === 0 ? true : demo;
+  const totals = useMemo(() => {
+    let current = 0;
+    let dueSoon = 0;
+    let overdue = 0;
+    for (const r of visible) {
+      const s = r.status.toLowerCase();
+      if (s.includes('overdue')) overdue += r.amount;
+      else if (s.includes('due soon') || s.includes('pending')) dueSoon += r.amount;
+      else current += r.amount;
+    }
+    return { current, dueSoon, overdue, total: current + dueSoon + overdue };
+  }, [visible]);
   return (
     <section className={`${cardShell} col-span-12 lg:col-span-6`} aria-label="Vendor payables aging">
       <div className="mb-3 flex items-center justify-between gap-2">
@@ -772,6 +847,27 @@ function PayablesTable({ rows, demo }: { rows: PayableRow[]; demo: boolean }) {
           </Link>
         </div>
       </div>
+      {/* Aging summary — Orlando "Budget history" style totals */}
+      <div className="mb-3 grid grid-cols-3 gap-2" role="list" aria-label="Payables aging summary">
+        <div role="listitem" className="rounded-xl border border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/60 px-3 py-2">
+          <p className="text-[11px] font-medium text-gray-500 dark:text-slate-400">Current</p>
+          <p className="text-sm font-extrabold tabular-nums text-gray-900 dark:text-white">
+            {totals.current.toLocaleString('en-US')}
+          </p>
+        </div>
+        <div role="listitem" className="rounded-xl border border-amber-100 dark:border-amber-900/40 bg-amber-50 dark:bg-amber-900/20 px-3 py-2">
+          <p className="text-[11px] font-medium text-amber-700 dark:text-amber-300">Due Soon</p>
+          <p className="text-sm font-extrabold tabular-nums text-amber-800 dark:text-amber-200">
+            {totals.dueSoon.toLocaleString('en-US')}
+          </p>
+        </div>
+        <div role="listitem" className="rounded-xl border border-red-100 dark:border-red-900/40 bg-red-50 dark:bg-red-900/20 px-3 py-2">
+          <p className="text-[11px] font-medium text-red-700 dark:text-red-300">Overdue</p>
+          <p className="text-sm font-extrabold tabular-nums text-red-800 dark:text-red-200">
+            {totals.overdue.toLocaleString('en-US')}
+          </p>
+        </div>
+      </div>
       <div className="overflow-x-auto">
         <table className="w-full border-collapse">
           <thead>
@@ -781,7 +877,7 @@ function PayablesTable({ rows, demo }: { rows: PayableRow[]; demo: boolean }) {
               <th scope="col" className={TH}>Invoice</th>
               <th scope="col" className={`${TH} text-right`}>Amount (ETB)</th>
               <th scope="col" className={TH}>Due Date</th>
-              <th scope="col" className={`${TH} text-right`}>Status</th>
+              <th scope="col" className={TH}>Status</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 dark:divide-slate-700/60">
@@ -798,12 +894,23 @@ function PayablesTable({ rows, demo }: { rows: PayableRow[]; demo: boolean }) {
                   {r.amount.toLocaleString('en-US')}
                 </td>
                 <td className={`${TD} whitespace-nowrap tabular-nums`}>{r.dueDate}</td>
-                <td className="px-3 py-3 text-right">
+                <td className="px-3 py-3">
                   <StatusPill status={r.status} />
                 </td>
               </tr>
             ))}
           </tbody>
+          <tfoot>
+            <tr className="border-t-2 border-gray-200 dark:border-slate-700 bg-gray-50/60 dark:bg-slate-800/40">
+              <td colSpan={3} className="px-3 py-2.5 text-xs font-bold uppercase tracking-wide text-gray-500 dark:text-slate-400">
+                Total outstanding
+              </td>
+              <td className="px-3 py-2.5 text-right text-sm font-extrabold tabular-nums text-gray-900 dark:text-white">
+                {totals.total.toLocaleString('en-US')}
+              </td>
+              <td colSpan={2} />
+            </tr>
+          </tfoot>
         </table>
       </div>
     </section>
@@ -947,6 +1054,7 @@ export function Dashboard() {
   const REFETCH = 60000;
   const [period, setPeriod] = useState<Period>('today');
   const [procFilter, setProcFilter] = useState<ProcFilter>('all');
+  const [shift, setShift] = useState<ShiftSel>('all');
 
   const kpisQ = useQuery({
     queryKey: ['dashboard-kpis'],
@@ -1349,7 +1457,13 @@ export function Dashboard() {
     const todayShifts = detailsReady
       ? details.filter((sh) => dayKey(new Date(sh.shiftDate ?? sh.startedAt)) === todayKey)
       : [];
-    const latestShift = todayShifts[0] ?? null;
+    const shiftFiltered =
+      shift === 'all'
+        ? todayShifts
+        : todayShifts.filter(
+            (sh) => String(sh.shift ?? '').toLowerCase().includes(shift.toLowerCase())
+          );
+    const latestShift = (shiftFiltered[0] ?? todayShifts[0]) ?? null;
     const hasLive = openBatch !== null || latestShift !== null;
     if (!hasLive) {
       return { ...SEED_SHIFT_MONITOR, demo: true };
@@ -1389,7 +1503,7 @@ export function Dashboard() {
       demo: false
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [batchesQ.isSuccess, batches, detailsReady, details, todayKey, nowMs]);
+  }, [batchesQ.isSuccess, batches, detailsReady, details, todayKey, nowMs, shift]);
 
   const firstName = displayFirstName(user);
 
@@ -1438,6 +1552,8 @@ export function Dashboard() {
         firstName={firstName}
         period={period}
         setPeriod={setPeriod}
+        shift={shift}
+        setShift={setShift}
         procFilter={procFilter}
         setProcFilter={setProcFilter}
         onExport={handleExport}
