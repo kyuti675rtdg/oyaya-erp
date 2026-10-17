@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 import { api } from '../lib/api';
 import { E } from '../lib/endpoints';
 
@@ -37,6 +37,48 @@ const ACTION_ALIASES: Record<string, string> = {
   read: 'view',
   create: 'manage'
 };
+
+const AUTH_KEY = 'oyaya-auth';
+
+/**
+ * Hybrid storage for the "Remember me" option.
+ * - Remember me ON  → persists in localStorage (survives browser restarts).
+ * - Remember me OFF → sessionStorage only (cleared when the tab closes).
+ * Reads check sessionStorage first so a session-scoped login survives reloads.
+ */
+const hybridStorage = {
+  getItem: (key: string): string | null =>
+    sessionStorage.getItem(key) ?? localStorage.getItem(key),
+  setItem: (key: string, value: string): void => {
+    if (sessionStorage.getItem(key) !== null) {
+      sessionStorage.setItem(key, value);
+    } else {
+      localStorage.setItem(key, value);
+    }
+  },
+  removeItem: (key: string): void => {
+    sessionStorage.removeItem(key);
+    localStorage.removeItem(key);
+  }
+};
+
+/**
+ * Move the persisted auth state between localStorage and sessionStorage
+ * according to the user's "Remember me" choice. Call after a successful login.
+ */
+export function setAuthPersistence(remember: boolean): void {
+  const sessionVal = sessionStorage.getItem(AUTH_KEY);
+  const localVal = localStorage.getItem(AUTH_KEY);
+  if (remember) {
+    if (sessionVal !== null) {
+      localStorage.setItem(AUTH_KEY, sessionVal);
+      sessionStorage.removeItem(AUTH_KEY);
+    }
+  } else if (localVal !== null) {
+    sessionStorage.setItem(AUTH_KEY, localVal);
+    localStorage.removeItem(AUTH_KEY);
+  }
+}
 
 export const useAuth = create<AuthState>()(
   persist(
@@ -83,6 +125,6 @@ export const useAuth = create<AuthState>()(
       },
       hasAnyClaim: (claims: string[]) => claims.some((c) => get().hasClaim(c))
     }),
-    { name: 'oyaya-auth' }
+    { name: AUTH_KEY, storage: createJSONStorage(() => hybridStorage) }
   )
 );

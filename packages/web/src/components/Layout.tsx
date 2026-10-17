@@ -1,148 +1,596 @@
-import { useState } from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../store/auth';
-import { useNetwork } from '../store/network';
 import { OfflineBanner } from './OfflineBanner';
 
 interface NavItem {
   to: string;
   label: string;
   claim?: string | string[];
+  icon: string;
 }
 
-interface NavSection {
+interface NavGroup {
   title: string;
+  icon: string;
   items: NavItem[];
 }
 
-const NAV: NavSection[] = [
+// Inner SVG paths (stroke style, 20x20 viewBox); sized via the svgIcon helper
+const PATHS: Record<string, ReactNode> = {
+  dashboard: (
+    <>
+      <rect x="3" y="3" width="6" height="6" rx="1.5" />
+      <rect x="11" y="3" width="6" height="4" rx="1.5" />
+      <rect x="11" y="9" width="6" height="8" rx="1.5" />
+      <rect x="3" y="11" width="6" height="6" rx="1.5" />
+    </>
+  ),
+  intake: (
+    <>
+      <path d="M10 3v10m0 0l-4-4m4 4l4-4" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M4 15v1.5A1.5 1.5 0 005.5 18h9a1.5 1.5 0 001.5-1.5V15" strokeLinecap="round" />
+    </>
+  ),
+  tanks: (
+    <>
+      <path d="M6 3h8l1 4H5l1-4z" strokeLinejoin="round" />
+      <path d="M5 7v9a2 2 0 002 2h6a2 2 0 002-2V7" strokeLinecap="round" />
+      <path d="M5 11h10" strokeLinecap="round" />
+    </>
+  ),
+  batches: (
+    <>
+      <circle cx="7" cy="7" r="3.5" />
+      <circle cx="13.5" cy="13" r="3.5" />
+      <path d="M10.5 7H14a2 2 0 012 2v1.5" strokeLinecap="round" />
+    </>
+  ),
+  shifts: (
+    <>
+      <circle cx="10" cy="10" r="7" />
+      <path d="M10 6v4l2.5 2.5" strokeLinecap="round" strokeLinejoin="round" />
+    </>
+  ),
+  qc: (
+    <>
+      <path d="M8 3h4M9 3v5l-4.2 8.4A1.5 1.5 0 006.1 18.5h7.8a1.5 1.5 0 001.3-2.1L11 8V3" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7.5 13h5" strokeLinecap="round" />
+    </>
+  ),
+  capa: (
+    <>
+      <path d="M10 2.5l6.5 3v5c0 4-2.8 6.8-6.5 8-3.7-1.2-6.5-4-6.5-8v-5l6.5-3z" strokeLinejoin="round" />
+      <path d="M7.5 10l1.8 1.8L12.8 8" strokeLinecap="round" strokeLinejoin="round" />
+    </>
+  ),
+  sales: (
+    <>
+      <path d="M3 6h14l-1.2 9.2a1.5 1.5 0 01-1.5 1.3H5.7a1.5 1.5 0 01-1.5-1.3L3 6z" strokeLinejoin="round" />
+      <path d="M7.5 9.5h5M7.5 12.5h3" strokeLinecap="round" />
+      <path d="M8 6V5a2 2 0 012-2h0a2 2 0 012 2v1" strokeLinecap="round" />
+    </>
+  ),
+  finance: (
+    <>
+      <rect x="3" y="6" width="14" height="10" rx="2" />
+      <path d="M3 10h14M7 15h4" strokeLinecap="round" />
+      <path d="M6 6V4.5A1.5 1.5 0 017.5 3h5A1.5 1.5 0 0114 4.5V6" strokeLinecap="round" />
+    </>
+  ),
+  payroll: (
+    <>
+      <circle cx="7" cy="6.5" r="2.5" />
+      <path d="M2.5 16a4.5 4.5 0 019 0" strokeLinecap="round" />
+      <path d="M14 4.5A2.5 2.5 0 0116.5 7M14.5 11.5a4.5 4.5 0 013 4.5" strokeLinecap="round" />
+    </>
+  ),
+  settings: (
+    <>
+      <circle cx="10" cy="10" r="2.5" />
+      <path d="M10 2.8v2M10 15.2v2M2.8 10h2M15.2 10h2M4.9 4.9l1.4 1.4M13.7 13.7l1.4 1.4M15.1 4.9l-1.4 1.4M6.3 13.7l-1.4 1.4" strokeLinecap="round" />
+    </>
+  ),
+  modules: (
+    <>
+      <rect x="3" y="3" width="5.5" height="5.5" rx="1.5" />
+      <rect x="11.5" y="3" width="5.5" height="5.5" rx="1.5" />
+      <rect x="3" y="11.5" width="5.5" height="5.5" rx="1.5" />
+      <rect x="11.5" y="11.5" width="5.5" height="5.5" rx="1.5" />
+    </>
+  ),
+  monitor: (
+    <>
+      <path d="M2.5 12.5l3.5-6 3 4 2.5-3 3 5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3 17h14" strokeLinecap="round" />
+    </>
+  ),
+  support: (
+    <>
+      <path d="M10 17.5a7.5 7.5 0 100-15 7.5 7.5 0 000 15z" />
+      <path d="M7.8 7.8A2.5 2.5 0 0110 6.5c1.4 0 2.5 1 2.5 2.2 0 1.7-2.2 2-2.5 3.3" strokeLinecap="round" />
+      <circle cx="10" cy="14" r="0.6" fill="currentColor" />
+    </>
+  ),
+  truck: (
+    <>
+      <path d="M2 4.5h10V13H2z" strokeLinejoin="round" />
+      <path d="M12 7.5h3.2l2.3 3v2.5H12" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="6" cy="15" r="1.6" />
+      <circle cx="14.8" cy="15" r="1.6" />
+    </>
+  ),
+  package: (
+    <>
+      <path d="M10 2.8L17 6.5v7L10 17.2L3 13.5v-7L10 2.8z" strokeLinejoin="round" />
+      <path d="M3 6.5l7 3.7 7-3.7M10 10.2v7" strokeLinecap="round" strokeLinejoin="round" />
+    </>
+  ),
+  factory: (
+    <>
+      <path d="M4 17V9.5l5-3.5v3.5l5-3.5V17" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M2.5 17h15" strokeLinecap="round" />
+    </>
+  )
+};
+
+function svgIcon(name: string, className: string): ReactNode {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className={className} aria-hidden="true">
+      {PATHS[name]}
+    </svg>
+  );
+}
+
+const NAV: NavGroup[] = [
   {
-    title: 'Overview',
-    items: [{ to: '/', label: 'Dashboard' }]
-  },
-  {
-    title: 'Mill Operations',
+    title: 'Business Intelligence',
+    icon: 'dashboard',
     items: [
-      { to: '/intake', label: 'Wheat Intake', claim: ['intake:create', 'intake:read'] },
-      { to: '/tanks', label: 'Conditioning Tanks', claim: ['tanks:read'] },
-      { to: '/batches', label: 'Batches & Blending', claim: ['batches:read'] },
-      { to: '/shifts', label: 'Shift Milling', claim: ['shifts:read'] }
+      { to: '/bi/production', label: 'Production BI', claim: ['production:view'], icon: 'factory' },
+      { to: '/bi/quality', label: 'Quality BI', claim: ['qc:view'], icon: 'qc' },
+      { to: '/bi/procurement', label: 'Procurement BI', claim: ['procurement:view'], icon: 'truck' },
+      { to: '/bi/inventory', label: 'Inventory BI', claim: ['storage:view'], icon: 'package' },
+      { to: '/bi/sales', label: 'Sales BI', claim: ['sales:view'], icon: 'sales' },
+      { to: '/bi/finance', label: 'Finance BI', claim: ['finance:view'], icon: 'finance' },
+      { to: '/bi/hr', label: 'HR & Payroll BI', claim: ['payroll:view'], icon: 'payroll' },
+      {
+        to: '/bi/report-builder',
+        label: 'Report Builder',
+        claim: ['production:view', 'qc:view', 'procurement:view', 'storage:view', 'sales:view', 'finance:view', 'payroll:view'],
+        icon: 'dashboard'
+      }
     ]
   },
   {
-    title: 'Quality',
+    title: 'Procurement & Vendor Management',
+    icon: 'truck',
     items: [
-      { to: '/qc', label: 'Lab Checks', claim: ['qc:read'] },
-      { to: '/capa', label: 'CAPA', claim: ['capa:read'] }
+      { to: '/intake', label: 'Wheat Intake', claim: ['intake:create', 'intake:read'], icon: 'intake' },
+      { to: '/suppliers', label: 'Suppliers', claim: ['procurement:view'], icon: 'truck' },
+      { to: '/purchase-orders', label: 'Purchase Orders', claim: ['procurement:view'], icon: 'finance' },
+      { to: '/incoming-inspection', label: 'Incoming Inspection', claim: ['procurement:view'], icon: 'qc' },
+      { to: '/accounts-payable', label: 'Accounts Payable', claim: ['procurement:view'], icon: 'finance' },
+      { to: '/procurement-reports', label: 'Procurement Reports', claim: ['procurement:view'], icon: 'dashboard' }
     ]
   },
   {
-    title: 'Commercial',
+    title: 'Storage & Conditioning',
+    icon: 'package',
     items: [
-      { to: '/sales', label: 'Sales & Dispatch', claim: ['sales:read'] },
-      { to: '/finance', label: 'Finance', claim: ['finance:read'] }
+      { to: '/tanks', label: 'Conditioning Tanks', claim: ['tanks:read'], icon: 'tanks' },
+      { to: '/dry-storage', label: 'Dry Wheat Storage', claim: ['tanks:read'], icon: 'package' },
+      { to: '/tank-filling', label: 'Tank Filling', claim: ['tanks:read'], icon: 'intake' },
+      { to: '/blend-tracking', label: 'Blend Tracking', claim: ['tanks:read'], icon: 'batches' },
+      { to: '/conditioning-monitor', label: 'Conditioning Monitor', claim: ['tanks:read'], icon: 'shifts' },
+      { to: '/tank-release', label: 'Tank Release', claim: ['tanks:read'], icon: 'qc' },
+      { to: '/stock-movement', label: 'Stock Movement', claim: ['tanks:read'], icon: 'dashboard' },
+      { to: '/storage-reports', label: 'Storage Reports', claim: ['tanks:read'], icon: 'finance' }
     ]
   },
   {
-    title: 'People',
-    items: [{ to: '/payroll', label: 'Payroll', claim: ['payroll:read'] }]
+    title: 'Production & Blending',
+    icon: 'factory',
+    items: [
+      { to: '/batches', label: 'Batches & Blending', claim: ['batches:read'], icon: 'batches' },
+      { to: '/shifts', label: 'Shift Milling', claim: ['shifts:read'], icon: 'shifts' },
+      { to: '/production-plans', label: 'Production Planning', claim: ['production:view'], icon: 'dashboard' },
+      { to: '/blend-recipes', label: 'Blend Recipes', claim: ['production:view'], icon: 'batches' },
+      { to: '/wheat-washing', label: 'Wheat Washing', claim: ['production:view'], icon: 'intake' },
+      { to: '/milling-process', label: 'Milling Process', claim: ['production:view'], icon: 'factory' },
+      { to: '/downtime', label: 'Downtime Logs', claim: ['production:view'], icon: 'monitor' },
+      { to: '/flour-output', label: 'Flour Output', claim: ['production:view'], icon: 'package' },
+      { to: '/yield-alerts', label: 'Yield Alerts', claim: ['production:view'], icon: 'capa' },
+      { to: '/production-reports', label: 'Production Reports', claim: ['production:view'], icon: 'finance' }
+    ]
   },
   {
-    title: 'System',
+    title: 'Quality Control',
+    icon: 'qc',
     items: [
-      { to: '/settings', label: 'Settings', claim: ['settings:read'] },
-      { to: '/module-manager', label: 'Module Manager', claim: ['settings:read'] },
-      { to: '/api-monitor', label: 'API Monitor', claim: ['settings:read'] },
-      { to: '/support', label: 'Support & Docs', claim: ['support:read'] },
+      { to: '/qc', label: 'Lab Checks', claim: ['qc:read'], icon: 'qc' },
+      { to: '/capa', label: 'CAPA', claim: ['capa:read'], icon: 'capa' },
+      { to: '/quality/standards', label: 'Quality Standards', claim: ['qc:view'], icon: 'settings' },
+      { to: '/quality/flour-tests', label: 'Flour Testing', claim: ['qc:view'], icon: 'qc' },
+      { to: '/quality/sampling', label: 'Sampling Schedule', claim: ['qc:view'], icon: 'shifts' },
+      { to: '/quality/approval', label: 'Quality Approval', claim: ['qc:view'], icon: 'intake' },
+      { to: '/quality/reports', label: 'Quality Reports', claim: ['qc:view'], icon: 'finance' },
+      { to: '/nc-register', label: 'NC Register', claim: ['capa:view'], icon: 'capa' },
+      { to: '/nc-root-cause', label: 'Root Cause', claim: ['capa:view'], icon: 'dashboard' },
+      { to: '/nc-actions', label: 'NC Actions', claim: ['capa:view'], icon: 'shifts' },
+      { to: '/nc-disposition', label: 'Disposition', claim: ['capa:view'], icon: 'package' },
+      { to: '/nc-signoff', label: 'Sign-Off', claim: ['capa:view'], icon: 'intake' },
+      { to: '/nc-reports', label: 'NC Reports', claim: ['capa:view'], icon: 'finance' }
+    ]
+  },
+  {
+    title: 'Sanitation & Hygiene',
+    icon: 'qc',
+    items: [
+      { to: '/hygiene/checklists', label: 'Cleaning Checklists', claim: ['hygiene:view'], icon: 'shifts' },
+      { to: '/hygiene/area-cleaning', label: 'Area Cleaning', claim: ['hygiene:view'], icon: 'intake' },
+      { to: '/hygiene/inspections', label: 'Hygiene Inspections', claim: ['hygiene:view'], icon: 'qc' },
+      { to: '/hygiene/actions', label: 'Action Tracking', claim: ['hygiene:view'], icon: 'capa' },
+      { to: '/hygiene/approvals', label: 'Approvals', claim: ['hygiene:view'], icon: 'finance' },
+      { to: '/hygiene/reports', label: 'Sanitation Reports', claim: ['hygiene:view'], icon: 'dashboard' }
+    ]
+  },
+  {
+    title: 'Pest Control',
+    icon: 'monitor',
+    items: [
+      { to: '/pest/schedule', label: 'Inspection Schedule', claim: ['pest:view'], icon: 'shifts' },
+      { to: '/pest/risk-inspections', label: 'Risk Area Inspections', claim: ['pest:view'], icon: 'qc' },
+      { to: '/pest/treatments', label: 'Treatments', claim: ['pest:view'], icon: 'intake' },
+      { to: '/pest/follow-ups', label: 'Follow-Ups', claim: ['pest:view'], icon: 'capa' },
+      { to: '/pest/alerts', label: 'Pest Alerts', claim: ['pest:view'], icon: 'monitor' },
+      { to: '/pest/reports', label: 'Pest Reports', claim: ['pest:view'], icon: 'finance' }
+    ]
+  },
+  {
+    title: 'Maintenance',
+    icon: 'settings',
+    items: [
+      { to: '/maintenance/planning', label: 'Equipment Planning', claim: ['maintenance:view'], icon: 'factory' },
+      { to: '/maintenance/pm-checklists', label: 'PM Checklists', claim: ['maintenance:view'], icon: 'shifts' },
+      { to: '/maintenance/breakdowns', label: 'Breakdowns', claim: ['maintenance:view'], icon: 'capa' },
+      { to: '/maintenance/spare-parts', label: 'Spare Parts', claim: ['maintenance:view'], icon: 'package' },
+      { to: '/maintenance/work-orders', label: 'Work Orders', claim: ['maintenance:view'], icon: 'intake' },
+      { to: '/maintenance/repair-approval', label: 'Repair Approval', claim: ['maintenance:view'], icon: 'finance' },
+      { to: '/maintenance/reports', label: 'Maintenance Reports', claim: ['maintenance:view'], icon: 'dashboard' }
+    ]
+  },
+  {
+    title: 'Finished Goods',
+    icon: 'package',
+    items: [
+      { to: '/fg', label: 'FG Inventory', claim: ['fg:view'], icon: 'package' },
+      { to: '/fg/grades', label: 'Flour Grades', claim: ['fg:view'], icon: 'qc' },
+      { to: '/fg/packaging', label: 'Packaging', claim: ['fg:view'], icon: 'batches' },
+      { to: '/fg/labels', label: 'Batch Labeling', claim: ['fg:view'], icon: 'intake' },
+      { to: '/fg/byproducts', label: 'Byproducts', claim: ['fg:view'], icon: 'dashboard' },
+      { to: '/fg/aging', label: 'Stock Aging', claim: ['fg:view'], icon: 'shifts' },
+      { to: '/fg/reports', label: 'FG Reports', claim: ['fg:view'], icon: 'finance' }
+    ]
+  },
+  {
+    title: 'Warehouse',
+    icon: 'truck',
+    items: [
+      { to: '/warehouse/locations', label: 'Locations', claim: ['warehouse:view'], icon: 'package' },
+      { to: '/warehouse/putaway', label: 'Put-Away', claim: ['warehouse:view'], icon: 'intake' },
+      { to: '/warehouse/transfers', label: 'Stock Transfers', claim: ['warehouse:view'], icon: 'truck' },
+      { to: '/warehouse/adjustments', label: 'Adjustments', claim: ['warehouse:view'], icon: 'settings' },
+      { to: '/warehouse/reservations', label: 'Reservations', claim: ['warehouse:view'], icon: 'shifts' },
+      { to: '/warehouse/dispatch', label: 'Dispatch', claim: ['warehouse:view'], icon: 'sales' },
+      { to: '/warehouse/stocktaking', label: 'Stocktaking', claim: ['warehouse:view'], icon: 'qc' },
+      { to: '/warehouse/reports', label: 'Inventory Reports', claim: ['warehouse:view'], icon: 'finance' }
+    ]
+  },
+  {
+    title: 'Fleet & Logistics',
+    icon: 'truck',
+    items: [
+      { to: '/fleet/vehicles', label: 'Vehicle Registry', claim: ['fleet:view'], icon: 'truck' },
+      { to: '/fleet/contracts', label: 'Owned & Rented Vehicles', claim: ['fleet:view'], icon: 'finance' },
+      { to: '/fleet/drivers', label: 'Driver Assignment', claim: ['fleet:view'], icon: 'payroll' },
+      { to: '/fleet/trips', label: 'Delivery Trips', claim: ['fleet:view'], icon: 'monitor' },
+      { to: '/fleet/utilization', label: 'Availability & Utilization', claim: ['fleet:view'], icon: 'dashboard' },
+      { to: '/fleet/fuel', label: 'Fuel & Expenses', claim: ['fleet:view'], icon: 'intake' },
+      { to: '/fleet/maintenance', label: 'Fleet Maintenance', claim: ['fleet:view'], icon: 'factory' },
+      { to: '/fleet/reports', label: 'Fleet Reports', claim: ['fleet:view'], icon: 'sales' }
+    ]
+  },
+  {
+    title: 'Product Traceability',
+    icon: 'qc',
+    items: [
+      { to: '/trace/intake', label: 'Intake Traceability', claim: ['traceability:read'], icon: 'intake' },
+      { to: '/trace/tanks', label: 'Tank & Lot Tracking', claim: ['traceability:read'], icon: 'tanks' },
+      { to: '/trace/batches', label: 'Batch History', claim: ['traceability:read'], icon: 'batches' },
+      { to: '/trace/finished', label: 'Finished Product Trace', claim: ['traceability:read'], icon: 'package' },
+      { to: '/trace/quality', label: 'Quality & CAPA History', claim: ['traceability:read'], icon: 'qc' },
+      { to: '/trace/recall', label: 'Batch Recall', claim: ['traceability:read'], icon: 'capa' },
+      { to: '/trace/search', label: 'Traceability Search', claim: ['traceability:read'], icon: 'dashboard' }
+    ]
+  },
+  {
+    title: 'Sales & Distribution',
+    icon: 'sales',
+    items: [
+      { to: '/sales', label: 'Customer Orders', claim: ['sales:read'], icon: 'sales' },
+      { to: '/sales/agreements', label: 'Price Agreements', claim: ['sales:read'], icon: 'finance' },
+      { to: '/sales/advances', label: 'Advance Payments', claim: ['sales:read'], icon: 'finance' },
+      { to: '/sales/loading', label: 'Loading', claim: ['sales:read'], icon: 'package' },
+      { to: '/sales/consolidation', label: 'Load Consolidation', claim: ['sales:read'], icon: 'truck' },
+      { to: '/sales/trips', label: 'Delivery Trips', claim: ['sales:read'], icon: 'truck' },
+      { to: '/sales/agents', label: 'Agent Stock', claim: ['sales:read'], icon: 'shifts' },
+      { to: '/sales/invoices', label: 'Invoices', claim: ['sales:read'], icon: 'finance' },
+      { to: '/sales/cash', label: 'Cash Reconciliation', claim: ['sales:read'], icon: 'finance' },
+      { to: '/sales/reports', label: 'Sales Reports', claim: ['sales:read'], icon: 'monitor' }
+    ]
+  },
+  {
+    title: 'Finance & Accounting',
+    icon: 'finance',
+    items: [
+      { to: '/finance', label: 'Finance', claim: ['finance:read'], icon: 'finance' },
+      { to: '/finance/chart-of-accounts', label: 'Chart of Accounts', claim: ['finance:read'], icon: 'finance' },
+      { to: '/finance/ledger', label: 'General Ledger', claim: ['finance:read'], icon: 'finance' },
+      { to: '/finance/accounts-payable', label: 'Accounts Payable', claim: ['finance:read'], icon: 'finance' },
+      { to: '/finance/accounts-receivable', label: 'Accounts Receivable', claim: ['finance:read'], icon: 'finance' },
+      { to: '/finance/cash-bank', label: 'Cash & Bank', claim: ['finance:read'], icon: 'finance' },
+      { to: '/finance/vouchers', label: 'Payment & Receipt Vouchers', claim: ['finance:read'], icon: 'finance' },
+      { to: '/finance/expenses', label: 'Expenses', claim: ['finance:read'], icon: 'finance' },
+      { to: '/finance/payroll-journal', label: 'Payroll Journal', claim: ['finance:read'], icon: 'finance' },
+      { to: '/finance/trial-balance', label: 'Trial Balance', claim: ['finance:read'], icon: 'finance' },
+      { to: '/finance/income-statement', label: 'Income Statement', claim: ['finance:read'], icon: 'finance' },
+      { to: '/finance/balance-sheet', label: 'Balance Sheet', claim: ['finance:read'], icon: 'finance' },
+      { to: '/finance/reports', label: 'Financial Reports', claim: ['finance:read'], icon: 'finance' },
+      { to: '/payroll', label: 'Payroll', claim: ['payroll:read'], icon: 'payroll' }
+    ]
+  },
+  {
+    title: 'HR & Payroll',
+    icon: 'payroll',
+    items: [
+      { to: '/hr/employees', label: 'Employees', claim: ['hr:read'], icon: 'payroll' },
+      { to: '/hr/departments', label: 'Departments', claim: ['hr:read'], icon: 'settings' },
+      { to: '/hr/attendance', label: 'Attendance', claim: ['hr:read'], icon: 'shifts' },
+      { to: '/hr/fixed-payroll', label: 'Fixed Salary & OT', claim: ['hr:read'], icon: 'finance' },
+      { to: '/hr/piece-rate', label: 'Piece-Rate Payroll', claim: ['hr:read'], icon: 'dashboard' },
+      { to: '/hr/driver-payroll', label: 'Driver Payroll', claim: ['hr:read'], icon: 'truck' },
+      { to: '/hr/allowances', label: 'Allowances', claim: ['hr:read'], icon: 'sales' },
+      { to: '/hr/payroll-run', label: 'Payroll Processing', claim: ['hr:read'], icon: 'monitor' },
+      { to: '/hr/payslips', label: 'Payslips & Reports', claim: ['hr:read'], icon: 'qc' }
+    ]
+  },
+  {
+    title: 'Administration & Governance',
+    icon: 'settings',
+    items: [
+      { to: '/settings', label: 'Settings', claim: ['settings:read'], icon: 'settings' },
+      { to: '/admin/users', label: 'User Management', claim: ['settings:read'], icon: 'payroll' },
+      { to: '/admin/roles', label: 'Roles & Permissions', claim: ['settings:read'], icon: 'capa' },
+      { to: '/admin/security', label: 'Security & MFA', claim: ['settings:read'], icon: 'settings' },
+      { to: '/admin/api-health', label: 'API Health', claim: ['settings:read'], icon: 'monitor' },
+      { to: '/admin/webhooks', label: 'Webhooks', claim: ['settings:read'], icon: 'modules' },
+      { to: '/admin/notifications', label: 'Notifications & SMS', claim: ['settings:read'], icon: 'support' },
+      { to: '/admin/audit-logs', label: 'Audit Logs', claim: ['settings:read'], icon: 'intake' },
+      { to: '/admin/backup', label: 'Backup & Data', claim: ['settings:read'], icon: 'package' }
     ]
   }
 ];
 
+/** Standalone bottom items (no chevron) per reference design. */
+const BOTTOM_NAV: NavItem[] = [
+  { to: '/api-monitor', label: 'API Monitoring', claim: ['settings:read'], icon: 'monitor' },
+  { to: '/support', label: 'Support & Helpdesk', claim: ['support:read'], icon: 'support' },
+  { to: '/module-manager', label: 'Module Management', claim: ['settings:read'], icon: 'modules' }
+];
+
+function itemMatches(item: NavItem, pathname: string): boolean {
+  if (item.to === '/') return pathname === '/';
+  return pathname === item.to || pathname.startsWith(item.to + '/');
+}
+
+function Logo() {
+  return (
+    <div className="flex items-center gap-3 px-5 pb-5 pt-5">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#5B35D5] text-white">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-6 w-6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M12 21V7" />
+          <path d="M12 10C9 10 6.5 7.5 6.5 4.5 9.5 4.5 12 7 12 10z" />
+          <path d="M12 10c3 0 5.5-2.5 5.5-5.5C14.5 4.5 12 7 12 10z" />
+          <path d="M12 15c-2.5 0-4.5-2-4.5-4.5 2.5 0 4.5 2 4.5 4.5z" />
+          <path d="M12 15c2.5 0 4.5-2 4.5-4.5-2.5 0-4.5 2-4.5 4.5z" />
+          <path d="M12 20c-2 0-3.5-1.5-3.5-3.5 2 0 3.5 1.5 3.5 3.5z" />
+          <path d="M12 20c2 0 3.5-1.5 3.5-3.5-2 0-3.5 1.5-3.5 3.5z" />
+        </svg>
+      </div>
+      <div className="min-w-0">
+        <p className="truncate text-sm font-bold leading-tight text-white">Oyaya Flour Mill ERP</p>
+        <p className="truncate text-[11px] text-white/50">Quality Flour · Better Lives</p>
+      </div>
+    </div>
+  );
+}
+
 function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const { hasAnyClaim } = useAuth();
+  const { pathname } = useLocation();
+
+  const visible = (item: NavItem) =>
+    !item.claim || hasAnyClaim(Array.isArray(item.claim) ? item.claim : [item.claim]);
+
+  const visibleGroups = NAV.map((group) => ({
+    ...group,
+    items: group.items.filter(visible)
+  })).filter((group) => group.items.length > 0);
+
+  const visibleBottom = BOTTOM_NAV.filter(visible);
+
+  const [openGroup, setOpenGroup] = useState<string | null>(() => {
+    const active = visibleGroups.find((g) => g.items.some((i) => itemMatches(i, pathname)));
+    return active ? active.title : null;
+  });
+
+  const dashActive = pathname === '/';
+
   return (
-    <nav className="flex-1 overflow-y-auto px-3 py-4">
-      {NAV.map((section) => {
-        const visible = section.items.filter(
-          (i) => !i.claim || hasAnyClaim(Array.isArray(i.claim) ? i.claim : [i.claim])
-        );
-        if (visible.length === 0) return null;
-        return (
-          <div key={section.title} className="mb-5">
-            <p className="px-3 pb-2 text-[11px] font-bold uppercase tracking-widest text-slate-500">
-              {section.title}
-            </p>
-            <ul className="space-y-1">
-              {visible.map((item) => (
-                <li key={item.to}>
-                  <NavLink
-                    to={item.to}
-                    end={item.to === '/'}
-                    onClick={onNavigate}
-                    className={({ isActive }) =>
-                      `touch flex items-center rounded-lg px-3 text-[15px] font-medium transition-colors ${
-                        isActive
-                          ? 'bg-navy text-white'
-                          : 'text-slate-300 hover:bg-white/10 hover:text-white'
-                      }`
-                    }
-                  >
-                    {item.label}
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
+    <div className="flex flex-1 flex-col overflow-hidden">
+      <nav className="flex-1 overflow-y-auto px-3 py-2" aria-label="Primary">
+        {/* Dashboard — top-level active pill */}
+        <NavLink
+          to="/"
+          end
+          onClick={onNavigate}
+          className={`touch mb-2 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors ${
+            dashActive ? 'bg-[#5B35D5] text-white' : 'text-white/70 hover:bg-white/5 hover:text-white'
+          }`}
+        >
+          <span className="shrink-0">{svgIcon('dashboard', 'h-5 w-5')}</span>
+          <span className="truncate">Dashboard</span>
+        </NavLink>
+
+        {visibleGroups.map((group) => {
+          const isOpen = openGroup === group.title;
+          return (
+            <div key={group.title} className="mb-0.5">
+              <button
+                type="button"
+                onClick={() => setOpenGroup(isOpen ? null : group.title)}
+                aria-expanded={isOpen}
+                className="touch flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left transition-colors hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B35D5]"
+              >
+                <span className="shrink-0 text-[#8F7BF0]">{svgIcon(group.icon, 'h-[18px] w-[18px]')}</span>
+                <span className="min-w-0 flex-1 truncate text-[13px] font-medium text-white/75">
+                  {group.title}
+                </span>
+                <svg
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  className={`h-3.5 w-3.5 shrink-0 text-white/40 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+                  aria-hidden="true"
+                >
+                  <path d="M5 7.5l5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+              {isOpen ? (
+                <ul className="mb-1 mt-0.5 space-y-0.5">
+                  {group.items.map((item) => (
+                    <li key={item.to}>
+                      <NavLink
+                        to={item.to}
+                        end={item.to === '/'}
+                        onClick={onNavigate}
+                        className={({ isActive }) =>
+                          `touch flex items-center gap-2.5 rounded-lg py-1.5 pl-10 pr-3 text-[13px] transition-colors duration-150 ${
+                            isActive
+                              ? 'bg-[#5B35D5] font-semibold text-white'
+                              : 'text-white/55 hover:bg-white/5 hover:text-white'
+                          }`
+                        }
+                      >
+                        <span className="text-[10px] text-white/30" aria-hidden="true">›</span>
+                        <span className="truncate">{item.label}</span>
+                      </NavLink>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
+          );
+        })}
+
+        {/* Bottom standalone items */}
+        {visibleBottom.length > 0 ? (
+          <div className="mt-3 border-t border-white/10 pt-3">
+            {visibleBottom.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                onClick={onNavigate}
+                className={({ isActive }) =>
+                  `touch mb-0.5 flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium transition-colors ${
+                    isActive
+                      ? 'bg-[#5B35D5] text-white'
+                      : 'text-white/70 hover:bg-white/5 hover:text-white'
+                  }`
+                }
+              >
+                <span className="shrink-0 text-white/50">{svgIcon(item.icon, 'h-[18px] w-[18px]')}</span>
+                <span className="truncate">{item.label}</span>
+              </NavLink>
+            ))}
           </div>
-        );
-      })}
-    </nav>
+        ) : null}
+      </nav>
+
+      {/* Version footer */}
+      <div className="border-t border-white/10 px-5 py-3">
+        <p className="text-[11px] text-white/40">v2.1.0 &nbsp;|&nbsp; Oyaya Flour Mill ERP</p>
+        <p className="mt-1 flex items-center gap-1.5 text-[11px] font-medium text-white/60">
+          <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400" />
+          System Online
+        </p>
+      </div>
+    </div>
   );
+}
+
+function useNow(): Date {
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(new Date()), 30000);
+    return () => window.clearInterval(id);
+  }, []);
+  return now;
 }
 
 export function Layout() {
   const { user, logout } = useAuth();
-  const { online, queued } = useNetwork();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const now = useNow();
 
   const handleLogout = () => {
+    setUserMenuOpen(false);
     logout();
     navigate('/login');
   };
 
+  const initial = (user?.name ?? user?.email ?? 'U').trim().charAt(0).toUpperCase();
+  const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
   return (
-    <div className="flex min-h-screen bg-alabaster">
+    <div className="flex min-h-screen bg-[#F4F6FA] text-[#172033]">
       {/* Desktop sidebar */}
-      <aside className="no-print sticky top-0 hidden h-screen w-64 shrink-0 flex-col bg-ink md:flex">
-        <div className="flex items-center gap-3 px-5 pb-4 pt-5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-harvest text-lg font-extrabold text-white">
-            O
-          </div>
-          <div>
-            <p className="text-base font-bold leading-tight text-white">Oyaya ERP</p>
-            <p className="text-xs text-slate-400">Flour Factory</p>
-          </div>
-        </div>
+      <aside className="no-print sticky top-0 hidden h-screen w-[228px] shrink-0 flex-col bg-[#171A3B] md:flex">
+        <Logo />
         <SidebarContent />
-        <div className="border-t border-white/10 p-4">
-          <p className="truncate text-sm font-semibold text-white">{user?.name ?? user?.email}</p>
-          <p className="text-xs uppercase tracking-wide text-slate-400">{user?.role}</p>
-        </div>
       </aside>
 
       {/* Mobile drawer */}
       {menuOpen ? (
         <div className="no-print fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setMenuOpen(false)} />
-          <aside className="absolute inset-y-0 left-0 flex w-72 flex-col bg-ink">
-            <div className="flex items-center justify-between px-5 pb-4 pt-5">
-              <p className="text-base font-bold text-white">Oyaya ERP</p>
+          <aside className="absolute inset-y-0 left-0 flex w-72 flex-col bg-[#171A3B]">
+            <div className="flex items-center justify-between pr-4">
+              <Logo />
               <button
                 onClick={() => setMenuOpen(false)}
-                className="touch rounded-lg px-3 text-slate-300 hover:bg-white/10"
+                className="touch rounded-lg px-3 py-2 text-sm font-semibold text-white/60 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
                 aria-label="Close menu"
               >
-                Close
+                ✕
               </button>
             </div>
             <SidebarContent onNavigate={() => setMenuOpen(false)} />
@@ -152,41 +600,163 @@ export function Layout() {
 
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Topbar */}
-        <header className="no-print sticky top-0 z-30 flex items-center gap-3 border-b border-line bg-ink px-4 py-2.5">
+        <header className="no-print sticky top-0 z-30 flex items-center gap-3 border-b border-[#E2E7F0] bg-white px-4 py-3 md:px-6">
           <button
             onClick={() => setMenuOpen(true)}
-            className="touch rounded-lg px-3 text-sm font-semibold text-slate-200 hover:bg-white/10 md:hidden"
+            className="touch rounded-lg p-2.5 text-[#172033] transition-colors hover:bg-[#F4F6FA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B35D5]"
             aria-label="Open menu"
           >
-            Menu
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5" aria-hidden="true">
+              <path d="M3 5.5h14M3 10h14M3 14.5h14" strokeLinecap="round" />
+            </svg>
           </button>
-          <div className="flex items-center gap-2 md:hidden">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-harvest text-sm font-extrabold text-white">
-              O
-            </div>
-            <span className="text-sm font-bold text-white">Oyaya ERP</span>
+
+          {/* Search */}
+          <div className="relative hidden w-full max-w-md sm:block">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#667085]" aria-hidden="true">
+              <circle cx="9" cy="9" r="5.5" />
+              <path d="M13.5 13.5L17 17" strokeLinecap="round" />
+            </svg>
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search anything... (e.g. supplier, batch, product, report)"
+              className="w-full rounded-xl border border-[#E2E7F0] bg-[#F7F8FC] py-2.5 pl-10 pr-4 text-sm text-[#172033] outline-none transition-shadow placeholder:text-[#667085]/70 focus-visible:ring-2 focus-visible:ring-[#5B35D5]/50"
+              aria-label="Search"
+            />
           </div>
-          <div className="ml-auto flex items-center gap-3">
-            <span
-              className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold ${
-                online ? 'bg-pass-bg text-pass-text' : 'bg-critical-bg text-critical-text'
-              }`}
-              role="status"
-            >
-              <span
-                className={`inline-block h-2.5 w-2.5 rounded-full ${online ? 'bg-pass-text' : 'bg-critical-text'}`}
-              />
-              {online ? (queued > 0 ? `Online — ${queued} queued` : 'Online') : 'Offline'}
-            </span>
-            <span className="hidden text-sm text-slate-300 sm:inline">
-              {user?.name ?? user?.email}
-            </span>
+
+          <div className="ml-auto flex items-center gap-2 sm:gap-3">
+            {/* Notification bell + popover */}
+            <div className="relative">
+              <button
+                onClick={() => setNotifOpen((v) => !v)}
+                className="touch relative rounded-xl p-2.5 text-[#667085] transition-colors hover:bg-[#F4F6FA] hover:text-[#5B35D5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B35D5]"
+                aria-label="Notifications"
+                aria-expanded={notifOpen}
+                aria-haspopup="true"
+              >
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5" aria-hidden="true">
+                  <path d="M10 3a4.5 4.5 0 00-4.5 4.5c0 3-1 4-1.5 4.5h12C15.5 11.5 14.5 10.5 14.5 7.5A4.5 4.5 0 0010 3z" strokeLinejoin="round" />
+                  <path d="M8 15a2 2 0 004 0" strokeLinecap="round" />
+                </svg>
+                <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white ring-2 ring-white">
+                  3
+                </span>
+              </button>
+              {notifOpen ? (
+                <>
+                  <button
+                    className="fixed inset-0 z-40 cursor-default"
+                    onClick={() => setNotifOpen(false)}
+                    aria-label="Close notifications"
+                    tabIndex={-1}
+                  />
+                  <div
+                    className="absolute right-0 z-50 mt-2 w-80 rounded-2xl border border-slate-100 bg-white p-2 shadow-[0_8px_30px_-6px_rgba(15,23,42,0.15)]"
+                    role="menu"
+                    aria-label="Notifications"
+                  >
+                    <p className="px-3 pb-1 pt-2 text-sm font-bold text-slate-800">Notifications</p>
+                    {[
+                      { dot: 'bg-amber-500', title: 'QC sample flagged', sub: 'Moisture above threshold — review required' },
+                      { dot: 'bg-rose-500', title: 'CAPA overdue', sub: 'Corrective action past due date' },
+                      { dot: 'bg-violet-500', title: 'Duket yield alert', sub: 'Yield below 78% on latest shift' }
+                    ].map((n) => (
+                      <div key={n.title} className="flex items-start gap-3 rounded-xl px-3 py-2.5 hover:bg-slate-50">
+                        <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${n.dot}`} />
+                        <div className="min-w-0">
+                          <p className="text-[13px] font-semibold text-slate-800">{n.title}</p>
+                          <p className="truncate text-xs text-slate-500">{n.sub}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : null}
+            </div>
+
+            {/* App grid */}
             <button
-              onClick={handleLogout}
-              className="touch rounded-lg border border-white/20 px-4 text-sm font-semibold text-slate-200 hover:bg-white/10"
+              className="touch rounded-xl p-2.5 text-[#667085] transition-colors hover:bg-[#F4F6FA] hover:text-[#5B35D5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B35D5]"
+              aria-label="All modules"
             >
-              Log out
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5" aria-hidden="true">
+                <rect x="3" y="3" width="5.5" height="5.5" rx="1.5" />
+                <rect x="11.5" y="3" width="5.5" height="5.5" rx="1.5" />
+                <rect x="3" y="11.5" width="5.5" height="5.5" rx="1.5" />
+                <rect x="11.5" y="11.5" width="5.5" height="5.5" rx="1.5" />
+              </svg>
             </button>
+
+            <div className="hidden h-8 w-px bg-[#E2E7F0] sm:block" aria-hidden="true" />
+
+            {/* Date / time */}
+            <div className="hidden items-center gap-2 lg:flex" aria-label="Current date and time">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5 text-[#667085]" aria-hidden="true">
+                <rect x="3" y="4.5" width="14" height="12" rx="2" />
+                <path d="M3 8.5h14M7 3v3M13 3v3" strokeLinecap="round" />
+              </svg>
+              <div className="text-left">
+                <p className="text-sm font-semibold leading-tight text-[#172033]">{dateStr}</p>
+                <p className="tnum text-xs leading-tight text-[#667085]">{timeStr}</p>
+              </div>
+            </div>
+
+            {/* Avatar + account menu */}
+            <div className="relative">
+              <button
+                onClick={() => setUserMenuOpen((v) => !v)}
+                className="touch flex items-center gap-2 rounded-lg p-1 transition-colors hover:bg-[#F4F6FA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B35D5]"
+                aria-label="Account menu"
+                aria-haspopup="menu"
+                aria-expanded={userMenuOpen}
+              >
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#5B35D5] text-sm font-bold text-white">
+                  {initial}
+                </div>
+                <div className="hidden text-left md:block">
+                  <p className="max-w-32 truncate text-sm font-semibold leading-tight text-[#172033]">
+                    {user?.name ?? user?.email}
+                  </p>
+                  <p className="max-w-32 truncate text-xs leading-tight text-[#667085]">{user?.role}</p>
+                </div>
+                <svg
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  className={`hidden h-4 w-4 text-[#667085] transition-transform duration-200 md:block ${userMenuOpen ? 'rotate-180' : ''}`}
+                  aria-hidden="true"
+                >
+                  <path d="M5 7.5l5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+              {userMenuOpen ? (
+                <>
+                  <button
+                    className="fixed inset-0 z-40 cursor-default"
+                    onClick={() => setUserMenuOpen(false)}
+                    aria-label="Close account menu"
+                    tabIndex={-1}
+                  />
+                  <div
+                    className="absolute right-0 z-50 mt-2 w-48 rounded-xl border border-[#E2E7F0] bg-white py-1 shadow-lg"
+                    role="menu"
+                    aria-label="Account"
+                  >
+                    <button
+                      onClick={handleLogout}
+                      role="menuitem"
+                      className="touch flex w-full items-center px-4 py-2 text-left text-sm font-semibold text-[#172033] transition-colors hover:bg-[#F4F6FA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#5B35D5]"
+                      aria-label="Log out"
+                    >
+                      Log out
+                    </button>
+                  </div>
+                </>
+              ) : null}
+            </div>
           </div>
         </header>
 

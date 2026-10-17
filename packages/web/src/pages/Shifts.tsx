@@ -4,11 +4,11 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { api, isNetworkError } from '../lib/api';
 import { E } from '../lib/endpoints';
 import { queueMutation, submitOrQueue } from '../lib/sync';
-import type { LabCheck, Product, ProductionBatch, ShiftOutput, ShiftRun } from '../types';
+import type { LabCheck, Product, ProductionBatch, ShiftHandover, ShiftOutput, ShiftRun } from '../types';
 import { Badge } from '../components/Badge';
 import { DataTable } from '../components/DataTable';
 import { NumPad } from '../components/NumPad';
-import { Button, Card, Field, NumberInput, SectionTitle, Select, Spinner, TextInput } from '../components/ui';
+import { Button, Card, Field, NumberInput, SectionTitle, Select, Spinner, TextArea, TextInput } from '../components/ui';
 import { fmtCountdown, fmtDateTime, fmtQ } from '../lib/format';
 
 const QC_INTERVAL_MS = 2 * 60 * 60 * 1000;
@@ -98,6 +98,11 @@ export function Shifts() {
   const [downtimeMin, setDowntimeMin] = useState('');
   const [downtimeReason, setDowntimeReason] = useState('');
 
+  // Module 4: handover notes + operator reassignment for the selected shift
+  const [handoverType, setHandoverType] = useState<'HANDOVER' | 'OPERATOR_NOTE'>('HANDOVER');
+  const [handoverContent, setHandoverContent] = useState('');
+  const [operatorsEdit, setOperatorsEdit] = useState('');
+
   const shiftsQ = useQuery({
     queryKey: ['shifts'],
     queryFn: async () => (await api.get<ShiftRun[]>(E.shifts)).data
@@ -116,6 +121,12 @@ export function Shifts() {
     enabled: !!selectedShiftId
   });
 
+  const handoversQ = useQuery({
+    queryKey: ['shift-handovers', selectedShiftId],
+    queryFn: async () => (await api.get<ShiftHandover[]>(E.prodShiftHandovers(selectedShiftId))).data,
+    enabled: !!selectedShiftId
+  });
+
   const selectedShift = shiftDetailQ.data ?? null;
 
   const extraction = useMemo(
@@ -126,6 +137,76 @@ export function Shifts() {
   const invalidate = () => {
     qc.invalidateQueries({ queryKey: ['shifts'] });
     qc.invalidateQueries({ queryKey: ['shift', selectedShiftId] });
+  };
+
+  // Module 4: reassign operators on the selected shift
+  const saveOperators = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!selectedShift) return;
+    setNotice(null);
+    setSaving(true);
+    try {
+      const ops = operatorsEdit.split(',').map((o) => o.trim()).filter(Boolean);
+      if (ops.length === 0) {
+        setNotice({ ok: false, text: 'Enter at least one operator name.' });
+        return;
+      }
+      const r = await submitOrQueue('shift-operators', E.shift(selectedShift.id), { operators: ops }, 'put');
+      setNotice({
+        ok: true,
+        text: r.queued ? 'Operators saved offline — will sync automatically.' : 'Operators reassigned.'
+      });
+      setOperatorsEdit('');
+      invalidate();
+    } catch (err) {
+      setNotice({ ok: false, text: err instanceof Error ? err.message : 'Failed to reassign operators.' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Module 4: end the selected shift
+  const endShift = async () => {
+    if (!selectedShift || selectedShift.endedAt) return;
+    setNotice(null);
+    setSaving(true);
+    try {
+      await api.put(E.shift(selectedShift.id), { endedAt: new Date().toISOString() });
+      setNotice({ ok: true, text: 'Shift ended.' });
+      invalidate();
+    } catch (err) {
+      setNotice({ ok: false, text: err instanceof Error ? err.message : 'Failed to end shift.' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Module 4: handover / operator note
+  const saveHandover = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!selectedShift) return;
+    setNotice(null);
+    setSaving(true);
+    try {
+      if (!handoverContent.trim()) {
+        setNotice({ ok: false, text: 'Write the handover note first.' });
+        return;
+      }
+      const r = await submitOrQueue('shift-handover', E.prodShiftHandovers(selectedShift.id), {
+        noteType: handoverType,
+        content: handoverContent.trim()
+      });
+      setNotice({
+        ok: true,
+        text: r.queued ? 'Note saved offline — will sync automatically.' : 'Handover note recorded.'
+      });
+      setHandoverContent('');
+      qc.invalidateQueries({ queryKey: ['shift-handovers', selectedShiftId] });
+    } catch (err) {
+      setNotice({ ok: false, text: err instanceof Error ? err.message : 'Failed to save note.' });
+    } finally {
+      setSaving(false);
+    }
   };
 
   const createShift = async (e: FormEvent) => {
@@ -375,6 +456,88 @@ export function Shifts() {
           ) : null}
         </Card>
       </div>
+
+      {/* Module 4: operator management + handover notes for the selected shift */}
+      {selectedShift ? (
+        <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <Card className="p-5">
+            <h3 className="mb-1 text-base font-bold text-ink">Operator assignment</h3>
+            <p className="mb-4 text-sm text-slate-500">
+              Current: <span className="font-semibold text-slate-700">{(selectedShift.operators ?? []).join(', ') || '—'}</span>
+            </p>
+            <form onSubmit={saveOperators} className="space-y-3">
+              <Field label="Reassign operators" hint="Comma separated — replaces the current list">
+                <TextInput
+                  value={operatorsEdit}
+                  onChange={(e) => setOperatorsEdit(e.target.value)}
+                  placeholder="e.g. Abebe T., Kebede M., Hana S."
+                />
+              </Field>
+              <div className="flex gap-2">
+                <Button type="submit" loading={saving} variant="secondary" className="flex-1">
+                  Reassign
+                </Button>
+                {!selectedShift.endedAt ? (
+                  <Button type="button" variant="secondary" onClick={endShift} loading={saving} className="flex-1">
+                    End shift now
+                  </Button>
+                ) : null}
+              </div>
+            </form>
+          </Card>
+
+          <Card className="p-5">
+            <h3 className="mb-4 text-base font-bold text-ink">Shift handover & operator notes</h3>
+            {handoversQ.isLoading ? (
+              <Spinner label="Loading notes..." />
+            ) : (handoversQ.data ?? []).length === 0 ? (
+              <p className="mb-4 text-sm text-slate-500">
+                No notes yet — leave a handover for the next shift's crew.
+              </p>
+            ) : (
+              <ul className="mb-4 max-h-48 space-y-2 overflow-y-auto">
+                {(handoversQ.data ?? []).map((n) => (
+                  <li key={n.id} className="rounded-lg bg-alabaster p-3">
+                    <div className="flex items-center justify-between">
+                      <Badge tone={n.noteType === 'HANDOVER' ? 'advisory' : 'neutral'}>
+                        {n.noteType === 'HANDOVER' ? 'Handover' : 'Operator note'}
+                      </Badge>
+                      <span className="tnum text-xs text-slate-500">{fmtDateTime(n.createdAt)}</span>
+                    </div>
+                    <p className="mt-1 text-sm text-slate-700">{n.content}</p>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <form onSubmit={saveHandover} className="space-y-3">
+              <div className="grid grid-cols-3 gap-2">
+                <Field label="Type">
+                  <Select
+                    value={handoverType}
+                    onChange={(e) => setHandoverType(e.target.value as 'HANDOVER' | 'OPERATOR_NOTE')}
+                  >
+                    <option value="HANDOVER">Handover</option>
+                    <option value="OPERATOR_NOTE">Operator note</option>
+                  </Select>
+                </Field>
+                <div className="col-span-2">
+                  <Field label="Note">
+                    <TextArea
+                      value={handoverContent}
+                      onChange={(e) => setHandoverContent(e.target.value)}
+                      rows={2}
+                      placeholder="Running issues, settings for the next crew..."
+                    />
+                  </Field>
+                </div>
+              </div>
+              <Button type="submit" loading={saving} variant="secondary" className="w-full">
+                Save note
+              </Button>
+            </form>
+          </Card>
+        </div>
+      ) : null}
 
       <div className="mt-6">
         <SectionTitle title="Shift log" />

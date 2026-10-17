@@ -16,15 +16,17 @@ interface TrialBalanceReport {
 }
 
 interface IncomeStatementReport {
-  revenue: number;
-  expenses: number;
+  revenue: { total: number; items: unknown[] };
+  cogs: { total: number; items: unknown[] };
+  grossProfit: number;
+  expenses: { total: number; items: unknown[] };
   netIncome: number;
 }
 
 interface BalanceSheetReport {
-  assets: number;
-  liabilities: number;
-  equity: number;
+  assets: { total: number; items: unknown[] };
+  liabilities: { total: number; items: unknown[] };
+  equity: { total: number };
   netIncome: number;
   balanced: boolean;
 }
@@ -178,8 +180,10 @@ export function Finance() {
         ) : incomeQ.data ? (
           <ReportTable
             rows={[
-              ['Revenue', incomeQ.data.revenue],
-              ['Expenses', incomeQ.data.expenses]
+              ['Revenue', incomeQ.data.revenue.total],
+              ['Cost of goods sold', incomeQ.data.cogs.total],
+              ['Gross profit', incomeQ.data.grossProfit],
+              ['Operating expenses', incomeQ.data.expenses.total]
             ]}
             total={['Net income', incomeQ.data.netIncome]}
           />
@@ -193,11 +197,11 @@ export function Finance() {
           <div>
             <ReportTable
               rows={[
-                ['Assets', balanceQ.data.assets],
-                ['Liabilities', balanceQ.data.liabilities],
-                ['Equity (incl. net income)', balanceQ.data.equity]
+                ['Assets', balanceQ.data.assets.total],
+                ['Liabilities', balanceQ.data.liabilities.total],
+                ['Equity (incl. net income)', balanceQ.data.equity.total]
               ]}
-              total={['Assets − (Liabilities + Equity)', balanceQ.data.assets - balanceQ.data.liabilities - balanceQ.data.equity]}
+              total={['Assets − (Liabilities + Equity)', balanceQ.data.assets.total - balanceQ.data.liabilities.total - balanceQ.data.equity.total]}
             />
             <p className={`mt-3 text-sm font-semibold ${balanceQ.data.balanced ? 'text-pass-text' : 'text-critical-text'}`}>
               {balanceQ.data.balanced ? 'Balance sheet balances.' : 'Balance sheet does not balance — investigate.'}

@@ -17,6 +17,7 @@ export const MODULES = [
   'sales',
   'finance',
   'payroll',
+  'hr',
   'fleet',
   'dashboard',
   'sync',

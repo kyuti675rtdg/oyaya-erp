@@ -38,6 +38,158 @@
   .badge-critical-pulse {
     animation: pulse-border 1.6s ease-in-out infinite;
   }
+
+  /* Premium card hover: subtle lift + shadow grow */
+  .card-lift {
+    @apply transition-all duration-200 ease-out;
+  }
+  .card-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 6px rgba(76, 29, 149, 0.08), 0 12px 28px rgba(76, 29, 149, 0.1);
+  }
+
+  /* Staggered entrance for dashboard cards */
+  .animate-fade-in-up {
+    animation: fade-in-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* Skeleton shimmer */
+  .skeleton-shimmer {
+    position: relative;
+    overflow: hidden;
+    background-color: #ece7f8;
+  }
+  .skeleton-shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+    animation: shimmer 1.6s ease-in-out infinite;
+  }
+
+  /* SVG bar grow-on-mount */
+  .bar-grow {
+    transform-box: fill-box;
+    transform-origin: bottom;
+    animation: bar-grow 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* Pulsing notification dot */
+  .pulse-dot {
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  /* Violet keyboard focus ring */
+  .focus-ring-violet {
+    @apply outline-none focus-visible:ring-2 focus-visible:ring-violet-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-white;
+  }
+
+  /* Slow-drifting grain particles (login branding panel) */
+  .wheat-particle {
+    animation-name: wheat-drift;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  /* Slow rotating dashed ring around the login logo */
+  .spin-slow {
+    animation: rotate-360 28s linear infinite;
+  }
+}
+
+@keyframes wheat-drift {
+  0% {
+    transform: translateY(0) rotate(-8deg);
+    opacity: 0;
+  }
+  12% {
+    opacity: var(--wp-o, 0.2);
+  }
+  88% {
+    opacity: var(--wp-o, 0.2);
+  }
+  100% {
+    transform: translateY(-108vh) rotate(14deg);
+    opacity: 0;
+  }
+}
+
+@keyframes rotate-360 {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bg-scale-in {
+  from {
+    transform: scale(1.07);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.animate-bg-scale-in {
+  animation: bg-scale-in 1.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes bar-grow {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(185, 28, 28, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(185, 28, 28, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in-up,
+  .animate-bg-scale-in,
+  .bar-grow,
+  .pulse-dot,
+  .skeleton-shimmer::after,
+  .badge-critical-pulse,
+  .wheat-particle,
+  .spin-slow {
+    animation: none !important;
+  }
+  .card-lift {
+    transition: none;
+  }
+  .card-lift:hover {
+    transform: none;
+  }
 }
 
 /* ---------- Print: Exit Note & Payment Voucher (A4) ---------- */
