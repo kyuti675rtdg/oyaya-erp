@@ -36,7 +36,7 @@ export interface CreateDispatchInput {
 
 /**
  * Create a dispatch: validate vehicle/orders/stock, decrement FG stock,
- * create dispatch + lines, upsert the fixed trip rule row, mark orders DISPATCHED,
+ * create dispatch + lines, upsert the fixed trip rule row, mark orders LOADED,
  * cut a PLACEMENT sales invoice, log piece-rate loading labor, and SMS the customer.
  * Must run inside the caller's transaction.
  */
@@ -55,10 +55,9 @@ export async function createDispatch(
   if (orders.length !== input.orderIds.length) {
     throw new AppError(404, 'One or more sales orders not found');
   }
-  const LOADABLE = ['OPEN', 'CONFIRMED', 'PROCESSING', 'LOADING'];
-  const notOpen = orders.find((o) => !LOADABLE.includes(o.status));
+  const notOpen = orders.find((o) => o.status !== 'OPEN');
   if (notOpen) {
-    throw new AppError(409, `Sales order ${notOpen.orderNo} is not loadable (status: ${notOpen.status})`);
+    throw new AppError(409, `Sales order ${notOpen.orderNo} is not OPEN (status: ${notOpen.status})`);
   }
   const customerId = orders[0].customerId;
   if (orders.some((o) => o.customerId !== customerId)) {
@@ -175,7 +174,7 @@ export async function createDispatch(
 
   await tx.salesOrder.updateMany({
     where: { id: { in: input.orderIds } },
-    data: { status: 'DISPATCHED' },
+    data: { status: 'LOADED' },
   });
 
   const invoiceNo = await nextDocNo(tx, 'salesInvoice', 'invoiceNo', 'INV');

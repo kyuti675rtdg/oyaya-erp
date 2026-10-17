@@ -10,22 +10,10 @@ const TABLES = {
   dispatch: 'Dispatch',
   apInvoice: 'APInvoice',
   apPayment: 'APPayment',
-  purchaseOrder: 'PurchaseOrder',
-  conditioningCycle: 'ConditioningCycle',
   salesInvoice: 'SalesInvoice',
   cashReceipt: 'CashReceipt',
   journalEntry: 'JournalEntry',
   supportTicket: 'SupportTicket',
-  recallCase: 'RecallCase',
-  expenseClaim: 'ExpenseClaim',
-  cashTransfer: 'CashTransfer',
-  financeVoucher: 'FinanceVoucher',
-  salesAgreement: 'SalesAgreement',
-  truckLoad: 'TruckLoad',
-  deliveryTrip: 'DeliveryTrip',
-  agentStockPlacement: 'AgentStockPlacement',
-  sopDocument: 'SopDocument',
-  techSupportRecord: 'TechSupportRecord',
 } as const;
 
 export type DocTable = keyof typeof TABLES;

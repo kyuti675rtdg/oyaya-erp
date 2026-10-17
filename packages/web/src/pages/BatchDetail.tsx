@@ -27,7 +27,6 @@ export function BatchDetail() {
   });
 
   const batch = batchQ.data;
-  const batchError = batchQ.isError ? batchQ.error : null;
   const editable = batch?.status === 'OPEN';
 
   const saveBlend = async (e: FormEvent) => {
@@ -68,28 +67,6 @@ export function BatchDetail() {
   };
 
   if (batchQ.isLoading) return <Spinner label="Loading batch..." />;
-  if (batchQ.isLoading)
-    return (
-      <div>
-        <Link to="/batches" className="font-semibold text-navy hover:underline">
-          Back to batches
-        </Link>
-        <p className="mt-4 text-slate-500">Loading batch…</p>
-      </div>
-    );
-
-  if (batchError)
-    return (
-      <div>
-        <Link to="/batches" className="font-semibold text-navy hover:underline">
-          Back to batches
-        </Link>
-        <p className="mt-4 text-red-600">
-          Could not load batch. Check your connection and try again.
-        </p>
-      </div>
-    );
-
   if (!batch)
     return (
       <div>

@@ -266,8 +266,8 @@ export function QcChecks() {
                 key: 'result',
                 label: 'Result',
                 render: (r) =>
-                  (r.outOfRange ?? []).length > 0 ? (
-                    <Badge tone="critical">{(r.outOfRange ?? []).length} out of range</Badge>
+                  r.outOfRange.length > 0 ? (
+                    <Badge tone="critical">{r.outOfRange.length} out of range</Badge>
                   ) : (
                     <Badge tone="pass">In spec</Badge>
                   )

@@ -304,17 +304,6 @@ const salesOrderDataSchema = z.object({
   priceBirr: z.number().positive(),
   requestedDate: z.string().datetime().optional(),
   orderDate: z.string().datetime().optional(),
-  lines: z
-    .array(
-      z.object({
-        productId: z.string().min(1),
-        packagingSizeId: z.string().min(1).nullable().optional(),
-        bags: z.number().int().nonnegative().default(0),
-        quintals: z.number().positive(),
-        priceBirr: z.number().positive(),
-      }),
-    )
-    .optional(),
 });
 
 const pieceRateLogDataSchema = z.object({
@@ -640,21 +629,8 @@ async function applyMutation(
           priceBirr: new Prisma.Decimal(d.priceBirr),
           requestedDate: d.requestedDate ? new Date(d.requestedDate) : null,
           orderDate: d.orderDate ? new Date(d.orderDate) : new Date(),
-          status: 'DRAFT',
+          status: 'OPEN',
           createdById: uid,
-          ...(d.lines && d.lines.length > 0
-            ? {
-                lines: {
-                  create: d.lines.map((l) => ({
-                    productId: l.productId,
-                    packagingSizeId: l.packagingSizeId ?? null,
-                    bags: l.bags,
-                    quintals: new Prisma.Decimal(l.quintals),
-                    priceBirr: new Prisma.Decimal(l.priceBirr),
-                  })),
-                },
-              }
-            : {}),
         },
       });
       return created.id;

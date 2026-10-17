@@ -40,17 +40,6 @@ const createOrderSchema = z.object({
   priceBirr: z.number().positive(),
   requestedDate: z.coerce.date().optional(),
   orderDate: z.coerce.date().optional(),
-  lines: z
-    .array(
-      z.object({
-        productId: z.string().min(1),
-        packagingSizeId: z.string().min(1).nullable().optional(),
-        bags: z.number().int().nonnegative(),
-        quintals: z.number().positive(),
-        priceBirr: z.number().positive(),
-      }),
-    )
-    .optional(),
 });
 
 const updateOrderSchema = z
@@ -73,10 +62,6 @@ router.get(
       const q = req.query as unknown as z.infer<typeof ordersQuerySchema>;
       const rows = await prisma.salesOrder.findMany({
         where: { customerId: q.customerId, status: q.status },
-        include: {
-          customer: true,
-          lines: { include: { product: true, packagingSize: true } },
-        },
         orderBy: { orderDate: 'desc' },
       });
       res.json(rows);
@@ -105,21 +90,8 @@ router.post(
             priceBirr: new Prisma.Decimal(body.priceBirr),
             requestedDate: body.requestedDate ?? null,
             orderDate: body.orderDate ?? new Date(),
-            status: 'DRAFT',
+            status: 'OPEN',
             createdById: uid,
-            ...(body.lines && body.lines.length > 0
-              ? {
-                  lines: {
-                    create: body.lines.map((l) => ({
-                      productId: l.productId,
-                      packagingSizeId: l.packagingSizeId ?? null,
-                      bags: l.bags,
-                      quintals: new Prisma.Decimal(l.quintals),
-                      priceBirr: new Prisma.Decimal(l.priceBirr),
-                    })),
-                  },
-                }
-              : {}),
           },
         });
         await audit(tx, {
@@ -168,8 +140,8 @@ router.put(
       const row = await prisma.$transaction(async (tx) => {
         const existing = await tx.salesOrder.findUnique({ where: { id: req.params.id } });
         if (!existing) throw new AppError(404, 'Sales order not found');
-        if (!['DRAFT', 'OPEN'].includes(existing.status)) {
-          throw new AppError(409, `Sales order ${existing.orderNo} is ${existing.status} and cannot be edited`);
+        if (existing.status !== 'OPEN') {
+          throw new AppError(409, `Sales order ${existing.orderNo} is not OPEN and cannot be edited`);
         }
         const updated = await tx.salesOrder.update({
           where: { id: req.params.id },

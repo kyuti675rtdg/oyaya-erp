@@ -1,307 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Building2, SlidersHorizontal, FlaskConical, Warehouse, Coins, Save, Upload } from 'lucide-react';
 import { api } from '../lib/api';
 import { E } from '../lib/endpoints';
 import type { DriverTripRate, PieceRateConfig, QcThreshold, StorageLocation } from '../types';
-import { CardHeader } from '../components/CardHeader';
-import { AdminNotice, errText } from '../components/AdminModal';
-import { Button, Card, Field, NumberInput, SectionTitle, Select, Spinner, TextInput, TextArea } from '../components/ui';
-import { useAuth } from '../store/auth';
+import { Button, Card, Field, NumberInput, SectionTitle, Spinner } from '../components/ui';
 import { useNetwork } from '../store/network';
 
-type Notice = { ok: boolean; text: string } | null;
-
 function useNotice() {
-  return useState<Notice>(null);
+  return useState<{ ok: boolean; text: string } | null>(null);
 }
-
-// ─── Module 18: Company & organization settings ─────────────────────
-
-interface CompanyProfile {
-  id: string;
-  name: string;
-  address: string | null;
-  taxId: string | null;
-  logoUrl: string | null;
-  phone: string | null;
-  email: string | null;
-  fiscalYearStartMonth: number | null;
-}
-
-const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-];
-
-function CompanySettingsEditor() {
-  const qc = useQueryClient();
-  const { hasClaim } = useAuth();
-  const canManage = hasClaim('settings:create');
-  const [notice, setNotice] = useNotice();
-  const [draft, setDraft] = useState<Record<string, string>>({});
-  const [initialized, setInitialized] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
-
-  const q = useQuery({
-    queryKey: ['settings-company'],
-    queryFn: async () => (await api.get<CompanyProfile>(E.settingsCompany)).data,
-  });
-
-  useEffect(() => {
-    if (q.data && !initialized) {
-      setDraft({
-        name: q.data.name ?? '',
-        address: q.data.address ?? '',
-        taxId: q.data.taxId ?? '',
-        logoUrl: q.data.logoUrl ?? '',
-        phone: q.data.phone ?? '',
-        email: q.data.email ?? '',
-        fiscalYearStartMonth: q.data.fiscalYearStartMonth != null ? String(q.data.fiscalYearStartMonth) : '',
-      });
-      setInitialized(true);
-    }
-  }, [q.data, initialized]);
-
-  const save = async () => {
-    setNotice(null);
-    if (!draft.name?.trim()) {
-      setNotice({ ok: false, text: 'Company name is required.' });
-      return;
-    }
-    if (draft.email && !/^\S+@\S+\.\S+$/.test(draft.email.trim())) {
-      setNotice({ ok: false, text: 'Company email is not a valid email address.' });
-      return;
-    }
-    const fy = draft.fiscalYearStartMonth ? Number(draft.fiscalYearStartMonth) : null;
-    if (fy != null && (!Number.isInteger(fy) || fy < 1 || fy > 12)) {
-      setNotice({ ok: false, text: 'Fiscal year start must be a month 1–12.' });
-      return;
-    }
-    setSaving(true);
-    try {
-      await api.put(E.settingsCompany, {
-        name: draft.name.trim(),
-        address: draft.address?.trim() || null,
-        taxId: draft.taxId?.trim() || null,
-        logoUrl: draft.logoUrl?.trim() || null,
-        phone: draft.phone?.trim() || null,
-        email: draft.email?.trim() || null,
-        fiscalYearStartMonth: fy,
-      });
-      setNotice({ ok: true, text: 'Company settings saved.' });
-      qc.invalidateQueries({ queryKey: ['settings-company'] });
-    } catch (err) {
-      setNotice({ ok: false, text: errText(err, 'Failed to save company settings.') });
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const onLogoFile = (file: File | undefined) => {
-    if (!file) return;
-    if (file.size > 300 * 1024) {
-      setNotice({ ok: false, text: 'Logo file must be under 300 KB.' });
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = () => {
-      setDraft((d) => ({ ...d, logoUrl: String(reader.result) }));
-      setNotice({ ok: true, text: 'Logo attached — save to apply.' });
-    };
-    reader.onerror = () => setNotice({ ok: false, text: 'Could not read the logo file.' });
-    reader.readAsDataURL(file);
-  };
-
-  const logoPreview = draft.logoUrl?.startsWith('data:image') || draft.logoUrl?.startsWith('http') ? draft.logoUrl : null;
-
-  return (
-    <Card className="p-5">
-      <CardHeader
-        icon={<Building2 className="h-4 w-4" />}
-        title="Company & organization"
-        subtitle="Legal identity shown on invoices, reports and the login screen"
-        action={
-          canManage ? (
-            <Button onClick={save} loading={saving} disabled={!initialized}>
-              <Save className="h-4 w-4" /> Save
-            </Button>
-          ) : undefined
-        }
-      />
-      <AdminNotice notice={notice} />
-      {!initialized ? (
-        <Spinner label="Loading company profile..." />
-      ) : (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <div className="sm:col-span-2 flex items-center gap-4">
-            <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border border-line bg-alabaster">
-              {logoPreview ? (
-                <img src={logoPreview} alt="Company logo" className="h-full w-full object-contain" />
-              ) : (
-                <Building2 className="h-7 w-7 text-slate-300" />
-              )}
-            </div>
-            <div className="flex-1">
-              <Field label="Logo" hint="PNG/JPG under 300 KB, or paste an image URL below.">
-                <input ref={fileRef} type="file" accept="image/png,image/jpeg" className="hidden" onChange={(e) => onLogoFile(e.target.files?.[0])} />
-                <Button variant="secondary" type="button" onClick={() => fileRef.current?.click()} disabled={!canManage}>
-                  <Upload className="h-4 w-4" /> Upload logo
-                </Button>
-              </Field>
-            </div>
-          </div>
-          <Field label="Company name" required>
-            <TextInput value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} disabled={!canManage} />
-          </Field>
-          <Field label="TIN (tax identification number)">
-            <TextInput value={draft.taxId} onChange={(e) => setDraft({ ...draft, taxId: e.target.value })} disabled={!canManage} />
-          </Field>
-          <div className="sm:col-span-2">
-            <Field label="Address">
-              <TextArea value={draft.address} onChange={(e) => setDraft({ ...draft, address: e.target.value })} disabled={!canManage} />
-            </Field>
-          </div>
-          <Field label="Logo URL" hint="Alternative to uploading — an https URL.">
-            <TextInput value={draft.logoUrl} onChange={(e) => setDraft({ ...draft, logoUrl: e.target.value })} placeholder="https://…" disabled={!canManage} />
-          </Field>
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Phone">
-              <TextInput value={draft.phone} onChange={(e) => setDraft({ ...draft, phone: e.target.value })} disabled={!canManage} />
-            </Field>
-            <Field label="Email">
-              <TextInput type="email" value={draft.email} onChange={(e) => setDraft({ ...draft, email: e.target.value })} disabled={!canManage} />
-            </Field>
-          </div>
-          <Field label="Fiscal year start" hint="Month the financial year begins.">
-            <Select
-              value={draft.fiscalYearStartMonth}
-              onChange={(e) => setDraft({ ...draft, fiscalYearStartMonth: e.target.value })}
-              disabled={!canManage}
-            >
-              <option value="">— Not set —</option>
-              {MONTHS.map((m, i) => (
-                <option key={m} value={i + 1}>{m}</option>
-              ))}
-            </Select>
-          </Field>
-        </div>
-      )}
-    </Card>
-  );
-}
-
-// ─── Module 18: General system preferences ──────────────────────────
-
-const PREF_KEYS = ['prefs.timezone', 'prefs.dateFormat', 'prefs.numberFormat', 'prefs.language', 'prefs.defaultPageSize'] as const;
-
-function PreferencesEditor() {
-  const qc = useQueryClient();
-  const { hasClaim } = useAuth();
-  const canManage = hasClaim('settings:create');
-  const [notice, setNotice] = useNotice();
-  const [draft, setDraft] = useState<Record<string, string>>({});
-  const [initialized, setInitialized] = useState(false);
-  const [saving, setSaving] = useState(false);
-
-  const q = useQuery({
-    queryKey: ['settings-preferences'],
-    queryFn: async () => (await api.get<Record<string, string>>(E.settingsPreferences)).data,
-  });
-
-  useEffect(() => {
-    if (q.data && !initialized) {
-      const d: Record<string, string> = {};
-      for (const k of PREF_KEYS) d[k] = q.data[k] ?? '';
-      setDraft(d);
-      setInitialized(true);
-    }
-  }, [q.data, initialized]);
-
-  const save = async () => {
-    setNotice(null);
-    const pageSize = Number(draft['prefs.defaultPageSize']);
-    if (!Number.isInteger(pageSize) || pageSize < 5 || pageSize > 500) {
-      setNotice({ ok: false, text: 'Default page size must be between 5 and 500.' });
-      return;
-    }
-    setSaving(true);
-    try {
-      const payload: Record<string, string> = {};
-      for (const k of PREF_KEYS) payload[k] = draft[k] ?? '';
-      await api.put(E.settingsPreferences, payload);
-      setNotice({ ok: true, text: 'Preferences saved.' });
-      qc.invalidateQueries({ queryKey: ['settings-preferences'] });
-    } catch (err) {
-      setNotice({ ok: false, text: errText(err, 'Failed to save preferences.') });
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  return (
-    <Card className="p-5">
-      <CardHeader
-        icon={<SlidersHorizontal className="h-4 w-4" />}
-        title="General preferences"
-        subtitle="Timezone, formats and display defaults for the whole system"
-        action={
-          canManage ? (
-            <Button onClick={save} loading={saving} disabled={!initialized}>
-              <Save className="h-4 w-4" /> Save
-            </Button>
-          ) : undefined
-        }
-      />
-      <AdminNotice notice={notice} />
-      {!initialized ? (
-        <Spinner label="Loading preferences..." />
-      ) : (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <Field label="Timezone" hint="Used when rendering dates and scheduling.">
-            <Select value={draft['prefs.timezone']} onChange={(e) => setDraft({ ...draft, 'prefs.timezone': e.target.value })} disabled={!canManage}>
-              <option value="Africa/Addis_Ababa">Africa/Addis_Ababa (EAT)</option>
-              <option value="UTC">UTC</option>
-              <option value="Africa/Nairobi">Africa/Nairobi</option>
-              <option value="Europe/London">Europe/London</option>
-            </Select>
-          </Field>
-          <Field label="Date format">
-            <Select value={draft['prefs.dateFormat']} onChange={(e) => setDraft({ ...draft, 'prefs.dateFormat': e.target.value })} disabled={!canManage}>
-              <option value="DD/MM/YYYY">DD/MM/YYYY</option>
-              <option value="MM/DD/YYYY">MM/DD/YYYY</option>
-              <option value="YYYY-MM-DD">YYYY-MM-DD</option>
-            </Select>
-          </Field>
-          <Field label="Number format">
-            <Select value={draft['prefs.numberFormat']} onChange={(e) => setDraft({ ...draft, 'prefs.numberFormat': e.target.value })} disabled={!canManage}>
-              <option value="1,234.56">1,234.56</option>
-              <option value="1.234,56">1.234,56</option>
-              <option value="1 234.56">1 234.56</option>
-            </Select>
-          </Field>
-          <Field label="Language">
-            <Select value={draft['prefs.language']} onChange={(e) => setDraft({ ...draft, 'prefs.language': e.target.value })} disabled={!canManage}>
-              <option value="en">English</option>
-              <option value="am">አማርኛ (Amharic)</option>
-            </Select>
-          </Field>
-          <Field label="Default page size" hint="Rows per table page (5–500).">
-            <NumberInput
-              value={draft['prefs.defaultPageSize']}
-              onChange={(e) => setDraft({ ...draft, 'prefs.defaultPageSize': e.target.value })}
-              min={5} max={500}
-              disabled={!canManage}
-            />
-          </Field>
-        </div>
-      )}
-    </Card>
-  );
-}
-
-// ─── Existing editors below (unchanged) ─────────────────────────────
 
 function Notice({ notice }: { notice: { ok: boolean; text: string } | null }) {
   if (!notice) return null;
@@ -362,11 +69,8 @@ function ThresholdsEditor() {
 
   return (
     <Card className="p-5">
-      <CardHeader
-        icon={<FlaskConical className="h-4 w-4" />}
-        title="Quality thresholds"
-        subtitle="Intake acceptance limits and in-process standard ranges."
-      />
+      <h3 className="text-base font-bold text-ink">Quality thresholds</h3>
+      <p className="mb-4 mt-0.5 text-sm text-slate-500">Intake acceptance limits and in-process standard ranges.</p>
       <Notice notice={notice} />
       {q.isLoading ? (
         <Spinner label="Loading thresholds..." />
@@ -450,11 +154,8 @@ function StorageEditor() {
 
   return (
     <Card className="p-5">
-      <CardHeader
-        icon={<Warehouse className="h-4 w-4" />}
-        title="Storage capacities"
-        subtitle="Dry-storage pool and conditioning tank capacities (quintals)."
-      />
+      <h3 className="text-base font-bold text-ink">Storage capacities</h3>
+      <p className="mb-4 mt-0.5 text-sm text-slate-500">Dry-storage pool and conditioning tank capacities (quintals).</p>
       <Notice notice={notice} />
       {q.isLoading ? (
         <Spinner label="Loading storage..." />
@@ -553,11 +254,8 @@ function RatesEditor() {
 
   return (
     <Card className="p-5">
-      <CardHeader
-        icon={<Coins className="h-4 w-4" />}
-        title="Piece & trip rates"
-        subtitle="Birr per quintal for the four labor stages, and the driver trip rate."
-      />
+      <h3 className="text-base font-bold text-ink">Piece & trip rates</h3>
+      <p className="mb-4 mt-0.5 text-sm text-slate-500">Birr per quintal for the four labor stages, and the driver trip rate.</p>
       <Notice notice={notice} />
       {ratesQ.isLoading || tripQ.isLoading ? (
         <Spinner label="Loading rates..." />
@@ -600,47 +298,18 @@ function RatesEditor() {
   );
 }
 
-const TABS = [
-  { id: 'company', label: 'Company', icon: Building2 },
-  { id: 'preferences', label: 'Preferences', icon: SlidersHorizontal },
-  { id: 'quality', label: 'Quality thresholds', icon: FlaskConical },
-  { id: 'storage', label: 'Storage', icon: Warehouse },
-  { id: 'rates', label: 'Piece & trip rates', icon: Coins },
-] as const;
-
-type TabId = (typeof TABS)[number]['id'];
-
 export function Settings() {
-  const [tab, setTab] = useState<TabId>('company');
   return (
     <div>
       <SectionTitle
         title="Settings"
-        sub="Company profile, system preferences, quality thresholds, storage capacities and payroll rates"
+        sub="Quality thresholds, storage capacities and payroll rates — changes apply without code changes"
       />
-      <div className="mb-4 flex gap-2 overflow-x-auto pb-1" role="tablist" aria-label="Settings sections">
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            role="tab"
-            aria-selected={tab === t.id}
-            onClick={() => setTab(t.id)}
-            className={`touch inline-flex shrink-0 items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold transition-colors ${
-              tab === t.id
-                ? 'border-navy bg-navy text-white'
-                : 'border-line bg-white text-slate-600 hover:bg-slate-50'
-            }`}
-          >
-            <t.icon className="h-4 w-4" />
-            {t.label}
-          </button>
-        ))}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <ThresholdsEditor />
+        <StorageEditor />
+        <RatesEditor />
       </div>
-      {tab === 'company' && <CompanySettingsEditor />}
-      {tab === 'preferences' && <PreferencesEditor />}
-      {tab === 'quality' && <ThresholdsEditor />}
-      {tab === 'storage' && <StorageEditor />}
-      {tab === 'rates' && <RatesEditor />}
     </div>
   );
 }

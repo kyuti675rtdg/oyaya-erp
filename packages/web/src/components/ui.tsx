@@ -10,18 +10,18 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const buttonStyles: Record<ButtonVariant, string> = {
   primary:
-    'bg-harvest hover:bg-amber-700 text-white font-semibold shadow-sm disabled:opacity-50 hover:shadow-md active:scale-[0.98]',
+    'bg-harvest hover:bg-amber-700 text-white font-semibold shadow-sm disabled:opacity-50',
   secondary:
-    'bg-white hover:bg-slate-50 text-slate-800 border border-line font-semibold disabled:opacity-50 hover:shadow-sm active:scale-[0.98]',
+    'bg-white hover:bg-slate-50 text-slate-800 border border-line font-semibold disabled:opacity-50',
   danger:
-    'bg-critical-text hover:bg-red-800 text-white font-semibold disabled:opacity-50 hover:shadow-md active:scale-[0.98]',
-  ghost: 'text-navy hover:bg-blue-50 font-semibold disabled:opacity-50 active:scale-[0.98]'
+    'bg-critical-text hover:bg-red-800 text-white font-semibold disabled:opacity-50',
+  ghost: 'text-navy hover:bg-blue-50 font-semibold disabled:opacity-50'
 };
 
 export function Button({ variant = 'primary', loading, className = '', children, ...rest }: ButtonProps) {
   return (
     <button
-      className={`touch focus-ring-violet inline-flex items-center justify-center gap-2 rounded-lg px-5 text-base transition-all duration-200 ease-out ${buttonStyles[variant]} ${className}`}
+      className={`touch inline-flex items-center justify-center gap-2 rounded-lg px-5 text-base transition-colors ${buttonStyles[variant]} ${className}`}
       disabled={loading || rest.disabled}
       {...rest}
     >

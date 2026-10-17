@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../lib/api';
 import { E } from '../lib/endpoints';
 import { submitOrQueue } from '../lib/sync';
-import type { Capa, NcAction, NcActionStatus, ProductionBatch } from '../types';
+import type { Capa, ProductionBatch } from '../types';
 import { Badge } from '../components/Badge';
 import { DataTable } from '../components/DataTable';
 import { Button, Card, Field, SectionTitle, Select, Spinner, TextArea, TextInput } from '../components/ui';
@@ -25,13 +25,6 @@ const STATUS_TONE: Record<string, 'pass' | 'advisory' | 'critical' | 'neutral'> 
   CLOSED: 'pass'
 };
 
-const ACTION_STATUS_TONE: Record<NcActionStatus, 'pass' | 'advisory' | 'neutral'> = {
-  PLANNED: 'neutral',
-  IN_PROGRESS: 'advisory',
-  COMPLETED: 'advisory',
-  VERIFIED: 'pass'
-};
-
 export function Capa() {
   const qc = useQueryClient();
   const online = useNetwork((s) => s.online);
@@ -45,94 +38,6 @@ export function Capa() {
   const [correctionType, setCorrectionType] = useState(CORRECTION_TYPES[0]);
   const [correctionDetail, setCorrectionDetail] = useState('');
   const [disposition, setDisposition] = useState<'BLENDED_ELSEWHERE' | 'FULLY_RECYCLED' | ''>('');
-
-  // Module 6 expansion: corrective / preventive action plan tab in the detail modal.
-  const [capaTab, setCapaTab] = useState<'overview' | 'actions'>('overview');
-  const [aType, setAType] = useState<'CORRECTIVE' | 'PREVENTIVE'>('CORRECTIVE');
-  const [aDesc, setADesc] = useState('');
-  const [aOwner, setAOwner] = useState('');
-  const [aDue, setADue] = useState('');
-  const [verifyFor, setVerifyFor] = useState<NcAction | null>(null);
-  const [verifyNote, setVerifyNote] = useState('');
-
-  const capaActionsQ = useQuery({
-    queryKey: ['capa-actions', detail?.id],
-    enabled: !!detail && capaTab === 'actions',
-    queryFn: async () => (await api.get<NcAction[]>(E.capaActions(detail!.id))).data
-  });
-
-  const openCapa = (r: Capa) => {
-    setDetail(r);
-    setCapaTab('overview');
-    setVerifyFor(null);
-  };
-
-  const reloadActions = () => qc.invalidateQueries({ queryKey: ['capa-actions', detail?.id] });
-
-  const addCapaAction = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!detail) return;
-    if (!online) {
-      setNotice({ ok: false, text: 'Adding an action requires a live connection.' });
-      return;
-    }
-    if (!aDesc.trim() || !aOwner.trim() || !aDue) {
-      setNotice({ ok: false, text: 'Action description, owner and due date are required.' });
-      return;
-    }
-    setSaving(true);
-    try {
-      await api.post(E.capaActions(detail.id), {
-        actionType: aType,
-        description: aDesc.trim(),
-        owner: aOwner.trim(),
-        dueDate: aDue
-      });
-      setADesc('');
-      setAOwner('');
-      setADue('');
-      reloadActions();
-    } catch (err) {
-      setNotice({ ok: false, text: err instanceof Error ? err.message : 'Failed to add action.' });
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const setActionStatus = async (a: NcAction, status: NcActionStatus) => {
-    if (!online) {
-      setNotice({ ok: false, text: 'Updating an action requires a live connection.' });
-      return;
-    }
-    setSaving(true);
-    try {
-      await api.put(E.ncAction(a.id), { status });
-      reloadActions();
-    } catch (err) {
-      setNotice({ ok: false, text: err instanceof Error ? err.message : 'Failed to update action.' });
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const verifyCapaAction = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!verifyFor || !verifyNote.trim()) {
-      setNotice({ ok: false, text: 'A verification note is required.' });
-      return;
-    }
-    setSaving(true);
-    try {
-      await api.post(E.ncActionVerify(verifyFor.id), { verificationResult: verifyNote.trim() });
-      setVerifyFor(null);
-      setVerifyNote('');
-      reloadActions();
-    } catch (err) {
-      setNotice({ ok: false, text: err instanceof Error ? err.message : 'Verification failed.' });
-    } finally {
-      setSaving(false);
-    }
-  };
 
   const capasQ = useQuery({
     queryKey: ['capas'],
@@ -320,7 +225,7 @@ export function Capa() {
                   key: 'open',
                   label: '',
                   render: (r) => (
-                    <Button variant="secondary" className="px-4 py-2 text-sm" onClick={() => openCapa(r)}>
+                    <Button variant="secondary" className="px-4 py-2 text-sm" onClick={() => setDetail(r)}>
                       Open
                     </Button>
                   )
@@ -341,29 +246,6 @@ export function Capa() {
             <p className="text-sm text-slate-500">
               Identified {fmtDateTime(detail.dateIdentified)}
             </p>
-            <div className="mt-3 flex gap-2 border-b border-line">
-              {(
-                [
-                  ['overview', 'Overview'],
-                  ['actions', 'Actions']
-                ] as const
-              ).map(([key, label]) => (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => setCapaTab(key)}
-                  className={`px-3 pb-2 text-sm font-semibold ${
-                    capaTab === key
-                      ? 'border-b-2 border-violet-600 text-violet-700'
-                      : 'text-slate-500 hover:text-slate-700'
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-            {capaTab === 'overview' ? (
-            <>
             <p className="mt-3 text-sm text-slate-700">{detail.issueDescription}</p>
             <dl className="mt-4 space-y-2 text-sm">
               <div className="flex justify-between">
@@ -409,121 +291,6 @@ export function Capa() {
                 </Button>
               ) : null}
             </div>
-            </>
-            ) : (
-            <div className="mt-3">
-              {capaActionsQ.isLoading ? (
-                <Spinner label="Loading actions..." />
-              ) : (
-                <div className="space-y-3">
-                  {(capaActionsQ.data ?? []).map((a) => (
-                    <div key={a.id} className="rounded-xl border border-line bg-white p-3">
-                      <div className="flex flex-wrap items-center justify-between gap-2">
-                        <div className="flex items-center gap-2">
-                          <Badge tone={a.actionType === 'CORRECTIVE' ? 'critical' : 'advisory'}>
-                            {a.actionType}
-                          </Badge>
-                          <Badge tone={ACTION_STATUS_TONE[a.status]}>
-                            {a.status.replace('_', ' ')}
-                          </Badge>
-                        </div>
-                        <span className="text-xs text-slate-500 tabular-nums">Due {fmtDate(a.dueDate)}</span>
-                      </div>
-                      <p className="mt-2 text-sm text-slate-700">{a.description}</p>
-                      <p className="mt-1 text-xs text-slate-500">
-                        Owner: <span className="font-semibold text-slate-700">{a.owner}</span>
-                      </p>
-                      {a.verificationResult ? (
-                        <p className="mt-2 rounded-lg bg-pass-bg px-3 py-2 text-xs text-pass-text">
-                          Verified: {a.verificationResult}
-                        </p>
-                      ) : null}
-                      {a.effectivenessAt ? (
-                        <p
-                          className={`mt-2 rounded-lg px-3 py-2 text-xs font-medium ${
-                            a.effectivenessOk ? 'bg-pass-bg text-pass-text' : 'bg-critical-bg text-critical-text'
-                          }`}
-                        >
-                          Effectiveness: {a.effectivenessOk ? 'Effective' : 'Not effective'}
-                        </p>
-                      ) : null}
-                      <div className="mt-2 flex flex-wrap gap-2">
-                        {a.status === 'PLANNED' ? (
-                          <Button variant="secondary" className="px-3 py-1.5 text-xs" disabled={saving} onClick={() => setActionStatus(a, 'IN_PROGRESS')}>
-                            Start
-                          </Button>
-                        ) : null}
-                        {a.status === 'IN_PROGRESS' ? (
-                          <Button variant="secondary" className="px-3 py-1.5 text-xs" disabled={saving} onClick={() => setActionStatus(a, 'COMPLETED')}>
-                            Mark complete
-                          </Button>
-                        ) : null}
-                        {a.status === 'COMPLETED' ? (
-                          <Button
-                            variant="secondary"
-                            className="px-3 py-1.5 text-xs"
-                            disabled={saving}
-                            onClick={() => {
-                              setVerifyFor(a);
-                              setVerifyNote('');
-                            }}
-                          >
-                            Verify
-                          </Button>
-                        ) : null}
-                      </div>
-                    </div>
-                  ))}
-                  {(capaActionsQ.data ?? []).length === 0 ? (
-                    <p className="rounded-xl border border-dashed border-line bg-alabaster px-4 py-6 text-center text-sm text-slate-500">
-                      No actions yet — plan the corrective and preventive steps below.
-                    </p>
-                  ) : null}
-                </div>
-              )}
-
-              {verifyFor ? (
-                <form onSubmit={verifyCapaAction} className="mt-3 space-y-3 rounded-xl bg-slate-50 p-4">
-                  <p className="text-sm font-semibold text-ink">Verify: {verifyFor.description}</p>
-                  <Field label="Verification result" required>
-                    <TextArea value={verifyNote} onChange={(e) => setVerifyNote(e.target.value)} required />
-                  </Field>
-                  <div className="flex gap-2">
-                    <Button variant="secondary" type="button" onClick={() => setVerifyFor(null)} className="flex-1">
-                      Cancel
-                    </Button>
-                    <Button type="submit" loading={saving} className="flex-1">
-                      Verify
-                    </Button>
-                  </div>
-                </form>
-              ) : detail.status !== 'CLOSED' ? (
-                <form onSubmit={addCapaAction} className="mt-3 space-y-3 rounded-xl bg-slate-50 p-4">
-                  <p className="text-sm font-semibold text-ink">Add action</p>
-                  <Field label="Type" required>
-                    <Select value={aType} onChange={(e) => setAType(e.target.value as 'CORRECTIVE' | 'PREVENTIVE')}>
-                      <option value="CORRECTIVE">Corrective</option>
-                      <option value="PREVENTIVE">Preventive</option>
-                    </Select>
-                  </Field>
-                  <Field label="Description" required>
-                    <TextArea value={aDesc} onChange={(e) => setADesc(e.target.value)} required />
-                  </Field>
-                  <div className="grid grid-cols-2 gap-3">
-                    <Field label="Owner" required>
-                      <TextInput value={aOwner} onChange={(e) => setAOwner(e.target.value)} required />
-                    </Field>
-                    <Field label="Due date" required>
-                      <TextInput type="date" value={aDue} onChange={(e) => setADue(e.target.value)} required />
-                    </Field>
-                  </div>
-                  <Button type="submit" loading={saving} className="w-full">
-                    Add action
-                  </Button>
-                </form>
-              ) : null}
-            </div>
-            )}
           </Card>
         </div>
       ) : null}

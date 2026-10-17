@@ -28,21 +28,6 @@ function requireUid(req: Request): string {
 const view = requirePermission('master:view');
 const manage = requirePermission('master:manage');
 
-// Module 18 (admin worker): never expose passwordHash / mfaSecret to clients.
-const userPublicSelect = {
-  id: true,
-  email: true,
-  name: true,
-  phone: true,
-  isActive: true,
-  companyId: true,
-  roleId: true,
-  mfaEnabled: true,
-  createdAt: true,
-  updatedAt: true,
-  role: { select: { id: true, name: true, isSystem: true } },
-} as const;
-
 const idParam = z.object({ id: z.string().min(1) });
 const LIST_TAKE = 500;
 
@@ -130,7 +115,7 @@ const updateUserSchema = z.object({
 router.get('/users', view, ah(async (_req, res) => {
   res.json(
     await prisma.user.findMany({
-      select: userPublicSelect,
+      include: { role: true },
       orderBy: { name: 'asc' },
       take: LIST_TAKE,
     }),
@@ -159,7 +144,7 @@ router.post(
           companyId: body.companyId,
           isActive: body.isActive ?? true,
         },
-        select: userPublicSelect,
+        include: { role: true },
       });
       await audit(tx, { userId: uid, action: 'CREATE', entityType: 'User', entityId: created.id });
       return created;
@@ -197,7 +182,7 @@ router.put(
           companyId: body.companyId,
           isActive: body.isActive,
         },
-        select: userPublicSelect,
+        include: { role: true },
       });
       await audit(tx, {
         userId: uid,
@@ -221,7 +206,7 @@ router.delete(
     const { id } = idParam.parse(req.params);
     const uid = requireUid(req);
     const user = await prisma.$transaction(async (tx) => {
-      const updated = await tx.user.update({ where: { id }, data: { isActive: false }, select: userPublicSelect });
+      const updated = await tx.user.update({ where: { id }, data: { isActive: false }, include: { role: true } });
       await audit(tx, { userId: uid, action: 'DELETE', entityType: 'User', entityId: id, changes: { isActive: false } });
       return updated;
     });
@@ -343,45 +328,21 @@ router.get('/permissions', view, ah(async (_req, res) => {
 const supplierSchema = z.object({
   name: z.string().min(1),
   type: z.nativeEnum(SupplierType),
-  contactPerson: z.string().optional(),
   phone: z.string().optional(),
-  email: z.string().email().optional().or(z.literal('')),
   address: z.string().optional(),
-  region: z.string().optional(),
-  tin: z.string().optional(),
-  licenseNo: z.string().optional(),
-  wheatTypes: z.array(z.string()).optional(),
   paymentTerms: z.string().optional(),
-  bankName: z.string().optional(),
-  bankAccountNo: z.string().optional(),
-  rating: z.number().int().min(1).max(5).optional(),
 });
 const updateSupplierSchema = z.object({
   name: z.string().min(1).optional(),
   type: z.nativeEnum(SupplierType).optional(),
-  contactPerson: z.string().optional().nullable(),
   phone: z.string().optional().nullable(),
-  email: z.string().email().optional().nullable().or(z.literal('')),
   address: z.string().optional().nullable(),
-  region: z.string().optional().nullable(),
-  tin: z.string().optional().nullable(),
-  licenseNo: z.string().optional().nullable(),
-  wheatTypes: z.array(z.string()).optional(),
   paymentTerms: z.string().optional().nullable(),
-  bankName: z.string().optional().nullable(),
-  bankAccountNo: z.string().optional().nullable(),
-  rating: z.number().int().min(1).max(5).nullable().optional(),
   isActive: z.boolean().optional(),
 });
 
 router.get('/suppliers', view, ah(async (_req, res) => {
-  res.json(
-    await prisma.supplier.findMany({
-      orderBy: { name: 'asc' },
-      include: { _count: { select: { intakes: true, purchaseOrders: true } } },
-      take: LIST_TAKE,
-    }),
-  );
+  res.json(await prisma.supplier.findMany({ orderBy: { name: 'asc' }, take: LIST_TAKE }));
 }));
 
 router.post(
