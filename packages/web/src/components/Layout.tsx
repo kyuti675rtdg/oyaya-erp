@@ -383,7 +383,8 @@ const NAV: NavGroup[] = [
       { to: '/admin/webhooks', label: 'Webhooks', claim: ['settings:read'], icon: 'modules' },
       { to: '/admin/notifications', label: 'Notifications', claim: ['settings:read'], icon: 'support' },
       { to: '/admin/audit-logs', label: 'Audit Logs', claim: ['settings:read'], icon: 'intake' },
-      { to: '/admin/backup', label: 'Backup', claim: ['settings:read'], icon: 'package' }
+      { to: '/admin/backup', label: 'Backup', claim: ['settings:read'], icon: 'package' },
+      { to: '/chat/admin', label: 'Chat Admin', claim: ['chat:manage'], icon: 'support' }
     ]
   },
   {
@@ -617,7 +618,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
             <p className={sectionLabel}>Quick access</p>
             {[
               { to: '/admin/notifications', label: 'Notifications', icon: 'monitor' },
-              { to: '/support/tickets', label: 'Chat', icon: 'support' },
+              { to: '/chat', label: 'Team Chat', icon: 'support' },
             ].map((a) => (
               <NavLink key={a.to} to={a.to} onClick={onNavigate}
                 aria-current={acctActive(a.to) ? 'page' : undefined}

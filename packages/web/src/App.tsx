@@ -52,6 +52,8 @@ import { Settings } from './pages/Settings';
 import { ModuleManager } from './pages/ModuleManager';
 import { ApiMonitor } from './pages/ApiMonitor';
 import { Support } from './pages/Support';
+import { TeamChat } from './pages/chat/TeamChat';
+import { ChatAdmin } from './pages/chat/ChatAdmin';
 // Module 19: Support & Documentation Center
 import { Manuals } from './pages/Manuals';
 import { SOPs } from './pages/SOPs';
@@ -714,6 +716,22 @@ export function App() {
           element={
             <ProtectedRoute claim="settings:read">
               <ApiMonitor />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/chat"
+          element={
+            <ProtectedRoute claim="chat:view">
+              <TeamChat />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/chat/admin"
+          element={
+            <ProtectedRoute claim="chat:manage">
+              <ChatAdmin />
             </ProtectedRoute>
           }
         />

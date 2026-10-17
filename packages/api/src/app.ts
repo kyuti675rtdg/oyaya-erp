@@ -35,6 +35,8 @@ import { router as adminSettingsRouter } from './modules/admin-settings/router';
 import { router as pestRouter } from './modules/pest/router';
 import { router as warehouseRouter } from './modules/warehouse/router';
 import { router as documentsRouter } from './modules/documents/router';
+import { router as rocketchatRouter } from './modules/rocketchat/router';
+import { router as teamchatRouter } from './modules/teamchat/router';
 import { admsRouter } from './modules/zkteco/adms';
 
 const app = express();
@@ -90,6 +92,8 @@ v1.use('/settings', adminSettingsRouter);
 v1.use('/pest', pestRouter);
 v1.use('/warehouse', warehouseRouter);
 v1.use('/documents', documentsRouter);
+v1.use('/chat', rocketchatRouter);
+v1.use('/teamchat', teamchatRouter);
 
 app.use('/api/v1', v1);
 
