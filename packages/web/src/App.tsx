@@ -10,6 +10,13 @@ import { IncomingInspection } from './pages/IncomingInspection';
 import { AccountsPayable } from './pages/AccountsPayable';
 import { ProcurementReports } from './pages/ProcurementReports';
 import { Tanks } from './pages/Tanks';
+import { DryStorage } from './pages/DryStorage';
+import { TankFilling } from './pages/TankFilling';
+import { BlendTracking } from './pages/BlendTracking';
+import { ConditioningMonitor } from './pages/ConditioningMonitor';
+import { TankRelease } from './pages/TankRelease';
+import { StockMovement } from './pages/StockMovement';
+import { StorageReports } from './pages/StorageReports';
 import { Batches } from './pages/Batches';
 import { BatchDetail } from './pages/BatchDetail';
 import { Shifts } from './pages/Shifts';
@@ -93,6 +100,62 @@ export function App() {
           element={
             <ProtectedRoute claim="tanks:read">
               <Tanks />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dry-storage"
+          element={
+            <ProtectedRoute claim="tanks:read">
+              <DryStorage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/tank-filling"
+          element={
+            <ProtectedRoute claim="tanks:read">
+              <TankFilling />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/blend-tracking"
+          element={
+            <ProtectedRoute claim="tanks:read">
+              <BlendTracking />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/conditioning-monitor"
+          element={
+            <ProtectedRoute claim="tanks:read">
+              <ConditioningMonitor />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/tank-release"
+          element={
+            <ProtectedRoute claim="tanks:read">
+              <TankRelease />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/stock-movement"
+          element={
+            <ProtectedRoute claim="tanks:read">
+              <StockMovement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/storage-reports"
+          element={
+            <ProtectedRoute claim="tanks:read">
+              <StorageReports />
             </ProtectedRoute>
           }
         />

@@ -160,7 +160,14 @@ const NAV: NavGroup[] = [
     title: 'Storage & Conditioning',
     icon: 'package',
     items: [
-      { to: '/tanks', label: 'Conditioning Tanks', claim: ['tanks:read'], icon: 'tanks' }
+      { to: '/tanks', label: 'Conditioning Tanks', claim: ['tanks:read'], icon: 'tanks' },
+      { to: '/dry-storage', label: 'Dry Wheat Storage', claim: ['tanks:read'], icon: 'package' },
+      { to: '/tank-filling', label: 'Tank Filling', claim: ['tanks:read'], icon: 'intake' },
+      { to: '/blend-tracking', label: 'Blend Tracking', claim: ['tanks:read'], icon: 'batches' },
+      { to: '/conditioning-monitor', label: 'Conditioning Monitor', claim: ['tanks:read'], icon: 'shifts' },
+      { to: '/tank-release', label: 'Tank Release', claim: ['tanks:read'], icon: 'qc' },
+      { to: '/stock-movement', label: 'Stock Movement', claim: ['tanks:read'], icon: 'dashboard' },
+      { to: '/storage-reports', label: 'Storage Reports', claim: ['tanks:read'], icon: 'finance' }
     ]
   },
   {

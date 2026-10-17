@@ -302,11 +302,30 @@ model PurchaseOrder {
 model StorageMovement {
   id           String          @id @default(cuid())
   locationCode String          // DRY_POOL etc.
-  direction    String          // IN | OUT
+  direction    String          // IN | OUT | ADJUST
   quintals     Decimal         @db.Decimal(12, 2)
+  wheatType    String?         // SOFT | HARD | FOREIGN
   reference    String?         // intakeNo / wash batch
+  notes        String?
   movedAt      DateTime        @default(now())
   movedById    String?
+}
+
+model ConditioningCycle {
+  id            String    @id @default(cuid())
+  tankCode      String    // TANK_A | TANK_B | TANK_C
+  batchNo       String    @unique // PB-2026-0001
+  blendRatio    Json?     // { soft: 40, hard: 60, foreign: 0 }
+  startedAt     DateTime  @default(now())
+  requiredHrs   Decimal   @db.Decimal(6, 2) // required conditioning duration
+  waterAddedQ   Decimal?  @db.Decimal(12, 2) // quintals of water added
+  moistureBefore Decimal? @db.Decimal(5, 2) // % before conditioning
+  moistureAfter  Decimal? @db.Decimal(5, 2) // % after conditioning (target 15.0-16.5)
+  completedAt   DateTime?
+  completedById String?
+  releasedAt    DateTime?
+  releasedById  String?
+  notes         String?
 }
 
 model TankFill {

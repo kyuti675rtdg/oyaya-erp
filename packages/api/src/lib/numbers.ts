@@ -11,6 +11,7 @@ const TABLES = {
   apInvoice: 'APInvoice',
   apPayment: 'APPayment',
   purchaseOrder: 'PurchaseOrder',
+  conditioningCycle: 'ConditioningCycle',
   salesInvoice: 'SalesInvoice',
   cashReceipt: 'CashReceipt',
   journalEntry: 'JournalEntry',

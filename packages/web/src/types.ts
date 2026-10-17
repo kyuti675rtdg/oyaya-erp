@@ -134,9 +134,63 @@ export interface ConditioningTank {
   capacityQ: number;
   levelQ: number;
   note: string | null;
+  status: 'Empty' | 'Filling' | 'Conditioning' | 'Ready' | 'In Use' | 'Cleaning';
+  activeCycle: {
+    id: string;
+    batchNo: string;
+    startedAt: string;
+    requiredHrs: number;
+    elapsedHrs: number;
+    remainingHrs: number;
+    completedAt: string | null;
+    releasedAt: string | null;
+    moistureAfter: number | null;
+  } | null;
   lastFillAt: string | null;
   elapsedHrs: number | null;
   lastEvent: { event: string; occurredAt: string } | null;
+}
+
+export interface ConditioningCycle {
+  id: string;
+  tankCode: string;
+  batchNo: string;
+  blendRatio: Record<string, number> | null;
+  startedAt: string;
+  requiredHrs: number;
+  waterAddedQ: number | null;
+  moistureBefore: number | null;
+  moistureAfter: number | null;
+  completedAt: string | null;
+  releasedAt: string | null;
+  notes: string | null;
+}
+
+export interface TankBlend {
+  tankCode: string;
+  levelQ: number;
+  blend: { soft: number; hard: number; foreign: number } | null;
+  batchNo: string | null;
+  history: Array<{ id: string; quintals: number; blendRatio: Record<string, number> | null; filledAt: string }>;
+}
+
+export interface DryPoolDetail {
+  capacityQ: number;
+  balanceQ: number;
+  pct: number;
+  breakdown: Record<string, number>;
+  alerts: Array<{ level: 'low' | 'high' | 'info'; message: string }>;
+}
+
+export interface StorageMovementRow {
+  id: string;
+  locationCode: string;
+  direction: string;
+  quintals: number;
+  wheatType: string | null;
+  reference: string | null;
+  notes: string | null;
+  movedAt: string;
 }
 
 export interface ProductionBatch {
