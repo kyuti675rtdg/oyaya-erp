@@ -151,10 +151,10 @@ const NAV: NavGroup[] = [
     items: [
       { to: '/intake', label: 'Intake', claim: ['intake:create', 'intake:read'], icon: 'intake' },
       { to: '/suppliers', label: 'Suppliers', claim: ['procurement:view'], icon: 'truck' },
-      { to: '/purchase-orders', label: 'Orders', claim: ['procurement:view'], icon: 'finance' },
+      { to: '/purchase-orders', label: 'Purchase Orders', claim: ['procurement:view'], icon: 'finance' },
       { to: '/incoming-inspection', label: 'Inspection', claim: ['procurement:view'], icon: 'qc' },
-      { to: '/accounts-payable', label: 'Payables', claim: ['procurement:view'], icon: 'finance' },
-      { to: '/procurement-reports', label: 'Reports', claim: ['procurement:view'], icon: 'dashboard' }
+      { to: '/accounts-payable', label: 'Vendor Payables', claim: ['procurement:view'], icon: 'finance' },
+      { to: '/procurement-reports', label: 'Procurement Reports', claim: ['procurement:view'], icon: 'dashboard' }
     ]
   },
   {
@@ -168,14 +168,14 @@ const NAV: NavGroup[] = [
       { to: '/conditioning-monitor', label: 'Monitor', claim: ['tanks:read'], icon: 'shifts' },
       { to: '/tank-release', label: 'Release', claim: ['tanks:read'], icon: 'qc' },
       { to: '/stock-movement', label: 'Movements', claim: ['tanks:read'], icon: 'dashboard' },
-      { to: '/storage-reports', label: 'Reports', claim: ['tanks:read'], icon: 'finance' }
+      { to: '/storage-reports', label: 'Storage Reports', claim: ['tanks:read'], icon: 'finance' }
     ]
   },
   {
     title: 'Production',
     icon: 'factory',
     items: [
-      { to: '/production-plans', label: 'Planning', claim: ['production:view'], icon: 'dashboard' },
+      { to: '/production-plans', label: 'Production Plans', claim: ['production:view'], icon: 'dashboard' },
       { to: '/batches', label: 'Batches', claim: ['batches:read'], icon: 'batches' },
       { to: '/blend-recipes', label: 'Recipes', claim: ['production:view'], icon: 'batches' },
       { to: '/wheat-washing', label: 'Washing', claim: ['production:view'], icon: 'intake' },
@@ -184,7 +184,7 @@ const NAV: NavGroup[] = [
       { to: '/downtime', label: 'Downtime', claim: ['production:view'], icon: 'monitor' },
       { to: '/flour-output', label: 'Output', claim: ['production:view'], icon: 'package' },
       { to: '/yield-alerts', label: 'Yield Alerts', claim: ['production:view'], icon: 'capa' },
-      { to: '/production-reports', label: 'Reports', claim: ['production:view'], icon: 'finance' }
+      { to: '/production-reports', label: 'Production Reports', claim: ['production:view'], icon: 'finance' }
     ]
   },
   {
@@ -196,7 +196,7 @@ const NAV: NavGroup[] = [
       { to: '/quality/flour-tests', label: 'Flour Tests', claim: ['qc:view'], icon: 'qc' },
       { to: '/quality/sampling', label: 'Sampling', claim: ['qc:view'], icon: 'shifts' },
       { to: '/quality/approval', label: 'Approval', claim: ['qc:view'], icon: 'intake' },
-      { to: '/quality/reports', label: 'Reports', claim: ['qc:view'], icon: 'finance' }
+      { to: '/quality/reports', label: 'Quality Reports', claim: ['qc:view'], icon: 'finance' }
     ]
   },
   {
@@ -243,16 +243,16 @@ const NAV: NavGroup[] = [
     title: 'Sales',
     icon: 'sales',
     items: [
-      { to: '/sales', label: 'Orders', claim: ['sales:read'], icon: 'sales' },
+      { to: '/sales', label: 'Sales Orders', claim: ['sales:read'], icon: 'sales' },
       { to: '/sales/agreements', label: 'Agreements', claim: ['sales:read'], icon: 'finance' },
       { to: '/sales/advances', label: 'Advances', claim: ['sales:read'], icon: 'finance' },
       { to: '/sales/loading', label: 'Loading', claim: ['sales:read'], icon: 'package' },
       { to: '/sales/consolidation', label: 'Consolidation', claim: ['sales:read'], icon: 'truck' },
-      { to: '/sales/trips', label: 'Trips', claim: ['sales:read'], icon: 'truck' },
+      { to: '/sales/trips', label: 'Delivery Trips', claim: ['sales:read'], icon: 'truck' },
       { to: '/sales/agents', label: 'Agents', claim: ['sales:read'], icon: 'shifts' },
       { to: '/sales/invoices', label: 'Invoices', claim: ['sales:read'], icon: 'finance' },
       { to: '/sales/cash', label: 'Cash', claim: ['sales:read'], icon: 'finance' },
-      { to: '/sales/reports', label: 'Reports', claim: ['sales:read'], icon: 'monitor' }
+      { to: '/sales/reports', label: 'Sales Reports', claim: ['sales:read'], icon: 'monitor' }
     ]
   },
   {
@@ -262,7 +262,7 @@ const NAV: NavGroup[] = [
       { to: '/finance', label: 'Overview', claim: ['finance:read'], icon: 'finance' },
       { to: '/finance/chart-of-accounts', label: 'Accounts', claim: ['finance:read'], icon: 'finance' },
       { to: '/finance/ledger', label: 'Ledger', claim: ['finance:read'], icon: 'finance' },
-      { to: '/finance/accounts-payable', label: 'Payables', claim: ['finance:read'], icon: 'finance' },
+      { to: '/finance/accounts-payable', label: 'AP Payables', claim: ['finance:read'], icon: 'finance' },
       { to: '/finance/accounts-receivable', label: 'Receivables', claim: ['finance:read'], icon: 'finance' },
       { to: '/finance/cash-bank', label: 'Cash & Bank', claim: ['finance:read'], icon: 'finance' },
       { to: '/finance/vouchers', label: 'Vouchers', claim: ['finance:read'], icon: 'finance' },
@@ -282,7 +282,7 @@ const NAV: NavGroup[] = [
       { to: '/fleet/vehicles', label: 'Vehicles', claim: ['fleet:view'], icon: 'truck' },
       { to: '/fleet/contracts', label: 'Contracts', claim: ['fleet:view'], icon: 'finance' },
       { to: '/fleet/drivers', label: 'Drivers', claim: ['fleet:view'], icon: 'payroll' },
-      { to: '/fleet/trips', label: 'Trips', claim: ['fleet:view'], icon: 'monitor' },
+      { to: '/fleet/trips', label: 'Fleet Trips', claim: ['fleet:view'], icon: 'monitor' },
       { to: '/fleet/utilization', label: 'Utilization', claim: ['fleet:view'], icon: 'dashboard' },
       { to: '/fleet/fuel', label: 'Fuel', claim: ['fleet:view'], icon: 'intake' },
       { to: '/fleet/maintenance', label: 'Maintenance', claim: ['fleet:view'], icon: 'factory' },
@@ -293,8 +293,8 @@ const NAV: NavGroup[] = [
     title: 'Maintenance',
     icon: 'factory',
     items: [
-      { to: '/maintenance/planning', label: 'Planning', claim: ['maintenance:view'], icon: 'factory' },
-      { to: '/maintenance/pm-checklists', label: 'Checklists', claim: ['maintenance:view'], icon: 'shifts' },
+      { to: '/maintenance/planning', label: 'Maintenance Plans', claim: ['maintenance:view'], icon: 'factory' },
+      { to: '/maintenance/pm-checklists', label: 'PM Checklists', claim: ['maintenance:view'], icon: 'shifts' },
       { to: '/maintenance/breakdowns', label: 'Breakdowns', claim: ['maintenance:view'], icon: 'capa' },
       { to: '/maintenance/spare-parts', label: 'Spare Parts', claim: ['maintenance:view'], icon: 'package' },
       { to: '/maintenance/work-orders', label: 'Work Orders', claim: ['maintenance:view'], icon: 'intake' },
@@ -306,12 +306,12 @@ const NAV: NavGroup[] = [
     title: 'Sanitation',
     icon: 'shifts',
     items: [
-      { to: '/hygiene/checklists', label: 'Checklists', claim: ['hygiene:view'], icon: 'shifts' },
+      { to: '/hygiene/checklists', label: 'Hygiene Lists', claim: ['hygiene:view'], icon: 'shifts' },
       { to: '/hygiene/area-cleaning', label: 'Cleaning', claim: ['hygiene:view'], icon: 'intake' },
       { to: '/hygiene/inspections', label: 'Inspections', claim: ['hygiene:view'], icon: 'qc' },
       { to: '/hygiene/actions', label: 'Actions', claim: ['hygiene:view'], icon: 'capa' },
-      { to: '/hygiene/approvals', label: 'Approvals', claim: ['hygiene:view'], icon: 'finance' },
-      { to: '/hygiene/reports', label: 'Reports', claim: ['hygiene:view'], icon: 'dashboard' }
+      { to: '/hygiene/approvals', label: 'Hygiene Approvals', claim: ['hygiene:view'], icon: 'finance' },
+      { to: '/hygiene/reports', label: 'Hygiene Reports', claim: ['hygiene:view'], icon: 'dashboard' }
     ]
   },
   {
@@ -323,7 +323,7 @@ const NAV: NavGroup[] = [
       { to: '/pest/treatments', label: 'Treatments', claim: ['pest:view'], icon: 'intake' },
       { to: '/pest/follow-ups', label: 'Follow-Ups', claim: ['pest:view'], icon: 'capa' },
       { to: '/pest/alerts', label: 'Alerts', claim: ['pest:view'], icon: 'monitor' },
-      { to: '/pest/reports', label: 'Reports', claim: ['pest:view'], icon: 'finance' }
+      { to: '/pest/reports', label: 'Pest Reports', claim: ['pest:view'], icon: 'finance' }
     ]
   },
   {
@@ -409,7 +409,7 @@ const NAV: NavGroup[] = [
       { to: '/documents', label: 'Library', claim: ['documents:view'], icon: 'intake' },
       { to: '/documents/folders', label: 'Folders', claim: ['documents:view'], icon: 'package' },
       { to: '/documents/versions', label: 'Versions', claim: ['documents:view'], icon: 'shifts' },
-      { to: '/documents/approvals', label: 'Approvals', claim: ['documents:view'], icon: 'finance' },
+      { to: '/documents/approvals', label: 'Doc Approvals', claim: ['documents:view'], icon: 'finance' },
       { to: '/documents/templates', label: 'Templates', claim: ['documents:view'], icon: 'dashboard' },
       { to: '/documents/archive', label: 'Archive', claim: ['documents:view'], icon: 'capa' },
       { to: '/documents/sharing', label: 'Sharing', claim: ['documents:view'], icon: 'sales' }
