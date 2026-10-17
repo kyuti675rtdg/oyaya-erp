@@ -53,6 +53,9 @@ model User {
   // Native team chat
   chatChannelMemberships ChatChannelMember[]
   chatMessages ChatMessage[]
+  // Rocket.Chat integration (unused, kept for future)
+  chatUserMap  ChatUserMap?
+  chatAnnouncements ChatAnnouncement[]
 }
 
 model Role {
