@@ -8,6 +8,29 @@ import { requirePermission } from '../../middleware/rbac';
 import { validateBody, validateQuery, validateParams } from '../../middleware/validate';
 import { AppError } from '../../middleware/errorHandler';
 import { recordShiftOutputs } from './service';
+import {
+  FLOUR_PRODUCT_TYPES,
+  DOWNTIME_CATEGORIES,
+  createBlendRecipe,
+  activateBlendRecipe,
+  checkBlendCompliance,
+  createProductionPlan,
+  transitionProductionPlan,
+  startMillingRun,
+  endMillingRun,
+  logDowntime,
+  downtimeSummary,
+  recordFlourOutput,
+  acknowledgeYieldAlert,
+  createShiftHandover,
+  dailyProductionReport,
+  shiftProductionReport,
+  type BlendRecipeInput,
+  type ProductionPlanInput,
+  type MillingRunInput,
+  type DowntimeInput,
+  type FlourOutputInput,
+} from './service';
 
 export const router = Router();
 
@@ -250,6 +273,8 @@ const shiftUpdateSchema = z.object({
   endedAt: z.coerce.date().optional(),
   downtimeMin: z.number().int().min(0).optional(),
   downtimeReason: z.string().max(500).optional().nullable(),
+  // Module 4: operator reassignment on an existing shift run
+  operators: z.array(z.string().min(1).max(120)).max(20).optional(),
 });
 type ShiftUpdateInput = z.infer<typeof shiftUpdateSchema>;
 
@@ -346,6 +371,7 @@ router.put(
             endedAt: b.endedAt,
             downtimeMin: b.downtimeMin,
             downtimeReason: b.downtimeReason ?? undefined,
+            operators: b.operators,
           },
         });
         await audit(tx, {
@@ -415,6 +441,9 @@ const washingCreateSchema = z.object({
   equipmentChange: z.string().max(500).optional().nullable(),
   operators: z.array(z.string()).optional().default([]),
   batchId: z.string().min(1).optional(),
+  waterUsedL: z.number().int().min(0).optional().nullable(),
+  impurityBeforePct: z.number().min(0).max(100).optional().nullable(),
+  impurityAfterPct: z.number().min(0).max(100).optional().nullable(),
 });
 type WashingCreateInput = z.infer<typeof washingCreateSchema>;
 
@@ -451,7 +480,12 @@ router.post(
         }
         const durationMin =
           b.endedAt !== undefined ? Math.round((b.endedAt.getTime() - b.startedAt.getTime()) / 60000) : null;
-        const created = await tx.washingLog.create({
+        // WashingLog.waterUsedL / impurity* columns arrive via /tmp/migration-module4.sql;
+        // until the Prisma client is regenerated we write through a cast delegate.
+        const washingCreate = tx.washingLog.create as unknown as (args: {
+          data: Record<string, unknown>;
+        }) => Promise<{ id: string }>;
+        const created = await washingCreate({
           data: {
             tankOrSilo: b.tankOrSilo,
             startedAt: b.startedAt,
@@ -461,6 +495,9 @@ router.post(
             equipmentChange: b.equipmentChange ?? null,
             operators: b.operators,
             batchId: b.batchId ?? null,
+            waterUsedL: b.waterUsedL ?? null,
+            impurityBeforePct: b.impurityBeforePct != null ? dec(b.impurityBeforePct) : null,
+            impurityAfterPct: b.impurityAfterPct != null ? dec(b.impurityAfterPct) : null,
             createdById: userId,
           },
         });
@@ -474,6 +511,675 @@ router.post(
         return created;
       });
       res.status(201).json(log);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+const washingUpdateSchema = z.object({
+  endedAt: z.coerce.date().optional(),
+  waterUsedL: z.number().int().min(0).optional().nullable(),
+  impurityBeforePct: z.number().min(0).max(100).optional().nullable(),
+  impurityAfterPct: z.number().min(0).max(100).optional().nullable(),
+  operators: z.array(z.string()).optional(),
+});
+type WashingUpdateInput = z.infer<typeof washingUpdateSchema>;
+
+router.put(
+  '/washing/:id',
+  requirePermission('production:manage'),
+  validateParams(idParamSchema),
+  validateBody(washingUpdateSchema),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = requireUid(req);
+      const { id } = req.params as { id: string };
+      const b = req.body as WashingUpdateInput;
+      const updated = await prisma.$transaction(async (tx) => {
+        const existing = await tx.washingLog.findUnique({ where: { id } });
+        if (!existing) throw new AppError(404, 'Washing log not found');
+        const data: Record<string, unknown> = {};
+        if (b.endedAt !== undefined) {
+          data.endedAt = b.endedAt;
+          data.durationMin = Math.round((b.endedAt.getTime() - existing.startedAt.getTime()) / 60000);
+        }
+        if (b.waterUsedL !== undefined) data.waterUsedL = b.waterUsedL;
+        if (b.impurityBeforePct !== undefined) {
+          data.impurityBeforePct = b.impurityBeforePct != null ? dec(b.impurityBeforePct) : null;
+        }
+        if (b.impurityAfterPct !== undefined) {
+          data.impurityAfterPct = b.impurityAfterPct != null ? dec(b.impurityAfterPct) : null;
+        }
+        if (b.operators !== undefined) data.operators = b.operators;
+        // New columns exist post-merge; cast for the current generated client.
+        const washingUpdate = tx.washingLog.update as unknown as (args: {
+          where: { id: string };
+          data: Record<string, unknown>;
+        }) => Promise<unknown>;
+        const saved = await washingUpdate({ where: { id }, data });
+        await audit(tx, {
+          userId,
+          action: 'UPDATE',
+          entityType: 'WashingLog',
+          entityId: id,
+          changes: b,
+        });
+        return saved;
+      });
+      res.json(updated);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * Module 4: Production & Milling Management
+ * ═══════════════════════════════════════════════════════════════════════════ */
+const m4View = requirePermission('production:view');
+const m4Manage = requirePermission('production:manage');
+const m4Approve = requirePermission('production:approve');
+
+// ─── Blend recipes ─────────────────────────────────────────────────────────
+
+const blendRecipeSchema = z.object({
+  name: z.string().min(1).max(120),
+  productType: z.enum(FLOUR_PRODUCT_TYPES),
+  hardPct: z.number().min(0).max(100),
+  softPct: z.number().min(0).max(100),
+  foreignPct: z.number().min(0).max(100),
+  isActive: z.boolean().optional(),
+  notes: z.string().max(500).optional().nullable(),
+});
+type BlendRecipeBody = z.infer<typeof blendRecipeSchema>;
+
+const blendRecipeListQuerySchema = z.object({
+  productType: z.enum(FLOUR_PRODUCT_TYPES).optional(),
+});
+type BlendRecipeListQuery = z.infer<typeof blendRecipeListQuerySchema>;
+
+router.get(
+  '/blend-recipes',
+  m4View,
+  validateQuery(blendRecipeListQuerySchema),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const q = req.query as BlendRecipeListQuery;
+      const recipes = await (prisma as unknown as {
+        blendRecipe: { findMany(args: unknown): Promise<Record<string, unknown>[]> };
+      }).blendRecipe.findMany({
+        where: { productType: q.productType },
+        orderBy: [{ productType: 'asc' }, { isActive: 'desc' }, { createdAt: 'desc' }],
+      });
+      res.json(recipes);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+router.post(
+  '/blend-recipes',
+  m4Manage,
+  validateBody(blendRecipeSchema),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = requireUid(req);
+      const recipe = await prisma.$transaction((tx) =>
+        createBlendRecipe(tx, req.body as BlendRecipeInput, userId),
+      );
+      res.status(201).json(recipe);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+router.post(
+  '/blend-recipes/:id/activate',
+  m4Manage,
+  validateParams(idParamSchema),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = requireUid(req);
+      const { id } = req.params as { id: string };
+      const recipe = await prisma.$transaction((tx) => activateBlendRecipe(tx, id, userId));
+      res.json(recipe);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+const blendComplianceQuerySchema = z.object({
+  batchId: z.string().min(1),
+  productType: z.enum(FLOUR_PRODUCT_TYPES),
+  tolerancePct: z.coerce.number().min(0).max(20).optional().default(2),
+});
+type BlendComplianceQuery = z.infer<typeof blendComplianceQuerySchema>;
+
+router.get(
+  '/blend-recipes/compliance',
+  m4View,
+  validateQuery(blendComplianceQuerySchema),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const q = req.query as unknown as BlendComplianceQuery;
+      const result = await prisma.$transaction((tx) =>
+        checkBlendCompliance(tx, q.batchId, q.productType, q.tolerancePct),
+      );
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+// ─── Production plans ──────────────────────────────────────────────────────
+
+const planTargetSchema = z.object({
+  productType: z.enum(FLOUR_PRODUCT_TYPES),
+  plannedQ: z.number().positive(),
+});
+
+const productionPlanSchema = z.object({
+  tankCode: z.string().min(1).max(20).optional().nullable(),
+  batchId: z.string().min(1).optional().nullable(),
+  targets: z.array(planTargetSchema).min(1).max(10),
+  plannedWheatQ: z.number().positive(),
+  scheduledDate: z.coerce.date(),
+  shift: z.enum(['MORNING', 'NIGHT']),
+  notes: z.string().max(1000).optional().nullable(),
+});
+type ProductionPlanBody = z.infer<typeof productionPlanSchema>;
+
+const planListQuerySchema = z.object({
+  status: z.string().min(1).optional(),
+  scheduledDate: z.coerce.date().optional(),
+});
+type PlanListQuery = z.infer<typeof planListQuerySchema>;
+
+router.get(
+  '/plans',
+  m4View,
+  validateQuery(planListQuerySchema),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const q = req.query as PlanListQuery;
+      const plans = await (prisma as unknown as {
+        productionPlan: { findMany(args: unknown): Promise<Record<string, unknown>[]> };
+      }).productionPlan.findMany({
+        where: { status: q.status, scheduledDate: q.scheduledDate },
+        orderBy: [{ scheduledDate: 'desc' }, { createdAt: 'desc' }],
+      });
+      res.json(plans);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+router.post(
+  '/plans',
+  m4Manage,
+  validateBody(productionPlanSchema),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = requireUid(req);
+      const plan = await prisma.$transaction((tx) =>
+        createProductionPlan(tx, req.body as ProductionPlanInput, userId),
+      );
+      res.status(201).json(plan);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+router.get(
+  '/plans/:id',
+  m4View,
+  validateParams(idParamSchema),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { id } = req.params as { id: string };
+      const plan = await (prisma as unknown as {
+        productionPlan: { findUnique(args: unknown): Promise<Record<string, unknown> | null> };
+      }).productionPlan.findUnique({ where: { id } });
+      if (!plan) throw new AppError(404, 'Production plan not found');
+      res.json(plan);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+const planTransitionSchema = z.object({
+  actualWheatQ: z.number().min(0).optional(),
+  actualOutputQ: z.number().min(0).optional(),
+});
+type PlanTransitionBody = z.infer<typeof planTransitionSchema>;
+
+router.post(
+  '/plans/:id/start',
+  m4Manage,
+  validateParams(idParamSchema),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = requireUid(req);
+      const { id } = req.params as { id: string };
+      const plan = await prisma.$transaction((tx) =>
+        transitionProductionPlan(tx, id, 'IN_PROGRESS', userId),
+      );
+      res.json(plan);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+router.post(
+  '/plans/:id/complete',
+  m4Manage,
+  validateParams(idParamSchema),
+  validateBody(planTransitionSchema),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = requireUid(req);
+      const { id } = req.params as { id: string };
+      const b = req.body as PlanTransitionBody;
+      const plan = await prisma.$transaction((tx) =>
+        transitionProductionPlan(tx, id, 'COMPLETED', userId, {
+          actualWheatQ: b.actualWheatQ,
+          actualOutputQ: b.actualOutputQ,
+        }),
+      );
+      res.json(plan);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+// ─── Milling runs ──────────────────────────────────────────────────────────
+
+const millingRunSchema = z.object({
+  planId: z.string().min(1).optional().nullable(),
+  batchId: z.string().min(1),
+  lineMachine: z.string().min(1).max(60),
+  startedAt: z.coerce.date(),
+  feedRateQHr: z.number().positive().optional().nullable(),
+  rollSettings: z.string().max(1000).optional().nullable(),
+  operator: z.string().min(1).max(120),
+});
+type MillingRunBody = z.infer<typeof millingRunSchema>;
+
+const millingRunListQuerySchema = z.object({
+  batchId: z.string().min(1).optional(),
+  planId: z.string().min(1).optional(),
+  status: z.string().min(1).optional(),
+});
+type MillingRunListQuery = z.infer<typeof millingRunListQuerySchema>;
+
+// NOTE: /milling-runs/running must be registered before /milling-runs/:id
+router.get(
+  '/milling-runs/running',
+  m4View,
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const runs = await (prisma as unknown as {
+        millingRun: { findMany(args: unknown): Promise<Record<string, unknown>[]> };
+      }).millingRun.findMany({
+        where: { status: 'RUNNING' },
+        orderBy: { startedAt: 'asc' },
+      });
+      res.json(runs);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+router.get(
+  '/milling-runs',
+  m4View,
+  validateQuery(millingRunListQuerySchema),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const q = req.query as MillingRunListQuery;
+      const runs = await (prisma as unknown as {
+        millingRun: { findMany(args: unknown): Promise<Record<string, unknown>[]> };
+      }).millingRun.findMany({
+        where: { batchId: q.batchId, planId: q.planId, status: q.status },
+        orderBy: { startedAt: 'desc' },
+      });
+      res.json(runs);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+router.post(
+  '/milling-runs',
+  m4Manage,
+  validateBody(millingRunSchema),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = requireUid(req);
+      const run = await prisma.$transaction((tx) =>
+        startMillingRun(tx, req.body as MillingRunInput, userId),
+      );
+      res.status(201).json(run);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+const millingRunEndSchema = z.object({
+  endedAt: z.coerce.date(),
+  status: z.enum(['COMPLETED', 'STOPPED']).optional().default('COMPLETED'),
+  feedRateQHr: z.number().positive().optional().nullable(),
+  rollSettings: z.string().max(1000).optional().nullable(),
+});
+type MillingRunEndBody = z.infer<typeof millingRunEndSchema>;
+
+router.post(
+  '/milling-runs/:id/end',
+  m4Manage,
+  validateParams(idParamSchema),
+  validateBody(millingRunEndSchema),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = requireUid(req);
+      const { id } = req.params as { id: string };
+      const b = req.body as MillingRunEndBody;
+      const run = await prisma.$transaction((tx) =>
+        endMillingRun(tx, id, userId, {
+          endedAt: b.endedAt,
+          status: b.status,
+          feedRateQHr: b.feedRateQHr,
+          rollSettings: b.rollSettings,
+        }),
+      );
+      res.json(run);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+// ─── Downtime logs ─────────────────────────────────────────────────────────
+
+const downtimeSchema = z.object({
+  machineLine: z.string().min(1).max(60),
+  runId: z.string().min(1).optional().nullable(),
+  shiftRunId: z.string().min(1).optional().nullable(),
+  startedAt: z.coerce.date(),
+  endedAt: z.coerce.date().optional().nullable(),
+  minutesLost: z.number().int().positive(),
+  reasonCategory: z.enum(DOWNTIME_CATEGORIES),
+  description: z.string().max(1000).optional().nullable(),
+  resolvedBy: z.string().max(120).optional().nullable(),
+});
+type DowntimeBody = z.infer<typeof downtimeSchema>;
+
+const downtimeListQuerySchema = z.object({
+  machineLine: z.string().min(1).optional(),
+  from: z.coerce.date().optional(),
+  to: z.coerce.date().optional(),
+});
+type DowntimeListQuery = z.infer<typeof downtimeListQuerySchema>;
+
+router.get(
+  '/downtime',
+  m4View,
+  validateQuery(downtimeListQuerySchema),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const q = req.query as DowntimeListQuery;
+      const where: Record<string, unknown> = { machineLine: q.machineLine };
+      if (q.from || q.to) where.startedAt = { gte: q.from, lte: q.to };
+      const logs = await (prisma as unknown as {
+        downtimeLog: { findMany(args: unknown): Promise<Record<string, unknown>[]> };
+      }).downtimeLog.findMany({ where, orderBy: { startedAt: 'desc' } });
+      res.json(logs);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+router.post(
+  '/downtime',
+  m4Manage,
+  validateBody(downtimeSchema),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = requireUid(req);
+      const entry = await prisma.$transaction((tx) =>
+        logDowntime(tx, req.body as DowntimeInput, userId),
+      );
+      res.status(201).json(entry);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+const downtimeSummaryQuerySchema = z.object({
+  from: z.coerce.date(),
+  to: z.coerce.date(),
+});
+type DowntimeSummaryQuery = z.infer<typeof downtimeSummaryQuerySchema>;
+
+router.get(
+  '/downtime/summary',
+  m4View,
+  validateQuery(downtimeSummaryQuerySchema),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const q = req.query as unknown as DowntimeSummaryQuery;
+      const summary = await prisma.$transaction((tx) => downtimeSummary(tx, q.from, q.to));
+      res.json(summary);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+// ─── Flour output & extraction ─────────────────────────────────────────────
+
+const flourOutputSchema = z.object({
+  batchId: z.string().min(1),
+  productType: z.enum(FLOUR_PRODUCT_TYPES),
+  quintals: z.number().positive(),
+});
+type FlourOutputBody = z.infer<typeof flourOutputSchema>;
+
+const flourOutputListQuerySchema = z.object({
+  batchId: z.string().min(1).optional(),
+  flagged: z.coerce.boolean().optional(),
+});
+type FlourOutputListQuery = z.infer<typeof flourOutputListQuerySchema>;
+
+router.get(
+  '/flour-outputs',
+  m4View,
+  validateQuery(flourOutputListQuerySchema),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const q = req.query as FlourOutputListQuery;
+      const outputs = await (prisma as unknown as {
+        flourOutput: { findMany(args: unknown): Promise<Record<string, unknown>[]> };
+      }).flourOutput.findMany({
+        where: { batchId: q.batchId, belowYieldFlag: q.flagged },
+        orderBy: { loggedAt: 'desc' },
+      });
+      res.json(outputs);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+router.post(
+  '/flour-outputs',
+  m4Manage,
+  validateBody(flourOutputSchema),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = requireUid(req);
+      const result = await prisma.$transaction((tx) =>
+        recordFlourOutput(tx, req.body as FlourOutputInput, userId),
+      );
+      res.status(201).json(result);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+// ─── Yield alerts ──────────────────────────────────────────────────────────
+
+const yieldAlertListQuerySchema = z.object({
+  status: z.string().min(1).optional(),
+  severity: z.enum(['AMBER', 'RED']).optional(),
+});
+type YieldAlertListQuery = z.infer<typeof yieldAlertListQuerySchema>;
+
+router.get(
+  '/yield-alerts',
+  m4View,
+  validateQuery(yieldAlertListQuerySchema),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const q = req.query as YieldAlertListQuery;
+      const alerts = await (prisma as unknown as {
+        yieldAlert: { findMany(args: unknown): Promise<Record<string, unknown>[]> };
+      }).yieldAlert.findMany({
+        where: { status: q.status, severity: q.severity },
+        orderBy: [{ severity: 'desc' }, { createdAt: 'desc' }],
+      });
+      res.json(alerts);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+const alertAckSchema = z.object({
+  ackNotes: z.string().max(1000).optional().nullable(),
+});
+type AlertAckBody = z.infer<typeof alertAckSchema>;
+
+router.post(
+  '/yield-alerts/:id/acknowledge',
+  m4Approve,
+  validateParams(idParamSchema),
+  validateBody(alertAckSchema),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = requireUid(req);
+      const { id } = req.params as { id: string };
+      const b = req.body as AlertAckBody;
+      const alert = await prisma.$transaction((tx) =>
+        acknowledgeYieldAlert(tx, id, userId, b.ackNotes),
+      );
+      res.json(alert);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+// ─── Shift handovers ───────────────────────────────────────────────────────
+
+const handoverSchema = z.object({
+  noteType: z.enum(['HANDOVER', 'OPERATOR_NOTE']).optional().default('HANDOVER'),
+  content: z.string().min(1).max(2000),
+});
+type HandoverBody = z.infer<typeof handoverSchema>;
+
+router.get(
+  '/shifts/:id/handovers',
+  m4View,
+  validateParams(idParamSchema),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { id } = req.params as { id: string };
+      const notes = await (prisma as unknown as {
+        shiftHandover: { findMany(args: unknown): Promise<Record<string, unknown>[]> };
+      }).shiftHandover.findMany({
+        where: { shiftRunId: id },
+        orderBy: { createdAt: 'desc' },
+      });
+      res.json(notes);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+router.post(
+  '/shifts/:id/handovers',
+  m4Manage,
+  validateParams(idParamSchema),
+  validateBody(handoverSchema),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = requireUid(req);
+      const { id } = req.params as { id: string };
+      const b = req.body as HandoverBody;
+      const note = await prisma.$transaction((tx) =>
+        createShiftHandover(tx, id, userId, b.noteType, b.content),
+      );
+      res.status(201).json(note);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+// ─── Reports ─────────────────────────────────────────────────────────────
+
+const dailyReportQuerySchema = z.object({
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected YYYY-MM-DD'),
+});
+type DailyReportQuery = z.infer<typeof dailyReportQuerySchema>;
+
+const shiftReportQuerySchema = z.object({
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected YYYY-MM-DD'),
+  shift: z.enum(['MORNING', 'NIGHT']),
+});
+type ShiftReportQuery = z.infer<typeof shiftReportQuerySchema>;
+
+router.get(
+  '/reports/daily',
+  m4View,
+  validateQuery(dailyReportQuerySchema),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const q = req.query as DailyReportQuery;
+      const report = await prisma.$transaction((tx) => dailyProductionReport(tx, q.date));
+      res.json(report);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+router.get(
+  '/reports/shift',
+  m4View,
+  validateQuery(shiftReportQuerySchema),
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const q = req.query as ShiftReportQuery;
+      const report = await prisma.$transaction((tx) => shiftProductionReport(tx, q.date, q.shift));
+      res.json(report);
     } catch (err) {
       next(err);
     }

@@ -28,6 +28,8 @@ import { router as moduleManagerRouter } from './modules/module-manager/router';
 import { router as apiMonitorRouter } from './modules/api-monitor/router';
 import { router as supportRouter } from './modules/support/router';
 import { router as auditLogRouter } from './modules/audit-log/router';
+import { router as pestRouter } from './modules/pest/router';
+import { router as warehouseRouter } from './modules/warehouse/router';
 import { admsRouter } from './modules/zkteco/adms';
 
 const app = express();
@@ -76,6 +78,8 @@ v1.use('/module-manager', moduleManagerRouter);
 v1.use('/api-monitor', apiMonitorRouter);
 v1.use('/support', supportRouter);
 v1.use('/audit-log', auditLogRouter);
+v1.use('/pest', pestRouter);
+v1.use('/warehouse', warehouseRouter);
 
 app.use('/api/v1', v1);
 

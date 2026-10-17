@@ -416,3 +416,1214 @@ export interface FlatKpis {
   activeEmployees: number;
   qcCompliancePct: number | null;
 }
+
+// ─── Module 6 expansion: Nonconformity & CAPA ─────────────────────────────
+
+export type NcSeverity = 'CRITICAL' | 'MAJOR' | 'MINOR';
+export type NcStatus = 'OPEN' | 'UNDER_REVIEW' | 'CLOSED';
+export type NcSource = 'INTAKE' | 'IN_PROCESS' | 'FLOUR' | 'HYGIENE' | 'PEST';
+export type NcDecision = 'RELEASE' | 'REWORK' | 'DOWNGRADE' | 'RECYCLE_FEED' | 'REJECT_DISPOSE';
+export type NcActionType = 'CORRECTIVE' | 'PREVENTIVE';
+export type NcActionStatus = 'PLANNED' | 'IN_PROGRESS' | 'COMPLETED' | 'VERIFIED';
+export type NcSignoffKind = 'CLOSURE' | 'DISPOSITION';
+export type NcSignoffStatus = 'PENDING' | 'COMPLETED';
+
+export interface NcRootCause {
+  id: string;
+  ncId: string;
+  fiveWhys: string[];
+  fishbone: Record<string, string>;
+  rootCause?: string | null;
+  analyst?: string | null;
+  analysisDate: string;
+}
+
+export interface NcAction {
+  id: string;
+  ncId?: string | null;
+  capaId?: string | null;
+  actionType: NcActionType;
+  description: string;
+  owner: string;
+  dueDate: string;
+  status: NcActionStatus;
+  completedAt?: string | null;
+  verificationResult?: string | null;
+  verifiedAt?: string | null;
+  effectivenessNote?: string | null;
+  effectivenessOk?: boolean | null;
+  effectivenessAt?: string | null;
+  nc?: { ncNo: string } | null;
+  capa?: { capaNo: string } | null;
+}
+
+export interface NcDisposition {
+  id: string;
+  ncId: string;
+  decision: NcDecision;
+  quantityQ: Dec;
+  approverName?: string | null;
+  approvedAt: string;
+  approvedById?: string | null;
+  executedAt?: string | null;
+  executedBy?: string | null;
+  executionNote?: string | null;
+}
+
+export interface NcSignoff {
+  id: string;
+  ncId: string;
+  kind: NcSignoffKind;
+  status: NcSignoffStatus;
+  qualitySignById?: string | null;
+  qualitySignedAt?: string | null;
+  productionSignById?: string | null;
+  productionSignedAt?: string | null;
+  createdAt: string;
+  nc?: {
+    ncNo: string;
+    description: string;
+    severity: NcSeverity;
+    status: NcStatus;
+    disposition?: { decision: NcDecision; quantityQ: Dec } | null;
+  } | null;
+}
+
+export interface Nonconformity {
+  id: string;
+  ncNo: string;
+  source: NcSource;
+  batchId?: string | null;
+  batch?: { id: string; batchNo: string; productType: string } | null;
+  reference?: string | null;
+  description: string;
+  severity: NcSeverity;
+  detectedBy?: string | null;
+  dateDetected: string;
+  status: NcStatus;
+  linkedCapaId?: string | null;
+  linkedCapa?: { capaNo: string } | null;
+  closedAt?: string | null;
+  createdAt: string;
+  rootCause?: NcRootCause | null;
+  actions?: NcAction[];
+  disposition?: NcDisposition | null;
+  signoffs?: NcSignoff[];
+}
+
+// ─── Module 9: Maintenance & Spare Parts ──────────────────────────────
+
+export interface MaintenanceEquipment {
+  id: string;
+  name: string;
+  type: string;
+  location: string | null;
+  installDate: string | null;
+  intervalDays: number;
+  nextDueDate: string | null;
+  lastMaintainedAt: string | null;
+  status: string;
+  overdue?: boolean;
+  dueSoon?: boolean;
+}
+
+export interface PmChecklistItem {
+  id: string;
+  label: string;
+  checked?: boolean;
+}
+
+export interface PmTemplate {
+  id: string;
+  equipmentType: string;
+  name: string;
+  frequencyDays: number;
+  estimatedMinutes: number;
+  items: PmChecklistItem[];
+}
+
+export interface PmExecution {
+  id: string;
+  equipmentId: string;
+  equipment?: { id: string; name: string; type: string };
+  templateId: string | null;
+  executedAt: string;
+  executedById: string | null;
+  checklist: PmChecklistItem[];
+  durationMinutes: number | null;
+  notes: string | null;
+  nextDueDate: string | null;
+}
+
+export interface BreakdownRecord {
+  id: string;
+  equipmentId: string;
+  equipment?: { id: string; name: string; type: string };
+  reportedById: string | null;
+  reportedByName: string | null;
+  failureTime: string;
+  symptom: string;
+  category: string;
+  status: string;
+  downtimeMinutes: number | null;
+  repairNotes: string | null;
+  resolvedAt: string | null;
+  resolvedById: string | null;
+  resolvedByName: string | null;
+  createdAt: string;
+}
+
+export interface SparePart {
+  id: string;
+  partNumber: string;
+  name: string;
+  compatibleTypes: string | null;
+  stockQty: number;
+  minLevel: number;
+  locationBin: string | null;
+  unit: string;
+  lowStock?: boolean;
+}
+
+export interface SparePartVerification {
+  id: string;
+  partId: string;
+  part?: { partNumber: string; name: string };
+  countedQty: number;
+  systemQty: number;
+  variance: number;
+  verifiedById: string | null;
+  verifiedAt: string;
+  notes: string | null;
+}
+
+export interface WorkOrderPartUsage {
+  partId: string;
+  partNumber: string;
+  name: string;
+  qty: number;
+}
+
+export interface WorkOrder {
+  id: string;
+  woNumber: string;
+  equipmentId: string;
+  equipment?: { id: string; name: string; type: string };
+  kind: string;
+  status: string;
+  priority: string;
+  assigneeId: string | null;
+  assigneeName: string | null;
+  breakdownId: string | null;
+  description: string;
+  partsUsed: WorkOrderPartUsage[] | null;
+  openedAt: string;
+  assignedAt: string | null;
+  startedAt: string | null;
+  completedAt: string | null;
+  verifiedAt: string | null;
+  verifiedById: string | null;
+  notes: string | null;
+  approval?: RepairApproval | null;
+}
+
+export interface RepairApproval {
+  id: string;
+  workOrderId: string;
+  workOrder?: WorkOrder;
+  technicianNote: string | null;
+  techSignedAt: string | null;
+  techSignedById: string | null;
+  supervisorNote: string | null;
+  approvedAt: string | null;
+  approvedById: string | null;
+  decision: string | null;
+  backInServiceAt: string | null;
+  createdAt: string;
+}
+
+export interface OverdueReport {
+  equipment: MaintenanceEquipment[];
+  pendingBreakdowns: BreakdownRecord[];
+}
+
+export interface MaintKpis {
+  totalBreakdowns: number;
+  resolvedCount: number;
+  openCount: number;
+  totalDowntimeMinutes: number;
+  mtbfMinutes: number | null;
+  mttrMinutes: number | null;
+  byCategory: { category: string; count: number; avgDowntimeMinutes: number }[];
+  partsConsumed: { partNumber: string; name: string; qty: number }[];
+}
+
+// ─── Module 8: Pest & Termite Control Management ─────────────────────
+
+export type PestScheduleStatus = 'SCHEDULED' | 'DONE' | 'CANCELLED';
+export type PestScheduleEffectiveStatus = PestScheduleStatus | 'OVERDUE';
+export type PestFrequency = 'WEEKLY' | 'MONTHLY';
+export type PestType = 'RODENT' | 'INSECT' | 'TERMITE' | 'BIRD';
+export type PestSeverity = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+export type TreatmentType = 'TRAP' | 'BAIT' | 'SPRAY' | 'FUMIGATION';
+export type PestEvidenceStatus = 'OPEN' | 'CLEARED';
+export type FollowUpStatus = 'PENDING' | 'DONE';
+export type FollowUpResult = 'CLEARED' | 'PERSISTENT' | 'ESCALATED';
+export type PestAlertType = 'OVERDUE_INSPECTION' | 'PERSISTENT_INFESTATION' | 'TREATMENT_DUE';
+export type PestAlertSeverity = 'INFO' | 'WARNING' | 'CRITICAL';
+export type RiskCheckpointResult = 'PASS' | 'FAIL';
+export type RiskCheckpointCategory = 'BAIT_STATION' | 'ENTRY_POINT' | 'GENERAL';
+
+export interface PestScheduleEntry {
+  id: string;
+  area: string;
+  scheduledDate: string;
+  frequency: PestFrequency;
+  inspector?: string | null;
+  status: PestScheduleStatus;
+  effectiveStatus?: PestScheduleEffectiveStatus;
+  completedAt?: string | null;
+  notes?: string | null;
+  createdAt: string;
+}
+
+export interface PestRiskCheckpoint {
+  id: string;
+  inspectionId: string;
+  checkpoint: string;
+  category: RiskCheckpointCategory;
+  result: RiskCheckpointResult;
+  notes?: string | null;
+}
+
+export interface PestRiskInspection {
+  id: string;
+  area: string;
+  inspectedAt: string;
+  inspector?: string | null;
+  overallPass: boolean;
+  notes?: string | null;
+  createdAt: string;
+  checkpoints: PestRiskCheckpoint[];
+}
+
+export interface PestFollowUp {
+  id: string;
+  evidenceId: string;
+  dueDate: string;
+  status: FollowUpStatus;
+  result?: FollowUpResult | null;
+  inspector?: string | null;
+  notes?: string | null;
+  escalatedAt?: string | null;
+  completedAt?: string | null;
+  createdAt: string;
+  evidence?: PestEvidenceRecord;
+}
+
+export interface PestEvidenceRecord {
+  id: string;
+  pestType: PestType;
+  location: string;
+  severity: PestSeverity;
+  observedAt: string;
+  description?: string | null;
+  treatment?: TreatmentType | null;
+  chemical?: string | null;
+  dosage?: string | null;
+  treatedAt?: string | null;
+  applicator?: string | null;
+  status: PestEvidenceStatus;
+  clearedAt?: string | null;
+  createdAt: string;
+  followUps?: PestFollowUp[];
+}
+
+export interface PestAlert {
+  id: string;
+  type: PestAlertType;
+  severity: PestAlertSeverity;
+  message: string;
+  refType?: string | null;
+  refId?: string | null;
+  dueDate?: string | null;
+  acknowledged: boolean;
+  acknowledgedBy?: string | null;
+  acknowledgedAt?: string | null;
+  createdAt: string;
+}
+
+export interface PestInspectionReport {
+  byArea: Array<{ area: string; scheduled: number; done: number; overdue: number }>;
+  byMonth: Array<{ month: string; scheduled: number; done: number }>;
+  riskByArea: Array<{ area: string; inspections: number; passed: number; failed: number }>;
+  totals: { schedules: number; riskInspections: number };
+}
+
+export interface PestEvidenceReport {
+  byPestType: Array<{ pestType: string; count: number }>;
+  bySeverity: Array<{ severity: string; count: number }>;
+  byLocation: Array<{ location: string; count: number }>;
+}
+
+export interface PestTreatmentEffectiveness {
+  overall: { treated: number; cleared: number; pct: number | null };
+  byTreatment: Array<{ treatment: string; treated: number; cleared: number; pct: number | null }>;
+}
+
+/* ── Module 7: Sanitation & Hygiene Management ─────────────────── */
+
+export type ChecklistFrequency = 'PER_SHIFT' | 'DAILY' | 'WEEKLY';
+export type AreaCleaningStatus = 'SCHEDULED' | 'IN_PROGRESS' | 'DONE';
+export type HygieneInspectionResult = 'PASS' | 'FAIL';
+export type CleaningActionStatus = 'OPEN' | 'IN_PROGRESS' | 'VERIFIED' | 'CLOSED';
+export type HygieneApprovalStatus = 'PENDING' | 'SUPERVISOR_SIGNED' | 'APPROVED' | 'REJECTED';
+
+export interface ChecklistTaskItem {
+  id: string;
+  title: string;
+  detail?: string | null;
+  sortOrder: number;
+}
+
+export interface CleaningChecklistTemplate {
+  id: string;
+  name: string;
+  equipment: string;
+  area?: string | null;
+  frequency: ChecklistFrequency;
+  assignedTo?: string | null;
+  isActive: boolean;
+  items?: ChecklistTaskItem[];
+  _count?: { items: number };
+  createdAt: string;
+}
+
+export interface CleaningLogTask {
+  id: string;
+  title: string;
+  detail?: string | null;
+  done: boolean;
+  doneAt?: string | null;
+}
+
+export interface AreaCleaningLog {
+  id: string;
+  area: string;
+  logDate: string;
+  shift: string;
+  cleaner: string;
+  templateId?: string | null;
+  startedAt?: string | null;
+  endedAt?: string | null;
+  status: AreaCleaningStatus;
+  notes?: string | null;
+  tasks?: CleaningLogTask[];
+  createdAt: string;
+}
+
+export interface InspectionCriterion {
+  id: string;
+  criterion: string;
+  result: HygieneInspectionResult;
+  notes?: string | null;
+}
+
+export interface HygieneInspection {
+  id: string;
+  targetType: 'AREA' | 'EQUIPMENT';
+  target: string;
+  inspector: string;
+  inspectedAt: string;
+  score?: number | null;
+  overallResult?: HygieneInspectionResult | null;
+  findings?: string | null;
+  photosNote?: string | null;
+  criteria?: InspectionCriterion[];
+  createdAt: string;
+}
+
+export interface CleaningAction {
+  id: string;
+  action: string;
+  owner: string;
+  dueDate?: string | null;
+  status: CleaningActionStatus;
+  sourceInspectionId?: string | null;
+  verificationNotes?: string | null;
+  verifiedById?: string | null;
+  verifiedAt?: string | null;
+  createdAt: string;
+}
+
+export interface HygieneApproval {
+  id: string;
+  subjectType: 'CLEANING' | 'INSPECTION';
+  subjectId: string;
+  subjectLabel?: string | null;
+  requestedById?: string | null;
+  supervisorBy?: string | null;
+  supervisorAt?: string | null;
+  supervisorNote?: string | null;
+  qualityBy?: string | null;
+  qualityAt?: string | null;
+  qualityNote?: string | null;
+  status: HygieneApprovalStatus;
+  createdAt: string;
+}
+
+export interface HygieneReportSummary {
+  from: string | null;
+  to: string | null;
+  cleaningCompliancePct: number;
+  totalCleanings: number;
+  doneCleanings: number;
+  overdueCleanings: number;
+  overdueCleaningIds: string[];
+  inspectionPassPct: number;
+  totalInspections: number;
+  passedInspections: number;
+  passRatesByArea: Array<{ target: string; total: number; pass: number; passPct: number }>;
+  openActions: number;
+}
+
+// ─── Module 11: Warehouse & Inventory ──────────────────────────────────────
+
+export type WhLocationType = 'RAW' | 'FG' | 'SPARE' | 'GENERAL';
+
+export interface WhLocation {
+  id: string;
+  code: string;
+  name: string;
+  zone: string | null;
+  type: WhLocationType;
+  capacityQ: number;
+  isActive: boolean;
+  onHandQ: number;
+  utilizationPct: number | null;
+}
+
+export interface WhStockRow {
+  locationId: string;
+  locationCode: string;
+  locationName: string;
+  productId: string;
+  productName: string;
+  batchNo: string | null;
+  quintals: number;
+  bags: number;
+  reservedQ: number;
+  availableQ: number;
+}
+
+export interface WhPutAwayLine {
+  id: string;
+  productId: string;
+  productName: string;
+  batchNo: string | null;
+  quintals: number;
+  bags: number;
+  packagingKg: number | null;
+  unitCostBirr: number | null;
+  suggestedLocationId: string | null;
+  suggestedCode: string | null;
+  placedLocationId: string | null;
+  placedCode: string | null;
+  placedAt: string | null;
+}
+
+export interface WhPutAwayList {
+  id: string;
+  docNo: string;
+  referenceDoc: string | null;
+  status: string;
+  receivedAt: string;
+  itemCount: number;
+  totalQ: number;
+}
+
+export interface WhPutAwayDetail extends WhPutAwayList {
+  items: WhPutAwayLine[];
+}
+
+export interface WhTransferLine {
+  id: string;
+  productId: string;
+  productName: string;
+  batchNo: string | null;
+  quintals: number;
+  bags: number;
+}
+
+export interface WhTransferList {
+  id: string;
+  docNo: string;
+  fromCode: string;
+  toCode: string;
+  reason: string | null;
+  status: string;
+  createdAt: string;
+  itemCount: number;
+  totalQ: number;
+}
+
+export interface WhTransferDetail extends WhTransferList {
+  fromName: string;
+  toName: string;
+  completedAt: string | null;
+  items: WhTransferLine[];
+}
+
+export interface WhAdjustmentLine {
+  id: string;
+  productId: string;
+  productName: string;
+  batchNo: string | null;
+  quintals: number;
+  bags: number;
+  unitCostBirr: number | null;
+  reason: string;
+}
+
+export interface WhAdjustmentList {
+  id: string;
+  docNo: string;
+  locationCode: string;
+  status: string;
+  reason: string | null;
+  createdAt: string;
+  itemCount: number;
+  totalAbsQ: number;
+}
+
+export interface WhAdjustmentDetail extends WhAdjustmentList {
+  locationName: string;
+  postedAt: string | null;
+  items: WhAdjustmentLine[];
+}
+
+export interface WhReservation {
+  id: string;
+  refNo: string;
+  reference: string | null;
+  productName: string;
+  batchNo: string | null;
+  locationCode: string;
+  quintals: number;
+  bags: number;
+  expiresAt: string | null;
+  status: string;
+  createdAt: string;
+}
+
+export interface WhDispatchLine {
+  id: string;
+  productId: string;
+  productName: string;
+  batchNo: string | null;
+  locationId: string;
+  locationCode: string;
+  quintals: number;
+  bags: number;
+}
+
+export interface WhDispatchList {
+  id: string;
+  docNo: string;
+  reference: string | null;
+  vehiclePlate: string | null;
+  driverName: string | null;
+  status: string;
+  createdAt: string;
+  dispatchedAt: string | null;
+  itemCount: number;
+  totalQ: number;
+}
+
+export interface WhDispatchDetail extends WhDispatchList {
+  items: WhDispatchLine[];
+}
+
+export interface WhCountLine {
+  id: string;
+  productId: string;
+  productName: string;
+  batchNo: string | null;
+  systemQ: number;
+  systemBags: number;
+  countedQ: number | null;
+  countedBags: number | null;
+  recountQ: number | null;
+  recountBags: number | null;
+  varianceQ: number | null;
+}
+
+export interface WhCountSessionList {
+  id: string;
+  sessionNo: string;
+  locationCode: string;
+  scheduledDate: string;
+  status: string;
+  createdAt: string;
+  lineCount: number;
+  countedLines: number;
+  totalAbsVariance: number;
+}
+
+export interface WhCountSessionDetail extends WhCountSessionList {
+  locationName: string;
+  postedAt: string | null;
+  lines: WhCountLine[];
+}
+
+export interface WhValuationRow {
+  locationId: string;
+  locationCode: string;
+  locationName: string;
+  productId: string;
+  productName: string;
+  batchNo: string | null;
+  quintals: number;
+  bags: number;
+  avgCostBirr: number;
+  valueBirr: number;
+}
+
+export interface WhMovementSummaryRow {
+  movementType: string;
+  lines: number;
+  inQ: number;
+  outQ: number;
+}
+
+export interface WhAgingRow {
+  locationCode: string;
+  productName: string;
+  batchNo: string | null;
+  quintals: number;
+  daysOld: number;
+  bucket: '0-30d' | '31-60d' | '61-90d' | '90d+';
+}
+
+// ─── Module 4: Production & Milling Management ─────────────────────────────
+
+export type FlourProductType = 'DUKET_NORMAL' | 'DUKET_SPECIAL' | 'FURISHKA' | 'FINO' | 'FERNACHO';
+
+export interface BlendRecipe {
+  id: string;
+  name: string;
+  productType: FlourProductType;
+  hardPct: Dec;
+  softPct: Dec;
+  foreignPct: Dec;
+  isActive: boolean;
+  notes?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PlanTarget {
+  productType: FlourProductType;
+  plannedQ: number;
+}
+
+export type PlanStatus = 'PLANNED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
+
+export interface ProductionPlan {
+  id: string;
+  planNo: string;
+  tankCode?: string | null;
+  batchId?: string | null;
+  targets: PlanTarget[];
+  plannedWheatQ: Dec;
+  scheduledDate: string;
+  shift: 'MORNING' | 'NIGHT';
+  status: PlanStatus;
+  actualWheatQ?: Dec | null;
+  actualOutputQ?: Dec | null;
+  notes?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type MillingRunStatus = 'RUNNING' | 'COMPLETED' | 'STOPPED';
+
+export interface MillingRun {
+  id: string;
+  runNo: string;
+  planId?: string | null;
+  batchId: string;
+  lineMachine: string;
+  startedAt: string;
+  endedAt?: string | null;
+  durationMin?: number | null;
+  feedRateQHr?: Dec | null;
+  rollSettings?: string | null;
+  operator: string;
+  status: MillingRunStatus;
+  createdAt: string;
+}
+
+export type DowntimeCategory = 'POWER' | 'MECHANICAL' | 'ELECTRICAL' | 'PLANNED' | 'OTHER';
+
+export interface DowntimeLog {
+  id: string;
+  machineLine: string;
+  runId?: string | null;
+  shiftRunId?: string | null;
+  startedAt: string;
+  endedAt?: string | null;
+  minutesLost: number;
+  reasonCategory: DowntimeCategory;
+  description?: string | null;
+  resolvedBy?: string | null;
+  createdAt: string;
+}
+
+export interface DowntimeSummaryRow {
+  id: string;
+  machineLine: string;
+  events: number;
+  minutesLost: number;
+  byCategory: Record<string, number>;
+  uptimePct: number;
+}
+
+export interface FlourOutput {
+  id: string;
+  batchId: string;
+  productType: FlourProductType;
+  quintals: Dec;
+  extractionPct?: Dec | null;
+  belowYieldFlag: boolean;
+  loggedAt: string;
+}
+
+export type YieldAlertType = 'LOW_EXTRACTION' | 'LOW_OUTPUT_VS_PLAN' | 'EXCESS_DOWNTIME';
+export type YieldSeverity = 'AMBER' | 'RED';
+export type YieldAlertStatus = 'OPEN' | 'ACKNOWLEDGED' | 'RESOLVED';
+
+export interface YieldAlert {
+  id: string;
+  alertType: YieldAlertType;
+  entityType: string;
+  entityId: string;
+  entityLabel?: string | null;
+  message: string;
+  severity: YieldSeverity;
+  status: YieldAlertStatus;
+  acknowledgedAt?: string | null;
+  ackNotes?: string | null;
+  createdAt: string;
+}
+
+export interface BlendCompliance {
+  recipe: BlendRecipe | null;
+  actual: { hardPct: number; softPct: number; foreignPct: number };
+  deviation: { hard: number; soft: number; foreign: number };
+  withinTolerance: boolean;
+  tolerancePct: number;
+}
+
+export interface ShiftHandover {
+  id: string;
+  shiftRunId: string;
+  noteType: 'HANDOVER' | 'OPERATOR_NOTE';
+  content: string;
+  authorId?: string | null;
+  createdAt: string;
+}
+
+export interface WashingLog {
+  id: string;
+  tankOrSilo: string;
+  startedAt: string;
+  endedAt?: string | null;
+  durationMin?: number | null;
+  downtimeMin?: number | null;
+  equipmentChange?: string | null;
+  operators: string[];
+  batchId?: string | null;
+  waterUsedL?: number | null;
+  impurityBeforePct?: Dec | null;
+  impurityAfterPct?: Dec | null;
+  createdById?: string | null;
+}
+
+export interface DailyReportKpis {
+  intakeQ: number;
+  totalFlourOutputQ: number;
+  weightedExtractionPct: number | null;
+  batchesWorked: number;
+  totalDowntimeMin: number;
+  plansCompleted: number;
+  openAlerts: number;
+  redAlerts: number;
+}
+
+export interface DailyReportBatchRow {
+  id: string;
+  batchId: string;
+  batchNo: string;
+  productType: string;
+  wheatWeighedQ: number;
+  flourOutputQ: number;
+  extractionPct: number | null;
+  flagged: boolean;
+}
+
+export interface DailyReportShiftRow {
+  id: string;
+  shiftRunId: string;
+  shiftDate: string;
+  shift: string;
+  batchNo: string | null;
+  operators: string[];
+  outputQ: number;
+  extractionPct: number | null;
+  downtimeMin: number;
+}
+
+export interface DailyProductionReport {
+  date: string;
+  kpis: DailyReportKpis;
+  perBatch: DailyReportBatchRow[];
+  perShift: DailyReportShiftRow[];
+}
+
+export interface ShiftProductionReport {
+  date: string;
+  shift: string;
+  rows: DailyReportShiftRow[];
+  totalOutputQ: number;
+  totalDowntimeMin: number;
+}
+
+// ─── Module 5: Quality Assurance & Laboratory Management ────────────
+
+export type QcVerdict = 'PASS' | 'FAIL' | 'UNTESTED';
+
+export interface FlourQualityTest {
+  id: string;
+  batchId: string;
+  batch?: { batchNo: string } | null;
+  productLabel: string;
+  sampleTime: string;
+  flourMoisturePct: Dec | null;
+  wetGlutenPct: Dec | null;
+  dryGlutenPct: Dec | null;
+  ashPct: Dec | null;
+  colorScore: Dec | null;
+  granulationPct: Dec | null;
+  impurityPct: Dec | null;
+  verdict: QcVerdict;
+  outOfRange: string[];
+  notes?: string | null;
+}
+
+export type SamplingKind = 'SHIFT_2H' | 'INTAKE_TRUCK' | 'FLOUR_BATCH';
+export type SamplingStatus = 'PENDING' | 'COLLECTED' | 'OVERDUE' | 'SKIPPED';
+
+export interface SamplingEntry {
+  id: string;
+  kind: SamplingKind;
+  label: string;
+  shiftRunId?: string | null;
+  intakeId?: string | null;
+  batchId?: string | null;
+  dueAt: string;
+  collectedAt?: string | null;
+  collectedById?: string | null;
+  status: SamplingStatus;
+  notes?: string | null;
+}
+
+export interface ReleaseChecklistItem {
+  key: string;
+  label: string;
+  passed: boolean;
+  detail: string;
+}
+
+export interface OpenCapaRef {
+  id: string;
+  capaNo: string;
+  issueDescription: string;
+  status: string;
+}
+
+export interface ReleaseChecklist {
+  batchId: string;
+  batchNo: string;
+  status: string;
+  canRelease: boolean;
+  items: ReleaseChecklistItem[];
+  openCapas: OpenCapaRef[];
+}
+
+export interface QcAuditEntry {
+  id: string;
+  action: string;
+  userId?: string | null;
+  changes?: unknown;
+  createdAt: string;
+}
+
+export interface QcThresholdRow extends QcThreshold {
+  isActive: boolean;
+}
+
+export interface QcDayCount {
+  date: string;
+  total: number;
+  failed: number;
+}
+
+export interface QcTrendPoint {
+  t: string;
+  v: number;
+}
+
+export interface QcSummaryBlock {
+  total: number;
+  passed: number;
+  failed: number;
+  passRate: number;
+  byDay: QcDayCount[];
+}
+
+export interface QcReportSummary {
+  range: { from: string; to: string };
+  labChecks: QcSummaryBlock;
+  flourTests: QcSummaryBlock;
+  intakeTests: { total: number; passed: number; failed: number; passRate: number };
+  paramTrends: Record<string, QcTrendPoint[]>;
+  thresholds: Array<{
+    code: string;
+    category: string;
+    param: string;
+    minValue: number | null;
+    maxValue: number | null;
+    unit: string | null;
+  }>;
+}
+
+/* ─── Module 10: Finished Goods & Byproduct Management ─── */
+
+export interface PackagingSize {
+  id: string;
+  label: string;
+  kg: number | string;
+  isActive: boolean;
+}
+
+export interface FgInventoryRow {
+  id: string;
+  productId: string;
+  productName: string;
+  productKind: string;
+  batchNo: string;
+  packagingSizeId: string | null;
+  bagLabel: string;
+  bagKg: number | null;
+  locationCode: string;
+  bags: number;
+  quintals: number;
+  receivedAt: string;
+  agingDays: number;
+  inflowBags: number;
+  inflowQ: number;
+  outflowBags: number;
+  outflowQ: number;
+}
+
+export interface PackagingRun {
+  id: string;
+  batchId: string;
+  productId: string;
+  productName?: string;
+  packagingSizeId: string;
+  bags: number;
+  quintals: Dec;
+  productionDate: string;
+  packedAt: string;
+  packedById: string | null;
+  line: string | null;
+  operator: string | null;
+  startedAt: string | null;
+  endedAt: string | null;
+  product?: Product;
+  batch?: ProductionBatch;
+}
+
+export interface PackingEfficiencyRow {
+  id?: string;
+  date: string;
+  line: string;
+  runs: number;
+  bags: number;
+  quintals: number;
+  hours: number;
+  bagsPerHour: number | null;
+}
+
+export interface FlourGrade {
+  id: string;
+  productId: string;
+  gradeCode: string;
+  name: string;
+  moistureMax: Dec;
+  wetGlutenMin: Dec;
+  wetGlutenMax: Dec;
+  ashMax: Dec;
+  shelfLifeDays: number;
+  isActive: boolean;
+  notes: string | null;
+  product?: Product;
+}
+
+export interface GradeParamCheck {
+  param: 'moisture' | 'wetGluten' | 'ash';
+  label: string;
+  value: number | null;
+  min: number | null;
+  max: number | null;
+  unit: string;
+  pass: boolean;
+}
+
+export interface GradeQualityResult {
+  id: string;
+  batchNo: string;
+  sampleTime: string;
+  params: GradeParamCheck[];
+  pass: boolean;
+}
+
+export interface LabelQueueRow {
+  id?: string;
+  packagingRunId: string;
+  batchNo: string;
+  batchStatus: string;
+  productId: string;
+  productName: string;
+  productionDate: string;
+  bagLabel: string;
+  bagKg: number | null;
+  bagsPacked: number;
+  labelsPrinted: number;
+  pending: number;
+}
+
+export interface LabelPrint {
+  id: string;
+  packagingRunId: string | null;
+  batchNo: string;
+  productId: string;
+  packagingSizeId: string | null;
+  bagKg: Dec;
+  copies: number;
+  productionDate: string;
+  expiryDate: string;
+  status: 'PRINTED' | 'REPRINTED';
+  reprintReason: string | null;
+  printedAt: string;
+  product?: Product;
+}
+
+export interface ByproductStockRow {
+  id: string;
+  type: 'BRAN' | 'SHORTS';
+  typeLabel: string;
+  batchNo: string | null;
+  locationCode: string;
+  quintals: number;
+  receivedAt: string;
+  agingDays: number;
+}
+
+export interface ByproductMovement {
+  id: string;
+  type: 'BRAN' | 'SHORTS';
+  typeLabel: string;
+  direction: 'IN' | 'OUT';
+  quintals: number;
+  reference: string | null;
+  reason: string | null;
+  movedAt: string;
+}
+
+export interface ByproductAlert {
+  kind: 'LOW_STOCK' | 'STALE';
+  type: string;
+  typeLabel: string;
+  detail: string;
+  quintals?: number;
+  agingDays?: number;
+}
+
+export type AgingBucket = '0-30' | '31-60' | '61-90' | '90+';
+
+export interface AgingLot {
+  id: string;
+  productId: string;
+  productName: string;
+  batchNo: string;
+  packagingSizeId: string | null;
+  bagLabel: string;
+  bagKg: number | null;
+  locationCode: string;
+  bags: number;
+  quintals: number;
+  receivedAt: string;
+  agingDays: number;
+  bucket: AgingBucket;
+  expiryDate: string;
+  daysToExpiry: number;
+  status: 'OK' | 'NEAR_EXPIRY' | 'EXPIRED';
+}
+
+export interface FefoSuggestion {
+  productId: string;
+  productName: string;
+  batchNo: string;
+  bagLabel: string;
+  locationCode: string;
+  agingDays: number;
+  quintals: number;
+}
+
+export interface FgStockAdjustment {
+  id: string;
+  productId: string;
+  batchNo: string;
+  packagingSizeId: string | null;
+  locationCode: string;
+  bagsDelta: number;
+  quintalsDelta: Dec;
+  reason: string;
+  status: 'DRAFT' | 'APPROVED' | 'REJECTED';
+  createdAt: string;
+  product?: Product;
+}
+
+export interface StockPositionProduct {
+  id?: string;
+  productId: string;
+  productName: string;
+  totalBags: number;
+  totalQuintals: number;
+  locations: string[];
+  sizes: { bagLabel: string; bags: number; quintals: number }[];
+  lowStock: boolean;
+}
+
+export interface ByproductBalanceType {
+  id?: string;
+  type: string;
+  typeLabel: string;
+  inflowQ: number;
+  outflowQ: number;
+  netQ: number;
+  onHandQ: number;
+}
