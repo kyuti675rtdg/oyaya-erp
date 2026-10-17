@@ -485,22 +485,25 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      <nav className="flex-1 overflow-y-auto px-3 py-2" aria-label="Primary">
-        {/* Dashboard — top-level active pill */}
+      <nav className="flex-1 overflow-y-auto px-4 py-3" aria-label="Primary">
+        {/* Dashboard — first item */}
         <NavLink
           to="/"
           end
           onClick={onNavigate}
-          className={`touch mb-2 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors ${
+          className={`touch mb-1 flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
             dashActive
               ? 'bg-gray-100 text-gray-900 dark:bg-slate-700 dark:text-white'
-              : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-slate-300 dark:hover:bg-slate-700/50 dark:hover:text-white'
+              : 'text-gray-700 hover:bg-gray-50 dark:text-slate-200 dark:hover:bg-slate-700/50'
           }`}
         >
-          <span className="shrink-0">{svgIcon('dashboard', 'h-5 w-5')}</span>
           <span className="truncate">Dashboard</span>
         </NavLink>
 
+        {/* MODULES — all modules listed first, text-only rows */}
+        <p className="mb-1 mt-4 px-3 text-[11px] font-semibold uppercase tracking-widest text-gray-400 dark:text-slate-500">
+          Modules
+        </p>
         {visibleGroups.map((group) => {
           const isOpen = openGroup === group.title;
           const hasActive = group.items.some((i) => itemMatches(i, pathname));
@@ -510,13 +513,12 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                 type="button"
                 onClick={() => setOpenGroup(isOpen ? null : group.title)}
                 aria-expanded={isOpen}
-                className={`touch flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 ${
+                className={`touch flex w-full items-center rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 ${
                   isOpen || hasActive
                     ? 'bg-gray-100 text-gray-900 dark:bg-slate-700 dark:text-white'
                     : 'text-gray-700 hover:bg-gray-50 dark:text-slate-200 dark:hover:bg-slate-700/50'
                 }`}
               >
-                <span className="shrink-0 text-gray-500 dark:text-slate-400">{svgIcon(group.icon, 'h-5 w-5')}</span>
                 <span className="min-w-0 flex-1 truncate">{group.title}</span>
                 <svg
                   viewBox="0 0 20 20"
@@ -530,7 +532,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                 </svg>
               </button>
               {isOpen ? (
-                <ul className="mb-1 mt-1 space-y-0.5">
+                <ul className="mb-1 mt-1 space-y-0.5 border-l-2 border-gray-100 dark:border-slate-700 ml-3 pl-2">
                   {group.items.map((item) => (
                     <li key={item.to}>
                       <NavLink
@@ -538,7 +540,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                         end={item.to === '/'}
                         onClick={onNavigate}
                         className={({ isActive }) =>
-                          `touch flex items-center gap-3 rounded-lg py-2 pl-[42px] pr-3 text-[13px] transition-colors duration-150 ${
+                          `touch flex items-center rounded-lg px-3 py-2 text-[13px] transition-colors duration-150 ${
                             isActive
                               ? 'bg-gray-100 font-semibold text-gray-900 dark:bg-slate-700 dark:text-white'
                               : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900 dark:text-slate-400 dark:hover:bg-slate-700/50 dark:hover:text-white'
@@ -555,23 +557,83 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           );
         })}
 
-        {/* Bottom standalone items */}
+        {/* ACCOUNT — notification, chat, settings, support */}
+        <p className="mb-1 mt-5 px-3 text-[11px] font-semibold uppercase tracking-widest text-gray-400 dark:text-slate-500">
+          Account
+        </p>
+        <NavLink
+          to="/admin/notifications"
+          onClick={onNavigate}
+          className={({ isActive }) =>
+            `touch mb-0.5 flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+              isActive
+                ? 'bg-gray-100 text-gray-900 dark:bg-slate-700 dark:text-white'
+                : 'text-gray-700 hover:bg-gray-50 dark:text-slate-200 dark:hover:bg-slate-700/50'
+            }`
+          }
+        >
+          <span className="truncate">Notification</span>
+        </NavLink>
+        <NavLink
+          to="/support/tickets"
+          onClick={onNavigate}
+          className={({ isActive }) =>
+            `touch mb-0.5 flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+              isActive
+                ? 'bg-gray-100 text-gray-900 dark:bg-slate-700 dark:text-white'
+                : 'text-gray-700 hover:bg-gray-50 dark:text-slate-200 dark:hover:bg-slate-700/50'
+            }`
+          }
+        >
+          <span className="truncate">Chat</span>
+        </NavLink>
+        {visibleSettings ? (
+          <NavLink
+            to="/settings"
+            onClick={onNavigate}
+            className={({ isActive }) =>
+              `touch mb-0.5 flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                isActive
+                  ? 'bg-gray-100 text-gray-900 dark:bg-slate-700 dark:text-white'
+                  : 'text-gray-700 hover:bg-gray-50 dark:text-slate-200 dark:hover:bg-slate-700/50'
+              }`
+            }
+          >
+            <span className="truncate">Settings</span>
+          </NavLink>
+        ) : null}
+        {visibleHelp ? (
+          <NavLink
+            to="/support"
+            onClick={onNavigate}
+            className={({ isActive }) =>
+              `touch mb-0.5 flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                isActive
+                  ? 'bg-gray-100 text-gray-900 dark:bg-slate-700 dark:text-white'
+                  : 'text-gray-700 hover:bg-gray-50 dark:text-slate-200 dark:hover:bg-slate-700/50'
+              }`
+            }
+          >
+            <span className="truncate">Support</span>
+          </NavLink>
+        ) : null}
+
+        {/* Admin tools */}
         {visibleBottom.length > 0 ? (
-          <div className="mt-3 border-t border-gray-200 pt-3 dark:border-slate-700">
+          <div className="mt-4 border-t border-gray-200 pt-3 dark:border-slate-700">
             {visibleBottom.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 onClick={onNavigate}
                 className={({ isActive }) =>
-                  `touch mb-0.5 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                  `touch mb-0.5 flex items-center rounded-lg px-3 py-2 text-[13px] font-medium transition-colors ${
                     isActive
                       ? 'bg-gray-100 text-gray-900 dark:bg-slate-700 dark:text-white'
-                      : 'text-gray-700 hover:bg-gray-50 dark:text-slate-200 dark:hover:bg-slate-700/50'
+                      : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900 dark:text-slate-400 dark:hover:bg-slate-700/50 dark:hover:text-white'
                   }`
                 }
               >
-                <span className="shrink-0 text-gray-500 dark:text-slate-400">{svgIcon(item.icon, 'h-5 w-5')}</span>
                 <span className="truncate">{item.label}</span>
               </NavLink>
             ))}
@@ -579,47 +641,19 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
         ) : null}
       </nav>
 
-      {/* Help / Settings / Logout + user profile (reference bottom section) */}
-      <div className="border-t border-gray-200 px-3 py-3 dark:border-slate-700">
-        {visibleHelp ? (
-          <NavLink
-            to="/support"
-            onClick={onNavigate}
-            className="touch mb-0.5 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:text-slate-200 dark:hover:bg-slate-700/50"
-          >
-            <span className="shrink-0 text-gray-500 dark:text-slate-400">{svgIcon('support', 'h-5 w-5')}</span>
-            <span className="truncate">Help Center</span>
-          </NavLink>
-        ) : null}
-        {visibleSettings ? (
-          <NavLink
-            to="/settings"
-            onClick={onNavigate}
-            className="touch mb-0.5 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:text-slate-200 dark:hover:bg-slate-700/50"
-          >
-            <span className="shrink-0 text-gray-500 dark:text-slate-400">{svgIcon('settings', 'h-5 w-5')}</span>
-            <span className="truncate">Settings</span>
-          </NavLink>
-        ) : null}
+      {/* Bottom: logout + user card (reference style) */}
+      <div className="border-t border-gray-200 px-4 py-3 dark:border-slate-700">
         <button
           type="button"
           onClick={() => {
             handleSidebarLogout();
             onNavigate?.();
           }}
-          className="touch flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:text-slate-200 dark:hover:bg-slate-700/50"
+          className="touch mb-2 flex w-full items-center rounded-lg px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:text-slate-200 dark:hover:bg-slate-700/50"
         >
-          <span className="shrink-0 text-gray-500 dark:text-slate-400">
-            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5" aria-hidden="true">
-              <path d="M8 3.5H5.5A1.5 1.5 0 004 5v10a1.5 1.5 0 001.5 1.5H8" strokeLinecap="round" />
-              <path d="M13 6.5l3 3.5-3 3.5M16 10H8" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </span>
           <span className="truncate">Logout</span>
         </button>
-
-        {/* User profile card */}
-        <div className="mt-3 flex items-center gap-3 rounded-xl bg-gray-50 p-3 dark:bg-slate-700/50">
+        <div className="flex items-center gap-3 rounded-xl bg-gray-50 p-3 dark:bg-slate-700/50">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-violet-600 text-sm font-bold text-white">
             {profileInitial}
           </div>
@@ -628,9 +662,6 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
             <p className="truncate text-xs leading-tight text-gray-500 dark:text-slate-400">{profileRole}</p>
           </div>
         </div>
-        <p className="mt-3 px-1 text-center text-[11px] leading-tight text-gray-400 dark:text-slate-500">
-          @2025 Oyaya Flour Production Company PLC
-        </p>
       </div>
     </div>
   );
