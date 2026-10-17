@@ -4,6 +4,11 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
 import { Intake } from './pages/Intake';
+import { Suppliers } from './pages/Suppliers';
+import { PurchaseOrders } from './pages/PurchaseOrders';
+import { IncomingInspection } from './pages/IncomingInspection';
+import { AccountsPayable } from './pages/AccountsPayable';
+import { ProcurementReports } from './pages/ProcurementReports';
 import { Tanks } from './pages/Tanks';
 import { Batches } from './pages/Batches';
 import { BatchDetail } from './pages/BatchDetail';
@@ -40,6 +45,46 @@ export function App() {
           element={
             <ProtectedRoute claim={['intake:read', 'intake:create']}>
               <Intake />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/incoming-inspection"
+          element={
+            <ProtectedRoute claim="procurement:view">
+              <IncomingInspection />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/suppliers"
+          element={
+            <ProtectedRoute claim="procurement:view">
+              <Suppliers />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/purchase-orders"
+          element={
+            <ProtectedRoute claim="procurement:view">
+              <PurchaseOrders />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/accounts-payable"
+          element={
+            <ProtectedRoute claim="procurement:view">
+              <AccountsPayable />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/procurement-reports"
+          element={
+            <ProtectedRoute claim="procurement:view">
+              <ProcurementReports />
             </ProtectedRoute>
           }
         />

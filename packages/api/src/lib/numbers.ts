@@ -10,6 +10,7 @@ const TABLES = {
   dispatch: 'Dispatch',
   apInvoice: 'APInvoice',
   apPayment: 'APPayment',
+  purchaseOrder: 'PurchaseOrder',
   salesInvoice: 'SalesInvoice',
   cashReceipt: 'CashReceipt',
   journalEntry: 'JournalEntry',

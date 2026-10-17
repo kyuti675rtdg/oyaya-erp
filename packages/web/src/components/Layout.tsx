@@ -148,7 +148,12 @@ const NAV: NavGroup[] = [
     title: 'Procurement & Vendor Management',
     icon: 'truck',
     items: [
-      { to: '/intake', label: 'Wheat Intake', claim: ['intake:create', 'intake:read'], icon: 'intake' }
+      { to: '/intake', label: 'Wheat Intake', claim: ['intake:create', 'intake:read'], icon: 'intake' },
+      { to: '/suppliers', label: 'Suppliers', claim: ['procurement:view'], icon: 'truck' },
+      { to: '/purchase-orders', label: 'Purchase Orders', claim: ['procurement:view'], icon: 'finance' },
+      { to: '/incoming-inspection', label: 'Incoming Inspection', claim: ['procurement:view'], icon: 'qc' },
+      { to: '/accounts-payable', label: 'Accounts Payable', claim: ['procurement:view'], icon: 'finance' },
+      { to: '/procurement-reports', label: 'Procurement Reports', claim: ['procurement:view'], icon: 'dashboard' }
     ]
   },
   {

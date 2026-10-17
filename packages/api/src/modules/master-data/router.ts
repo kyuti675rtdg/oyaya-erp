@@ -328,21 +328,45 @@ router.get('/permissions', view, ah(async (_req, res) => {
 const supplierSchema = z.object({
   name: z.string().min(1),
   type: z.nativeEnum(SupplierType),
+  contactPerson: z.string().optional(),
   phone: z.string().optional(),
+  email: z.string().email().optional().or(z.literal('')),
   address: z.string().optional(),
+  region: z.string().optional(),
+  tin: z.string().optional(),
+  licenseNo: z.string().optional(),
+  wheatTypes: z.array(z.string()).optional(),
   paymentTerms: z.string().optional(),
+  bankName: z.string().optional(),
+  bankAccountNo: z.string().optional(),
+  rating: z.number().int().min(1).max(5).optional(),
 });
 const updateSupplierSchema = z.object({
   name: z.string().min(1).optional(),
   type: z.nativeEnum(SupplierType).optional(),
+  contactPerson: z.string().optional().nullable(),
   phone: z.string().optional().nullable(),
+  email: z.string().email().optional().nullable().or(z.literal('')),
   address: z.string().optional().nullable(),
+  region: z.string().optional().nullable(),
+  tin: z.string().optional().nullable(),
+  licenseNo: z.string().optional().nullable(),
+  wheatTypes: z.array(z.string()).optional(),
   paymentTerms: z.string().optional().nullable(),
+  bankName: z.string().optional().nullable(),
+  bankAccountNo: z.string().optional().nullable(),
+  rating: z.number().int().min(1).max(5).nullable().optional(),
   isActive: z.boolean().optional(),
 });
 
 router.get('/suppliers', view, ah(async (_req, res) => {
-  res.json(await prisma.supplier.findMany({ orderBy: { name: 'asc' }, take: LIST_TAKE }));
+  res.json(
+    await prisma.supplier.findMany({
+      orderBy: { name: 'asc' },
+      include: { _count: { select: { intakes: true, purchaseOrders: true } } },
+      take: LIST_TAKE,
+    }),
+  );
 }));
 
 router.post(

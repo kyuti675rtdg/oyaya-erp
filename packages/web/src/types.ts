@@ -9,9 +9,20 @@ export interface Supplier {
   id: string;
   name: string;
   type: 'INDIVIDUAL_FARMER' | 'ASSOCIATION' | 'TRADER';
+  contactPerson?: string | null;
   phone?: string | null;
+  email?: string | null;
   address?: string | null;
+  region?: string | null;
+  tin?: string | null;
+  licenseNo?: string | null;
+  wheatTypes?: string[];
   paymentTerms?: string | null;
+  bankName?: string | null;
+  bankAccountNo?: string | null;
+  rating?: number | null;
+  isActive?: boolean;
+  _count?: { intakes: number; purchaseOrders: number };
 }
 
 export interface Customer {
@@ -57,11 +68,64 @@ export interface WheatIntake extends IntakeLabResult {
   wheatOrigin?: string | null;
   bagCount: number;
   quintals: Dec;
+  grossKg?: Dec | null;
+  tareKg?: Dec | null;
+  netKg?: Dec | null;
+  moistureQuick?: Dec | null;
+  purchaseOrderId?: string | null;
+  purchaseOrder?: { id: string; poNo: string } | null;
   status: 'PENDING_LAB' | 'FLAGGED' | 'ACCEPTED' | 'REJECTED';
   flaggedReasons: string[];
   decision?: string | null;
   decidedAt?: string | null;
   decisionNote?: string | null;
+  returnNote?: string | null;
+}
+
+export type POStatus = 'DRAFT' | 'APPROVED' | 'PARTIALLY_RECEIVED' | 'COMPLETED' | 'CANCELLED';
+
+export interface PurchaseOrder {
+  id: string;
+  poNo: string;
+  supplierId: string;
+  supplier?: { id: string; name: string } | null;
+  wheatCategory: WheatCategory;
+  quantityQ: Dec;
+  pricePerQBirr: Dec;
+  totalBirr: Dec;
+  deliveryDate?: string | null;
+  terms?: string | null;
+  status: POStatus;
+  receivedQ: Dec;
+  approvedAt?: string | null;
+  cancelledAt?: string | null;
+  cancelReason?: string | null;
+  createdAt: string;
+  intakes?: WheatIntake[];
+  _count?: { intakes: number };
+}
+
+export interface APInvoice {
+  id: string;
+  invoiceNo: string;
+  intakeId: string;
+  intake?: WheatIntake | null;
+  supplierId: string;
+  amountBirr: Dec;
+  status: string;
+  issuedAt: string;
+  dueDate?: string | null;
+  payments?: APPayment[];
+}
+
+export interface APPayment {
+  id: string;
+  voucherNo: string;
+  apInvoiceId: string;
+  amountBirr: Dec;
+  method: string;
+  reference?: string | null;
+  paidAt: string;
 }
 
 export interface ConditioningTank {
@@ -268,26 +332,6 @@ export interface DriverTripRate {
   id: string;
   rateBirrPerTrip: Dec;
   isActive: boolean;
-}
-
-export interface APPayment {
-  id: string;
-  voucherNo: string;
-  apInvoiceId: string;
-  amountBirr: Dec;
-  method: string;
-  reference?: string | null;
-  paidAt: string;
-}
-
-export interface APInvoice {
-  id: string;
-  invoiceNo: string;
-  intakeId: string;
-  amountBirr: Dec;
-  status: string;
-  intake?: (WheatIntake & { supplier?: { id: string; name: string } | null }) | null;
-  payments: APPayment[];
 }
 
 export interface ReconRow {

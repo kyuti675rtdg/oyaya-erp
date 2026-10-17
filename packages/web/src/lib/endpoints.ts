@@ -16,6 +16,11 @@ export const E = {
   intakesFlagged: '/procurement/intakes?status=FLAGGED',
   intakeDecision: (id: string) => `/procurement/intakes/${id}/decision`,
   apInvoices: '/procurement/ap-invoices',
+  apPay: (id: string) => `/procurement/ap-invoices/${id}/pay`,
+  purchaseOrders: '/procurement/purchase-orders',
+  purchaseOrder: (id: string) => `/procurement/purchase-orders/${id}`,
+  poApprove: (id: string) => `/procurement/purchase-orders/${id}/approve`,
+  poCancel: (id: string) => `/procurement/purchase-orders/${id}/cancel`,
 
   tanks: '/storage/tanks',
   tankFills: (tankCode: string) => `/storage/tanks/${tankCode}/fills`,

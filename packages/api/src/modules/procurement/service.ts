@@ -154,15 +154,17 @@ export async function recordLabResult(
 // ─── Executive decision ─────────────────────────────────────────
 
 export interface DecideIntakeInput {
-  decision: 'ACCEPT' | 'REJECT';
+  decision: 'ACCEPT' | 'REJECT' | 'CONDITIONAL';
   note?: string;
   pricePerQuintalBirr?: number;
+  returnNote?: string;
   granaryDumping?: Array<{ laborer: string; quintals: number }>;
 }
 
 /**
- * Explicit executive decision on an intake. ACCEPT posts the dry-pool stock
- * movement, the AP invoice and the purchase journal; REJECT posts nothing.
+ * Explicit executive decision on an intake. ACCEPT / CONDITIONAL post the
+ * dry-pool stock movement, the AP invoice and the purchase journal and advance
+ * the linked purchase order; REJECT posts nothing and records return notes.
  */
 export async function decideIntake(
   db: DbClient,
@@ -172,14 +174,18 @@ export async function decideIntake(
 ) {
   const intake = await db.wheatIntake.findUnique({
     where: { id: intakeId },
-    include: { supplier: true },
+    include: { supplier: true, purchaseOrder: true },
   });
   if (!intake) throw new AppError(404, 'Intake not found');
   if (intake.status !== IntakeStatus.PENDING_LAB && intake.status !== IntakeStatus.FLAGGED) {
     throw new AppError(409, 'Intake has already been decided');
   }
+  if (input.decision === 'REJECT' && !input.returnNote?.trim() && !input.note?.trim()) {
+    throw new AppError(400, 'A return note or decision reason is required for rejection');
+  }
 
-  const status = input.decision === 'ACCEPT' ? IntakeStatus.ACCEPTED : IntakeStatus.REJECTED;
+  const accepted = input.decision !== 'REJECT';
+  const status = accepted ? IntakeStatus.ACCEPTED : IntakeStatus.REJECTED;
   const updated = await db.wheatIntake.update({
     where: { id: intakeId },
     data: {
@@ -187,12 +193,13 @@ export async function decideIntake(
       decidedById: uid,
       decidedAt: new Date(),
       decisionNote: input.note ?? null,
+      returnNote: input.decision === 'REJECT' ? (input.returnNote ?? input.note ?? null) : null,
       status,
     },
     include: { supplier: true },
   });
 
-  if (input.decision === 'ACCEPT') {
+  if (accepted) {
     const price = new Prisma.Decimal(input.pricePerQuintalBirr ?? 400);
     const amount = intake.quintals.times(price);
 
@@ -212,6 +219,7 @@ export async function decideIntake(
         intakeId: intake.id,
         supplierId: intake.supplierId,
         amountBirr: amount,
+        dueDate: new Date(Date.now() + 30 * 24 * 3600 * 1000), // net-30 default
       },
     });
 
@@ -228,6 +236,22 @@ export async function decideIntake(
       ],
     });
 
+    // Advance linked purchase order
+    if (intake.purchaseOrderId) {
+      const po = await db.purchaseOrder.findUnique({ where: { id: intake.purchaseOrderId } });
+      if (po) {
+        const received = po.receivedQ.plus(intake.quintals);
+        const complete = received.gte(po.quantityQ);
+        await db.purchaseOrder.update({
+          where: { id: po.id },
+          data: {
+            receivedQ: received,
+            status: complete ? 'COMPLETED' : 'PARTIALLY_RECEIVED',
+          },
+        });
+      }
+    }
+
     for (const g of input.granaryDumping ?? []) {
       await db.pieceRateLog.create({
         data: {
@@ -242,7 +266,7 @@ export async function decideIntake(
 
   await audit(db, {
     userId: uid,
-    action: input.decision === 'ACCEPT' ? 'APPROVE' : 'REJECT',
+    action: input.decision === 'REJECT' ? 'REJECT' : 'APPROVE',
     entityType: 'WheatIntake',
     entityId: intake.id,
     changes: { decision: input.decision, status, note: input.note ?? null },
