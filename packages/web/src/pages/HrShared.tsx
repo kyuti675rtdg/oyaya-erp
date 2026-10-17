@@ -16,11 +16,11 @@ export const hrSecondaryBtn =
   'inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-50 active:scale-[0.98]';
 
 export function useHrPerms() {
-  const hasClaim = useAuth((s) => s.hasClaim);
+  const hasAnyClaim = useAuth((s) => s.hasAnyClaim);
   return {
-    canView: hasClaim('hr:read'),
-    canManage: hasClaim('hr:create'),
-    canApprove: hasClaim('hr:approve')
+    canView: hasAnyClaim(['hr:read', 'payroll:read']),
+    canManage: hasAnyClaim(['hr:create', 'payroll:create', 'hr:manage', 'payroll:manage']),
+    canApprove: hasAnyClaim(['hr:approve', 'payroll:approve'])
   };
 }
 
