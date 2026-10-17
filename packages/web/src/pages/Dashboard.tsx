@@ -1,14 +1,14 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useChartTheme } from '../lib/theme';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
   Area,
   AreaChart,
+  Bar,
+  BarChart,
   CartesianGrid,
   Cell,
-  Line,
-  LineChart,
   Pie,
   PieChart,
   ReferenceLine,
@@ -18,29 +18,21 @@ import {
   YAxis
 } from 'recharts';
 import {
-  ArrowRight,
-  BarChart3,
-  Bell,
-  Boxes,
+  AlertTriangle,
+  ArrowDown,
+  ArrowUp,
   Calendar,
-  CheckCircle2,
+  Check,
   ChevronDown,
-  ClipboardList,
-  Container,
-  CreditCard,
+  Clock,
+  Download,
   Factory,
   FlaskConical,
   Gauge,
-  Package,
-  PackageCheck,
   Percent,
   ShieldCheck,
-  ShoppingCart,
-  Sun,
-  Timer,
+  SlidersHorizontal,
   Truck,
-  Users,
-  Warehouse,
   Wheat
 } from 'lucide-react';
 import { api } from '../lib/api';
@@ -51,22 +43,19 @@ import type {
   FlatKpis,
   LabCheck,
   ProductionBatch,
+  SalesInvoice,
   ShiftRun,
   WheatIntake
 } from '../types';
 import { useAuth } from '../store/auth';
 import { SkeletonDashboard } from '../components/Skeleton';
-import { fmtDate, fmtQ } from '../lib/format';
+import { fmtDate } from '../lib/format';
 import {
-  SEED_ACTIVITIES,
   SEED_PILLARS,
   SEED_PROCUREMENT,
-  SEED_PRODUCT_LINES,
   SEED_PRODUCT_OUTPUT,
   SEED_PRODUCTION_CHART,
-  SEED_QUALITY_TREND,
   SEED_SHIFT_MONITOR,
-  SEED_STOCK_LEVELS,
   SEED_TOTAL_FLOUR
 } from '../data/dashboardSeed';
 
@@ -89,6 +78,19 @@ function lastNDays(n: number): { key: string; label: string }[] {
   return out;
 }
 
+function lastNMonths(n: number): { key: string; label: string }[] {
+  const out: { key: string; label: string }[] = [];
+  const now = new Date();
+  for (let i = n - 1; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    out.push({
+      key: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`,
+      label: d.toLocaleDateString('en-GB', { month: 'short' })
+    });
+  }
+  return out;
+}
+
 function safeNum(v: unknown): number {
   const n = Number(v);
   return Number.isFinite(n) ? n : 0;
@@ -100,135 +102,108 @@ function pctChange(cur: number, prev: number): number | null {
   return ((cur - prev) / prev) * 100;
 }
 
-function tankShort(code: string): string {
-  const c = code.replace('TANK_', '');
-  return c.length === 1 ? `Tank ${c}` : c;
-}
-
 function categoryLabel(c: string): string {
   return c === 'SOFT' ? 'Soft' : c === 'HARD' ? 'Hard' : c === 'FOREIGN' ? 'Foreign' : c;
 }
 
+function relTime(ts: number): string {
+  const diff = Date.now() - ts;
+  if (diff < 60000) return 'Just now';
+  if (diff < 3600000) {
+    const m = Math.max(1, Math.floor(diff / 60000));
+    return `${m} min ago`;
+  }
+  if (diff < 86400000) {
+    const d = new Date(ts);
+    return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  }
+  const days = Math.floor(diff / 86400000);
+  return days === 1 ? 'Yesterday' : `${days} days ago`;
+}
+
+// Orlando card: white, thin border, soft shadow
 const cardShell =
-  'bg-[#FAF9FF] dark:bg-[#2A2640] rounded-2xl p-5 border border-violet-100/60 dark:border-white/5 shadow-[0_2px_12px_-4px_rgba(124,58,237,0.08)]';
+  'bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm p-5';
 
 function DemoBadge() {
   return (
-    <span className="rounded bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+    <span className="rounded bg-gray-100 dark:bg-slate-700 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gray-400 dark:text-slate-500">
       Demo
     </span>
   );
 }
 
-function TrendText({ pct, invert = false }: { pct: number | null; invert?: boolean }) {
-  if (pct === null || !Number.isFinite(pct)) return null;
-  const up = pct >= 0;
-  const good = invert ? !up : up;
-  const flat = pct === 0;
-  const tone = flat
-    ? 'bg-violet-100 text-violet-700 dark:bg-white/10 dark:text-slate-300'
-    : good
-      ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400'
-      : 'bg-rose-100 text-rose-600 dark:bg-rose-500/15 dark:text-rose-400';
+/** Orlando trend line: green/red arrow + "X% more/less than <suffix>". */
+function TrendLine({ pct, suffix }: { pct: number | null; suffix: string }) {
+  if (pct === null || !Number.isFinite(pct) || pct === 0) return null;
+  const up = pct > 0;
   return (
-    <span
-      className={`inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-[11px] font-bold tabular-nums ${tone}`}
+    <p
+      className={`mt-2 flex items-center gap-1 text-xs font-medium ${
+        up ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'
+      }`}
     >
-      {flat ? '→' : up ? '↑' : '↓'} {Math.abs(pct).toFixed(0)}%
+      {up ? <ArrowUp size={14} aria-hidden="true" /> : <ArrowDown size={14} aria-hidden="true" />}
+      <span className="tabular-nums">
+        {Math.abs(pct).toFixed(1)}% {up ? 'more' : 'less'} than {suffix}
+      </span>
+    </p>
+  );
+}
+
+function StatusPill({ status }: { status: string }) {
+  const s = status.toLowerCase();
+  const tone =
+    s === 'received' || s === 'approved' || s === 'current' || s === 'paid'
+      ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400'
+      : s === 'pending' || s === 'due soon'
+        ? 'bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400'
+        : 'bg-rose-50 text-rose-600 dark:bg-rose-500/15 dark:text-rose-400';
+  return (
+    <span className={`inline-flex whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-semibold ${tone}`}>
+      {status}
     </span>
   );
 }
 
-// ─── Unified card header (spec 4.2) ─────────────────────────────────────────
-
-function CardHeader({
-  icon,
-  title,
-  subtitle,
-  action,
-  demo
-}: {
-  icon: React.ReactNode;
-  title: string;
-  subtitle?: string;
-  action?: React.ReactNode;
-  demo?: boolean;
-}) {
-  return (
-    <div className="mb-4 flex items-center justify-between border-b border-violet-100/60 dark:border-white/5 pb-4">
-      <div className="flex items-center gap-2.5">
-        <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-violet-100 dark:bg-white/10 text-violet-700 dark:text-violet-300">
-          {icon}
-        </span>
-        <div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-sm font-bold text-slate-900 dark:text-white">{title}</h2>
-            {demo ? <DemoBadge /> : null}
-          </div>
-          {subtitle ? <p className="text-xs text-slate-500 dark:text-slate-400">{subtitle}</p> : null}
-        </div>
-      </div>
-      {action ? <div className="flex items-center gap-2">{action}</div> : null}
-    </div>
-  );
-}
-
-// ─── KPI Card (spec 4.1 micro-design) ───────────────────────────────────────
+// ─── KPI Card (Orlando micro-design) ────────────────────────────────────────
 
 interface KpiSpec {
   icon: React.ReactNode;
-  iconTone: string;
+  chip: string;
   label: string;
   value: string;
-  unit: string;
-  /** Bottom-row pill: { text, tone } or trend pct */
-  pill?: { text: string; tone: 'emerald' | 'amber' | 'slate' | 'rose' };
   trendPct?: number | null;
-  sub?: string;
+  trendSuffix?: string;
+  customTrend?: React.ReactNode;
   demo: boolean;
   to?: string;
 }
 
-const PILL_TONES: Record<string, string> = {
-  emerald: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400',
-  amber: 'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400',
-  slate: 'bg-violet-100 text-violet-700 dark:bg-white/10 dark:text-slate-300',
-  rose: 'bg-rose-100 text-rose-600 dark:bg-rose-500/15 dark:text-rose-400'
-};
-
 function KpiCard({ spec }: { spec: KpiSpec }) {
   const inner = (
-    <div className="flex h-full flex-col rounded-2xl border border-violet-100/60 dark:border-white/5 bg-violet-50/70 dark:bg-white/5 p-5 shadow-[0_2px_12px_-4px_rgba(124,58,237,0.08)] transition-all hover:border-violet-200 dark:hover:border-white/10 hover:shadow-md">
-      <div className="flex items-start justify-between gap-3">
-        <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${spec.iconTone}`}>
+    <div className={`${cardShell} h-full transition-shadow hover:shadow-md`}>
+      <div className="flex items-start justify-between gap-2">
+        <span
+          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-white ${spec.chip}`}
+          aria-hidden="true"
+        >
           {spec.icon}
         </span>
-        <div className="flex shrink-0 items-center gap-1.5">
-          {spec.demo ? <DemoBadge /> : null}
-          {spec.pill ? (
-            <span
-              className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-bold tabular-nums ${PILL_TONES[spec.pill.tone]}`}
-            >
-              {spec.pill.text}
-            </span>
-          ) : (
-            <TrendText pct={spec.trendPct ?? null} />
-          )}
-        </div>
+        {spec.demo ? <DemoBadge /> : null}
       </div>
-      <p className="mt-3 truncate text-3xl font-extrabold tabular-nums tracking-tight text-slate-900 dark:text-white">
-        {spec.value} <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">{spec.unit}</span>
+      <p className="mt-3 truncate text-2xl font-extrabold tabular-nums tracking-tight text-gray-900 dark:text-white">
+        {spec.value}
       </p>
-      <p className="mt-1 text-xs font-medium text-violet-900/60 dark:text-slate-400">{spec.label}</p>
-      {spec.sub ? (
-        <p className="mt-1 truncate text-[11px] text-slate-500 dark:text-slate-400">{spec.sub}</p>
-      ) : null}
+      <p className="mt-1 truncate text-xs text-gray-500 dark:text-slate-400">{spec.label}</p>
+      {spec.customTrend ?? <TrendLine pct={spec.trendPct ?? null} suffix={spec.trendSuffix ?? 'yesterday'} />}
     </div>
   );
   return spec.to ? (
     <Link
       to={spec.to}
-      className="block h-full rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2"
+      className="block h-full rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500"
+      aria-label={spec.label}
     >
       {inner}
     </Link>
@@ -237,7 +212,178 @@ function KpiCard({ spec }: { spec: KpiSpec }) {
   );
 }
 
-// ─── Display name: skip generic/role-like names ("System Administrator") ─────
+// ─── Page header (Orlando: Welcome + date | period, Filter, Export) ─────────
+
+type Period = 'today' | 'yesterday';
+type ProcFilter = 'all' | 'Received' | 'Pending';
+
+function PageHeader({
+  firstName,
+  period,
+  setPeriod,
+  procFilter,
+  setProcFilter,
+  onExport
+}: {
+  firstName: string | null;
+  period: Period;
+  setPeriod: (p: Period) => void;
+  procFilter: ProcFilter;
+  setProcFilter: (f: ProcFilter) => void;
+  onExport: () => void;
+}) {
+  const [periodOpen, setPeriodOpen] = useState(false);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const todayStr = new Date().toLocaleDateString('en-GB', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  });
+  const btn =
+    'touch inline-flex items-center gap-1.5 rounded-lg border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm font-medium text-gray-700 dark:text-slate-200 shadow-sm transition-colors hover:bg-gray-50 dark:hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500';
+
+  return (
+    <div className="flex flex-wrap items-start justify-between gap-3">
+      <div>
+        <h1 className="text-xl font-extrabold tracking-tight text-gray-900 dark:text-white">
+          Welcome{firstName ? ` ${firstName}` : ''}
+        </h1>
+        <p className="mt-0.5 text-sm text-gray-500 dark:text-slate-400">Today&apos;s {todayStr}</p>
+      </div>
+      <div className="flex flex-wrap items-center gap-2">
+        {/* Period dropdown */}
+        <div className="relative">
+          <button
+            type="button"
+            className={btn}
+            aria-haspopup="listbox"
+            aria-expanded={periodOpen}
+            aria-label="Select period"
+            onClick={() => {
+              setPeriodOpen((v) => !v);
+              setFilterOpen(false);
+            }}
+          >
+            <Calendar size={15} aria-hidden="true" />
+            {period === 'today' ? 'Today' : 'Yesterday'}
+            <ChevronDown size={14} aria-hidden="true" />
+          </button>
+          {periodOpen ? (
+            <>
+              <button
+                type="button"
+                className="fixed inset-0 z-30 cursor-default"
+                onClick={() => setPeriodOpen(false)}
+                aria-label="Close period menu"
+                tabIndex={-1}
+              />
+              <div
+                role="listbox"
+                aria-label="Period"
+                className="absolute right-0 z-40 mt-2 w-40 rounded-xl border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800 py-1 shadow-lg"
+              >
+                {(['today', 'yesterday'] as Period[]).map((p) => (
+                  <button
+                    key={p}
+                    type="button"
+                    role="option"
+                    aria-selected={period === p}
+                    onClick={() => {
+                      setPeriod(p);
+                      setPeriodOpen(false);
+                    }}
+                    className={`flex w-full items-center justify-between px-4 py-2 text-left text-sm capitalize transition-colors hover:bg-gray-50 dark:hover:bg-slate-700 ${
+                      period === p ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-600 dark:text-slate-300'
+                    }`}
+                  >
+                    {p}
+                    {period === p ? <Check size={14} className="text-violet-600" aria-hidden="true" /> : null}
+                  </button>
+                ))}
+              </div>
+            </>
+          ) : null}
+        </div>
+
+        {/* Filter */}
+        <div className="relative">
+          <button
+            type="button"
+            className={btn}
+            aria-haspopup="true"
+            aria-expanded={filterOpen}
+            aria-label="Filter purchase orders"
+            onClick={() => {
+              setFilterOpen((v) => !v);
+              setPeriodOpen(false);
+            }}
+          >
+            <SlidersHorizontal size={15} aria-hidden="true" />
+            Filter
+            {procFilter !== 'all' ? (
+              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-violet-600 text-[10px] font-bold text-white">
+                1
+              </span>
+            ) : null}
+          </button>
+          {filterOpen ? (
+            <>
+              <button
+                type="button"
+                className="fixed inset-0 z-30 cursor-default"
+                onClick={() => setFilterOpen(false)}
+                aria-label="Close filter menu"
+                tabIndex={-1}
+              />
+              <div
+                className="absolute right-0 z-40 mt-2 w-48 rounded-xl border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800 py-1 shadow-lg"
+                role="menu"
+                aria-label="Purchase order status filter"
+              >
+                <p className="px-4 pb-1 pt-2 text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:text-slate-500">
+                  Order status
+                </p>
+                {(
+                  [
+                    ['all', 'All orders'],
+                    ['Received', 'Received'],
+                    ['Pending', 'Pending']
+                  ] as Array<[ProcFilter, string]>
+                ).map(([f, label]) => (
+                  <button
+                    key={f}
+                    type="button"
+                    role="menuitemradio"
+                    aria-checked={procFilter === f}
+                    onClick={() => {
+                      setProcFilter(f);
+                      setFilterOpen(false);
+                    }}
+                    className={`flex w-full items-center justify-between px-4 py-2 text-left text-sm transition-colors hover:bg-gray-50 dark:hover:bg-slate-700 ${
+                      procFilter === f ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-600 dark:text-slate-300'
+                    }`}
+                  >
+                    {label}
+                    {procFilter === f ? <Check size={14} className="text-violet-600" aria-hidden="true" /> : null}
+                  </button>
+                ))}
+              </div>
+            </>
+          ) : null}
+        </div>
+
+        {/* Export */}
+        <button type="button" className={btn} onClick={onExport} aria-label="Export dashboard summary as CSV">
+          <Download size={15} aria-hidden="true" />
+          Export
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Display name: skip generic/role-like names ──────────────────────────────
 
 const GENERIC_NAME_WORDS = new Set([
   'system',
@@ -260,118 +406,130 @@ function displayFirstName(user: { name?: string | null; email?: string | null } 
   return null;
 }
 
-// ─── Row 1: Hero ────────────────────────────────────────────────────────────
+// ─── Donut: Mill Output Mix (Orlando "Staff applications card" style) ───────
 
-function WelcomeBanner({ firstName }: { firstName: string | null }) {
+interface DonutSeg {
+  name: string;
+  value: number;
+  color: string;
+}
+
+function colorForProduct(name: string, i: number): string {
+  const n = name.toLowerCase();
+  if (n.includes('special')) return '#3B82F6';
+  if (n.includes('duket')) return '#7C3AED';
+  if (n.includes('furishka')) return '#F59E0B';
+  if (n.includes('fino')) return '#10B981';
+  if (n.includes('fernacho')) return '#14B8A6';
+  const palette = ['#7C3AED', '#F59E0B', '#3B82F6', '#10B981', '#14B8A6', '#A78BFA'];
+  return palette[i % palette.length];
+}
+
+function OutputDonut({
+  segments,
+  total,
+  demo,
+  periodLabel
+}: {
+  segments: DonutSeg[];
+  total: number;
+  demo: boolean;
+  periodLabel: string;
+}) {
   return (
-    <div className="col-span-12 px-1 py-1 lg:col-span-7">
-      <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-        Hi{firstName ? `, ${firstName}` : ' there'}!
-      </h1>
-      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-        This is your flour mill overview so far
+    <section className={`${cardShell} col-span-12 lg:col-span-4`} aria-label={`Mill output mix, ${periodLabel}`}>
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <h2 className="text-base font-bold text-gray-900 dark:text-white">Mill Output Mix</h2>
+        {demo ? <DemoBadge /> : null}
+      </div>
+      <p className="sr-only">
+        Total output {total.toLocaleString('en-US')} quintals {periodLabel}.{' '}
+        {segments.map((s) => `${s.name}: ${s.value.toLocaleString('en-US')} quintals`).join('. ')}
       </p>
-    </div>
-  );
-}
-
-function ProductionStatusCard({ activeBatches, demo }: { activeBatches: number | null; demo: boolean }) {
-  const active = (activeBatches ?? 0) > 0;
-  return (
-    <Link
-      to="/production"
-      className={`${cardShell} col-span-12 flex items-center gap-4 !p-5 transition-all hover:border-violet-200 dark:hover:border-white/10 sm:col-span-6 lg:col-span-3`}
-    >
-      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-violet-600 text-white shadow-md shadow-violet-200">
-        <Package size={22} strokeWidth={2} />
-      </div>
-      <div className="min-w-0">
-        <p className="text-sm font-bold text-slate-800 dark:text-slate-100">
-          Production{' '}
-          <span className={`font-extrabold ${demo || active ? 'text-emerald-600' : 'text-slate-400'}`}>
-            {demo || active ? 'Active' : 'Idle'}
-          </span>
-        </p>
-        <p className="mt-0.5 truncate text-xs text-slate-500 dark:text-slate-400">
-          Main Mill • Shift 1 (06:00 - 14:00)
-        </p>
-      </div>
-    </Link>
-  );
-}
-
-function WeatherCard() {
-  return (
-    <div
-      className={`${cardShell} col-span-12 flex items-center justify-between !p-5 sm:col-span-6 lg:col-span-2`}
-    >
-      <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-50 text-amber-500">
-          <Sun size={20} strokeWidth={2} />
-        </div>
-        <div>
-          <p className="text-lg font-extrabold tabular-nums text-slate-800 dark:text-slate-100">22°C</p>
-          <p className="text-xs text-slate-500 dark:text-slate-400">Addis Ababa</p>
+      <div className="relative mx-auto h-48 w-48" aria-hidden="true">
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={segments}
+              dataKey="value"
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              innerRadius="70%"
+              outerRadius="95%"
+              paddingAngle={2}
+              strokeWidth={0}
+            >
+              {segments.map((s) => (
+                <Cell key={s.name} fill={s.color} />
+              ))}
+            </Pie>
+            <Tooltip
+              contentStyle={{
+                borderRadius: 12,
+                border: '1px solid #E5E7EB',
+                fontSize: 12,
+                boxShadow: '0 4px 16px rgba(15,23,42,0.08)'
+              }}
+              formatter={(value: unknown) => `${Number(value).toLocaleString('en-US')} Qt`}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
+          <p className="text-2xl font-extrabold tabular-nums tracking-tight text-gray-900 dark:text-white">
+            {total.toLocaleString('en-US')}
+          </p>
+          <p className="text-xs text-gray-500 dark:text-slate-400">Total Output (Qt)</p>
         </div>
       </div>
-      <ChevronDown size={16} className="text-slate-400 dark:text-slate-500" />
-    </div>
+      <ul className="mt-4 space-y-2.5">
+        {segments.map((s) => (
+          <li key={s.name} className="flex items-center justify-between gap-2 text-sm">
+            <span className="flex min-w-0 items-center gap-2 text-gray-600 dark:text-slate-300">
+              <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: s.color }} />
+              <span className="truncate">{s.name}</span>
+            </span>
+            <span className="shrink-0 font-bold tabular-nums text-gray-900 dark:text-white">
+              {s.value.toLocaleString('en-US')}{' '}
+              <span className="text-xs font-medium text-gray-400 dark:text-slate-500">Qt</span>
+            </span>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
 
-// ─── Row 3: Production overview (recharts) ──────────────────────────────────
+// ─── Weekly Mill Performance (grouped bars, Orlando "Annual payroll" style) ──
 
-interface ProdPoint {
+interface PerfPoint {
   name: string;
   wheat: number;
   flour: number;
 }
 
-function ProductionOverview({
-  data,
-  demo
-}: {
-  data: ProdPoint[];
-  demo: boolean;
-}) {
+function WeeklyPerformance({ data, demo }: { data: PerfPoint[]; demo: boolean }) {
   const ct = useChartTheme();
   return (
-    <div className={`${cardShell} col-span-12 lg:col-span-5`}>
-      <CardHeader
-        icon={<BarChart3 size={16} />}
-        title="Production Overview"
-        subtitle="Wheat intake vs. flour output"
-        demo={demo}
-        action={
-          <>
-            <div className="hidden items-center gap-3 text-xs font-medium text-slate-600 dark:text-slate-300 sm:flex">
-              <span className="inline-flex items-center gap-1.5">
-                <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#A78BFA]" />
-                Flour Produced (Qt)
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#4C1D95]" />
-                Wheat Received (Qt)
-              </span>
-            </div>
-            <button
-              type="button"
-              className="inline-flex items-center gap-1.5 rounded-full border border-violet-200 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-1 text-xs font-semibold text-violet-900 dark:text-slate-300"
-            >
-              Last 7 Days <ChevronDown size={14} />
-            </button>
-          </>
-        }
-      />
-      <div className="h-64 w-full">
+    <section className={`${cardShell} col-span-12 lg:col-span-4`} aria-label="Weekly mill performance">
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+        <h2 className="text-base font-bold text-gray-900 dark:text-white">Weekly Mill Performance</h2>
+        <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-slate-400">
+          {demo ? <DemoBadge /> : null}
+          <span className="inline-flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-[#7C3AED]" aria-hidden="true" /> Wheat Intake
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-[#F59E0B]" aria-hidden="true" /> Flour Output
+          </span>
+        </div>
+      </div>
+      <p className="sr-only">
+        Bar chart comparing wheat intake and flour output in quintals for the last 7 days.
+      </p>
+      <div className="h-64 w-full" aria-hidden="true">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 5, right: 5, left: -12, bottom: 0 }}>
-            <defs>
-              <linearGradient id="flourGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#7C3AED" stopOpacity={0.25} />
-                <stop offset="100%" stopColor="#7C3AED" stopOpacity={0} />
-              </linearGradient>
-            </defs>
+          <BarChart data={data} margin={{ top: 8, right: 4, left: -8, bottom: 0 }} barGap={3}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={ct.grid} />
             <XAxis
               dataKey="name"
@@ -381,13 +539,13 @@ function ProductionOverview({
               dy={6}
             />
             <YAxis
-              ticks={[0, 300, 600, 900, 1200, 1500]}
-              domain={[0, 1500]}
               tick={{ fontSize: 11, fill: ct.tick }}
               axisLine={false}
               tickLine={false}
+              tickFormatter={(v: number) => (v >= 1000 ? `${(v / 1000).toFixed(1)}k` : `${v}`)}
             />
             <Tooltip
+              cursor={{ fill: ct.cursor, opacity: 0.4 }}
               contentStyle={{
                 borderRadius: 12,
                 border: `1px solid ${ct.tooltipBorder}`,
@@ -398,301 +556,116 @@ function ProductionOverview({
               }}
               formatter={(value: unknown, name: unknown) => [
                 `${Number(value).toLocaleString('en-US')} Qt`,
-                name === 'wheat' ? 'Wheat Received' : 'Flour Produced'
+                name === 'wheat' ? 'Wheat Intake' : 'Flour Output'
               ]}
             />
-            <Area
-              type="monotone"
-              dataKey="wheat"
-              stroke="#A78BFA"
-              strokeWidth={2}
-              fill="none"
-              fillOpacity={0}
-              dot={{ r: 3.5, fill: '#A78BFA', strokeWidth: 0 }}
-              activeDot={{ r: 5 }}
+            <Bar dataKey="wheat" name="wheat" fill="#7C3AED" radius={[4, 4, 0, 0]} barSize={11} />
+            <Bar dataKey="flour" name="flour" fill="#F59E0B" radius={[4, 4, 0, 0]} barSize={11} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </section>
+  );
+}
+
+// ─── Revenue Trend (Orlando "Total income" area style) ──────────────────────
+
+interface RevenuePoint {
+  label: string;
+  revenue: number;
+}
+
+const SEED_MONTHLY_REVENUE = [
+  820000, 910000, 870000, 1040000, 1120000, 980000, 1060000, 1150000, 1090000, 1210000, 1180000,
+  1250000
+];
+
+function RevenueTrend({ data, demo }: { data: RevenuePoint[]; demo: boolean }) {
+  const ct = useChartTheme();
+  const total = data.reduce((s, d) => s + d.revenue, 0);
+  const target = Math.round((total / Math.max(1, data.length)) * 1.15);
+  return (
+    <section className={`${cardShell} col-span-12 lg:col-span-4`} aria-label="Revenue trend, last 12 months">
+      <div className="mb-1 flex items-center justify-between gap-2">
+        <h2 className="text-base font-bold text-gray-900 dark:text-white">Revenue Trend</h2>
+        {demo ? <DemoBadge /> : null}
+      </div>
+      <p className="text-2xl font-extrabold tabular-nums tracking-tight text-gray-900 dark:text-white">
+        {total.toLocaleString('en-US')}{' '}
+        <span className="text-sm font-semibold text-gray-500 dark:text-slate-400">ETB</span>
+      </p>
+      <p className="text-xs text-gray-500 dark:text-slate-400">in last 12 months</p>
+      <p className="sr-only">
+        Area chart of monthly sales revenue in birr for the last 12 months, with a target reference line at{' '}
+        {target.toLocaleString('en-US')} birr.
+      </p>
+      <div className="mt-2 h-52 w-full" aria-hidden="true">
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={data} margin={{ top: 8, right: 4, left: -4, bottom: 0 }}>
+            <defs>
+              <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#7C3AED" stopOpacity={0.3} />
+                <stop offset="100%" stopColor="#7C3AED" stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={ct.grid} />
+            <XAxis
+              dataKey="label"
+              tick={{ fontSize: 11, fill: ct.tick }}
+              axisLine={false}
+              tickLine={false}
+              dy={6}
+              interval={1}
+            />
+            <YAxis
+              tick={{ fontSize: 11, fill: ct.tick }}
+              axisLine={false}
+              tickLine={false}
+              tickFormatter={(v: number) => (v >= 1000000 ? `${(v / 1000000).toFixed(1)}M` : `${Math.round(v / 1000)}k`)}
+            />
+            <Tooltip
+              contentStyle={{
+                borderRadius: 12,
+                border: `1px solid ${ct.tooltipBorder}`,
+                backgroundColor: ct.tooltipBg,
+                color: ct.tooltipText,
+                fontSize: 12,
+                boxShadow: '0 4px 16px rgba(15,23,42,0.08)'
+              }}
+              formatter={(value: unknown) => [`${Number(value).toLocaleString('en-US')} ETB`, 'Revenue']}
+            />
+            <ReferenceLine
+              y={target}
+              stroke="#DC2626"
+              strokeDasharray="6 4"
+              strokeOpacity={0.7}
+              label={{
+                value: 'Target',
+                fontSize: 10,
+                fill: '#FFFFFF',
+                position: 'insideTopRight'
+              }}
             />
             <Area
               type="monotone"
-              dataKey="flour"
+              dataKey="revenue"
               stroke="#7C3AED"
-              strokeWidth={2}
-              fill="url(#flourGrad)"
-              dot={{ r: 3.5, fill: '#7C3AED', strokeWidth: 0 }}
-              activeDot={{ r: 5 }}
+              strokeWidth={2.5}
+              fill="url(#revGrad)"
+              dot={false}
+              activeDot={{ r: 4 }}
             />
           </AreaChart>
         </ResponsiveContainer>
       </div>
-    </div>
+    </section>
   );
 }
 
-// ─── Row 3: Product output donut (recharts) ─────────────────────────────────
+// ─── Orlando tables ─────────────────────────────────────────────────────────
 
-interface DonutSeg {
-  name: string;
-  value: number;
-  pct: number;
-  color: string;
-}
-
-function ProductOutputDonut({
-  segments,
-  total,
-  demo
-}: {
-  segments: DonutSeg[];
-  total: number;
-  demo: boolean;
-}) {
-  return (
-    <div className={`${cardShell} col-span-12 md:col-span-6 lg:col-span-4`}>
-      <CardHeader
-        icon={<Package size={16} />}
-        title="Product Output (Today)"
-        subtitle="Measured in Quintals (1 Qt = 100 kg)"
-        demo={demo}
-        action={
-          <span className="rounded-full border border-violet-200 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-1 text-xs font-semibold text-violet-900 dark:text-slate-300">
-            All Products
-          </span>
-        }
-      />
-      <div className="grid grid-cols-12 items-center gap-2">
-        <div className="relative col-span-12 flex min-h-[190px] items-center justify-center overflow-visible sm:col-span-5">
-          <ResponsiveContainer width="100%" height={190}>
-            <PieChart margin={{ top: 8, right: 8, bottom: 8, left: 8 }}>
-              <Pie
-                data={segments}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                innerRadius="68%"
-                outerRadius="88%"
-                paddingAngle={3}
-                strokeWidth={0}
-              >
-                {segments.map((s) => (
-                  <Cell key={s.name} fill={s.color} />
-                ))}
-              </Pie>
-              <Tooltip
-                contentStyle={{
-                  borderRadius: 12,
-                  border: '1px solid #E2E8F0',
-                  fontSize: 12
-                }}
-                formatter={(value: unknown) => `${Number(value).toLocaleString('en-US')} Qt`}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-          <div className="pointer-events-none absolute flex max-w-[110px] flex-col items-center justify-center text-center">
-            <p className="text-2xl font-extrabold tabular-nums tracking-tight text-slate-900 dark:text-white">
-              {total.toLocaleString('en-US')} Qt
-            </p>
-            <p className="text-[11px] font-medium leading-tight text-violet-900/50 dark:text-slate-400">
-              Total Output
-            </p>
-          </div>
-        </div>
-        <div className="col-span-12 space-y-2.5 pl-2 sm:col-span-7">
-          {segments.map((s) => (
-            <div
-              key={s.name}
-              className="flex items-center justify-between border-b border-violet-100/60 dark:border-white/5 pb-1.5 text-xs last:border-0"
-            >
-              <span className="inline-flex min-w-0 items-center gap-2">
-                <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: s.color }} />
-                <span className="truncate font-medium text-slate-600 dark:text-slate-300">{s.name}</span>
-              </span>
-              <span className="ml-2 shrink-0">
-                <span className="font-bold tabular-nums text-slate-800 dark:text-slate-100">
-                  {s.value.toLocaleString('en-US')} Qt
-                </span>{' '}
-                <span className="tabular-nums text-slate-500 dark:text-slate-400">{s.pct.toFixed(1)}%</span>
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── Row 3: Recent activities ───────────────────────────────────────────────
-
-interface ActivityItem {
-  title: string;
-  sub: string;
-  time: string;
-  icon: React.ReactNode;
-  tile: string;
-  to: string;
-}
-
-function RecentActivities({ items, demo }: { items: ActivityItem[]; demo: boolean }) {
-  return (
-    <div className={`${cardShell} col-span-12 flex flex-col justify-between md:col-span-6 lg:col-span-5`}>
-      <CardHeader
-        icon={<Bell size={16} />}
-        title="Recent Activities"
-        demo={demo}
-        action={
-          <Link to="/audit" className="text-xs font-semibold text-violet-600 hover:text-violet-700">
-            View All
-          </Link>
-        }
-      />
-      <ul className="space-y-3.5">
-        {items.map((a, i) => (
-          <li key={`${a.title}-${i}`}>
-            <Link to={a.to} className="flex items-start gap-3">
-              <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${a.tile}`}>
-                {a.icon}
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block truncate text-[13px] font-semibold text-slate-800 dark:text-slate-100">{a.title}</span>
-                <span className="block truncate text-xs text-slate-500 dark:text-slate-400">{a.sub}</span>
-              </span>
-              <span className="shrink-0 pt-0.5 text-[11px] tabular-nums text-slate-500 dark:text-slate-400">{a.time}</span>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-// ─── Row 4: Quick access + Product catalog (combined card) ──────────────────
-
-const CATALOG_TONES: Record<string, string> = {
-  violet: 'bg-violet-50/70 hover:bg-violet-100/80 border-violet-100',
-  emerald: 'bg-emerald-50/60 hover:bg-emerald-100/70 border-emerald-100',
-  amber: 'bg-amber-50/60 hover:bg-amber-100/70 border-amber-100'
-};
-
-const QUICK_LINKS = [
-  { to: '/intake', label: 'New Purchase Order', icon: <ShoppingCart size={18} />, tone: 'bg-violet-50/80 hover:bg-violet-100/80 text-violet-700' },
-  { to: '/batches', label: 'Create Production Batch', icon: <Factory size={18} />, tone: 'bg-sky-50/80 hover:bg-sky-100/80 text-sky-700' },
-  { to: '/qc', label: 'Record Lab Test', icon: <FlaskConical size={18} />, tone: 'bg-emerald-50/80 hover:bg-emerald-100/80 text-emerald-700' },
-  { to: '/reports', label: 'Generate Report', icon: <BarChart3 size={18} />, tone: 'bg-amber-50/80 hover:bg-amber-100/80 text-amber-700' },
-  { to: '/intake', label: 'Manage Suppliers', icon: <Users size={18} />, tone: 'bg-teal-50/80 hover:bg-teal-100/80 text-teal-700' },
-  { to: '/storage', label: 'View Inventory', icon: <Boxes size={18} />, tone: 'bg-purple-50/80 hover:bg-purple-100/80 text-purple-700' }
-];
-
-function QuickAccessCatalog() {
-  return (
-    <div className={`${cardShell} col-span-12 flex flex-col lg:col-span-3`}>
-      <CardHeader icon={<BarChart3 size={16} />} title="Quick Access" />
-      <div className="grid grid-cols-3 gap-2">
-        {QUICK_LINKS.map((q) => (
-          <Link
-            key={q.label}
-            to={q.to}
-            className={`flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-xl p-2.5 text-center transition-all hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 ${q.tone}`}
-          >
-            {q.icon}
-            <span className="text-[11px] font-semibold leading-tight">{q.label}</span>
-          </Link>
-        ))}
-      </div>
-      <div className="my-4 border-t border-violet-100/60 dark:border-white/5" />
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Package size={15} className="text-violet-600" />
-          <h3 className="text-[13px] font-bold text-slate-800 dark:text-slate-100">Product Lines</h3>
-        </div>
-        <span className="rounded-md bg-violet-50 px-2 py-0.5 text-[10px] font-semibold text-violet-700">
-          5 Active Lines
-        </span>
-      </div>
-      <div className="mt-2.5 grid grid-cols-1 gap-1.5">
-        {SEED_PRODUCT_LINES.map((p) => (
-          <Link
-            key={p.name}
-            to="/products"
-            className={`flex cursor-pointer items-center justify-between rounded-xl border px-3 py-2 text-xs font-semibold text-slate-800 transition ${CATALOG_TONES[p.tone]}`}
-          >
-            <span className="min-w-0">
-              <span className="block truncate">{p.name}</span>
-              <span className="block text-[10px] font-medium text-slate-500 dark:text-slate-400">{p.packaging}</span>
-            </span>
-            <span className="ml-2 shrink-0 rounded-md bg-white/70 px-2 py-0.5 font-bold tabular-nums text-slate-700 dark:text-slate-200">
-              {p.stock.toLocaleString('en-US')} Qt
-            </span>
-          </Link>
-        ))}
-      </div>
-      <div className="mt-auto pt-3">
-        <Link
-          to="/products"
-          className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-violet-600 px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-violet-200 transition-all hover:bg-violet-700 active:bg-violet-800"
-        >
-          View Products <ArrowRight size={14} />
-        </Link>
-      </div>
-    </div>
-  );
-}
-
-// ─── Row 4: Stock levels ────────────────────────────────────────────────────
-
-interface StockRow {
-  label: string;
-  balance: number;
-  capacity: number;
-  color: string;
-  tile: string;
-}
-
-function StockLevels({ rows, demo }: { rows: StockRow[]; demo: boolean }) {
-  return (
-    <div className={`${cardShell} col-span-12 md:col-span-6 lg:col-span-3`}>
-      <CardHeader
-        icon={<Warehouse size={16} />}
-        title="Stock Levels"
-        demo={demo}
-        action={
-          <Link to="/storage" className="text-xs font-semibold text-violet-600 hover:text-violet-700">
-            View All
-          </Link>
-        }
-      />
-      <div className="mt-3 space-y-3.5">
-        {rows.map((r) => {
-          const pct = r.capacity > 0 ? Math.min(100, (r.balance / r.capacity) * 100) : 0;
-          return (
-            <div key={r.label} className="flex items-center gap-3">
-              <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${r.tile}`}>
-                <Warehouse size={18} />
-              </span>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-slate-700 dark:text-slate-200">{r.label}</span>
-                  <span className="tabular-nums text-slate-500 dark:text-slate-400">
-                    <span className="font-bold text-slate-800 dark:text-slate-100">{r.balance.toLocaleString('en-US')}</span>
-                    {' / '}
-                    {r.capacity.toLocaleString('en-US')} Qt
-                    <span className="ml-2 font-bold text-slate-800 dark:text-slate-100">{pct.toFixed(0)}%</span>
-                  </span>
-                </div>
-                <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-violet-100/70 dark:bg-white/10">
-                  <div
-                    className="h-full rounded-full transition-all duration-700"
-                    style={{ width: `${pct}%`, background: 'linear-gradient(90deg, #4C1D95, #7C3AED 55%, #A78BFA)' }}
-                  />
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-// ─── Row 4: Recent procurement ──────────────────────────────────────────────
+const TH = 'px-3 py-2.5 text-left text-xs font-semibold text-gray-500 dark:text-slate-400';
+const TD = 'px-3 py-3 text-sm text-gray-700 dark:text-slate-200';
 
 interface ProcRow {
   date: string;
@@ -702,65 +675,198 @@ interface ProcRow {
   status: 'Received' | 'Pending' | string;
 }
 
-function RecentProcurement({ rows, demo }: { rows: ProcRow[]; demo: boolean }) {
+function PurchaseOrdersTable({
+  rows,
+  demo,
+  filter
+}: {
+  rows: ProcRow[];
+  demo: boolean;
+  filter: ProcFilter;
+}) {
+  const visible = filter === 'all' ? rows : rows.filter((r) => r.status === filter);
   return (
-    <div className={`${cardShell} col-span-12 lg:col-span-4`}>
-      <CardHeader
-        icon={<Truck size={16} />}
-        title="Recent Procurement"
-        subtitle="Intake gate"
-        demo={demo}
-      />
+    <section className={`${cardShell} col-span-12 lg:col-span-6`} aria-label="Recent purchase orders">
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <h2 className="text-base font-bold text-gray-900 dark:text-white">Recent Purchase Orders</h2>
+        <div className="flex items-center gap-2">
+          {demo ? <DemoBadge /> : null}
+          <Link
+            to="/purchase-orders"
+            className="text-xs font-semibold text-violet-600 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 rounded"
+          >
+            View all
+          </Link>
+        </div>
+      </div>
       <div className="overflow-x-auto">
-        <table className="w-full border-collapse text-left">
+        <table className="w-full border-collapse">
           <thead>
-            <tr className="border-y border-violet-100/60 dark:border-white/5 bg-violet-50/50 dark:bg-white/5">
-              {['Date', 'Supplier', 'Wheat Type', 'Qty (Qt)', 'Status'].map((h) => (
-                <th
-                  key={h}
-                  className="px-2.5 py-2 text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500"
-                >
-                  {h}
-                </th>
-              ))}
+            <tr className="border-b border-gray-200 dark:border-slate-700">
+              <th scope="col" className={TH}>S/N</th>
+              <th scope="col" className={TH}>Supplier</th>
+              <th scope="col" className={TH}>Date</th>
+              <th scope="col" className={TH}>Wheat Type</th>
+              <th scope="col" className={`${TH} text-right`}>Qty (Qt)</th>
+              <th scope="col" className={`${TH} text-right`}>Status</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-violet-100/60 dark:divide-white/5">
-            {rows.map((r, i) => (
-              <tr key={`${r.supplier}-${i}`} className="transition-colors hover:bg-violet-50/50 dark:hover:bg-white/5">
-                <td className="whitespace-nowrap px-2.5 py-3 text-xs tabular-nums text-slate-500 dark:text-slate-400">
-                  {r.date}
+          <tbody className="divide-y divide-gray-100 dark:divide-slate-700/60">
+            {visible.map((r, i) => (
+              <tr key={`${r.supplier}-${i}`} className="transition-colors hover:bg-gray-50 dark:hover:bg-slate-700/30">
+                <td className="px-3 py-3 text-sm tabular-nums text-gray-400 dark:text-slate-500">
+                  {String(i + 1).padStart(2, '0')}
                 </td>
-                <td className="max-w-[150px] truncate px-2.5 py-3 text-xs font-semibold text-slate-700 dark:text-slate-200">
-                  {r.supplier}
+                <td className={`${TD} max-w-[180px] truncate font-medium`}>{r.supplier}</td>
+                <td className={`${TD} whitespace-nowrap tabular-nums`}>{r.date}</td>
+                <td className={TD}>{r.wheatType}</td>
+                <td className={`${TD} text-right font-semibold tabular-nums`}>{r.qty.toLocaleString('en-US')}</td>
+                <td className="px-3 py-3 text-right">
+                  <StatusPill status={r.status} />
                 </td>
-                <td className="px-2.5 py-3 text-xs text-slate-500 dark:text-slate-400">{r.wheatType}</td>
-                <td className="px-2.5 py-3 text-xs font-semibold tabular-nums text-slate-700 dark:text-slate-200">
-                  {r.qty.toLocaleString('en-US')}
+              </tr>
+            ))}
+            {visible.length === 0 ? (
+              <tr>
+                <td colSpan={6} className="px-3 py-8 text-center text-sm text-gray-400 dark:text-slate-500">
+                  No purchase orders match this filter.
                 </td>
-                <td className="px-2.5 py-3">
-                  <span
-                    className={`inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
-                      r.status === 'Received'
-                        ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400'
-                        : r.status === 'Pending'
-                          ? 'bg-amber-50 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400'
-                          : 'bg-slate-100 text-slate-500 dark:bg-white/10 dark:text-slate-400'
-                    }`}
-                  >
-                    {r.status}
-                  </span>
+              </tr>
+            ) : null}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
+interface PayableRow {
+  vendor: string;
+  invoiceNo: string;
+  amount: number;
+  dueDate: string;
+  status: 'Overdue' | 'Due Soon' | 'Current';
+}
+
+const SEED_PAYABLES: PayableRow[] = [
+  { vendor: 'Alemu Trading PLC', invoiceNo: 'AP-2025-0142', amount: 62500, dueDate: 'Apr 10, 2025', status: 'Overdue' },
+  { vendor: 'Debre Berhan Farmers', invoiceNo: 'AP-2025-0145', amount: 48200, dueDate: 'Apr 16, 2025', status: 'Due Soon' },
+  { vendor: 'Selam Agricultural Coop', invoiceNo: 'AP-2025-0148', amount: 37750, dueDate: 'Apr 20, 2025', status: 'Current' },
+  { vendor: 'Addis Grain Traders', invoiceNo: 'AP-2025-0151', amount: 29800, dueDate: 'Apr 22, 2025', status: 'Current' }
+];
+
+function PayablesTable({ rows, demo }: { rows: PayableRow[]; demo: boolean }) {
+  const visible = rows.length > 0 ? rows : SEED_PAYABLES;
+  const showDemo = rows.length === 0 ? true : demo;
+  return (
+    <section className={`${cardShell} col-span-12 lg:col-span-6`} aria-label="Vendor payables aging">
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <h2 className="text-base font-bold text-gray-900 dark:text-white">Vendor Payables</h2>
+        <div className="flex items-center gap-2">
+          {showDemo ? <DemoBadge /> : null}
+          <Link
+            to="/finance/accounts-payable"
+            className="rounded text-xs font-semibold text-violet-600 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500"
+          >
+            View all
+          </Link>
+        </div>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="border-b border-gray-200 dark:border-slate-700">
+              <th scope="col" className={TH}>S/N</th>
+              <th scope="col" className={TH}>Vendor</th>
+              <th scope="col" className={TH}>Invoice</th>
+              <th scope="col" className={`${TH} text-right`}>Amount (ETB)</th>
+              <th scope="col" className={TH}>Due Date</th>
+              <th scope="col" className={`${TH} text-right`}>Status</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100 dark:divide-slate-700/60">
+            {visible.map((r, i) => (
+              <tr key={`${r.invoiceNo}-${i}`} className="transition-colors hover:bg-gray-50 dark:hover:bg-slate-700/30">
+                <td className="px-3 py-3 text-sm tabular-nums text-gray-400 dark:text-slate-500">
+                  {String(i + 1).padStart(2, '0')}
+                </td>
+                <td className={`${TD} max-w-[160px] truncate font-medium`}>{r.vendor}</td>
+                <td className={`${TD} whitespace-nowrap tabular-nums text-gray-500 dark:text-slate-400`}>
+                  {r.invoiceNo}
+                </td>
+                <td className={`${TD} text-right font-bold tabular-nums text-gray-900 dark:text-white`}>
+                  {r.amount.toLocaleString('en-US')}
+                </td>
+                <td className={`${TD} whitespace-nowrap tabular-nums`}>{r.dueDate}</td>
+                <td className="px-3 py-3 text-right">
+                  <StatusPill status={r.status} />
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-    </div>
+    </section>
   );
 }
 
-// ─── Shift & Milling Operations Live Monitor (replaces Production Performance) ─
+// ─── Quality Alerts + Shift Monitor ─────────────────────────────────────────
+
+interface AlertItem {
+  title: string;
+  sub: string;
+  time: string;
+  severity: 'critical' | 'warning';
+}
+
+const SEED_ALERTS: AlertItem[] = [
+  { title: 'Moisture above threshold', sub: 'Sample WB-1045 • 14.6% (max 14.0%)', time: '10:15 AM', severity: 'critical' },
+  { title: 'CAPA overdue', sub: 'Corrective action past due date', time: 'Yesterday', severity: 'warning' },
+  { title: 'Duket yield below 78%', sub: 'Latest shift extraction 76.2%', time: 'Yesterday', severity: 'warning' }
+];
+
+function QualityAlerts({ items }: { items: AlertItem[] }) {
+  const visible = items.length > 0 ? items : SEED_ALERTS;
+  return (
+    <section className={`${cardShell} col-span-12 lg:col-span-6`} aria-label="Quality alerts">
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <h2 className="flex items-center gap-2 text-base font-bold text-gray-900 dark:text-white">
+          <FlaskConical size={16} className="text-violet-600" aria-hidden="true" />
+          Quality Alerts
+        </h2>
+        <div className="flex items-center gap-2">
+          {items.length === 0 ? <DemoBadge /> : null}
+          <Link
+            to="/qc"
+            className="rounded text-xs font-semibold text-violet-600 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500"
+          >
+            View all
+          </Link>
+        </div>
+      </div>
+      <ul className="divide-y divide-gray-100 dark:divide-slate-700/60">
+        {visible.map((a, i) => (
+          <li key={`${a.title}-${i}`} className="flex items-start gap-3 py-3 first:pt-0 last:pb-0">
+            <span
+              className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${
+                a.severity === 'critical' ? 'bg-rose-500' : 'bg-amber-500'
+              }`}
+              aria-hidden="true"
+            />
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold text-gray-800 dark:text-slate-100">{a.title}</p>
+              <p className="truncate text-xs text-gray-500 dark:text-slate-400">{a.sub}</p>
+            </div>
+            <span className="flex shrink-0 items-center gap-1 text-xs tabular-nums text-gray-400 dark:text-slate-500">
+              <Clock size={12} aria-hidden="true" />
+              {a.time}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
 
 interface ShiftMonitorData {
   shiftName: string;
@@ -774,277 +880,64 @@ interface ShiftMonitorData {
   demo: boolean;
 }
 
-function ShiftMonitor({ data }: { data: ShiftMonitorData }) {
-  const rows: Array<{
-    icon: React.ReactNode;
-    tile: string;
-    label: string;
-    value: string;
-    sub: string;
-    badge?: { text: string; tone: 'amber' };
-  }> = [
-    {
-      icon: <Timer size={18} />,
-      tile: 'bg-violet-100 text-violet-600',
-      label: 'Active Shift',
-      value: data.shiftName,
-      sub: `Operator: ${data.operator}`
-    },
-    {
-      icon: <FlaskConical size={18} />,
-      tile: 'bg-blue-100 text-blue-600',
-      label: 'Next 2-Hour Lab Check',
-      value: data.nextLabCheck,
-      sub: data.nextLabSub,
-      badge: { text: data.nextLabCheck, tone: 'amber' as const }
-    },
-    {
-      icon: <Gauge size={18} />,
-      tile: 'bg-emerald-100 text-emerald-600',
-      label: 'Mill Uptime / Downtime',
-      value: data.uptime,
-      sub: data.uptimeSub
-    },
-    {
-      icon: <ClipboardList size={18} />,
-      tile: 'bg-amber-100 text-amber-600',
-      label: 'Active Blend Ratio',
-      value: data.blend,
-      sub: data.blendSub
-    }
+function ShiftMonitorCard({ data }: { data: ShiftMonitorData }) {
+  const rows = [
+    { icon: <Gauge size={16} />, label: 'Active Shift', value: data.shiftName, sub: `Operator: ${data.operator}` },
+    { icon: <FlaskConical size={16} />, label: 'Next Lab Check', value: data.nextLabCheck, sub: data.nextLabSub },
+    { icon: <Truck size={16} />, label: 'Mill Uptime', value: data.uptime, sub: data.uptimeSub },
+    { icon: <Wheat size={16} />, label: 'Blend Ratio', value: data.blend, sub: data.blendSub }
   ];
   return (
-    <div className={`${cardShell} col-span-12 lg:col-span-7`}>
-      <CardHeader
-        icon={<Gauge size={16} />}
-        title="Shift & Milling Operations"
-        subtitle="Live monitor"
-        demo={data.demo}
-        action={
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
+    <section className={`${cardShell} col-span-12 lg:col-span-6`} aria-label="Shift monitor">
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <h2 className="flex items-center gap-2 text-base font-bold text-gray-900 dark:text-white">
+          <Gauge size={16} className="text-violet-600" aria-hidden="true" />
+          Shift Monitor
+        </h2>
+        <div className="flex items-center gap-2">
+          {data.demo ? <DemoBadge /> : null}
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 dark:bg-emerald-500/15 px-2.5 py-1 text-[11px] font-bold text-emerald-700 dark:text-emerald-400">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" aria-hidden="true" />
             LIVE
           </span>
-        }
-      />
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        </div>
+      </div>
+      <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {rows.map((r) => (
-          <div key={r.label} className="rounded-2xl border border-violet-100/60 dark:border-white/5 bg-white/60 dark:bg-white/5 p-3.5">
-            <div className="flex items-center gap-2.5">
-              <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${r.tile}`}>
-                {r.icon}
-              </span>
-              <p className="min-w-0 flex-1 truncate text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                {r.label}
-              </p>
-              {r.badge ? (
-                <span className="inline-flex shrink-0 items-center rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-bold text-amber-700">
-                  {r.badge.text}
-                </span>
-              ) : null}
-            </div>
-            <p className="mt-2.5 truncate text-[15px] font-extrabold tabular-nums text-slate-900 dark:text-slate-100">
+          <div
+            key={r.label}
+            className="rounded-xl border border-gray-100 dark:border-slate-700 bg-gray-50/60 dark:bg-slate-700/30 p-3.5"
+          >
+            <dt className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-slate-500">
+              <span className="text-violet-500" aria-hidden="true">{r.icon}</span>
+              {r.label}
+            </dt>
+            <dd className="mt-2 truncate text-sm font-extrabold tabular-nums text-gray-900 dark:text-white">
               {r.value}
-            </p>
-            <p className="mt-0.5 truncate text-xs text-slate-500 dark:text-slate-400">{r.sub}</p>
+            </dd>
+            <dd className="mt-0.5 truncate text-xs text-gray-500 dark:text-slate-400">{r.sub}</dd>
           </div>
         ))}
-      </div>
-    </div>
+      </dl>
+    </section>
   );
 }
 
-// ─── Row 5: Quality trend (recharts) ────────────────────────────────────────
+// ─── CSV export ─────────────────────────────────────────────────────────────
 
-interface QualityPoint {
-  label: string;
-  gluten: number | null;
-  moisture: number | null;
-  impurity: number | null;
-  hectoliter?: number | null;
-}
-
-const Q_LINES = [
-  { key: 'gluten', label: 'Gluten', color: '#7C3AED' },
-  { key: 'moisture', label: 'Moisture', color: '#A78BFA' },
-  { key: 'impurity', label: 'Impurity', color: '#4C1D95' },
-  { key: 'hectoliter', label: 'Hectoliter Weight', color: '#8B5CF6' }
-] as const;
-
-function qVal(p: QualityPoint, key: (typeof Q_LINES)[number]['key']): number | null {
-  switch (key) {
-    case 'gluten':
-      return p.gluten;
-    case 'moisture':
-      return p.moisture;
-    case 'impurity':
-      return p.impurity;
-    case 'hectoliter':
-      return p.hectoliter ?? null;
-  }
-}
-
-// ─── Quality thresholds (Oyaya standards) ───────────────────────────────────
-
-const Q_THRESHOLDS: Record<string, { label: string; check: string; pass: (v: number) => boolean }> = {
-  gluten: { label: 'Gluten', check: '30–33%', pass: (v) => v >= 30 && v <= 33 },
-  moisture: { label: 'Moisture', check: 'Max ≤ 14.0%', pass: (v) => v <= 14.0 },
-  impurity: { label: 'Impurity', check: 'Max < 3.0%', pass: (v) => v < 3.0 },
-  hectoliter: { label: 'Hectoliter', check: 'Min ≥ 74', pass: (v) => v >= 74 }
-};
-
-function QualityTooltip({
-  active,
-  payload,
-  label
-}: {
-  active?: boolean;
-  payload?: Array<{ dataKey?: string | number; value?: number | string; color?: string }>;
-  label?: string;
-}) {
-  if (!active || !payload || payload.length === 0) return null;
-  return (
-    <div className="rounded-xl border border-violet-100 dark:border-white/10 bg-white dark:bg-[#2A2640] px-3 py-2 text-xs shadow-lg">
-      <p className="mb-1.5 font-bold text-slate-800 dark:text-slate-100">{label}</p>
-      <div className="space-y-1">
-        {payload.map((p) => {
-          const key = String(p.dataKey ?? '');
-          const th = Q_THRESHOLDS[key];
-          const v = Number(p.value);
-          if (!th || !Number.isFinite(v)) return null;
-          const ok = th.pass(v);
-          const unit = key === 'hectoliter' ? '' : '%';
-          return (
-            <div key={key} className="flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full" style={{ backgroundColor: p.color }} />
-              <span className="font-medium text-slate-600 dark:text-slate-300">{th.label}:</span>
-              <span className="font-bold tabular-nums text-slate-800 dark:text-slate-100">
-                {v.toFixed(1)}
-                {unit}
-              </span>
-              <span className="text-slate-500 dark:text-slate-400">({th.check})</span>
-              <span
-                className={`rounded-full px-1.5 py-px text-[10px] font-bold ${
-                  ok ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400' : 'bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400'
-                }`}
-              >
-                {ok ? 'PASS' : 'FAIL'}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-function QualityTrendChart({ data, demo }: { data: QualityPoint[]; demo: boolean }) {
-  const ct = useChartTheme();
-  const visible = Q_LINES.filter((l) => data.some((p) => qVal(p, l.key) != null));
-  return (
-    <div className={`${cardShell} col-span-12 lg:col-span-5`}>
-      <CardHeader
-        icon={<FlaskConical size={16} />}
-        title="Quality Trend"
-        subtitle="2-hour lab inspection parameters"
-        demo={demo}
-        action={
-          <button
-            type="button"
-            className="inline-flex items-center gap-1.5 rounded-full border border-violet-200 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-1 text-xs font-semibold text-violet-900 dark:text-slate-300"
-          >
-            Last 7 Days <ChevronDown size={14} />
-          </button>
-        }
-      />
-      <div className="mb-2 flex flex-wrap gap-3 text-[11px] font-medium text-slate-600 dark:text-slate-300">
-        {visible.map((l) => (
-          <span key={l.key} className="inline-flex items-center gap-1.5">
-            <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: l.color }} />
-            {l.label}
-          </span>
-        ))}
-      </div>
-      <div className="h-56 w-full">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data} margin={{ top: 5, right: 5, left: -14, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={ct.grid} />
-            <XAxis
-              dataKey="label"
-              tick={{ fontSize: 11, fill: ct.tick }}
-              axisLine={false}
-              tickLine={false}
-              dy={6}
-            />
-            <YAxis
-              yAxisId="left"
-              ticks={[0, 10, 20, 30, 40]}
-              domain={[0, 40]}
-              tickFormatter={(v: number) => `${v}%`}
-              tick={{ fontSize: 11, fill: ct.tick }}
-              axisLine={false}
-              tickLine={false}
-            />
-            <YAxis
-              yAxisId="right"
-              orientation="right"
-              ticks={[60, 65, 70, 75, 80, 85]}
-              domain={[60, 85]}
-              tick={{ fontSize: 11, fill: ct.tick }}
-              axisLine={false}
-              tickLine={false}
-            />
-            <Tooltip content={<QualityTooltip />} />
-            <ReferenceLine
-              yAxisId="left"
-              y={14}
-              stroke="#F59E0B"
-              strokeDasharray="5 4"
-              strokeOpacity={0.6}
-              label={{ value: 'Moisture max', fontSize: 10, fill: '#D97706', position: 'insideTopRight' }}
-            />
-            <ReferenceLine
-              yAxisId="right"
-              y={74}
-              stroke="#10B981"
-              strokeDasharray="5 4"
-              strokeOpacity={0.6}
-              label={{ value: 'Hl min', fontSize: 10, fill: '#059669', position: 'insideTopRight' }}
-            />
-            {visible
-              .filter((l) => l.key !== 'hectoliter')
-              .map((l) => (
-                <Line
-                  key={l.key}
-                  yAxisId="left"
-                  type="monotone"
-                  dataKey={l.key}
-                  name={l.key}
-                  stroke={l.color}
-                  strokeWidth={2}
-                  dot={{ r: 3, fill: l.color, strokeWidth: 0 }}
-                  activeDot={{ r: 4.5 }}
-                  connectNulls
-                />
-              ))}
-            {visible.some((l) => l.key === 'hectoliter') ? (
-              <Line
-                yAxisId="right"
-                type="monotone"
-                dataKey="hectoliter"
-                name="hectoliter"
-                stroke="#8B5CF6"
-                strokeWidth={2}
-                dot={{ r: 3, fill: '#8B5CF6', strokeWidth: 0 }}
-                activeDot={{ r: 4.5 }}
-                connectNulls
-              />
-            ) : null}
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
-  );
+function exportCsv(filename: string, rows: string[][]) {
+  const csv = rows
+    .map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(','))
+    .join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 }
 
 // ─── Main dashboard ─────────────────────────────────────────────────────────
@@ -1052,6 +945,8 @@ function QualityTrendChart({ data, demo }: { data: QualityPoint[]; demo: boolean
 export function Dashboard() {
   const { user } = useAuth();
   const REFETCH = 60000;
+  const [period, setPeriod] = useState<Period>('today');
+  const [procFilter, setProcFilter] = useState<ProcFilter>('all');
 
   const kpisQ = useQuery({
     queryKey: ['dashboard-kpis'],
@@ -1110,6 +1005,11 @@ export function Dashboard() {
     queryFn: async () => (await api.get<APInvoice[]>(E.apInvoices)).data,
     refetchInterval: REFETCH
   });
+  const salesQ = useQuery({
+    queryKey: ['dashboard-sales-invoices'],
+    queryFn: async () => (await api.get<SalesInvoice[]>(`${E.salesInvoices}?pageSize=200`)).data,
+    refetchInterval: REFETCH
+  });
 
   const k = kpisQ.data;
   const intakes = useMemo(() => (Array.isArray(intakesQ.data) ? intakesQ.data : []), [intakesQ.data]);
@@ -1137,74 +1037,35 @@ export function Dashboard() {
   monthStart.setHours(0, 0, 0, 0);
   const monthStartMs = monthStart.getTime();
 
-  const shiftFlour = (sh: ShiftRun) => (sh.outputs ?? []).reduce((a, o) => a + safeNum(o.quintals), 0);
-
-  // ── Live KPI computation ─────────────────────────────────────────────────
-  const sumIntakes = (from: number, to: number) =>
-    intakesQ.isSuccess
-      ? intakes
-          .filter((i) => {
-            const t = new Date(i.deliveryDate).getTime();
-            return i.status === 'ACCEPTED' && t >= from && t < to;
-          })
-          .reduce((s, i) => s + safeNum(i.quintals), 0)
-      : null;
-  const wheatThisWeek = sumIntakes(weekAgoMs, nowMs);
-  const wheatPrevWeek = sumIntakes(twoWeeksAgoMs, weekAgoMs);
-  const flourThisWeek = detailsReady
-    ? details
-        .filter((sh) => new Date(sh.shiftDate ?? sh.startedAt).getTime() >= weekAgoMs)
-        .reduce((s, sh) => s + shiftFlour(sh), 0)
-    : null;
-  const flourPrevWeek = detailsReady
-    ? details
-        .filter((sh) => {
-          const t = new Date(sh.shiftDate ?? sh.startedAt).getTime();
-          return t >= twoWeeksAgoMs && t < weekAgoMs;
-        })
-        .reduce((s, sh) => s + shiftFlour(sh), 0)
-    : null;
-  const hasFlourData = detailsReady && details.some((sh) => (sh.outputs ?? []).length > 0);
-  const dryStock = k ? safeNum(k.dryPool.balanceQ) : null;
-  const activeBatches = batchesQ.isSuccess ? batches.filter((b) => b.status === 'OPEN').length : null;
-  const qcPass =
-    k && k.qcCompliancePct !== null && k.qcCompliancePct !== undefined ? k.qcCompliancePct : null;
-  const qcPassPrevWeek = (() => {
-    if (!labChecksQ.isSuccess || labChecks.length === 0) return null;
-    const prev = labChecks.filter((c) => {
-      const t = new Date(c.sampleTime).getTime();
-      return t >= twoWeeksAgoMs && t < weekAgoMs;
-    });
-    if (prev.length === 0) return null;
-    const passed = prev.filter((c) => (c.outOfRange ?? []).length === 0).length;
-    return (passed / prev.length) * 100;
-  })();
-
-  // ── 5 distinct executive KPI pillars (spec 3.1 — zero overlap) ──────────────
   const todayKey = dayKey(new Date());
   const yesterdayKey = dayKey(new Date(nowMs - 24 * 3600 * 1000));
+  const dayBeforeKey = dayKey(new Date(nowMs - 2 * 24 * 3600 * 1000));
+  const periodKey = period === 'today' ? todayKey : yesterdayKey;
+  const periodPrevKey = period === 'today' ? yesterdayKey : dayBeforeKey;
+  const periodLabel = period === 'today' ? 'today' : 'yesterday';
 
-  const intakeToday = intakesQ.isSuccess
-    ? intakes.filter((i) => i.status === 'ACCEPTED' && dayKey(new Date(i.deliveryDate)) === todayKey)
-    : null;
-  const intakeTodayQt = intakeToday !== null ? intakeToday.reduce((s, i) => s + safeNum(i.quintals), 0) : null;
-  const intakeYdayQt = intakesQ.isSuccess
-    ? intakes
-        .filter((i) => i.status === 'ACCEPTED' && dayKey(new Date(i.deliveryDate)) === yesterdayKey)
-        .reduce((s, i) => s + safeNum(i.quintals), 0)
-    : null;
+  const shiftFlour = (sh: ShiftRun) => (sh.outputs ?? []).reduce((a, o) => a + safeNum(o.quintals), 0);
 
-  const outputTodayQt = detailsReady
-    ? details
-        .filter((sh) => dayKey(new Date(sh.shiftDate ?? sh.startedAt)) === todayKey)
-        .reduce((s, sh) => s + shiftFlour(sh), 0)
-    : null;
-  const outputYdayQt = detailsReady
-    ? details
-        .filter((sh) => dayKey(new Date(sh.shiftDate ?? sh.startedAt)) === yesterdayKey)
-        .reduce((s, sh) => s + shiftFlour(sh), 0)
-    : null;
+  // ── Intake / output per day ──────────────────────────────────────────────
+  const intakeForDay = (key: string): number | null =>
+    intakesQ.isSuccess
+      ? intakes
+          .filter((i) => i.status === 'ACCEPTED' && dayKey(new Date(i.deliveryDate)) === key)
+          .reduce((s, i) => s + safeNum(i.quintals), 0)
+      : null;
+  const intakeCur = intakeForDay(periodKey);
+  const intakePrev = intakeForDay(periodPrevKey);
 
+  const outputForDay = (key: string): number | null =>
+    detailsReady
+      ? details
+          .filter((sh) => dayKey(new Date(sh.shiftDate ?? sh.startedAt)) === key)
+          .reduce((s, sh) => s + shiftFlour(sh), 0)
+      : null;
+  const outputCur = outputForDay(periodKey);
+  const outputPrev = outputForDay(periodPrevKey);
+
+  // ── Extraction rate (month to date) ──────────────────────────────────────
   const monthWheatQt = batchesQ.isSuccess
     ? batches
         .filter((b) => new Date(b.createdAt).getTime() >= monthStartMs)
@@ -1220,101 +1081,110 @@ export function Dashboard() {
       ? (monthFlourQt / monthWheatQt) * 100
       : null;
 
+  // ── QC pass rate ─────────────────────────────────────────────────────────
+  const qcPass =
+    k && k.qcCompliancePct !== null && k.qcCompliancePct !== undefined ? k.qcCompliancePct : null;
+  const qcPassPrevWeek = (() => {
+    if (!labChecksQ.isSuccess || labChecks.length === 0) return null;
+    const prev = labChecks.filter((c) => {
+      const t = new Date(c.sampleTime).getTime();
+      return t >= twoWeeksAgoMs && t < weekAgoMs;
+    });
+    if (prev.length === 0) return null;
+    const passed = prev.filter((c) => (c.outOfRange ?? []).length === 0).length;
+    return (passed / prev.length) * 100;
+  })();
   const openCapas = capasQ.isSuccess ? capas.filter((c) => c.status !== 'CLOSED').length : null;
 
-  const pendingPayables = apInvoicesQ.isSuccess
-    ? apInvoices.filter((inv) => inv.status !== 'PAID')
-    : null;
-  const payablesTotal =
-    pendingPayables !== null
-      ? pendingPayables.reduce((s, inv) => {
-          const paid = (inv.payments ?? []).reduce((a, p) => a + safeNum(p.amountBirr), 0);
-          return s + Math.max(0, safeNum(inv.amountBirr) - paid);
-        }, 0)
-      : null;
-
+  // ── 4 Orlando KPI cards ───────────────────────────────────────────────────
   const kpiSpecs: KpiSpec[] = [
     {
-      icon: <Wheat size={20} />,
-      iconTone: 'bg-violet-100 text-violet-600',
-      label: "Today's Wheat Intake",
-      value: (intakeTodayQt ?? SEED_PILLARS.intakeToday.value).toLocaleString('en-US'),
-      unit: 'Qt',
+      icon: <Wheat size={18} />,
+      chip: 'bg-orange-500',
+      label: `${period === 'today' ? "Today's" : "Yesterday's"} Wheat Intake (Qt)`,
+      value: (intakeCur ?? SEED_PILLARS.intakeToday.value).toLocaleString('en-US'),
       trendPct:
-        intakeTodayQt !== null && intakeYdayQt !== null
-          ? pctChange(intakeTodayQt, intakeYdayQt)
+        intakeCur !== null && intakePrev !== null
+          ? pctChange(intakeCur, intakePrev)
           : SEED_PILLARS.intakeToday.trendPct,
-      sub: `${intakeToday !== null ? intakeToday.length : 3} Trucks Accepted • vs. yesterday`,
-      demo: intakeTodayQt === null,
+      trendSuffix: period === 'today' ? 'yesterday' : 'the day before',
+      demo: intakeCur === null,
       to: '/intake'
     },
     {
-      icon: <PackageCheck size={20} />,
-      iconTone: 'bg-blue-100 text-blue-600',
-      label: "Today's Mill Output",
-      value: (outputTodayQt ?? SEED_PILLARS.outputToday.value).toLocaleString('en-US'),
-      unit: 'Qt',
+      icon: <Factory size={18} />,
+      chip: 'bg-blue-500',
+      label: `${period === 'today' ? "Today's" : "Yesterday's"} Mill Output (Qt)`,
+      value: (outputCur ?? SEED_PILLARS.outputToday.value).toLocaleString('en-US'),
       trendPct:
-        outputTodayQt !== null && outputYdayQt !== null
-          ? pctChange(outputTodayQt, outputYdayQt)
+        outputCur !== null && outputPrev !== null
+          ? pctChange(outputCur, outputPrev)
           : SEED_PILLARS.outputToday.trendPct,
-      sub: 'Duket & Byproducts • vs. yesterday',
-      demo: outputTodayQt === null,
+      trendSuffix: period === 'today' ? 'yesterday' : 'the day before',
+      demo: outputCur === null,
       to: '/production'
     },
     {
-      icon: <Percent size={20} />,
-      iconTone: 'bg-emerald-100 text-emerald-600',
-      label: 'Net Extraction Rate',
-      value: (extractionRate ?? SEED_PILLARS.extraction.value).toFixed(1),
-      unit: '%',
-      pill:
-        extractionRate !== null
-          ? extractionRate >= 78
-            ? { text: '✓ Pass', tone: 'emerald' as const }
-            : { text: '⚠ Below target', tone: 'rose' as const }
-          : { text: SEED_PILLARS.extraction.pass ? '✓ Pass' : '⚠ Below target', tone: 'emerald' as const },
-      sub: 'Target ≥ 78.0%',
+      icon: <Percent size={18} />,
+      chip: 'bg-violet-600',
+      label: 'Net Extraction Rate (month to date)',
+      value: `${(extractionRate ?? SEED_PILLARS.extraction.value).toFixed(1)}%`,
+      customTrend:
+        extractionRate !== null ? (
+          extractionRate >= 78 ? (
+            <p className="mt-2 flex items-center gap-1 text-xs font-medium text-emerald-600 dark:text-emerald-400">
+              <Check size={14} aria-hidden="true" />
+              On target (≥ 78%)
+            </p>
+          ) : (
+            <p className="mt-2 flex items-center gap-1 text-xs font-medium text-rose-600 dark:text-rose-400">
+              <AlertTriangle size={14} aria-hidden="true" />
+              Below target (≥ 78%)
+            </p>
+          )
+        ) : (
+          <p className="mt-2 flex items-center gap-1 text-xs font-medium text-emerald-600 dark:text-emerald-400">
+            <Check size={14} aria-hidden="true" />
+            On target (≥ 78%)
+          </p>
+        ),
       demo: extractionRate === null,
       to: '/production'
     },
     {
-      icon: <ShieldCheck size={20} />,
-      iconTone: 'bg-emerald-100 text-emerald-600',
-      label: 'Lab Quality Pass Rate',
-      value: (qcPass ?? SEED_PILLARS.qualityPass.value).toFixed(1),
-      unit: '%',
-      trendPct:
-        qcPass !== null
-          ? qcPassPrevWeek !== null
-            ? qcPass - qcPassPrevWeek
-            : null
-          : SEED_PILLARS.qualityPass.trendPct,
-      sub: `2-Hr Shift Checks • ${openCapas ?? 0} Open CAPAs`,
+      icon: <ShieldCheck size={18} />,
+      chip: 'bg-emerald-500',
+      label: `Lab Quality Pass Rate${openCapas !== null ? ` • ${openCapas} open CAPAs` : ''}`,
+      value: `${(qcPass ?? SEED_PILLARS.qualityPass.value).toFixed(1)}%`,
+      customTrend:
+        qcPass !== null && qcPassPrevWeek !== null ? (
+          (() => {
+            const diff = qcPass - qcPassPrevWeek;
+            if (Math.abs(diff) < 0.05) return null;
+            const up = diff > 0;
+            return (
+              <p
+                className={`mt-2 flex items-center gap-1 text-xs font-medium ${
+                  up ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'
+                }`}
+              >
+                {up ? <ArrowUp size={14} aria-hidden="true" /> : <ArrowDown size={14} aria-hidden="true" />}
+                <span className="tabular-nums">{Math.abs(diff).toFixed(1)} pts vs last week</span>
+              </p>
+            );
+          })()
+        ) : (
+          <TrendLine pct={qcPass === null ? SEED_PILLARS.qualityPass.trendPct : null} suffix="last week" />
+        ),
       demo: qcPass === null,
       to: '/qc'
-    },
-    {
-      icon: <CreditCard size={20} />,
-      iconTone: 'bg-amber-100 text-amber-600',
-      label: 'Pending Vendor Payables',
-      value: (payablesTotal ?? SEED_PILLARS.payables.value).toLocaleString('en-US'),
-      unit: 'ETB',
-      pill:
-        pendingPayables !== null && pendingPayables.length > 0
-          ? { text: `${pendingPayables.length} Vouchers Ready`, tone: 'amber' as const }
-          : { text: '3 Vouchers Ready', tone: 'amber' as const },
-      sub: 'Finance GL',
-      demo: payablesTotal === null,
-      to: '/finance'
     }
   ];
 
-  // ── Production chart data ────────────────────────────────────────────────
-  const DONUT_COLORS = ['#4C1D95', '#7C3AED', '#A78BFA', '#C4B5FD', '#DDD6FE'];
-  const prodData: ProdPoint[] = useMemo(() => {
+  // ── Weekly performance chart data ────────────────────────────────────────
+  const perfData: PerfPoint[] = useMemo(() => {
     const days = lastNDays(7);
-    const byKey = new Map(days.map((d) => [d.key, { name: d.label, wheat: 0, flour: 0 } as ProdPoint]));
+    const byKey = new Map(days.map((d) => [d.key, { name: d.label, wheat: 0, flour: 0 } as PerfPoint]));
     if (intakesQ.isSuccess) {
       for (const i of intakes) {
         const t = new Date(i.deliveryDate).getTime();
@@ -1332,74 +1202,66 @@ export function Dashboard() {
     return [...byKey.values()];
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [intakesQ.isSuccess, intakes, details]);
-  const hasProdData = prodData.some((p) => p.wheat > 0 || p.flour > 0);
-  const chartData: ProdPoint[] = hasProdData
-    ? prodData
+  const hasPerfData = perfData.some((p) => p.wheat > 0 || p.flour > 0);
+  const chartData: PerfPoint[] = hasPerfData
+    ? perfData
     : SEED_PRODUCTION_CHART.labels.map((name, i) => ({
         name,
         wheat: SEED_PRODUCTION_CHART.wheatReceived[i],
         flour: SEED_PRODUCTION_CHART.flourProduced[i]
       }));
 
-  // ── Donut data ───────────────────────────────────────────────────────────
-  const liveSegments: DonutSeg[] = useMemo(() => {
+  // ── Donut segments for the selected period ────────────────────────────────
+  const donut = useMemo(() => {
     const byName = new Map<string, number>();
     for (const sh of details) {
       const t = new Date(sh.shiftDate ?? sh.startedAt).getTime();
-      if (t < weekAgoMs) continue;
+      if (!Number.isFinite(t) || dayKey(new Date(t)) !== periodKey) continue;
       for (const o of sh.outputs ?? []) {
-        const name = o.product?.name?.trim() || 'Unnamed product';
+        const name = o.product?.name?.trim() || 'Other';
         byName.set(name, (byName.get(name) ?? 0) + safeNum(o.quintals));
       }
     }
     const total = [...byName.values()].reduce((s, v) => s + v, 0);
-    return [...byName.entries()]
-      .map(([name, value], i) => ({
-        name,
-        value,
-        pct: total > 0 ? (value / total) * 100 : 0,
-        color: DONUT_COLORS[i % DONUT_COLORS.length]
-      }))
+    const segs: DonutSeg[] = [...byName.entries()]
+      .map(([name, value], i) => ({ name, value, color: colorForProduct(name, i) }))
       .sort((a, b) => b.value - a.value);
+    return { segs, total };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [details]);
-  const donutDemo = liveSegments.length === 0;
-  const donutSegments: DonutSeg[] = donutDemo ? SEED_PRODUCT_OUTPUT : liveSegments;
-  const donutTotal = donutDemo ? SEED_TOTAL_FLOUR : donutSegments.reduce((s, x) => s + x.value, 0);
+  }, [details, periodKey]);
+  const donutDemo = donut.segs.length === 0;
+  const donutSegments: DonutSeg[] = donutDemo
+    ? SEED_PRODUCT_OUTPUT.map((s) => ({ name: s.name, value: s.value, color: s.color }))
+    : donut.segs;
+  const donutTotal = donutDemo ? SEED_TOTAL_FLOUR : donut.total;
 
-  // ── Stock levels ─────────────────────────────────────────────────────────
-  const liveStock: StockRow[] = useMemo(() => {
-    if (!k) return [];
-    const rows: StockRow[] = [
-      {
-        label: 'Dry Storage',
-        balance: safeNum(k.dryPool.balanceQ),
-        capacity: safeNum(k.dryPool.capacityQ),
-        color: '#7C3AED',
-        tile: 'bg-violet-100 text-violet-600'
+  // ── Revenue trend (12 months from sales invoices) ─────────────────────────
+  const revenue = useMemo(() => {
+    const months = lastNMonths(12);
+    const sums = new Map(months.map((m) => [m.key, 0]));
+    let live = false;
+    if (salesQ.isSuccess && Array.isArray(salesQ.data)) {
+      for (const inv of salesQ.data) {
+        const t = new Date(inv.invoicedAt ?? inv.createdAt).getTime();
+        if (!Number.isFinite(t)) continue;
+        const d = new Date(t);
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        if (sums.has(key)) {
+          sums.set(key, (sums.get(key) ?? 0) + safeNum(inv.amountBirr));
+          live = true;
+        }
       }
-    ];
-    const tones: Array<[string, string]> = [
-      ['#3B82F6', 'bg-blue-100 text-blue-600'],
-      ['#10B981', 'bg-teal-100 text-teal-600'],
-      ['#F59E0B', 'bg-amber-100 text-amber-600']
-    ];
-    (k.tanks ?? []).forEach((t, i) => {
-      const [color, tile] = tones[i % tones.length];
-      rows.push({
-        label: `${tankShort(t.code)} (Wet)`,
-        balance: safeNum(t.levelQ),
-        capacity: safeNum(t.capacityQ),
-        color,
-        tile
-      });
-    });
-    return rows;
-  }, [k]);
-  const stockDemo = liveStock.length === 0;
-  const stockRows: StockRow[] = stockDemo ? SEED_STOCK_LEVELS : liveStock;
+    }
+    if (!live) {
+      months.forEach((m, i) => sums.set(m.key, SEED_MONTHLY_REVENUE[i % SEED_MONTHLY_REVENUE.length]));
+    }
+    return {
+      data: months.map((m) => ({ label: m.label, revenue: Math.round(sums.get(m.key) ?? 0) })),
+      live
+    };
+  }, [salesQ.isSuccess, salesQ.data]);
 
-  // ── Procurement rows ─────────────────────────────────────────────────────
+  // ── Procurement rows ──────────────────────────────────────────────────────
   const INTAKE_STATUS: Record<string, 'Received' | 'Pending'> = {
     ACCEPTED: 'Received',
     PENDING_LAB: 'Pending',
@@ -1410,7 +1272,7 @@ export function Dashboard() {
     () =>
       [...intakes]
         .sort((a, b) => new Date(b.deliveryDate).getTime() - new Date(a.deliveryDate).getTime())
-        .slice(0, 5)
+        .slice(0, 6)
         .map((i) => ({
           date: fmtDate(i.deliveryDate),
           supplier: i.supplier?.name ?? '—',
@@ -1424,75 +1286,64 @@ export function Dashboard() {
   const procDemo = liveProc.length === 0;
   const procRows: ProcRow[] = procDemo ? SEED_PROCUREMENT : liveProc;
 
-  // ── Activities ───────────────────────────────────────────────────────────
-  const SEED_TILE: Record<string, { icon: React.ReactNode; tile: string; to: string }> = {
-    truck: { icon: <Truck size={18} />, tile: 'bg-emerald-50 text-emerald-600', to: '/intake' },
-    check: { icon: <CheckCircle2 size={18} />, tile: 'bg-emerald-50 text-emerald-600', to: '/qc' },
-    factory: { icon: <Factory size={18} />, tile: 'bg-violet-50 text-violet-600', to: '/batches' },
-    card: { icon: <CreditCard size={18} />, tile: 'bg-blue-50 text-blue-600', to: '/finance' },
-    tank: { icon: <Container size={18} />, tile: 'bg-amber-50 text-amber-600', to: '/storage' }
-  };
-  const liveActivities: ActivityItem[] = useMemo(() => {
-    const items: Array<ActivityItem & { ts: number }> = [];
-    const sortedIntakes = [...intakes].sort(
-      (a, b) => new Date(b.deliveryDate).getTime() - new Date(a.deliveryDate).getTime()
-    );
-    for (const i of sortedIntakes.slice(0, 2)) {
-      const ts = new Date(i.deliveryDate).getTime();
-      if (!Number.isFinite(ts)) continue;
-      items.push({
-        ts,
-        title: 'New wheat delivery received',
-        sub: `Supplier: ${i.supplier?.name ?? 'Unknown'}`,
-        time: relTime(ts),
-        icon: <Truck size={18} />,
-        tile: 'bg-emerald-50 text-emerald-600',
-        to: '/intake'
-      });
-    }
-    const sortedBatches = [...batches].sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
-    for (const b of sortedBatches.slice(0, 2)) {
-      const ts = new Date(b.createdAt).getTime();
-      if (!Number.isFinite(ts)) continue;
-      items.push({
-        ts,
-        title: 'Production batch completed',
-        sub: `Batch: ${b.batchNo}`,
-        time: relTime(ts),
-        icon: <Factory size={18} />,
-        tile: 'bg-violet-50 text-violet-600',
-        to: `/batches/${b.id}`
-      });
-    }
-    const sortedLab = [...labChecks].sort(
-      (a, b) => new Date(b.sampleTime).getTime() - new Date(a.sampleTime).getTime()
-    );
-    for (const c of sortedLab.slice(0, 1)) {
-      const ts = new Date(c.sampleTime).getTime();
-      if (!Number.isFinite(ts)) continue;
-      const passed = (c.outOfRange ?? []).length === 0;
-      items.push({
-        ts,
-        title: passed ? 'Quality test passed' : 'Quality test flagged',
-        sub: `Sample: ${c.id.slice(0, 8)}`,
-        time: relTime(ts),
-        icon: <CheckCircle2 size={18} />,
-        tile: passed ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600',
-        to: '/qc'
-      });
-    }
-    return items.sort((a, b) => b.ts - a.ts).slice(0, 5);
+  // ── Payables rows ─────────────────────────────────────────────────────────
+  const payableRows: PayableRow[] = useMemo(() => {
+    if (!apInvoicesQ.isSuccess) return [];
+    return [...apInvoices]
+      .filter((inv) => inv.status !== 'PAID')
+      .map((inv) => {
+        const paid = (inv.payments ?? []).reduce((a, p) => a + safeNum(p.amountBirr), 0);
+        const balance = Math.max(0, safeNum(inv.amountBirr) - paid);
+        const due = inv.dueDate ? new Date(inv.dueDate).getTime() : NaN;
+        const daysOver = Number.isFinite(due) ? Math.floor((nowMs - due) / 86400000) : -999;
+        const status: PayableRow['status'] =
+          daysOver > 0 ? 'Overdue' : daysOver > -7 ? 'Due Soon' : 'Current';
+        return {
+          vendor: inv.intake?.supplier?.name ?? '—',
+          invoiceNo: inv.invoiceNo,
+          amount: balance,
+          dueDate: inv.dueDate ? fmtDate(inv.dueDate) : '—',
+          status
+        };
+      })
+      .sort((a, b) => b.amount - a.amount)
+      .slice(0, 6);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [intakes, batches, labChecks]);
-  const actDemo = liveActivities.length === 0;
-  const activities: ActivityItem[] = actDemo
-    ? SEED_ACTIVITIES.map((s) => ({ ...SEED_TILE[s.icon], title: s.title, sub: s.sub, time: s.time }))
-    : liveActivities;
+  }, [apInvoicesQ.isSuccess, apInvoices, nowMs]);
+  const payablesDemo = apInvoicesQ.isSuccess && payableRows.length === 0;
 
-  // ── Performance tiles ────────────────────────────────────────────────────
-  // ── Shift & Milling Operations monitor data ─────────────────────────────────
+  // ── Quality alerts ────────────────────────────────────────────────────────
+  const alerts: AlertItem[] = useMemo(() => {
+    const items: AlertItem[] = [];
+    const flagged = [...labChecks]
+      .filter((c) => (c.outOfRange ?? []).length > 0)
+      .sort((a, b) => new Date(b.sampleTime).getTime() - new Date(a.sampleTime).getTime())
+      .slice(0, 3);
+    for (const c of flagged) {
+      const ts = new Date(c.sampleTime).getTime();
+      items.push({
+        title: 'Lab sample out of range',
+        sub: (c.outOfRange ?? []).join(', '),
+        time: Number.isFinite(ts) ? relTime(ts) : '—',
+        severity: 'critical'
+      });
+    }
+    const open = [...capas]
+      .filter((c) => c.status !== 'CLOSED')
+      .slice(0, Math.max(0, 4 - items.length));
+    for (const c of open) {
+      items.push({
+        title: 'Open CAPA requires action',
+        sub: `CAPA ${c.capaNo} • ${c.issueDescription.slice(0, 40)}`,
+        time: 'Open',
+        severity: 'warning'
+      });
+    }
+    return items.slice(0, 4);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [labChecks, capas]);
+
+  // ── Shift monitor ─────────────────────────────────────────────────────────
   const shiftMonitor: ShiftMonitorData = useMemo(() => {
     const openBatch = batchesQ.isSuccess ? batches.find((b) => b.status === 'OPEN') : null;
     const todayShifts = detailsReady
@@ -1518,102 +1369,105 @@ export function Dashboard() {
       const fw = safeNum((openBatch as { foreignWheatQ?: unknown }).foreignWheatQ);
       const tot = hw + sw + fw;
       if (tot > 0) {
-        blendParts.push(`${Math.round((hw / tot) * 100)}% Hard`, `${Math.round((sw / tot) * 100)}% Soft`, `${Math.round((fw / tot) * 100)}% Foreign`);
+        blendParts.push(
+          `${Math.round((hw / tot) * 100)}% Hard`,
+          `${Math.round((sw / tot) * 100)}% Soft`,
+          `${Math.round((fw / tot) * 100)}% Foreign`
+        );
       }
     }
     return {
-      shiftName: latestShift ? `Shift ${latestShift.shift} (${latestShift.shift === 'MORNING' ? 'Morning 06:00–14:00' : latestShift.shift === 'NIGHT' ? 'Night 22:00–06:00' : String(latestShift.shift)})` : 'Shift 1 (Morning 06:00–14:00)',
+      shiftName: latestShift ? `Shift ${latestShift.shift}` : 'Shift 1 (Morning)',
       operator: latestShift?.operators?.[0] ?? 'Abebe K.',
       nextLabCheck: 'In 24 Mins',
-      nextLabSub: '10:00 AM Sample Passed',
+      nextLabSub: '2-hour inspection cycle',
       uptime: uptimePct !== null ? `${uptimePct.toFixed(1)}% Uptime` : '95.8% Uptime',
       uptimeSub:
-        totalDownMin > 0 ? `${Math.round(totalDownMin)}m downtime logged today` : '18m Power Fluctuation logged',
+        totalDownMin > 0 ? `${Math.round(totalDownMin)}m downtime logged today` : 'No downtime logged',
       blend: blendParts.length > 0 ? blendParts.join(' • ') : '50% Hard • 30% Soft • 20% Foreign',
-      blendSub: openBatch ? `Batch ${openBatch.batchNo}` : 'Batch PB-2025-0087',
+      blendSub: openBatch ? `Batch ${openBatch.batchNo}` : 'No open batch',
       demo: false
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [batchesQ.isSuccess, batches, detailsReady, details, todayKey, nowMs]);
 
-  // ── Quality trend points ─────────────────────────────────────────────────
-  const liveQuality: QualityPoint[] = useMemo(() => {
-    const days = lastNDays(7);
-    return days.map((d) => {
-      const checks = labChecks.filter((c) => dayKey(new Date(c.sampleTime)) === d.key);
-      const avg = (get: (c: LabCheck) => number | null) => {
-        const vals = checks.map(get).filter((v): v is number => v !== null && Number.isFinite(v));
-        return vals.length > 0 ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
-      };
-      return {
-        label: d.label,
-        gluten: avg((c) => (c.wetGlutenPct !== null ? safeNum(c.wetGlutenPct) : null)),
-        moisture: avg((c) => (c.flourMoisturePct !== null ? safeNum(c.flourMoisturePct) : null)),
-        impurity: avg((c) => (c.impurityPct !== null ? safeNum(c.impurityPct) : null))
-      };
-    });
-  }, [labChecks]);
-  const hasLiveQuality = liveQuality.some(
-    (p) => p.gluten !== null || p.moisture !== null || p.impurity !== null
-  );
-  const qualityData: QualityPoint[] = hasLiveQuality ? liveQuality : SEED_QUALITY_TREND;
-
   const firstName = displayFirstName(user);
+
+  const handleExport = () => {
+    const rows: string[][] = [
+      ['Oyaya ERP — Dashboard Summary', new Date().toLocaleString()],
+      [],
+      ['KPI', 'Value'],
+      ["Wheat Intake", `${(intakeCur ?? 0).toLocaleString('en-US')} Qt`],
+      ["Mill Output", `${(outputCur ?? 0).toLocaleString('en-US')} Qt`],
+      ["Net Extraction Rate", `${(extractionRate ?? 0).toFixed(1)}%`],
+      ["Lab Quality Pass Rate", `${(qcPass ?? 0).toFixed(1)}%`],
+      [],
+      ['Recent Purchase Orders'],
+      ['S/N', 'Supplier', 'Date', 'Wheat Type', 'Qty (Qt)', 'Status'],
+      ...procRows.map((r, i) => [
+        String(i + 1).padStart(2, '0'),
+        r.supplier,
+        r.date,
+        r.wheatType,
+        String(r.qty),
+        r.status
+      ]),
+      [],
+      ['Vendor Payables'],
+      ['S/N', 'Vendor', 'Invoice', 'Amount (ETB)', 'Due Date', 'Status'],
+      ...(payableRows.length > 0 ? payableRows : SEED_PAYABLES).map((r, i) => [
+        String(i + 1).padStart(2, '0'),
+        r.vendor,
+        r.invoiceNo,
+        String(r.amount),
+        r.dueDate,
+        r.status
+      ])
+    ];
+    exportCsv(`oyaya-dashboard-${dayKey(new Date())}.csv`, rows);
+  };
 
   if (kpisQ.isLoading && intakesQ.isLoading && shiftsQ.isLoading) {
     return <SkeletonDashboard />;
   }
 
   return (
-    <div className="space-y-5">
-      {/* ── Row 1: hero + status + weather ── */}
-      <div className="grid grid-cols-12 gap-4">
-        <WelcomeBanner firstName={firstName} />
-        <ProductionStatusCard activeBatches={activeBatches} demo={activeBatches === null} />
-        <WeatherCard />
-      </div>
+    <div className="space-y-4">
+      <PageHeader
+        firstName={firstName}
+        period={period}
+        setPeriod={setPeriod}
+        procFilter={procFilter}
+        setProcFilter={setProcFilter}
+        onExport={handleExport}
+      />
 
-      {/* ── Row 2: 5 distinct executive KPI pillars ── */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      {/* 4 KPI cards */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {kpiSpecs.map((s) => (
           <KpiCard key={s.label} spec={s} />
         ))}
       </div>
 
-      {/* ── Row 3: production chart + donut + storage levels ── */}
+      {/* Donut + weekly bars + revenue */}
       <div className="grid grid-cols-12 gap-4">
-        <ProductionOverview data={chartData} demo={!hasProdData} />
-        <ProductOutputDonut segments={donutSegments} total={donutTotal} demo={donutDemo} />
-        <StockLevels rows={stockRows} demo={stockDemo} />
+        <OutputDonut segments={donutSegments} total={donutTotal} demo={donutDemo} periodLabel={periodLabel} />
+        <WeeklyPerformance data={chartData} demo={!hasPerfData} />
+        <RevenueTrend data={revenue.data} demo={!revenue.live} />
       </div>
 
-      {/* ── Row 4: quality trend + procurement + quick access/catalog ── */}
+      {/* Tables */}
       <div className="grid grid-cols-12 gap-4">
-        <QualityTrendChart data={qualityData} demo={!hasLiveQuality} />
-        <RecentProcurement rows={procRows} demo={procDemo} />
-        <QuickAccessCatalog />
+        <PurchaseOrdersTable rows={procRows} demo={procDemo} filter={procFilter} />
+        <PayablesTable rows={payableRows} demo={payablesDemo} />
       </div>
 
-      {/* ── Row 5: shift monitor + recent activities ── */}
+      {/* Alerts + shift */}
       <div className="grid grid-cols-12 gap-4">
-        <ShiftMonitor data={shiftMonitor} />
-        <RecentActivities items={activities} demo={actDemo} />
+        <QualityAlerts items={alerts} />
+        <ShiftMonitorCard data={shiftMonitor} />
       </div>
     </div>
   );
-}
-
-function relTime(ts: number): string {
-  const diff = Date.now() - ts;
-  if (diff < 60000) return 'Just now';
-  if (diff < 3600000) {
-    const m = Math.max(1, Math.floor(diff / 60000));
-    return `${m} min ago`;
-  }
-  if (diff < 86400000) {
-    const d = new Date(ts);
-    return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-  }
-  const days = Math.floor(diff / 86400000);
-  return days === 1 ? 'Yesterday' : `${days} days ago`;
 }

@@ -443,8 +443,8 @@ function Logo() {
         </svg>
       </div>
       <div className="min-w-0">
-        <p className="truncate text-sm font-bold leading-tight text-slate-900 dark:text-white">Oyaya ERP</p>
-        <p className="truncate text-[11px] text-slate-400 dark:text-slate-500">Flour Mill</p>
+        <p className="truncate text-sm font-bold leading-tight text-gray-900 dark:text-white">Oyaya ERP</p>
+        <p className="truncate text-[11px] text-gray-400 dark:text-slate-500">Flour Mill</p>
       </div>
     </div>
   );
@@ -491,10 +491,10 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           to="/"
           end
           onClick={onNavigate}
-          className={`touch mb-2 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors ${
+          className={`touch mb-2 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors ${
             dashActive
-              ? 'bg-violet-100 text-violet-800 dark:bg-white/10 dark:text-violet-200'
-              : 'text-slate-600 hover:bg-violet-50 hover:text-violet-800 dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-white'
+              ? 'bg-gray-100 text-gray-900 dark:bg-slate-700 dark:text-white'
+              : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-slate-300 dark:hover:bg-slate-700/50 dark:hover:text-white'
           }`}
         >
           <span className="shrink-0">{svgIcon('dashboard', 'h-5 w-5')}</span>
@@ -509,10 +509,10 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                 type="button"
                 onClick={() => setOpenGroup(isOpen ? null : group.title)}
                 aria-expanded={isOpen}
-                className="touch flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left transition-colors hover:bg-violet-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:hover:bg-white/5"
+                className="touch flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:hover:bg-slate-700/50"
               >
-                <span className="shrink-0 text-violet-500 dark:text-violet-400">{svgIcon(group.icon, 'h-[18px] w-[18px]')}</span>
-                <span className="min-w-0 flex-1 truncate text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                <span className="shrink-0 text-gray-500 dark:text-slate-400">{svgIcon(group.icon, 'h-[18px] w-[18px]')}</span>
+                <span className="min-w-0 flex-1 truncate text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">
                   {group.title}
                 </span>
                 <svg
@@ -535,14 +535,14 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                         end={item.to === '/'}
                         onClick={onNavigate}
                         className={({ isActive }) =>
-                          `touch flex items-center gap-2.5 rounded-xl py-1.5 pl-10 pr-3 text-[13px] transition-colors duration-150 ${
+                          `touch flex items-center gap-2.5 rounded-lg py-1.5 pl-10 pr-3 text-[13px] transition-colors duration-150 ${
                             isActive
-                              ? 'bg-violet-100 font-semibold text-violet-800 dark:bg-white/10 dark:text-violet-200'
-                              : 'text-slate-500 hover:bg-violet-50 hover:text-violet-700 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white'
+                              ? 'bg-gray-100 font-semibold text-gray-900 dark:bg-slate-700 dark:text-white'
+                              : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900 dark:text-slate-400 dark:hover:bg-slate-700/50 dark:hover:text-white'
                           }`
                         }
                       >
-                        <span className="text-[10px] text-slate-300 dark:text-slate-600" aria-hidden="true">›</span>
+                        <span className="text-[10px] text-gray-300 dark:text-slate-600" aria-hidden="true">›</span>
                         <span className="truncate">{item.label}</span>
                       </NavLink>
                     </li>
@@ -555,21 +555,21 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
         {/* Bottom standalone items */}
         {visibleBottom.length > 0 ? (
-          <div className="mt-3 border-t border-violet-100 pt-3 dark:border-white/10">
+          <div className="mt-3 border-t border-gray-200 pt-3 dark:border-slate-700">
             {visibleBottom.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 onClick={onNavigate}
                 className={({ isActive }) =>
-                  `touch mb-0.5 flex items-center gap-3 rounded-xl px-3 py-2 text-[13px] font-medium transition-colors ${
+                  `touch mb-0.5 flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium transition-colors ${
                     isActive
-                      ? 'bg-violet-100 text-violet-800 dark:bg-white/10 dark:text-violet-200'
-                      : 'text-slate-600 hover:bg-violet-50 hover:text-violet-800 dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-white'
+                      ? 'bg-gray-100 text-gray-900 dark:bg-slate-700 dark:text-white'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-slate-300 dark:hover:bg-slate-700/50 dark:hover:text-white'
                   }`
                 }
               >
-                <span className="shrink-0 text-slate-400 dark:text-slate-500">{svgIcon(item.icon, 'h-[18px] w-[18px]')}</span>
+                <span className="shrink-0 text-gray-400 dark:text-slate-500">{svgIcon(item.icon, 'h-[18px] w-[18px]')}</span>
                 <span className="truncate">{item.label}</span>
               </NavLink>
             ))}
@@ -578,14 +578,14 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       </nav>
 
       {/* Help / Settings / Logout + user profile (reference bottom section) */}
-      <div className="border-t border-violet-100 px-3 py-3 dark:border-white/10">
+      <div className="border-t border-gray-200 px-3 py-3 dark:border-slate-700">
         {visibleHelp ? (
           <NavLink
             to="/support"
             onClick={onNavigate}
-            className="touch mb-0.5 flex items-center gap-3 rounded-xl px-3 py-2 text-[13px] font-medium text-slate-600 transition-colors hover:bg-violet-50 hover:text-violet-800 dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-white"
+            className="touch mb-0.5 flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900 dark:text-slate-300 dark:hover:bg-slate-700/50 dark:hover:text-white"
           >
-            <span className="shrink-0 text-slate-400 dark:text-slate-500">{svgIcon('support', 'h-[18px] w-[18px]')}</span>
+            <span className="shrink-0 text-gray-400 dark:text-slate-500">{svgIcon('support', 'h-[18px] w-[18px]')}</span>
             <span className="truncate">Help Center</span>
           </NavLink>
         ) : null}
@@ -593,9 +593,9 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           <NavLink
             to="/settings"
             onClick={onNavigate}
-            className="touch mb-0.5 flex items-center gap-3 rounded-xl px-3 py-2 text-[13px] font-medium text-slate-600 transition-colors hover:bg-violet-50 hover:text-violet-800 dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-white"
+            className="touch mb-0.5 flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900 dark:text-slate-300 dark:hover:bg-slate-700/50 dark:hover:text-white"
           >
-            <span className="shrink-0 text-slate-400 dark:text-slate-500">{svgIcon('settings', 'h-[18px] w-[18px]')}</span>
+            <span className="shrink-0 text-gray-400 dark:text-slate-500">{svgIcon('settings', 'h-[18px] w-[18px]')}</span>
             <span className="truncate">Settings</span>
           </NavLink>
         ) : null}
@@ -605,9 +605,9 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
             handleSidebarLogout();
             onNavigate?.();
           }}
-          className="touch flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-[13px] font-medium text-slate-600 transition-colors hover:bg-violet-50 hover:text-violet-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-white"
+          className="touch flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-[13px] font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:text-slate-300 dark:hover:bg-slate-700/50 dark:hover:text-white"
         >
-          <span className="shrink-0 text-slate-400 dark:text-slate-500">
+          <span className="shrink-0 text-gray-400 dark:text-slate-500">
             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-[18px] w-[18px]" aria-hidden="true">
               <path d="M8 3.5H5.5A1.5 1.5 0 004 5v10a1.5 1.5 0 001.5 1.5H8" strokeLinecap="round" />
               <path d="M13 6.5l3 3.5-3 3.5M16 10H8" strokeLinecap="round" strokeLinejoin="round" />
@@ -617,15 +617,18 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
         </button>
 
         {/* User profile card */}
-        <div className="mt-3 flex items-center gap-3 rounded-2xl bg-violet-50 p-3 dark:bg-white/5">
+        <div className="mt-3 flex items-center gap-3 rounded-xl bg-gray-50 p-3 dark:bg-slate-700/50">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-violet-600 text-sm font-bold text-white">
             {profileInitial}
           </div>
           <div className="min-w-0">
-            <p className="truncate text-sm font-semibold leading-tight text-slate-900 dark:text-white">{profileName}</p>
-            <p className="truncate text-xs leading-tight text-slate-500 dark:text-slate-400">{profileRole}</p>
+            <p className="truncate text-sm font-semibold leading-tight text-gray-900 dark:text-white">{profileName}</p>
+            <p className="truncate text-xs leading-tight text-gray-500 dark:text-slate-400">{profileRole}</p>
           </div>
         </div>
+        <p className="mt-3 px-1 text-center text-[11px] leading-tight text-gray-400 dark:text-slate-500">
+          @2025 Oyaya Flour Production Company PLC
+        </p>
       </div>
     </div>
   );
@@ -661,9 +664,9 @@ export function Layout() {
   const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
 
   return (
-    <div className="flex min-h-screen bg-[#F5F3FF] text-slate-900 dark:bg-[#1E1B2E] dark:text-slate-100">
+    <div className="flex min-h-screen bg-[#F5F6FA] text-gray-900 dark:bg-slate-900 dark:text-slate-100">
       {/* Desktop sidebar */}
-      <aside className="no-print sticky top-0 hidden h-screen w-[248px] shrink-0 flex-col border-r border-violet-100/70 bg-white dark:border-white/5 dark:bg-[#1E1B2E] md:flex">
+      <aside className="no-print sticky top-0 hidden h-screen w-[248px] shrink-0 flex-col border-r border-gray-200 bg-white dark:border-slate-700 dark:bg-slate-800 md:flex">
         <Logo />
         <SidebarContent />
       </aside>
@@ -672,12 +675,12 @@ export function Layout() {
       {menuOpen ? (
         <div className="no-print fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setMenuOpen(false)} />
-          <aside className="absolute inset-y-0 left-0 flex w-72 flex-col bg-white dark:bg-[#1E1B2E]">
+          <aside className="absolute inset-y-0 left-0 flex w-72 flex-col bg-white dark:bg-slate-800">
             <div className="flex items-center justify-between pr-4">
               <Logo />
               <button
                 onClick={() => setMenuOpen(false)}
-                className="touch rounded-lg px-3 py-2 text-sm font-semibold text-slate-500 hover:bg-violet-50 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-white"
+                className="touch rounded-lg px-3 py-2 text-sm font-semibold text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-white"
                 aria-label="Close menu"
               >
                 ✕
@@ -690,10 +693,10 @@ export function Layout() {
 
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Topbar */}
-        <header className="no-print sticky top-0 z-30 flex items-center gap-3 border-b border-violet-100/70 bg-[#FAF9FF]/90 px-4 py-3 backdrop-blur dark:border-white/5 dark:bg-[#1E1B2E]/90 md:px-6">
+        <header className="no-print sticky top-0 z-30 flex items-center gap-3 border-b border-gray-200 bg-white/95 px-4 py-3 backdrop-blur dark:border-slate-700 dark:bg-slate-800/95 md:px-6">
           <button
             onClick={() => setMenuOpen(true)}
-            className="touch rounded-xl p-2.5 text-slate-600 transition-colors hover:bg-violet-100 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:text-slate-300 dark:hover:bg-white/10 md:hidden"
+            className="touch rounded-lg p-2.5 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:text-slate-300 dark:hover:bg-slate-700 md:hidden"
             aria-label="Open menu"
           >
             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5" aria-hidden="true">
@@ -712,7 +715,7 @@ export function Layout() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search anything"
-                className="w-full rounded-full border border-violet-100 bg-[#F5F3FF] py-2.5 pl-11 pr-4 text-sm text-slate-900 outline-none transition-shadow placeholder:text-slate-400 focus-visible:ring-2 focus-visible:ring-violet-500/50 dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500"
+                className="w-full rounded-full border border-transparent bg-gray-100 py-2.5 pl-11 pr-4 text-sm text-gray-900 outline-none transition-shadow placeholder:text-gray-400 focus-visible:ring-2 focus-visible:ring-violet-500/50 dark:bg-slate-700 dark:text-slate-100 dark:placeholder:text-slate-500"
                 aria-label="Search"
               />
             </div>
@@ -722,7 +725,7 @@ export function Layout() {
             {/* Theme toggle */}
             <button
               onClick={toggleTheme}
-              className="touch rounded-xl p-2.5 text-slate-500 transition-colors hover:bg-violet-100 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-amber-400"
+              className="touch rounded-lg p-2.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-amber-400"
               aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
             >
               {theme === 'dark' ? (
@@ -741,7 +744,7 @@ export function Layout() {
             <div className="relative">
               <button
                 onClick={() => setNotifOpen((v) => !v)}
-                className="touch relative rounded-xl p-2.5 text-slate-500 transition-colors hover:bg-violet-100 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:text-slate-300 dark:hover:bg-white/10"
+                className="touch relative rounded-lg p-2.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:text-slate-300 dark:hover:bg-slate-700"
                 aria-label="Notifications"
                 aria-expanded={notifOpen}
                 aria-haspopup="true"
@@ -763,21 +766,21 @@ export function Layout() {
                     tabIndex={-1}
                   />
                   <div
-                    className="absolute right-0 z-50 mt-2 w-80 rounded-2xl border border-violet-100 bg-white p-2 shadow-[0_8px_30px_-6px_rgba(124,58,237,0.15)] dark:border-white/10 dark:bg-[#2A2640]"
+                    className="absolute right-0 z-50 mt-2 w-80 rounded-xl border border-gray-200 bg-white p-2 shadow-lg dark:border-slate-600 dark:bg-slate-800"
                     role="menu"
                     aria-label="Notifications"
                   >
-                    <p className="px-3 pb-1 pt-2 text-sm font-bold text-slate-800 dark:text-slate-100">Notifications</p>
+                    <p className="px-3 pb-1 pt-2 text-sm font-bold text-gray-800 dark:text-slate-100">Notifications</p>
                     {[
                       { dot: 'bg-amber-500', title: 'QC sample flagged', sub: 'Moisture above threshold — review required' },
                       { dot: 'bg-rose-500', title: 'CAPA overdue', sub: 'Corrective action past due date' },
                       { dot: 'bg-violet-500', title: 'Duket yield alert', sub: 'Yield below 78% on latest shift' }
                     ].map((n) => (
-                      <div key={n.title} className="flex items-start gap-3 rounded-xl px-3 py-2.5 hover:bg-violet-50 dark:hover:bg-white/5">
+                      <div key={n.title} className="flex items-start gap-3 rounded-lg px-3 py-2.5 hover:bg-gray-50 dark:hover:bg-slate-700/50">
                         <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${n.dot}`} />
                         <div className="min-w-0">
-                          <p className="text-[13px] font-semibold text-slate-800 dark:text-slate-100">{n.title}</p>
-                          <p className="truncate text-xs text-slate-500 dark:text-slate-400">{n.sub}</p>
+                          <p className="text-[13px] font-semibold text-gray-800 dark:text-slate-100">{n.title}</p>
+                          <p className="truncate text-xs text-gray-500 dark:text-slate-400">{n.sub}</p>
                         </div>
                       </div>
                     ))}
@@ -788,7 +791,7 @@ export function Layout() {
 
             {/* App grid */}
             <button
-              className="touch rounded-xl p-2.5 text-slate-500 transition-colors hover:bg-violet-100 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:text-slate-300 dark:hover:bg-white/10"
+              className="touch rounded-lg p-2.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:text-slate-300 dark:hover:bg-slate-700"
               aria-label="All modules"
             >
               <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5" aria-hidden="true">
@@ -799,7 +802,7 @@ export function Layout() {
               </svg>
             </button>
 
-            <div className="hidden h-8 w-px bg-violet-100 dark:bg-white/10 sm:block" aria-hidden="true" />
+            <div className="hidden h-8 w-px bg-gray-200 dark:bg-slate-700 sm:block" aria-hidden="true" />
 
             {/* Date / time */}
             <div className="hidden items-center gap-2 lg:flex" aria-label="Current date and time">
@@ -808,8 +811,8 @@ export function Layout() {
                 <path d="M3 8.5h14M7 3v3M13 3v3" strokeLinecap="round" />
               </svg>
               <div className="text-left">
-                <p className="text-sm font-semibold leading-tight text-slate-900 dark:text-white">{dateStr}</p>
-                <p className="tnum text-xs leading-tight text-slate-400 dark:text-slate-500">{timeStr}</p>
+                <p className="text-sm font-semibold leading-tight text-gray-900 dark:text-white">{dateStr}</p>
+                <p className="tnum text-xs leading-tight text-gray-400 dark:text-slate-500">{timeStr}</p>
               </div>
             </div>
 
@@ -817,7 +820,7 @@ export function Layout() {
             <div className="relative">
               <button
                 onClick={() => setUserMenuOpen((v) => !v)}
-                className="touch flex items-center gap-2 rounded-lg p-1 transition-colors hover:bg-violet-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:hover:bg-white/10"
+                className="touch flex items-center gap-2 rounded-lg p-1 transition-colors hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:hover:bg-slate-700"
                 aria-label="Account menu"
                 aria-haspopup="menu"
                 aria-expanded={userMenuOpen}
@@ -826,10 +829,10 @@ export function Layout() {
                   {initial}
                 </div>
                 <div className="hidden text-left md:block">
-                  <p className="max-w-32 truncate text-sm font-semibold leading-tight text-slate-900 dark:text-white">
+                  <p className="max-w-32 truncate text-sm font-semibold leading-tight text-gray-900 dark:text-white">
                     {user?.name ?? user?.email}
                   </p>
-                  <p className="max-w-32 truncate text-xs leading-tight text-slate-400 dark:text-slate-500">{user?.role}</p>
+                  <p className="max-w-32 truncate text-xs leading-tight text-gray-400 dark:text-slate-500">{user?.role}</p>
                 </div>
                 <svg
                   viewBox="0 0 20 20"
@@ -851,14 +854,14 @@ export function Layout() {
                     tabIndex={-1}
                   />
                   <div
-                    className="absolute right-0 z-50 mt-2 w-48 rounded-xl border border-violet-100 bg-white py-1 shadow-lg dark:border-white/10 dark:bg-[#2A2640]"
+                    className="absolute right-0 z-50 mt-2 w-48 rounded-xl border border-gray-200 bg-white py-1 shadow-lg dark:border-slate-600 dark:bg-slate-800"
                     role="menu"
                     aria-label="Account"
                   >
                     <button
                       onClick={handleLogout}
                       role="menuitem"
-                      className="touch flex w-full items-center px-4 py-2 text-left text-sm font-semibold text-slate-900 transition-colors hover:bg-violet-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-violet-500 dark:text-slate-100 dark:hover:bg-white/5"
+                      className="touch flex w-full items-center px-4 py-2 text-left text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-violet-500 dark:text-slate-100 dark:hover:bg-slate-700/50"
                       aria-label="Log out"
                     >
                       Log out
