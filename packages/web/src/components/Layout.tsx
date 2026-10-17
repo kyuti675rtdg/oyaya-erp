@@ -476,48 +476,6 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       .filter((it) => (isSubGroup(it) ? it.items.length > 0 : visible(it as NavItem)))
   })).filter((group) => group.items.length > 0);
 
-  const visibleBottom = BOTTOM_NAV.filter(visible);
-
-  // Favorites (persisted)
-  const [favorites, setFavorites] = useState<string[]>(() => {
-    try {
-      return JSON.parse(localStorage.getItem('oyaya-fav-modules') ?? '[]');
-    } catch {
-      return [];
-    }
-  });
-  const toggleFavorite = (title: string) => {
-    setFavorites((prev) => {
-      const next = prev.includes(title) ? prev.filter((t) => t !== title) : [...prev, title];
-      try {
-        localStorage.setItem('oyaya-fav-modules', JSON.stringify(next));
-      } catch { /* ignore */ }
-      return next;
-    });
-  };
-
-  // Recents (last 4 visited)
-  const [recents, setRecents] = useState<string[]>(() => {
-    try {
-      return JSON.parse(localStorage.getItem('oyaya-recent-modules') ?? '[]');
-    } catch {
-      return [];
-    }
-  });
-  useEffect(() => {
-    const match = visibleGroups.find((g) => leafItems(g).some((i) => itemMatches(i, pathname)));
-    if (match) {
-      setRecents((prev) => {
-        const next = [match.title, ...prev.filter((t) => t !== match.title)].slice(0, 4);
-        try {
-          localStorage.setItem('oyaya-recent-modules', JSON.stringify(next));
-        } catch { /* ignore */ }
-        return next;
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
-
   // Search
   const [query, setQuery] = useState('');
   const q = query.trim().toLowerCase();
@@ -577,7 +535,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
   // ── Design tokens: premium industrial ERP ──
   const sectionLabel =
-    'mb-2 mt-5 px-4 text-[11px] font-semibold uppercase tracking-[0.1em] text-gray-400 dark:text-slate-500';
+    'mb-1.5 mt-4 px-4 text-[11px] font-semibold uppercase tracking-[0.1em] text-gray-400 dark:text-slate-500';
   // Module row: 44px touch target, icon + label + chevron
   const modBase =
     'touch relative flex w-full items-center gap-3 rounded-lg px-3 text-left transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-violet-500';
@@ -621,10 +579,9 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
     );
   };
 
-  const renderGroup = (group: (typeof visibleGroups)[number], showFav = true) => {
+  const renderGroup = (group: (typeof visibleGroups)[number]) => {
     const isOpen = openGroup === group.title || !!q;
     const hasActive = leafItems(group).some((i) => itemMatches(i, pathname));
-    const isFav = favorites.includes(group.title);
     const active = isOpen || hasActive;
     return (
       <div key={group.title} className="mb-1">
@@ -634,29 +591,16 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
             onClick={() => setOpenGroup(isOpen && !q ? null : group.title)}
             aria-expanded={isOpen}
             aria-controls={`nav-group-${group.title}`}
-            className={`${modBase} h-11 flex-1 ${active ? modActive : modIdle}`}
+            className={`${modBase} h-10 flex-1 ${active ? modActive : modIdle}`}
           >
             {hasActive ? activeBar() : null}
-            <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md transition-colors ${hasActive ? 'bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300' : 'bg-gray-100 text-gray-500 group-hover:bg-gray-200 dark:bg-slate-700/60 dark:text-slate-400'}`}>
+            <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors ${hasActive ? 'bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300' : 'bg-gray-100 text-gray-500 group-hover:bg-gray-200 dark:bg-slate-700/60 dark:text-slate-400'}`}>
               {svgIcon(group.icon, 'h-[18px] w-[18px]')}
             </span>
             <span className="min-w-0 flex-1 truncate text-sm">{group.title}</span>
             {chevron(isOpen)}
           </button>
-          {showFav ? (
-            <button
-              type="button"
-              onClick={() => toggleFavorite(group.title)}
-              aria-pressed={isFav}
-              aria-label={isFav ? `Remove ${group.title} from favorites` : `Add ${group.title} to favorites`}
-              className="mr-1 hidden shrink-0 rounded-md p-2 text-gray-300 transition-colors hover:bg-gray-200 hover:text-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 group-hover:block dark:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-amber-400"
-            >
-              <svg viewBox="0 0 20 20" fill={isFav ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth={1.6}
-                className={`h-4 w-4 ${isFav ? '!block text-amber-500' : ''}`} aria-hidden="true">
-                <path d="M10 2.5l2.3 4.9 5.2.7-3.8 3.6.9 5.2-4.6-2.5-4.6 2.5.9-5.2L2.5 8.1l5.2-.7z" strokeLinejoin="round" />
-              </svg>
-            </button>
-          ) : null}
+
         </div>
         {isOpen ? (
           <ul id={`nav-group-${group.title}`} className="mb-1 ml-[26px] mt-1 space-y-px border-l border-gray-200 pl-3 dark:border-slate-700" aria-label={`${group.title} pages`}>
@@ -694,7 +638,6 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
     );
   };
 
-  const favGroups = visibleGroups.filter((g) => favorites.includes(g.title));
   const acctActive = (to: string) => itemMatches({ to } as NavItem, pathname);
 
   return (
@@ -733,41 +676,10 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
             <p className={sectionLabel} role="status" aria-live="polite">
               {filteredGroups.length === 0 ? `No modules match "${query}"` : `${filteredGroups.length} found`}
             </p>
-            {filteredGroups.map((g) => renderGroup(g, false))}
+            {filteredGroups.map((g) => renderGroup(g))}
           </>
         ) : (
           <>
-            {favGroups.length > 0 ? (
-              <><p className={sectionLabel}>Favorites</p>{favGroups.map((g) => renderGroup(g))}</>
-            ) : null}
-
-            {recents.length > 0 ? (
-              <>
-                <p className={sectionLabel}>Recent</p>
-                <ul className="mb-1 space-y-1" aria-label="Recently visited modules">
-                  {recents.map((t) => {
-                    const group = visibleGroups.find((g) => g.title === t);
-                    if (!group) return null;
-                    const leaves = leafItems(group);
-                    if (leaves.length === 0) return null;
-                    const hasActive = leaves.some((i) => itemMatches(i, pathname));
-                    return (
-                      <li key={group.title}>
-                        <NavLink to={leaves[0].to} onClick={onNavigate}
-                          className={`${modBase} h-10 ${hasActive ? modActive : modIdle}`}>
-                          {hasActive ? activeBar() : null}
-                          <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${hasActive ? 'bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300' : 'bg-gray-100 text-gray-500 dark:bg-slate-700/60 dark:text-slate-400'}`}>
-                            {svgIcon(group.icon, 'h-4 w-4')}
-                          </span>
-                          <span className="truncate text-sm">{group.title}</span>
-                        </NavLink>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </>
-            ) : null}
-
             <p className={sectionLabel}>Modules</p>
             {visibleGroups.map((g) => renderGroup(g))}
 
@@ -778,7 +690,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
             ].map((a) => (
               <NavLink key={a.to} to={a.to} onClick={onNavigate}
                 aria-current={acctActive(a.to) ? 'page' : undefined}
-                className={`${modBase} mb-1 h-11 ${acctActive(a.to) ? modActive : modIdle}`}>
+                className={`${modBase} mb-1 h-10 ${acctActive(a.to) ? modActive : modIdle}`}>
                 {acctActive(a.to) ? activeBar() : null}
                 <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md ${acctActive(a.to) ? 'bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300' : 'bg-gray-100 text-gray-500 dark:bg-slate-700/60 dark:text-slate-400'}`}>
                   {svgIcon(a.icon, 'h-[18px] w-[18px]')}
@@ -787,21 +699,6 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
               </NavLink>
             ))}
 
-            {visibleBottom.length > 0 ? (
-              <div className="mt-3 border-t border-gray-200 pt-2 dark:border-slate-700">
-                {visibleBottom.map((item) => {
-                  const active = itemMatches(item, pathname);
-                  return (
-                    <NavLink key={item.to} to={item.to} onClick={onNavigate}
-                      aria-current={active ? 'page' : undefined}
-                      className={`${leafBase} mb-px h-9 text-[13px] ${active ? leafActive : leafIdle}`}>
-                      {active ? activeBar('h-4') : null}
-                      <span className="truncate">{item.label}</span>
-                    </NavLink>
-                  );
-                })}
-              </div>
-            ) : null}
           </>
         )}
       </nav>
