@@ -159,7 +159,7 @@ function CardHeader({
             <h2 className="text-sm font-bold text-slate-800">{title}</h2>
             {demo ? <DemoBadge /> : null}
           </div>
-          {subtitle ? <p className="text-xs text-slate-400">{subtitle}</p> : null}
+          {subtitle ? <p className="text-xs text-slate-500">{subtitle}</p> : null}
         </div>
       </div>
       {action ? <div className="flex items-center gap-2">{action}</div> : null}
@@ -217,12 +217,15 @@ function KpiCard({ spec }: { spec: KpiSpec }) {
         ) : (
           <TrendText pct={spec.trendPct ?? null} />
         )}
-        {spec.sub ? <span className="truncate text-[11px] text-slate-400">{spec.sub}</span> : null}
+        {spec.sub ? <span className="truncate text-[11px] text-slate-500">{spec.sub}</span> : null}
       </div>
     </div>
   );
   return spec.to ? (
-    <Link to={spec.to} className="block h-full">
+    <Link
+      to={spec.to}
+      className="block h-full rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2"
+    >
       {inner}
     </Link>
   ) : (
@@ -302,8 +305,8 @@ function ProductionStatusCard({ activeBatches, demo }: { activeBatches: number |
       <div className="min-w-0">
         <p className="text-sm font-bold text-slate-800">
           Production{' '}
-          <span className={`font-extrabold ${active ? 'text-emerald-600' : 'text-slate-400'}`}>
-            {demo ? 'Active' : active ? 'Active' : 'Idle'}
+          <span className={`font-extrabold ${demo || active ? 'text-emerald-600' : 'text-slate-400'}`}>
+            {demo || active ? 'Active' : 'Idle'}
           </span>
         </p>
         <p className="mt-0.5 truncate text-xs text-slate-500">
@@ -497,7 +500,7 @@ function ProductOutputDonut({
             <p className="text-xl font-extrabold tabular-nums text-slate-900">
               {total.toLocaleString('en-US')} Qt
             </p>
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
               Total Output (Quintals)
             </p>
           </div>
@@ -516,7 +519,7 @@ function ProductOutputDonut({
                 <span className="font-bold tabular-nums text-slate-800">
                   {s.value.toLocaleString('en-US')} Qt
                 </span>{' '}
-                <span className="tabular-nums text-slate-400">{s.pct.toFixed(1)}%</span>
+                <span className="tabular-nums text-slate-500">{s.pct.toFixed(1)}%</span>
               </span>
             </div>
           ))}
@@ -561,7 +564,7 @@ function RecentActivities({ items, demo }: { items: ActivityItem[]; demo: boolea
                 <span className="block truncate text-[13px] font-semibold text-slate-800">{a.title}</span>
                 <span className="block truncate text-xs text-slate-500">{a.sub}</span>
               </span>
-              <span className="shrink-0 pt-0.5 text-[11px] tabular-nums text-slate-400">{a.time}</span>
+              <span className="shrink-0 pt-0.5 text-[11px] tabular-nums text-slate-500">{a.time}</span>
             </Link>
           </li>
         ))}
@@ -596,10 +599,10 @@ function QuickAccessCatalog() {
           <Link
             key={q.label}
             to={q.to}
-            className={`flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-xl p-2.5 text-center transition-all hover:-translate-y-0.5 hover:shadow-md ${q.tone}`}
+            className={`flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-xl p-2.5 text-center transition-all hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 ${q.tone}`}
           >
             {q.icon}
-            <span className="text-[10px] font-semibold leading-tight">{q.label}</span>
+            <span className="text-[11px] font-semibold leading-tight">{q.label}</span>
           </Link>
         ))}
       </div>
@@ -724,7 +727,7 @@ function RecentProcurement({ rows, demo }: { rows: ProcRow[]; demo: boolean }) {
               {['Date', 'Supplier', 'Wheat Type', 'Qty (Qt)', 'Status'].map((h) => (
                 <th
                   key={h}
-                  className="px-2.5 py-2 text-[11px] font-semibold uppercase tracking-wide text-slate-400"
+                  className="px-2.5 py-2 text-[11px] font-semibold uppercase tracking-wide text-slate-500"
                 >
                   {h}
                 </th>
@@ -781,7 +784,14 @@ interface ShiftMonitorData {
 }
 
 function ShiftMonitor({ data }: { data: ShiftMonitorData }) {
-  const rows = [
+  const rows: Array<{
+    icon: React.ReactNode;
+    tile: string;
+    label: string;
+    value: string;
+    sub: string;
+    badge?: { text: string; tone: 'amber' };
+  }> = [
     {
       icon: <Timer size={18} />,
       tile: 'bg-violet-100 text-violet-600',
@@ -833,7 +843,14 @@ function ShiftMonitor({ data }: { data: ShiftMonitorData }) {
               <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${r.tile}`}>
                 {r.icon}
               </span>
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{r.label}</p>
+              <p className="min-w-0 flex-1 truncate text-xs font-semibold uppercase tracking-wide text-slate-500">
+                {r.label}
+              </p>
+              {r.badge ? (
+                <span className="inline-flex shrink-0 items-center rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-bold text-amber-700">
+                  {r.badge.text}
+                </span>
+              ) : null}
             </div>
             <p className="mt-2.5 truncate text-[15px] font-extrabold tabular-nums text-slate-900">
               {r.value}
@@ -882,7 +899,7 @@ const Q_THRESHOLDS: Record<string, { label: string; check: string; pass: (v: num
   gluten: { label: 'Gluten', check: '30–33%', pass: (v) => v >= 30 && v <= 33 },
   moisture: { label: 'Moisture', check: 'Max ≤ 14.0%', pass: (v) => v <= 14.0 },
   impurity: { label: 'Impurity', check: 'Max < 3.0%', pass: (v) => v < 3.0 },
-  hectoliter: { label: 'Hectoliter Wt', check: 'Min ≥ 74', pass: (v) => v >= 74 }
+  hectoliter: { label: 'Hectoliter', check: 'Min ≥ 74', pass: (v) => v >= 74 }
 };
 
 function QualityTooltip({
@@ -914,7 +931,7 @@ function QualityTooltip({
                 {v.toFixed(1)}
                 {unit}
               </span>
-              <span className="text-slate-400">({th.check})</span>
+              <span className="text-slate-500">({th.check})</span>
               <span
                 className={`rounded-full px-1.5 py-px text-[10px] font-bold ${
                   ok ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-600'
@@ -1196,10 +1213,6 @@ export function Dashboard() {
         .reduce((s, sh) => s + shiftFlour(sh), 0)
     : null;
 
-  const wheatMonthQt = detailsReady
-    ? 0 // computed below via batches for extraction denominator
-    : null;
-  void wheatMonthQt;
   const monthWheatQt = batchesQ.isSuccess
     ? batches
         .filter((b) => new Date(b.createdAt).getTime() >= monthStartMs)
@@ -1560,7 +1573,7 @@ export function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen space-y-5 bg-[#F4F6FA] p-6">
+    <div className="space-y-5">
       {/* ── Row 1: hero + status + weather ── */}
       <div className="grid grid-cols-12 gap-4">
         <WelcomeBanner firstName={firstName} />
