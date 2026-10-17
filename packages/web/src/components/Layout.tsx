@@ -158,23 +158,26 @@ const NAV: NavGroup[] = [
     title: 'Dashboard & BI',
     icon: 'dashboard',
     items: [
+
       { to: '/', label: 'Dashboard', icon: 'dashboard' },
-      { to: '/bi/production', label: 'Production', claim: ['production:view'], icon: 'factory' },
-      { to: '/bi/quality', label: 'Quality', claim: ['qc:view'], icon: 'qc' },
       { to: '/bi/procurement', label: 'Procurement', claim: ['procurement:view'], icon: 'truck' },
       { to: '/bi/inventory', label: 'Inventory', claim: ['storage:view'], icon: 'package' },
+      { to: '/bi/production', label: 'Production', claim: ['production:view'], icon: 'factory' },
+      { to: '/bi/quality', label: 'Quality', claim: ['qc:view'], icon: 'qc' },
       { to: '/bi/sales', label: 'Sales', claim: ['sales:view'], icon: 'sales' },
       { to: '/bi/finance', label: 'Finance', claim: ['finance:view'], icon: 'finance' },
-      { to: '/bi/hr', label: 'HR', claim: ['payroll:view'], icon: 'payroll' }
+      { to: '/bi/hr', label: 'HR', claim: ['payroll:view'], icon: 'payroll' },
+      { to: '/bi/report-builder', label: 'Report Builder', claim: ['bi:view'], icon: 'dashboard' }
     ]
   },
   {
     title: 'Procurement',
     icon: 'intake',
     items: [
-      { to: '/intake', label: 'Intake', claim: ['intake:create', 'intake:read'], icon: 'intake' },
+
       { to: '/suppliers', label: 'Suppliers', claim: ['procurement:view'], icon: 'truck' },
       { to: '/purchase-orders', label: 'Purchase Orders', claim: ['procurement:view'], icon: 'finance' },
+      { to: '/intake', label: 'Intake', claim: ['intake:create', 'intake:read'], icon: 'intake' },
       { to: '/incoming-inspection', label: 'Inspection', claim: ['procurement:view'], icon: 'qc' },
       { to: '/accounts-payable', label: 'Vendor Payables', claim: ['procurement:view'], icon: 'finance' },
       { to: '/procurement-reports', label: 'Procurement Reports', claim: ['procurement:view'], icon: 'dashboard' }
@@ -219,9 +222,10 @@ const NAV: NavGroup[] = [
     title: 'Production',
     icon: 'factory',
     items: [
+
       { to: '/production-plans', label: 'Production Plans', claim: ['production:view'], icon: 'dashboard' },
-      { to: '/batches', label: 'Batches', claim: ['batches:read'], icon: 'batches' },
       { to: '/blend-recipes', label: 'Recipes', claim: ['production:view'], icon: 'batches' },
+      { to: '/batches', label: 'Batches', claim: ['batches:read'], icon: 'batches' },
       { to: '/wheat-washing', label: 'Washing', claim: ['production:view'], icon: 'intake' },
       { to: '/milling-process', label: 'Milling', claim: ['production:view'], icon: 'factory' },
       { to: '/shifts', label: 'Shifts', claim: ['shifts:read'], icon: 'shifts' },
@@ -235,10 +239,11 @@ const NAV: NavGroup[] = [
     title: 'Quality',
     icon: 'qc',
     items: [
-      { to: '/qc', label: 'Lab Checks', claim: ['qc:read'], icon: 'qc' },
-      { to: '/quality/standards', label: 'Standards', claim: ['qc:view'], icon: 'settings' },
-      { to: '/quality/flour-tests', label: 'Flour Tests', claim: ['qc:view'], icon: 'qc' },
+
       { to: '/quality/sampling', label: 'Sampling', claim: ['qc:view'], icon: 'shifts' },
+      { to: '/qc', label: 'Lab Checks', claim: ['qc:read'], icon: 'qc' },
+      { to: '/quality/flour-tests', label: 'Flour Tests', claim: ['qc:view'], icon: 'qc' },
+      { to: '/quality/standards', label: 'Standards', claim: ['qc:view'], icon: 'settings' },
       { to: '/quality/approval', label: 'Approval', claim: ['qc:view'], icon: 'intake' },
       { to: '/quality/reports', label: 'Quality Reports', claim: ['qc:view'], icon: 'finance' },
       { title: 'CAPA', items: [
@@ -276,12 +281,13 @@ const NAV: NavGroup[] = [
     title: 'Maintenance',
     icon: 'monitor',
     items: [
+
       { to: '/maintenance/planning', label: 'Maintenance Plans', claim: ['maintenance:view'], icon: 'factory' },
       { to: '/maintenance/pm-checklists', label: 'PM Checklists', claim: ['maintenance:view'], icon: 'shifts' },
-      { to: '/maintenance/breakdowns', label: 'Breakdowns', claim: ['maintenance:view'], icon: 'capa' },
-      { to: '/maintenance/spare-parts', label: 'Spare Parts', claim: ['maintenance:view'], icon: 'package' },
       { to: '/maintenance/work-orders', label: 'Work Orders', claim: ['maintenance:view'], icon: 'intake' },
+      { to: '/maintenance/breakdowns', label: 'Breakdowns', claim: ['maintenance:view'], icon: 'capa' },
       { to: '/maintenance/repair-approval', label: 'Repairs', claim: ['maintenance:view'], icon: 'finance' },
+      { to: '/maintenance/spare-parts', label: 'Spare Parts', claim: ['maintenance:view'], icon: 'package' },
       { to: '/maintenance/reports', label: 'Maint Reports', claim: ['maintenance:view'], icon: 'dashboard' }
     ]
   },
@@ -289,14 +295,15 @@ const NAV: NavGroup[] = [
     title: 'Sales',
     icon: 'sales',
     items: [
-      { to: '/sales', label: 'Sales Orders', claim: ['sales:read'], icon: 'sales' },
+
+      { to: '/sales/agents', label: 'Agents', claim: ['sales:read'], icon: 'shifts' },
       { to: '/sales/agreements', label: 'Agreements', claim: ['sales:read'], icon: 'finance' },
+      { to: '/sales', label: 'Sales Orders', claim: ['sales:read'], icon: 'sales' },
       { to: '/sales/advances', label: 'Advances', claim: ['sales:read'], icon: 'finance' },
+      { to: '/sales/invoices', label: 'Invoices', claim: ['sales:read'], icon: 'finance' },
       { to: '/sales/loading', label: 'Loading', claim: ['sales:read'], icon: 'package' },
       { to: '/sales/consolidation', label: 'Consolidation', claim: ['sales:read'], icon: 'truck' },
       { to: '/sales/trips', label: 'Delivery Trips', claim: ['sales:read'], icon: 'truck' },
-      { to: '/sales/agents', label: 'Agents', claim: ['sales:read'], icon: 'shifts' },
-      { to: '/sales/invoices', label: 'Invoices', claim: ['sales:read'], icon: 'finance' },
       { to: '/sales/cash', label: 'Cash', claim: ['sales:read'], icon: 'finance' },
       { to: '/sales/reports', label: 'Sales Reports', claim: ['sales:read'], icon: 'monitor' }
     ]
@@ -338,13 +345,14 @@ const NAV: NavGroup[] = [
     title: 'HR & Payroll',
     icon: 'payroll',
     items: [
-      { to: '/hr/employees', label: 'Employees', claim: ['hr:read'], icon: 'payroll' },
+
       { to: '/hr/departments', label: 'Departments', claim: ['hr:read'], icon: 'settings' },
+      { to: '/hr/employees', label: 'Employees', claim: ['hr:read'], icon: 'payroll' },
       { to: '/hr/attendance', label: 'Attendance', claim: ['hr:read'], icon: 'shifts' },
       { to: '/hr/fixed-payroll', label: 'Salaries', claim: ['hr:read'], icon: 'finance' },
+      { to: '/hr/allowances', label: 'Allowances', claim: ['hr:read'], icon: 'sales' },
       { to: '/hr/piece-rate', label: 'Piece-Rate', claim: ['hr:read'], icon: 'dashboard' },
       { to: '/hr/driver-payroll', label: 'Driver Pay', claim: ['hr:read'], icon: 'truck' },
-      { to: '/hr/allowances', label: 'Allowances', claim: ['hr:read'], icon: 'sales' },
       { to: '/hr/payroll-run', label: 'Payroll Run', claim: ['hr:read'], icon: 'monitor' },
       { to: '/hr/payslips', label: 'Payslips', claim: ['hr:read'], icon: 'qc' },
       { to: '/payroll', label: 'Payroll', claim: ['payroll:read'], icon: 'payroll' }
