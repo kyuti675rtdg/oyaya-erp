@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../store/auth';
@@ -447,7 +447,6 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const { user, logout, hasAnyClaim } = useAuth();
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const searchRef = useRef<HTMLInputElement>(null);
 
   const handleSidebarLogout = () => {
     logout();
@@ -476,46 +475,9 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       .filter((it) => (isSubGroup(it) ? it.items.length > 0 : visible(it as NavItem)))
   })).filter((group) => group.items.length > 0);
 
-  // Search
-  const [query, setQuery] = useState('');
-  const q = query.trim().toLowerCase();
-  const filteredGroups = q
-    ? visibleGroups
-        .map((g) => ({
-          ...g,
-          items: g.items
-            .map((it) =>
-              isSubGroup(it)
-                ? {
-                    ...it,
-                    items: it.items.filter(
-                      (i) =>
-                        it.title.toLowerCase().includes(q) || i.label.toLowerCase().includes(q)
-                    )
-                  }
-                : it
-            )
-            .filter((it) =>
-              isSubGroup(it)
-                ? it.items.length > 0 || it.title.toLowerCase().includes(q)
-                : g.title.toLowerCase().includes(q) || (it as NavItem).label.toLowerCase().includes(q)
-            )
-        }))
-        .filter((g) => g.items.length > 0 || g.title.toLowerCase().includes(q))
-    : visibleGroups;
 
-  // '/' focuses search
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      const tag = (e.target as HTMLElement)?.tagName;
-      if (e.key === '/' && tag !== 'INPUT' && tag !== 'TEXTAREA') {
-        e.preventDefault();
-        searchRef.current?.focus();
-      }
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, []);
+
+
 
   const [openGroup, setOpenGroup] = useState<string | null>(() => {
     const active = visibleGroups.find((g) => leafItems(g).some((i) => itemMatches(i, pathname)));
@@ -529,9 +491,6 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
     }
     return null;
   });
-  useEffect(() => {
-    if (q && filteredGroups.length > 0) setOpenGroup(filteredGroups[0].title);
-  }, [q]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Design tokens: premium industrial ERP ──
   const sectionLabel =
@@ -580,7 +539,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   };
 
   const renderGroup = (group: (typeof visibleGroups)[number]) => {
-    const isOpen = openGroup === group.title || !!q;
+    const isOpen = openGroup === group.title;
     const hasActive = leafItems(group).some((i) => itemMatches(i, pathname));
     const active = isOpen || hasActive;
     return (
@@ -588,7 +547,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
         <div className={`group flex items-center rounded-lg transition-colors duration-150 ${active ? 'bg-gray-100 dark:bg-slate-800' : ''}`}>
           <button
             type="button"
-            onClick={() => setOpenGroup(isOpen && !q ? null : group.title)}
+            onClick={() => setOpenGroup(isOpen ? null : group.title)}
             aria-expanded={isOpen}
             aria-controls={`nav-group-${group.title}`}
             className={`${modBase} h-10 flex-1 ${active ? modActive : modIdle}`}
@@ -607,13 +566,13 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
             {group.items.map((it) => {
               if (isSubGroup(it)) {
                 const subKey = `${group.title}/${it.title}`;
-                const subOpen = openSub === subKey || !!q;
+                const subOpen = openSub === subKey;
                 const subActive = it.items.some((i) => itemMatches(i, pathname));
                 return (
                   <li key={subKey} className="pt-0.5">
                     <button
                       type="button"
-                      onClick={() => setOpenSub(subOpen && !q ? null : subKey)}
+                      onClick={() => setOpenSub(subOpen ? null : subKey)}
                       aria-expanded={subOpen}
                       aria-controls={`nav-sub-${subKey}`}
                       className={`${leafBase} h-10 text-[13px] font-semibold ${subOpen || subActive ? 'text-gray-900 dark:text-white' : leafIdle}`}
@@ -642,43 +601,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      <div className="shrink-0 px-4 pb-2 pt-3" role="search">
-        <label htmlFor="sidebar-module-search" className="sr-only">Search modules and submodules</label>
-        <div className="relative">
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8}
-            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-slate-500" aria-hidden="true">
-            <circle cx="9" cy="9" r="5.5" />
-            <path d="M13.5 13.5L17 17" strokeLinecap="round" />
-          </svg>
-          <input
-            ref={searchRef} id="sidebar-module-search" type="search" value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={(e) => { if (e.key === 'Escape') { setQuery(''); searchRef.current?.blur(); } }}
-            placeholder="Search modules\u2026" autoComplete="off"
-            className="h-10 w-full rounded-lg border border-gray-200 bg-gray-50 pl-10 pr-9 text-sm text-gray-900 placeholder:text-gray-400 transition-shadow focus:border-violet-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-violet-500/25 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-500 dark:focus:bg-slate-800"
-          />
-          {query ? (
-            <button type="button" onClick={() => setQuery('')} aria-label="Clear search"
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-gray-400 hover:text-gray-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:hover:text-slate-300">
-              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={2} className="h-3.5 w-3.5" aria-hidden="true">
-                <path d="M6 6l8 8M14 6l-8 8" strokeLinecap="round" />
-              </svg>
-            </button>
-          ) : (
-            <kbd className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 rounded border border-gray-200 bg-white px-1.5 py-0.5 text-[10px] font-semibold text-gray-400 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-500" aria-hidden="true">/</kbd>
-          )}
-        </div>
-      </div>
-
-      <nav className="flex-1 overflow-y-auto px-3 pb-4" aria-label="Primary">
-        {q ? (
-          <>
-            <p className={sectionLabel} role="status" aria-live="polite">
-              {filteredGroups.length === 0 ? `No modules match "${query}"` : `${filteredGroups.length} found`}
-            </p>
-            {filteredGroups.map((g) => renderGroup(g))}
-          </>
-        ) : (
+      <nav className="flex-1 overflow-y-auto px-3 pb-4 pt-3" aria-label="Primary">
           <>
             <p className={sectionLabel}>Modules</p>
             {visibleGroups.map((g) => renderGroup(g))}
@@ -700,7 +623,6 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
             ))}
 
           </>
-        )}
       </nav>
 
       <div className="shrink-0 border-t border-gray-100 px-3 py-3 dark:border-slate-800">
