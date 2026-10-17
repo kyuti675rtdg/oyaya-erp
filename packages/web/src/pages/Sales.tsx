@@ -413,7 +413,7 @@ export function Sales() {
               {draftLines.length > 0 ? (
                 <ul className="mt-3 space-y-1">
                   {draftLines.map((l, i) => (
-                    <li key={i} className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2 text-sm">
+                    <li key={i} className="flex items-center justify-between rounded-lg bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm">
                       <span>
                         {productNameBy.get(l.productId)}
                         {l.packagingSizeId ? ` · ${packLabelBy.get(l.packagingSizeId)}` : ''}
@@ -435,7 +435,7 @@ export function Sales() {
             </div>
 
             <div className="flex items-center justify-between">
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-slate-500 dark:text-slate-400">
                 Total: <span className="tnum font-bold text-ink">{fmtQ(draftTotalQ)} q</span> —{' '}
                 <span className="tnum font-bold text-ink">{fmtBirr(draftTotalV)}</span>
               </p>
@@ -469,7 +469,7 @@ export function Sales() {
             </form>
 
             <h3 className="mb-2 mt-6 text-base font-bold text-ink">Dispatch</h3>
-            <p className="mb-3 text-sm text-slate-500">
+            <p className="mb-3 text-sm text-slate-500 dark:text-slate-400">
               Loading is confirmed separately from order placement. Multiple orders for the same or nearby
               destination area can be consolidated up to vehicle capacity.
             </p>
@@ -491,15 +491,15 @@ export function Sales() {
             ) : recon ? (
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
-                  <span className="text-slate-500">Invoiced sales</span>
+                  <span className="text-slate-500 dark:text-slate-400">Invoiced sales</span>
                   <span className="tnum font-bold text-ink">{fmtBirr(recon.totals.invoiced)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-slate-500">Cash received</span>
+                  <span className="text-slate-500 dark:text-slate-400">Cash received</span>
                   <span className="tnum font-bold text-ink">{fmtBirr(recon.totals.received)}</span>
                 </div>
                 <div className="flex justify-between border-t border-line pt-2 text-sm">
-                  <span className="font-semibold text-slate-700">Unreconciled gap</span>
+                  <span className="font-semibold text-slate-700 dark:text-slate-200">Unreconciled gap</span>
                   <span className={`tnum font-bold ${recon.totals.gap !== 0 ? 'text-critical-text' : 'text-pass-text'}`}>
                     {fmtBirr(recon.totals.gap)}
                   </span>
@@ -511,7 +511,7 @@ export function Sales() {
                 )}
               </div>
             ) : (
-              <p className="text-sm text-slate-500">No reconciliation data.</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">No reconciliation data.</p>
             )}
           </Card>
         </div>
@@ -587,7 +587,7 @@ export function Sales() {
             </h3>
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-xs text-slate-500">
+                <tr className="text-left text-xs text-slate-500 dark:text-slate-400">
                   <th className="py-1">Product</th>
                   <th className="py-1">Pack</th>
                   <th className="py-1 text-right">Bags</th>
@@ -626,7 +626,7 @@ export function Sales() {
 
             {wizardStep === 1 ? (
               <div>
-                <p className="mb-3 text-sm text-slate-500">Select loadable orders to consolidate into one dispatch.</p>
+                <p className="mb-3 text-sm text-slate-500 dark:text-slate-400">Select loadable orders to consolidate into one dispatch.</p>
                 <div className="space-y-2">
                   {openOrders.map((o) => (
                     <label
@@ -651,7 +651,7 @@ export function Sales() {
                     </label>
                   ))}
                   {openOrders.length === 0 ? (
-                    <p className="text-sm text-slate-500">No loadable orders available.</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">No loadable orders available.</p>
                   ) : null}
                 </div>
                 <Button onClick={() => setWizardStep(2)} disabled={pickedOrders.length === 0} className="mt-4 w-full">
@@ -692,7 +692,7 @@ export function Sales() {
 
             {wizardStep === 3 ? (
               <div>
-                <p className="mb-3 text-sm text-slate-500">Review the consolidated dispatch — enter the finished-goods batch number for each line.</p>
+                <p className="mb-3 text-sm text-slate-500 dark:text-slate-400">Review the consolidated dispatch — enter the finished-goods batch number for each line.</p>
                 <ul className="mb-4 space-y-2 text-sm">
                   {openOrders
                     .filter((o) => pickedOrders.includes(o.id))
@@ -707,7 +707,7 @@ export function Sales() {
                             <span>
                               <span className="tnum font-bold">{o.orderNo}</span> — {customerNameBy.get(o.customerId)}
                             </span>
-                            <span className="text-slate-500">{sl.label}</span>
+                            <span className="text-slate-500 dark:text-slate-400">{sl.label}</span>
                           </div>
                           <div className="mt-2">
                             <Field label="FG batch number" required>
@@ -724,19 +724,19 @@ export function Sales() {
                 </ul>
                 <dl className="space-y-1 text-sm">
                   <div className="flex justify-between">
-                    <dt className="text-slate-500">Vehicle</dt>
+                    <dt className="text-slate-500 dark:text-slate-400">Vehicle</dt>
                     <dd className="tnum font-semibold">{(vehiclesQ.data ?? []).find((v) => v.id === vehicleId)?.plateNo ?? '-'}</dd>
                   </div>
                   <div className="flex justify-between">
-                    <dt className="text-slate-500">Destination area</dt>
+                    <dt className="text-slate-500 dark:text-slate-400">Destination area</dt>
                     <dd className="font-semibold">{destinationArea}</dd>
                   </div>
                   <div className="flex justify-between">
-                    <dt className="text-slate-500">Total load</dt>
+                    <dt className="text-slate-500 dark:text-slate-400">Total load</dt>
                     <dd className="tnum font-bold">{fmtQ(pickedTotal)} q</dd>
                   </div>
                   <div className="flex justify-between">
-                    <dt className="text-slate-500">Trip count</dt>
+                    <dt className="text-slate-500 dark:text-slate-400">Trip count</dt>
                     <dd className="tnum font-bold">1 trip (fixed area rule)</dd>
                   </div>
                 </dl>

@@ -119,10 +119,10 @@ export function DocVersions() {
         <>
           <div className={`${cardShell} flex flex-wrap items-center gap-4`}>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-bold text-slate-800">
-                {doc.title} <span className="font-normal text-slate-500">· v{doc.version}</span>
+              <p className="text-sm font-bold text-slate-800 dark:text-slate-100">
+                {doc.title} <span className="font-normal text-slate-500 dark:text-slate-400">· v{doc.version}</span>
               </p>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 {doc.docNo} · {formatFileSize(doc.fileSize)} · {doc.fileName}
               </p>
             </div>
@@ -165,8 +165,8 @@ export function DocVersions() {
                       v{v.version}
                     </span>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold text-slate-800">{v.fileName}</p>
-                      <p className="text-xs text-slate-500">
+                      <p className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">{v.fileName}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
                         {formatFileSize(v.fileSize)} · {fmtDateTime(v.createdAt)}
                         {v.changeNote ? ` · ${v.changeNote}` : ''}
                       </p>
@@ -177,7 +177,7 @@ export function DocVersions() {
                         type="button"
                         onClick={() => setRestoreVid(v.id)}
                         title="Restore this version"
-                        className="rounded-lg p-1.5 text-slate-400 hover:bg-violet-50 hover:text-violet-700"
+                        className="rounded-lg p-1.5 text-slate-400 dark:text-slate-500 hover:bg-violet-50 hover:text-violet-700"
                       >
                         <RotateCcw size={15} />
                       </button>
@@ -194,11 +194,11 @@ export function DocVersions() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
           <form onSubmit={submit} className={`${cardShell} w-full max-w-md space-y-4 !p-6`}>
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-slate-800">Check In New Version</h3>
+              <h3 className="text-base font-bold text-slate-800 dark:text-slate-100">Check In New Version</h3>
               <button
                 type="button"
                 onClick={() => setShowCheckin(false)}
-                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100"
+                className="rounded-lg p-1.5 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700"
                 aria-label="Close"
               >
                 <X size={18} />
@@ -209,10 +209,10 @@ export function DocVersions() {
               tabIndex={0}
               onClick={() => fileRef.current?.click()}
               onKeyDown={(e) => e.key === 'Enter' && fileRef.current?.click()}
-              className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50/60 px-4 py-8 text-center hover:border-violet-300"
+              className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/60 px-4 py-8 text-center hover:border-violet-300"
             >
               <Upload size={22} className="text-violet-500" />
-              <p className="text-sm font-semibold text-slate-700">{pendingFile ? pendingFile.name : 'Select updated file'}</p>
+              <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">{pendingFile ? pendingFile.name : 'Select updated file'}</p>
               <input ref={fileRef} type="file" className="hidden" onChange={(e) => setPendingFile(e.target.files?.[0] ?? null)} />
             </div>
             <Field label="Change note">
@@ -239,8 +239,8 @@ export function DocVersions() {
       {restoreVid ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
           <div className={`${cardShell} w-full max-w-sm space-y-4 !p-6`}>
-            <h3 className="text-base font-bold text-slate-800">Restore version?</h3>
-            <p className="text-sm text-slate-600">
+            <h3 className="text-base font-bold text-slate-800 dark:text-slate-100">Restore version?</h3>
+            <p className="text-sm text-slate-600 dark:text-slate-300">
               This creates a new version from the selected older file. The current version is preserved in history.
             </p>
             <div className="flex justify-end gap-2">

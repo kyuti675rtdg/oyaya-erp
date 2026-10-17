@@ -146,8 +146,8 @@ export function HygieneInspections() {
       label: 'Target',
       render: (r: HygieneInspection) => (
         <span>
-          <span className="font-semibold text-slate-800">{r.target}</span>
-          <span className="ml-2 text-xs uppercase tracking-wide text-slate-400">{r.targetType}</span>
+          <span className="font-semibold text-slate-800 dark:text-slate-100">{r.target}</span>
+          <span className="ml-2 text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500">{r.targetType}</span>
         </span>
       )
     },
@@ -162,7 +162,7 @@ export function HygieneInspections() {
       key: 'overallResult',
       label: 'Result',
       render: (r: HygieneInspection) =>
-        r.overallResult ? <Badge tone={INSPECTION_TONE[r.overallResult]}>{r.overallResult}</Badge> : <span className="text-slate-400">—</span>
+        r.overallResult ? <Badge tone={INSPECTION_TONE[r.overallResult]}>{r.overallResult}</Badge> : <span className="text-slate-400 dark:text-slate-500">—</span>
     },
     {
       key: 'actions',
@@ -230,11 +230,11 @@ export function HygieneInspections() {
             </div>
             <div className="grid grid-cols-1 gap-3 md:hidden">
               {(listQ.data ?? []).map((r) => (
-                <div key={r.id} className="rounded-xl border border-line bg-white p-4">
+                <div key={r.id} className="rounded-xl border border-line bg-white dark:bg-slate-800 p-4">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <p className="font-bold text-slate-800">{r.target}</p>
-                      <p className="text-xs tabular-nums text-slate-500">{fmtDate(r.inspectedAt)} · {r.inspector}</p>
+                      <p className="font-bold text-slate-800 dark:text-slate-100">{r.target}</p>
+                      <p className="text-xs tabular-nums text-slate-500 dark:text-slate-400">{fmtDate(r.inspectedAt)} · {r.inspector}</p>
                     </div>
                     {r.overallResult ? <Badge tone={INSPECTION_TONE[r.overallResult]}>{r.overallResult}</Badge> : null}
                   </div>
@@ -282,8 +282,8 @@ export function HygieneInspections() {
             </Field>
           </div>
           <div className="mt-4">
-            <p className="mb-2 text-sm font-semibold text-slate-700">
-              Criteria <span className="font-normal text-slate-500">(overall: {derivedOverall(criteria.filter((c) => c.criterion.trim()))})</span>
+            <p className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-200">
+              Criteria <span className="font-normal text-slate-500 dark:text-slate-400">(overall: {derivedOverall(criteria.filter((c) => c.criterion.trim()))})</span>
             </p>
             <div className="space-y-2">
               {criteria.map((c, i) => (
@@ -325,7 +325,7 @@ export function HygieneInspections() {
             <div className="mb-2 flex items-start justify-between">
               <div>
                 <h3 className="text-lg font-bold text-ink">{detail.target}</h3>
-                <p className="text-sm tabular-nums text-slate-500">{fmtDateTime(detail.inspectedAt)} · {detail.inspector}</p>
+                <p className="text-sm tabular-nums text-slate-500 dark:text-slate-400">{fmtDateTime(detail.inspectedAt)} · {detail.inspector}</p>
               </div>
               <Button variant="ghost" className="px-2 py-1" onClick={() => setDetail(null)} aria-label="Close">
                 <X size={18} />
@@ -334,18 +334,18 @@ export function HygieneInspections() {
             <div className="mb-3 flex flex-wrap items-center gap-2">
               {detail.overallResult ? <Badge tone={INSPECTION_TONE[detail.overallResult]}>{detail.overallResult}</Badge> : null}
               {detail.score !== null && detail.score !== undefined ? (
-                <span className="text-sm tabular-nums text-slate-600">Score {fmtPct(detail.score, 0)}</span>
+                <span className="text-sm tabular-nums text-slate-600 dark:text-slate-300">Score {fmtPct(detail.score, 0)}</span>
               ) : null}
               {detail.photosNote ? (
-                <span className="inline-flex items-center gap-1 text-xs text-slate-500"><Camera size={13} /> {detail.photosNote}</span>
+                <span className="inline-flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400"><Camera size={13} /> {detail.photosNote}</span>
               ) : null}
             </div>
             <ul className="space-y-2">
               {(detail.criteria ?? []).map((c) => (
                 <li key={c.id} className="flex items-start justify-between gap-3 rounded-lg border border-line bg-alabaster px-3 py-2.5">
                   <div>
-                    <p className="text-sm font-semibold text-slate-800">{c.criterion}</p>
-                    {c.notes ? <p className="text-xs text-slate-500">{c.notes}</p> : null}
+                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{c.criterion}</p>
+                    {c.notes ? <p className="text-xs text-slate-500 dark:text-slate-400">{c.notes}</p> : null}
                   </div>
                   <Badge tone={INSPECTION_TONE[c.result]}>{c.result}</Badge>
                 </li>
@@ -353,8 +353,8 @@ export function HygieneInspections() {
             </ul>
             {detail.findings ? (
               <div className="mt-3">
-                <p className="mb-1 text-sm font-semibold text-slate-700">Findings</p>
-                <p className="text-sm text-slate-700">{detail.findings}</p>
+                <p className="mb-1 text-sm font-semibold text-slate-700 dark:text-slate-200">Findings</p>
+                <p className="text-sm text-slate-700 dark:text-slate-200">{detail.findings}</p>
               </div>
             ) : null}
             <div className="mt-4">

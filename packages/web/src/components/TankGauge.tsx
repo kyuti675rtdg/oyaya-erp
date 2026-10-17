@@ -20,18 +20,18 @@ export function TankGauge({
   const elapsed = fillStartedAt ? fmtElapsed(Date.now() - new Date(fillStartedAt).getTime()) : '-';
 
   return (
-    <div className="rounded-xl border border-line bg-white p-4 shadow-sm">
+    <div className="rounded-xl border border-line bg-white dark:bg-slate-800 p-4 shadow-sm">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-bold text-ink">
-          Tank {code} <span className="ml-1 text-sm font-medium text-slate-500">{name}</span>
+          Tank {code} <span className="ml-1 text-sm font-medium text-slate-500 dark:text-slate-400">{name}</span>
         </h3>
-        <span className="tnum text-sm font-semibold text-slate-600">
+        <span className="tnum text-sm font-semibold text-slate-600 dark:text-slate-300">
           {fmtQ(currentQ)} / {fmtQ(capacityQ)} q
         </span>
       </div>
 
       <div
-        className="mt-3 h-6 overflow-hidden rounded-full bg-slate-100"
+        className="mt-3 h-6 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700"
         role="progressbar"
         aria-valuenow={Math.round(pct)}
         aria-valuemin={0}
@@ -46,11 +46,11 @@ export function TankGauge({
 
       <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Level</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Level</p>
           <p className="tnum text-lg font-bold text-ink">{pct.toFixed(0)}%</p>
         </div>
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Elapsed rest</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Elapsed rest</p>
           <p className="tnum text-lg font-bold text-ink">{elapsed}</p>
         </div>
       </div>

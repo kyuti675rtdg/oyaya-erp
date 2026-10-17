@@ -173,7 +173,7 @@ export function ApiMonitor() {
               },
               { key: 'latencyMs', label: 'Latency', render: (r) => <span className="text-sm">{r.latencyMs != null ? `${r.latencyMs} ms` : '—'}</span> },
               { key: 'uptimePct', label: 'Uptime', render: (r) => <span className="text-sm">{r.uptimePct != null ? `${r.uptimePct.toFixed(1)}%` : '—'}</span> },
-              { key: 'lastCheckedAt', label: 'Last Check', render: (r) => <span className="text-sm text-slate-500">{r.lastCheckedAt ? fmtDateTime(r.lastCheckedAt) : 'Never'}</span> },
+              { key: 'lastCheckedAt', label: 'Last Check', render: (r) => <span className="text-sm text-slate-500 dark:text-slate-400">{r.lastCheckedAt ? fmtDateTime(r.lastCheckedAt) : 'Never'}</span> },
               {
                 key: 'id', label: 'Actions',
                 render: (r) => (
@@ -232,7 +232,7 @@ export function ApiMonitor() {
                 placeholder="https://api.afromessage.com"
               />
             </Field>
-            <label className="flex cursor-pointer items-center gap-2 text-sm font-semibold text-slate-800">
+            <label className="flex cursor-pointer items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-100">
               <input
                 type="checkbox"
                 className="h-4 w-4 accent-[#5B35D5]"
@@ -262,7 +262,7 @@ export function ApiMonitor() {
               { key: 'createdAt', label: 'Time', render: (r) => <span className="text-sm">{fmtDateTime(r.createdAt)}</span> },
               { key: 'status', label: 'Status', render: (r) => <Badge tone={STATUS_TONE[r.status] ?? 'neutral'}>{r.status}</Badge> },
               { key: 'latencyMs', label: 'Latency', render: (r) => <span className="text-sm">{r.latencyMs != null ? `${r.latencyMs} ms` : '—'}</span> },
-              { key: 'message', label: 'Message', render: (r) => <span className="text-sm text-slate-500">{r.message ?? '—'}</span> },
+              { key: 'message', label: 'Message', render: (r) => <span className="text-sm text-slate-500 dark:text-slate-400">{r.message ?? '—'}</span> },
             ]}
             rows={(history ?? []).map((h, i) => ({ ...h, id: String(i) }))}
             emptyTitle="No history yet."

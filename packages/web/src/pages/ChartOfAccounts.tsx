@@ -142,7 +142,7 @@ export function ChartOfAccounts() {
 
         <div className="mb-4 grid gap-3 sm:grid-cols-3">
           <div className="relative sm:col-span-2">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
             <TextInput
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -188,7 +188,7 @@ export function ChartOfAccounts() {
                   <div>
                     <span className="font-semibold text-ink">{r.name}</span>
                     {childrenOf(r.id).length > 0 ? (
-                      <p className="text-xs text-slate-400">
+                      <p className="text-xs text-slate-400 dark:text-slate-500">
                         Parent of {childrenOf(r.id).length} sub-account
                         {childrenOf(r.id).length === 1 ? '' : 's'}
                       </p>
@@ -221,7 +221,7 @@ export function ChartOfAccounts() {
                       </button>
                       <button
                         onClick={() => toggleActiveM.mutate(r)}
-                        className="text-sm font-semibold text-slate-500 hover:underline"
+                        className="text-sm font-semibold text-slate-500 dark:text-slate-400 hover:underline"
                       >
                         {r.isActive ? 'Deactivate' : 'Activate'}
                       </button>
@@ -244,13 +244,13 @@ export function ChartOfAccounts() {
                 <h3 className="text-lg font-bold text-ink">
                   {editing ? 'Edit account' : 'New account'}
                 </h3>
-                <p className="mt-0.5 text-sm text-slate-500">
+                <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
                   Peachtree-style numeric codes keep the ledger sortable.
                 </p>
               </div>
               <button
                 onClick={() => setModalOpen(false)}
-                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100"
+                className="rounded-lg p-1.5 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700"
                 aria-label="Close"
               >
                 <X className="h-5 w-5" />

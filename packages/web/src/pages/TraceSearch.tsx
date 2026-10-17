@@ -155,10 +155,10 @@ export function TraceSearch() {
             {r.batches.length === 0 ? <EmptyState title="No batches" /> : (
               <ul className="space-y-2">
                 {r.batches.map((b) => (
-                  <li key={b.id} className="flex items-center justify-between rounded-xl border border-slate-100 px-4 py-3">
+                  <li key={b.id} className="flex items-center justify-between rounded-xl border border-slate-100 dark:border-slate-700 px-4 py-3">
                     <div>
-                      <p className="text-sm font-bold text-slate-800 tnum">{b.batchNo}</p>
-                      <p className="text-xs text-slate-500">{b.productType.toLowerCase().replace('_', ' ')} · {fmtDate(b.createdAt)}</p>
+                      <p className="text-sm font-bold text-slate-800 dark:text-slate-100 tnum">{b.batchNo}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">{b.productType.toLowerCase().replace('_', ' ')} · {fmtDate(b.createdAt)}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <StatusBadge value={b.status} />
@@ -180,10 +180,10 @@ export function TraceSearch() {
             {r.intakes.length === 0 ? <EmptyState title="No intakes" /> : (
               <ul className="space-y-2">
                 {r.intakes.map((i) => (
-                  <li key={i.id} className="flex items-center justify-between rounded-xl border border-slate-100 px-4 py-3">
+                  <li key={i.id} className="flex items-center justify-between rounded-xl border border-slate-100 dark:border-slate-700 px-4 py-3">
                     <div>
-                      <p className="text-sm font-bold text-slate-800 tnum">{i.intakeNo}</p>
-                      <p className="text-xs text-slate-500">{i.supplier?.name ?? '—'} · truck <span className="tnum">{i.truckPlate}</span> · {fmtDate(i.deliveryDate)}</p>
+                      <p className="text-sm font-bold text-slate-800 dark:text-slate-100 tnum">{i.intakeNo}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">{i.supplier?.name ?? '—'} · truck <span className="tnum">{i.truckPlate}</span> · {fmtDate(i.deliveryDate)}</p>
                     </div>
                     <button
                       onClick={() => setReport({ kind: 'intake', id: i.id, label: i.intakeNo })}
@@ -202,10 +202,10 @@ export function TraceSearch() {
             {r.lots.length === 0 ? <EmptyState title="No lots" /> : (
               <ul className="space-y-2">
                 {r.lots.map((l) => (
-                  <li key={l.id} className="flex items-center justify-between rounded-xl border border-slate-100 px-4 py-3">
+                  <li key={l.id} className="flex items-center justify-between rounded-xl border border-slate-100 dark:border-slate-700 px-4 py-3">
                     <div>
-                      <p className="text-sm font-bold text-slate-800 tnum">{l.batchNo} · {l.product?.name ?? '—'}</p>
-                      <p className="text-xs text-slate-500 tnum">{l.bags} bags · {fmtQ(l.quintals)} Q</p>
+                      <p className="text-sm font-bold text-slate-800 dark:text-slate-100 tnum">{l.batchNo} · {l.product?.name ?? '—'}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 tnum">{l.bags} bags · {fmtQ(l.quintals)} Q</p>
                     </div>
                     <button
                       onClick={() => setReport({ kind: 'lot', id: l.id, label: `${l.batchNo}` })}
@@ -224,9 +224,9 @@ export function TraceSearch() {
             {r.suppliers.length === 0 ? <EmptyState title="No suppliers" /> : (
               <ul className="space-y-2">
                 {r.suppliers.map((s) => (
-                  <li key={s.id} className="rounded-xl border border-slate-100 px-4 py-3">
-                    <p className="text-sm font-bold text-slate-800">{s.name}</p>
-                    <p className="text-xs text-slate-500">{s.type.toLowerCase()}</p>
+                  <li key={s.id} className="rounded-xl border border-slate-100 dark:border-slate-700 px-4 py-3">
+                    <p className="text-sm font-bold text-slate-800 dark:text-slate-100">{s.name}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{s.type.toLowerCase()}</p>
                   </li>
                 ))}
               </ul>
@@ -252,13 +252,13 @@ export function TraceSearch() {
                 </button>
                 <button
                   onClick={() => window.print()}
-                  className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+                  className="flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
                 >
                   <Printer className="h-3.5 w-3.5" /> Print
                 </button>
                 <button
                   onClick={() => setReport(null)}
-                  className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+                  className="rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
                 >
                   Close
                 </button>
@@ -272,17 +272,17 @@ export function TraceSearch() {
               <table className="w-full min-w-[640px] text-left text-sm">
                 <thead>
                   <tr>
-                    <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-500">Stage</th>
-                    <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-500">Detail</th>
+                    <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Stage</th>
+                    <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Detail</th>
                   </tr>
                 </thead>
                 <tbody>
                   {flattenChain(chainQ.data).map((row, i) => (
-                    <tr key={i} className="border-t border-slate-100 hover:bg-slate-50/60">
+                    <tr key={i} className="border-t border-slate-100 dark:border-slate-700 hover:bg-slate-50/60">
                       <td className="px-4 py-3">
                         <StatusBadge value={String(row.stage ?? '')} />
                       </td>
-                      <td className="px-4 py-3 text-slate-700">
+                      <td className="px-4 py-3 text-slate-700 dark:text-slate-200">
                         {Object.entries(row)
                           .filter(([k]) => k !== 'stage')
                           .map(([k, v]) => `${k}: ${v ?? '—'}`)

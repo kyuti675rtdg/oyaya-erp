@@ -159,7 +159,7 @@ export function ByproductInventory() {
             <DataTable<ByproductStockRow>
               columns={[
                 { key: 'type', label: 'Type', render: (r) => <span className="font-semibold">{r.typeLabel}</span> },
-                { key: 'batchNo', label: 'Batch', mono: true, render: (r) => r.batchNo ?? <span className="text-slate-400">—</span> },
+                { key: 'batchNo', label: 'Batch', mono: true, render: (r) => r.batchNo ?? <span className="text-slate-400 dark:text-slate-500">—</span> },
                 { key: 'locationCode', label: 'Location', mono: true },
                 { key: 'quintals', label: 'Qt', mono: true, render: (r) => <span className="font-bold">{fmtQ(r.quintals)}</span> },
                 {
@@ -204,7 +204,7 @@ export function ByproductInventory() {
                 },
                 { key: 'typeLabel', label: 'Type' },
                 { key: 'quintals', label: 'Qt', mono: true, render: (r) => <span className="font-bold">{fmtQ(r.quintals)}</span> },
-                { key: 'reference', label: 'Reference', mono: true, render: (r) => r.reference ?? <span className="text-slate-400">—</span> },
+                { key: 'reference', label: 'Reference', mono: true, render: (r) => r.reference ?? <span className="text-slate-400 dark:text-slate-500">—</span> },
                 { key: 'reason', label: 'Reason' },
                 { key: 'movedAt', label: 'Moved', render: (r) => fmtDate(r.movedAt) }
               ]}

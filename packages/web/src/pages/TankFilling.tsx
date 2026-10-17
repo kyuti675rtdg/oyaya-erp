@@ -154,13 +154,13 @@ export function TankFilling() {
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-xl font-bold text-ink">Tank Filling &amp; Batch Allocation</h2>
-          <p className="mt-0.5 text-sm text-slate-500">
+          <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
             Allocate wheat from the dry pool into a conditioning tank — batch numbers are assigned when conditioning starts
           </p>
         </div>
         <Link
           to="/tanks"
-          className="inline-flex items-center gap-2 rounded-lg border border-line bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+          className="inline-flex items-center gap-2 rounded-lg border border-line bg-white dark:bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 transition hover:bg-slate-50 dark:hover:bg-slate-700"
         >
           <ArrowLeft size={16} /> Back to tanks
         </Link>
@@ -198,11 +198,11 @@ export function TankFilling() {
             <form onSubmit={submit} className="space-y-4">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <Field label="Source">
-                  <div className="flex h-12 items-center gap-2 rounded-lg border border-line bg-slate-50 px-4">
-                    <Warehouse size={16} className="text-slate-500" />
-                    <span className="text-sm font-semibold text-slate-700">
+                  <div className="flex h-12 items-center gap-2 rounded-lg border border-line bg-slate-50 dark:bg-slate-800 px-4">
+                    <Warehouse size={16} className="text-slate-500 dark:text-slate-400" />
+                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">
                       Dry Pool{' '}
-                      <span className="tabular-nums text-slate-500">
+                      <span className="tabular-nums text-slate-500 dark:text-slate-400">
                         ({dryPool ? `${fmtQ(dryPool.balanceQ)} q available` : '—'})
                       </span>
                     </span>
@@ -262,15 +262,15 @@ export function TankFilling() {
               >
                 <div className="grid grid-cols-3 gap-3">
                   <div>
-                    <span className="mb-1 block text-xs font-medium text-slate-500">Soft</span>
+                    <span className="mb-1 block text-xs font-medium text-slate-500 dark:text-slate-400">Soft</span>
                     <NumberInput value={soft} onChange={(e) => setSoft(e.target.value)} min={0} max={100} placeholder="0" />
                   </div>
                   <div>
-                    <span className="mb-1 block text-xs font-medium text-slate-500">Hard</span>
+                    <span className="mb-1 block text-xs font-medium text-slate-500 dark:text-slate-400">Hard</span>
                     <NumberInput value={hard} onChange={(e) => setHard(e.target.value)} min={0} max={100} placeholder="0" />
                   </div>
                   <div>
-                    <span className="mb-1 block text-xs font-medium text-slate-500">Foreign</span>
+                    <span className="mb-1 block text-xs font-medium text-slate-500 dark:text-slate-400">Foreign</span>
                     <NumberInput value={foreign} onChange={(e) => setForeign(e.target.value)} min={0} max={100} placeholder="0" />
                   </div>
                 </div>
@@ -289,16 +289,16 @@ export function TankFilling() {
 
               {/* Live preview */}
               {selectedTank ? (
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                  <p className="mb-2 text-sm font-bold text-slate-700">
+                <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-4">
+                  <p className="mb-2 text-sm font-bold text-slate-700 dark:text-slate-200">
                     Preview — Tank {tankCode.replace('TANK_', '')}
                   </p>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-500">
-                      Current: <span className="font-semibold tabular-nums text-slate-800">{fmtQ(selectedTank.levelQ)} q</span>
+                    <span className="text-slate-500 dark:text-slate-400">
+                      Current: <span className="font-semibold tabular-nums text-slate-800 dark:text-slate-100">{fmtQ(selectedTank.levelQ)} q</span>
                     </span>
-                    <span className="text-slate-500">
-                      After: <span className="font-bold tabular-nums text-slate-900">{fmtQ(newLevel)} q</span>
+                    <span className="text-slate-500 dark:text-slate-400">
+                      After: <span className="font-bold tabular-nums text-slate-900 dark:text-slate-100">{fmtQ(newLevel)} q</span>
                     </span>
                   </div>
                   <div
@@ -311,8 +311,8 @@ export function TankFilling() {
                   >
                     <div className="h-full rounded-full bg-harvest transition-all duration-300" style={{ width: `${Math.min(100, newPct)}%` }} />
                   </div>
-                  <p className="mt-1 text-right text-xs font-semibold tabular-nums text-slate-500">{newPct.toFixed(1)}% full</p>
-                  <p className="mt-2 flex items-start gap-1.5 text-xs text-slate-500">
+                  <p className="mt-1 text-right text-xs font-semibold tabular-nums text-slate-500 dark:text-slate-400">{newPct.toFixed(1)}% full</p>
+                  <p className="mt-2 flex items-start gap-1.5 text-xs text-slate-500 dark:text-slate-400">
                     <Info size={13} className="mt-0.5 shrink-0" />
                     Batch No. PB-YYYY-XXXX is assigned when conditioning starts — the fill itself does not create a batch.
                   </p>
@@ -333,27 +333,27 @@ export function TankFilling() {
                 <div>
                   <div className="flex items-baseline justify-between">
                     <span className="text-3xl font-bold tabular-nums text-ink">{fmtQ(dryPool.balanceQ)}</span>
-                    <span className="text-sm text-slate-500">
+                    <span className="text-sm text-slate-500 dark:text-slate-400">
                       of <span className="font-semibold tabular-nums">{fmtQ(dryPool.capacityQ)} q</span>
                     </span>
                   </div>
-                  <div className="mt-2 h-3 overflow-hidden rounded-full bg-slate-100">
+                  <div className="mt-2 h-3 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
                     <div className="h-full rounded-full bg-harvest" style={{ width: `${Math.min(100, Number(dryPool.pct) || 0)}%` }} />
                   </div>
-                  <p className="mt-1 text-right text-xs font-semibold tabular-nums text-slate-500">{fmtPct(dryPool.pct, 0)} full</p>
+                  <p className="mt-1 text-right text-xs font-semibold tabular-nums text-slate-500 dark:text-slate-400">{fmtPct(dryPool.pct, 0)} full</p>
                   {dryPool.breakdown && Object.keys(dryPool.breakdown).length > 0 ? (
-                    <div className="mt-3 space-y-1.5 border-t border-slate-100 pt-3">
+                    <div className="mt-3 space-y-1.5 border-t border-slate-100 dark:border-slate-700 pt-3">
                       {Object.entries(dryPool.breakdown).map(([k, v]) => (
                         <div key={k} className="flex items-center justify-between text-sm">
-                          <span className="font-medium capitalize text-slate-600">{k}</span>
-                          <span className="font-semibold tabular-nums text-slate-800">{fmtQ(v)} q</span>
+                          <span className="font-medium capitalize text-slate-600 dark:text-slate-300">{k}</span>
+                          <span className="font-semibold tabular-nums text-slate-800 dark:text-slate-100">{fmtQ(v)} q</span>
                         </div>
                       ))}
                     </div>
                   ) : null}
                 </div>
               ) : (
-                <p className="text-sm text-slate-500">Dry pool data unavailable.</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Dry pool data unavailable.</p>
               )}
             </div>
 
@@ -366,10 +366,10 @@ export function TankFilling() {
                   return (
                     <div key={t.code}>
                       <div className="flex items-center justify-between text-sm">
-                        <span className="font-semibold text-slate-700">Tank {t.code.replace('TANK_', '')}</span>
-                        <span className="font-bold tabular-nums text-slate-900">{fmtQ(free)} q</span>
+                        <span className="font-semibold text-slate-700 dark:text-slate-200">Tank {t.code.replace('TANK_', '')}</span>
+                        <span className="font-bold tabular-nums text-slate-900 dark:text-slate-100">{fmtQ(free)} q</span>
                       </div>
-                      <div className="mt-1 h-2 overflow-hidden rounded-full bg-slate-100">
+                      <div className="mt-1 h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
                         <div
                           className={`h-full rounded-full ${free <= 0.0001 ? 'bg-slate-300' : 'bg-harvest'}`}
                           style={{ width: `${Math.min(100, pct)}%` }}
@@ -390,12 +390,12 @@ export function TankFilling() {
         {blendsQ.isLoading ? (
           <Spinner label="Loading fill history..." />
         ) : recentFills.length === 0 ? (
-          <p className="text-sm text-slate-500">No fills recorded yet.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">No fills recorded yet.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[560px] text-sm">
               <thead>
-                <tr className="border-b border-slate-100 text-left text-xs uppercase tracking-wide text-slate-500">
+                <tr className="border-b border-slate-100 dark:border-slate-700 text-left text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
                   <th className="pb-2 pr-4 font-semibold">Date</th>
                   <th className="pb-2 pr-4 font-semibold">Tank</th>
                   <th className="pb-2 pr-4 text-right font-semibold">Quintals</th>
@@ -405,10 +405,10 @@ export function TankFilling() {
               <tbody>
                 {recentFills.map((r) => (
                   <tr key={r.id} className="border-b border-slate-50 last:border-0">
-                    <td className="py-2 pr-4 text-slate-600">{fmtDateTime(r.filledAt)}</td>
-                    <td className="py-2 pr-4 font-semibold text-slate-800">Tank {r.tankCode.replace('TANK_', '')}</td>
-                    <td className="py-2 pr-4 text-right font-semibold tabular-nums text-slate-900">{fmtQ(r.quintals)}</td>
-                    <td className="py-2 text-slate-600 tabular-nums">{blendSummary(r.blendRatio)}</td>
+                    <td className="py-2 pr-4 text-slate-600 dark:text-slate-300">{fmtDateTime(r.filledAt)}</td>
+                    <td className="py-2 pr-4 font-semibold text-slate-800 dark:text-slate-100">Tank {r.tankCode.replace('TANK_', '')}</td>
+                    <td className="py-2 pr-4 text-right font-semibold tabular-nums text-slate-900 dark:text-slate-100">{fmtQ(r.quintals)}</td>
+                    <td className="py-2 text-slate-600 dark:text-slate-300 tabular-nums">{blendSummary(r.blendRatio)}</td>
                   </tr>
                 ))}
               </tbody>

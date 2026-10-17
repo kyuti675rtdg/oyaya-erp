@@ -338,7 +338,7 @@ export function Capa() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <Card className="max-h-[90vh] w-full max-w-lg overflow-y-auto p-6">
             <h3 className="text-lg font-bold text-ink">CAPA {detail.capaNo}</h3>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               Identified {fmtDateTime(detail.dateIdentified)}
             </p>
             <div className="mt-3 flex gap-2 border-b border-line">
@@ -364,26 +364,26 @@ export function Capa() {
             </div>
             {capaTab === 'overview' ? (
             <>
-            <p className="mt-3 text-sm text-slate-700">{detail.issueDescription}</p>
+            <p className="mt-3 text-sm text-slate-700 dark:text-slate-200">{detail.issueDescription}</p>
             <dl className="mt-4 space-y-2 text-sm">
               <div className="flex justify-between">
-                <dt className="text-slate-500">Correction</dt>
+                <dt className="text-slate-500 dark:text-slate-400">Correction</dt>
                 <dd className="font-medium text-ink">{detail.correctionType ?? '—'}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-slate-500">Disposition</dt>
+                <dt className="text-slate-500 dark:text-slate-400">Disposition</dt>
                 <dd className="font-medium text-ink">{detail.disposition?.replace('_', ' ') ?? 'Not set'}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-slate-500">Quality sign-off</dt>
+                <dt className="text-slate-500 dark:text-slate-400">Quality sign-off</dt>
                 <dd className="font-medium">{detail.qualitySignById ? 'Signed' : 'Pending'}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-slate-500">Production sign-off</dt>
+                <dt className="text-slate-500 dark:text-slate-400">Production sign-off</dt>
                 <dd className="font-medium">{detail.productionSignById ? 'Signed' : 'Pending'}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-slate-500">Status</dt>
+                <dt className="text-slate-500 dark:text-slate-400">Status</dt>
                 <dd>
                   <Badge tone={STATUS_TONE[detail.status] ?? 'neutral'}>{detail.status.replace('_', ' ')}</Badge>
                 </dd>
@@ -417,7 +417,7 @@ export function Capa() {
               ) : (
                 <div className="space-y-3">
                   {(capaActionsQ.data ?? []).map((a) => (
-                    <div key={a.id} className="rounded-xl border border-line bg-white p-3">
+                    <div key={a.id} className="rounded-xl border border-line bg-white dark:bg-slate-800 p-3">
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <div className="flex items-center gap-2">
                           <Badge tone={a.actionType === 'CORRECTIVE' ? 'critical' : 'advisory'}>
@@ -427,11 +427,11 @@ export function Capa() {
                             {a.status.replace('_', ' ')}
                           </Badge>
                         </div>
-                        <span className="text-xs text-slate-500 tabular-nums">Due {fmtDate(a.dueDate)}</span>
+                        <span className="text-xs text-slate-500 dark:text-slate-400 tabular-nums">Due {fmtDate(a.dueDate)}</span>
                       </div>
-                      <p className="mt-2 text-sm text-slate-700">{a.description}</p>
-                      <p className="mt-1 text-xs text-slate-500">
-                        Owner: <span className="font-semibold text-slate-700">{a.owner}</span>
+                      <p className="mt-2 text-sm text-slate-700 dark:text-slate-200">{a.description}</p>
+                      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                        Owner: <span className="font-semibold text-slate-700 dark:text-slate-200">{a.owner}</span>
                       </p>
                       {a.verificationResult ? (
                         <p className="mt-2 rounded-lg bg-pass-bg px-3 py-2 text-xs text-pass-text">
@@ -475,7 +475,7 @@ export function Capa() {
                     </div>
                   ))}
                   {(capaActionsQ.data ?? []).length === 0 ? (
-                    <p className="rounded-xl border border-dashed border-line bg-alabaster px-4 py-6 text-center text-sm text-slate-500">
+                    <p className="rounded-xl border border-dashed border-line bg-alabaster px-4 py-6 text-center text-sm text-slate-500 dark:text-slate-400">
                       No actions yet — plan the corrective and preventive steps below.
                     </p>
                   ) : null}
@@ -483,7 +483,7 @@ export function Capa() {
               )}
 
               {verifyFor ? (
-                <form onSubmit={verifyCapaAction} className="mt-3 space-y-3 rounded-xl bg-slate-50 p-4">
+                <form onSubmit={verifyCapaAction} className="mt-3 space-y-3 rounded-xl bg-slate-50 dark:bg-slate-800 p-4">
                   <p className="text-sm font-semibold text-ink">Verify: {verifyFor.description}</p>
                   <Field label="Verification result" required>
                     <TextArea value={verifyNote} onChange={(e) => setVerifyNote(e.target.value)} required />
@@ -498,7 +498,7 @@ export function Capa() {
                   </div>
                 </form>
               ) : detail.status !== 'CLOSED' ? (
-                <form onSubmit={addCapaAction} className="mt-3 space-y-3 rounded-xl bg-slate-50 p-4">
+                <form onSubmit={addCapaAction} className="mt-3 space-y-3 rounded-xl bg-slate-50 dark:bg-slate-800 p-4">
                   <p className="text-sm font-semibold text-ink">Add action</p>
                   <Field label="Type" required>
                     <Select value={aType} onChange={(e) => setAType(e.target.value as 'CORRECTIVE' | 'PREVENTIVE')}>

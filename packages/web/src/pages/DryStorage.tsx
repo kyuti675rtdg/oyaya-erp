@@ -37,7 +37,7 @@ function directionBadge(direction: string) {
     return <span className="inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700">IN</span>;
   if (d === 'OUT' || d === 'ADJUST_OUT')
     return <span className="inline-flex items-center rounded-full bg-rose-100 px-2.5 py-0.5 text-[11px] font-bold text-rose-700">OUT</span>;
-  return <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-bold text-slate-600">ADJUST</span>;
+  return <span className="inline-flex items-center rounded-full bg-slate-100 dark:bg-slate-700 px-2.5 py-0.5 text-[11px] font-bold text-slate-600 dark:text-slate-300">ADJUST</span>;
 }
 
 function fmtDate(iso: string) {
@@ -143,31 +143,31 @@ export function DryStorage() {
           <>
             <div className={cardShell}>
               <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Total Stock</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Total Stock</p>
                 <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
                   <Wheat size={18} />
                 </span>
               </div>
-              <p className="mt-2 text-2xl font-extrabold tabular-nums text-slate-800">
-                {fmt(detail.balanceQ)} <span className="text-sm font-semibold text-slate-400">Qt</span>
+              <p className="mt-2 text-2xl font-extrabold tabular-nums text-slate-800 dark:text-slate-100">
+                {fmt(detail.balanceQ)} <span className="text-sm font-semibold text-slate-400 dark:text-slate-500">Qt</span>
               </p>
-              <p className="mt-1 text-xs text-slate-500">of {fmt(detail.capacityQ)} Qt capacity</p>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">of {fmt(detail.capacityQ)} Qt capacity</p>
             </div>
 
             <div className={cardShell}>
               <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Capacity Used</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Capacity Used</p>
                 <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-50 text-sky-600">
                   <BarChart3 size={18} />
                 </span>
               </div>
-              <p className="mt-2 text-2xl font-extrabold tabular-nums text-slate-800">{pct1(detail.pct)}</p>
-              <p className="mt-1 text-xs text-slate-500">Low &lt; 15% · High &gt; 95%</p>
+              <p className="mt-2 text-2xl font-extrabold tabular-nums text-slate-800 dark:text-slate-100">{pct1(detail.pct)}</p>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Low &lt; 15% · High &gt; 95%</p>
             </div>
 
             <div className={cardShell}>
               <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Wheat Mix</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Wheat Mix</p>
                 <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-50 text-orange-600">
                   <Layers size={18} />
                 </span>
@@ -176,10 +176,10 @@ export function DryStorage() {
                 {breakdownBars.map((b) => (
                   <div key={b.type} className="flex items-center gap-2">
                     <span className={`w-12 text-[10px] font-bold uppercase ${TYPE_COLORS[b.type].text}`}>{b.type.slice(0, 4)}</span>
-                    <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100">
+                    <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
                       <div className={`h-full rounded-full ${TYPE_COLORS[b.type].bar}`} style={{ width: `${Math.min(100, b.share)}%` }} />
                     </div>
-                    <span className="w-12 text-right text-[11px] font-semibold tabular-nums text-slate-600">{pct1(b.share)}</span>
+                    <span className="w-12 text-right text-[11px] font-semibold tabular-nums text-slate-600 dark:text-slate-300">{pct1(b.share)}</span>
                   </div>
                 ))}
               </div>
@@ -187,13 +187,13 @@ export function DryStorage() {
 
             <div className={cardShell}>
               <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Active Alerts</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Active Alerts</p>
                 <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-50 text-rose-600">
                   <AlertTriangle size={18} />
                 </span>
               </div>
-              <p className="mt-2 text-2xl font-extrabold tabular-nums text-slate-800">{detail.alerts.length}</p>
-              <p className="mt-1 text-xs text-slate-500">
+              <p className="mt-2 text-2xl font-extrabold tabular-nums text-slate-800 dark:text-slate-100">{detail.alerts.length}</p>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                 {detail.alerts.length === 0 ? 'All levels normal' : 'Check the alerts list below'}
               </p>
             </div>
@@ -213,7 +213,7 @@ export function DryStorage() {
               subtitle={`Target: keep between 15% and 95% · conditioning moisture 15.0–16.5%`}
             />
             <div className="relative pt-1">
-              <div className="h-5 overflow-hidden rounded-full bg-slate-100">
+              <div className="h-5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
                 <div
                   className={`h-full rounded-full transition-all ${
                     detail.pct >= 95 ? 'bg-rose-500' : detail.pct < 15 ? 'bg-amber-500' : 'bg-emerald-500'
@@ -225,9 +225,9 @@ export function DryStorage() {
               <div className="absolute top-1 h-5 w-px bg-slate-400" style={{ left: '15%' }} title="15% low threshold" />
               <div className="absolute top-1 h-5 w-px bg-slate-400" style={{ left: '95%' }} title="95% high threshold" />
             </div>
-            <div className="mt-2 flex justify-between text-[11px] font-semibold text-slate-400">
+            <div className="mt-2 flex justify-between text-[11px] font-semibold text-slate-400 dark:text-slate-500">
               <span>15% LOW</span>
-              <span className="tabular-nums text-slate-600">
+              <span className="tabular-nums text-slate-600 dark:text-slate-300">
                 {fmt(detail.balanceQ)} / {fmt(detail.capacityQ)} Qt
               </span>
               <span>95% HIGH</span>
@@ -242,8 +242,8 @@ export function DryStorage() {
                 {breakdownBars.map((b) => (
                   <div key={b.type} className={`rounded-xl p-4 ${TYPE_COLORS[b.type].soft}`}>
                     <p className={`text-[11px] font-bold uppercase tracking-wide ${TYPE_COLORS[b.type].text}`}>{b.type}</p>
-                    <p className="mt-1 text-xl font-extrabold tabular-nums text-slate-800">{fmt(b.q)}</p>
-                    <p className="text-xs tabular-nums text-slate-500">{pct1(b.share)} of total</p>
+                    <p className="mt-1 text-xl font-extrabold tabular-nums text-slate-800 dark:text-slate-100">{fmt(b.q)}</p>
+                    <p className="text-xs tabular-nums text-slate-500 dark:text-slate-400">{pct1(b.share)} of total</p>
                   </div>
                 ))}
               </div>
@@ -322,20 +322,20 @@ export function DryStorage() {
             title="Recent Movements"
             subtitle="Last 8 dry pool movements"
             action={
-              <span className="text-xs font-semibold text-slate-400">
+              <span className="text-xs font-semibold text-slate-400 dark:text-slate-500">
                 <CalendarClock size={14} className="mr-1 inline" />
                 live
               </span>
             }
           />
-          {movementsQ.isPending && <p className="py-8 text-center text-sm text-slate-400">Loading movements…</p>}
+          {movementsQ.isPending && <p className="py-8 text-center text-sm text-slate-400 dark:text-slate-500">Loading movements…</p>}
           {movementsQ.isError && <ErrorBox message="Could not load recent movements." onRetry={() => movementsQ.refetch()} />}
           {movementsQ.data && recent.length === 0 && <EmptyState title="No movements yet" sub="Dry pool movements will appear here." />}
           {recent.length > 0 && (
             <div className="overflow-x-auto">
               <table className="w-full min-w-[520px] text-sm">
                 <thead>
-                  <tr className="border-b border-slate-100 text-left text-[11px] font-bold uppercase tracking-wide text-slate-400">
+                  <tr className="border-b border-slate-100 dark:border-slate-700 text-left text-[11px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-500">
                     <th className="py-2 pr-3">Date</th>
                     <th className="py-2 pr-3">Direction</th>
                     <th className="py-2 pr-3 text-right">Qt</th>
@@ -346,11 +346,11 @@ export function DryStorage() {
                 <tbody>
                   {recent.map((m) => (
                     <tr key={m.id} className="border-b border-slate-50 last:border-0">
-                      <td className="whitespace-nowrap py-2 pr-3 text-slate-600">{fmtDate(m.movedAt)}</td>
+                      <td className="whitespace-nowrap py-2 pr-3 text-slate-600 dark:text-slate-300">{fmtDate(m.movedAt)}</td>
                       <td className="py-2 pr-3">{directionBadge(m.direction)}</td>
-                      <td className="py-2 pr-3 text-right font-bold tabular-nums text-slate-800">{fmt(m.quintals)}</td>
-                      <td className="py-2 pr-3 text-slate-600">{m.wheatType ?? '—'}</td>
-                      <td className="py-2 text-xs text-slate-500">{m.reference ?? '—'}</td>
+                      <td className="py-2 pr-3 text-right font-bold tabular-nums text-slate-800 dark:text-slate-100">{fmt(m.quintals)}</td>
+                      <td className="py-2 pr-3 text-slate-600 dark:text-slate-300">{m.wheatType ?? '—'}</td>
+                      <td className="py-2 text-xs text-slate-500 dark:text-slate-400">{m.reference ?? '—'}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -212,8 +212,8 @@ export function FlourGrades() {
                   mono: true,
                   render: (g) => <span className="font-bold text-violet-700">{g.gradeCode}</span>
                 },
-                { key: 'name', label: 'Grade', render: (g) => <div><p className="font-semibold">{g.name}</p><p className="text-xs text-slate-500">{g.product?.name ?? g.productId}</p></div> },
-                { key: 'spec', label: 'Spec', render: (g) => <span className="tnum text-xs text-slate-600">{specText(g)}</span> },
+                { key: 'name', label: 'Grade', render: (g) => <div><p className="font-semibold">{g.name}</p><p className="text-xs text-slate-500 dark:text-slate-400">{g.product?.name ?? g.productId}</p></div> },
+                { key: 'spec', label: 'Spec', render: (g) => <span className="tnum text-xs text-slate-600 dark:text-slate-300">{specText(g)}</span> },
                 { key: 'shelfLifeDays', label: 'Shelf life', mono: true, render: (g) => `${g.shelfLifeDays}d` },
                 {
                   key: 'isActive',
@@ -275,8 +275,8 @@ export function FlourGrades() {
               {quality.map((r) => (
                 <div key={r.id} className={`rounded-xl border p-3.5 ${r.pass ? 'border-emerald-200 bg-emerald-50/40' : 'border-rose-200 bg-rose-50/40'}`}>
                   <div className="flex items-center justify-between gap-2">
-                    <p className="tnum text-sm font-bold text-slate-800">
-                      {r.batchNo} <span className="font-normal text-slate-500">· {fmtDate(r.sampleTime)}</span>
+                    <p className="tnum text-sm font-bold text-slate-800 dark:text-slate-100">
+                      {r.batchNo} <span className="font-normal text-slate-500 dark:text-slate-400">· {fmtDate(r.sampleTime)}</span>
                     </p>
                     {r.pass ? (
                       <span className="flex items-center gap-1 text-xs font-bold text-emerald-700"><CheckCircle2 size={14} /> PASS</span>
@@ -287,10 +287,10 @@ export function FlourGrades() {
                   <div className="tnum mt-2 grid grid-cols-3 gap-2 text-xs">
                     {r.params.map((p) => (
                       <div key={p.param} className={`rounded-lg px-2 py-1.5 ${p.pass ? 'bg-white/70' : 'bg-white font-bold text-rose-700'}`}>
-                        <p className="font-semibold text-slate-500">{p.label}</p>
+                        <p className="font-semibold text-slate-500 dark:text-slate-400">{p.label}</p>
                         <p>
                           {p.value === null ? '—' : `${p.value.toFixed(1)}${p.unit}`}
-                          <span className="text-slate-400">
+                          <span className="text-slate-400 dark:text-slate-500">
                             {' '}({p.min !== null ? `≥${p.min}` : ''}{p.min !== null && p.max !== null ? ' ' : ''}{p.max !== null ? `≤${p.max}` : ''})
                           </span>
                         </p>

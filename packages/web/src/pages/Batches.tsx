@@ -116,7 +116,7 @@ export function Batches() {
                 <NumberInput value={foreignQ} onChange={(e) => setForeignQ(e.target.value)} min={0} step="0.1" placeholder="0.0" />
               </Field>
             </div>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-500 dark:text-slate-400">
               The lab sets a fresh blend per batch; percentages are computed from the quintal quantities and locked to the batch.
             </p>
             <Button type="submit" loading={saving} className="w-full">

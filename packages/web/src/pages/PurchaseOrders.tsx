@@ -51,13 +51,13 @@ function ReceiveProgress({ po }: { po: PurchaseOrder }) {
   const pct = ordered > 0 ? Math.min(100, (received / ordered) * 100) : 0;
   return (
     <div className="min-w-[140px]">
-      <div className="flex items-center justify-between text-xs text-slate-500">
-        <span className="tnum font-semibold text-slate-700">
+      <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+        <span className="tnum font-semibold text-slate-700 dark:text-slate-200">
           {fmtQ(received)} / {fmtQ(ordered)} q
         </span>
         <span className="tnum">{pct.toFixed(0)}%</span>
       </div>
-      <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+      <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
         <div
           className={`h-full rounded-full transition-all ${pct >= 100 ? 'bg-emerald-500' : 'bg-violet-500'}`}
           style={{ width: `${pct}%` }}
@@ -299,7 +299,7 @@ export function PurchaseOrders() {
           <div className="col-span-2 md:col-span-1 lg:col-span-2">
             <Field label="Search PO number">
               <div className="relative">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
                 <TextInput
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
@@ -385,7 +385,7 @@ export function PurchaseOrders() {
                       type="button"
                       title="View detail"
                       onClick={() => setDetailId(r.id)}
-                      className="rounded-lg border border-line p-1.5 text-slate-600 hover:bg-slate-50"
+                      className="rounded-lg border border-line p-1.5 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
                     >
                       <Eye className="h-4 w-4" />
                     </button>
@@ -407,7 +407,7 @@ export function PurchaseOrders() {
                               type="button"
                               title="Edit draft"
                               onClick={() => openEdit(r)}
-                              className="rounded-lg border border-line p-1.5 text-slate-600 hover:bg-slate-50"
+                              className="rounded-lg border border-line p-1.5 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
                             >
                               <Pencil className="h-4 w-4" />
                             </button>
@@ -424,7 +424,7 @@ export function PurchaseOrders() {
                       </>
                     ) : null}
                     {r.status !== 'DRAFT' && r.status !== 'CANCELLED' ? (
-                      <span className="tnum ml-1 hidden text-xs font-semibold text-slate-500 xl:inline" title="Outstanding quantity">
+                      <span className="tnum ml-1 hidden text-xs font-semibold text-slate-500 dark:text-slate-400 xl:inline" title="Outstanding quantity">
                         Outstanding: {fmtQ(Math.max(0, (Number(r.quantityQ) || 0) - (Number(r.receivedQ) || 0)))} q
                       </span>
                     ) : null}
@@ -444,7 +444,7 @@ export function PurchaseOrders() {
         <div className={modalShell}>
           <div className={`${cardShell} w-full max-w-lg`}>
             <h3 className="text-lg font-bold text-ink">New purchase order</h3>
-            <p className="mt-1 text-sm text-slate-500">Draft — the order takes effect once approved.</p>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Draft — the order takes effect once approved.</p>
             <form onSubmit={submitCreate} className="mt-4 space-y-4">
               <Field label="Supplier" required>
                 <Select value={form.supplierId} onChange={(e) => setField('supplierId', e.target.value)} required>
@@ -505,7 +505,7 @@ export function PurchaseOrders() {
         <div className={modalShell}>
           <div className={`${cardShell} w-full max-w-lg`}>
             <h3 className="text-lg font-bold text-ink">Edit draft {editTarget.poNo}</h3>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               Supplier: {editTarget.supplier?.name ?? '—'}
             </p>
             <form onSubmit={submitEdit} className="mt-4 space-y-4">
@@ -561,7 +561,7 @@ export function PurchaseOrders() {
               <Ban className="h-5 w-5 text-rose-600" />
               <h3 className="text-lg font-bold text-ink">Cancel {cancelTarget.poNo}?</h3>
             </div>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               The order will be closed as cancelled. Gate deliveries already received are not affected.
             </p>
             <div className="mt-4">
@@ -596,14 +596,14 @@ export function PurchaseOrders() {
                   <h3 className="tnum text-lg font-bold text-ink">{detail?.poNo ?? 'Purchase order'}</h3>
                   {detail ? <POStatusBadge status={detail.status} /> : null}
                 </div>
-                <p className="mt-1 text-sm text-slate-500">
+                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                   Created {detail ? fmtDateTime(detail.createdAt) : '—'}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setDetailId(null)}
-                className="rounded-lg border border-line p-1.5 text-slate-600 hover:bg-slate-50"
+                className="rounded-lg border border-line p-1.5 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
                 aria-label="Close"
               >
                 <XCircle className="h-4 w-4" />
@@ -626,16 +626,16 @@ export function PurchaseOrders() {
                     { label: 'Total value', value: fmtBirr(detail.totalBirr), mono: true },
                     { label: 'Delivery date', value: fmtDate(detail.deliveryDate) }
                   ].map((kv) => (
-                    <div key={kv.label} className="rounded-xl border border-slate-100 bg-slate-50/60 p-3">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{kv.label}</p>
+                    <div key={kv.label} className="rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/60 p-3">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{kv.label}</p>
                       <p className={`mt-1 text-sm font-bold text-ink ${kv.mono ? 'tnum' : ''}`}>{kv.value}</p>
                     </div>
                   ))}
                 </div>
                 {detail.terms ? (
-                  <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Terms / notes</p>
-                    <p className="mt-1 text-sm text-slate-700">{detail.terms}</p>
+                  <div className="rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/60 p-3">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Terms / notes</p>
+                    <p className="mt-1 text-sm text-slate-700 dark:text-slate-200">{detail.terms}</p>
                   </div>
                 ) : null}
 
@@ -644,23 +644,23 @@ export function PurchaseOrders() {
                   <h4 className="mb-2 text-sm font-bold text-ink">Ordered vs received</h4>
                   <ReceiveProgress po={detail} />
                   <div className="mt-2 flex flex-wrap gap-4 text-sm">
-                    <span className="tnum text-slate-600">Received: <strong className="text-ink">{fmtQ(detailReceived)} q</strong></span>
-                    <span className="tnum text-slate-600">Outstanding: <strong className="text-ink">{fmtQ(detailOutstanding)} q</strong></span>
+                    <span className="tnum text-slate-600 dark:text-slate-300">Received: <strong className="text-ink">{fmtQ(detailReceived)} q</strong></span>
+                    <span className="tnum text-slate-600 dark:text-slate-300">Outstanding: <strong className="text-ink">{fmtQ(detailOutstanding)} q</strong></span>
                   </div>
                 </div>
 
                 {/* Linked intakes */}
                 <div>
                   <h4 className="mb-2 flex items-center gap-2 text-sm font-bold text-ink">
-                    <Truck className="h-4 w-4 text-slate-400" /> Linked deliveries ({detailIntakes.length})
+                    <Truck className="h-4 w-4 text-slate-400 dark:text-slate-500" /> Linked deliveries ({detailIntakes.length})
                   </h4>
                   {detailIntakes.length === 0 ? (
-                    <p className="text-sm text-slate-500">No gate deliveries have been linked to this order yet.</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">No gate deliveries have been linked to this order yet.</p>
                   ) : (
-                    <div className="overflow-x-auto rounded-xl border border-slate-100">
+                    <div className="overflow-x-auto rounded-xl border border-slate-100 dark:border-slate-700">
                       <table className="w-full min-w-[420px] text-sm">
                         <thead>
-                          <tr className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+                          <tr className="bg-slate-50 dark:bg-slate-800 text-left text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
                             <th className="px-3 py-2">Intake No.</th>
                             <th className="px-3 py-2">Date</th>
                             <th className="px-3 py-2 text-right">Quintals</th>
@@ -669,11 +669,11 @@ export function PurchaseOrders() {
                         </thead>
                         <tbody>
                           {detailIntakes.map((i) => (
-                            <tr key={i.id} className="border-t border-slate-100">
+                            <tr key={i.id} className="border-t border-slate-100 dark:border-slate-700">
                               <td className="tnum px-3 py-2 font-semibold text-ink">{i.intakeNo}</td>
-                              <td className="px-3 py-2 text-slate-600">{fmtDate(i.deliveryDate)}</td>
+                              <td className="px-3 py-2 text-slate-600 dark:text-slate-300">{fmtDate(i.deliveryDate)}</td>
                               <td className="tnum px-3 py-2 text-right">{fmtQ(i.quintals)}</td>
-                              <td className="px-3 py-2 text-slate-600">{i.status.replace('_', ' ')}</td>
+                              <td className="px-3 py-2 text-slate-600 dark:text-slate-300">{i.status.replace('_', ' ')}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -685,22 +685,22 @@ export function PurchaseOrders() {
                 {/* Timeline */}
                 <div>
                   <h4 className="mb-2 flex items-center gap-2 text-sm font-bold text-ink">
-                    <CalendarDays className="h-4 w-4 text-slate-400" /> Timeline
+                    <CalendarDays className="h-4 w-4 text-slate-400 dark:text-slate-500" /> Timeline
                   </h4>
                   <ul className="space-y-2 text-sm">
                     <li className="flex justify-between">
-                      <span className="text-slate-500">Draft created</span>
+                      <span className="text-slate-500 dark:text-slate-400">Draft created</span>
                       <span className="tnum font-semibold">{fmtDateTime(detail.createdAt)}</span>
                     </li>
                     {detail.approvedAt ? (
                       <li className="flex justify-between">
-                        <span className="text-slate-500">Approved</span>
+                        <span className="text-slate-500 dark:text-slate-400">Approved</span>
                         <span className="tnum font-semibold">{fmtDateTime(detail.approvedAt)}</span>
                       </li>
                     ) : null}
                     {detailIntakes.length > 0 ? (
                       <li className="flex justify-between">
-                        <span className="text-slate-500">First delivery</span>
+                        <span className="text-slate-500 dark:text-slate-400">First delivery</span>
                         <span className="tnum font-semibold">{fmtDate(detailIntakes[0].deliveryDate)}</span>
                       </li>
                     ) : null}
@@ -714,7 +714,7 @@ export function PurchaseOrders() {
                 </div>
 
                 {/* Actions */}
-                <div className="flex flex-wrap gap-2 border-t border-slate-100 pt-4">
+                <div className="flex flex-wrap gap-2 border-t border-slate-100 dark:border-slate-700 pt-4">
                   {detail.status === 'DRAFT' ? (
                     <>
                       {canApprove ? (

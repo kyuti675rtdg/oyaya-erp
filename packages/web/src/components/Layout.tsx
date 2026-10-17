@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../store/auth';
+import { useTheme } from '../lib/theme';
 import { OfflineBanner } from './OfflineBanner';
 
 interface NavItem {
@@ -585,6 +586,7 @@ function useNow(): Date {
 
 export function Layout() {
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [search, setSearch] = useState('');
@@ -632,10 +634,10 @@ export function Layout() {
 
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Topbar */}
-        <header className="no-print sticky top-0 z-30 flex items-center gap-3 border-b border-[#E2E7F0] bg-white px-4 py-3 md:px-6">
+        <header className="no-print sticky top-0 z-30 flex items-center gap-3 border-b border-[#E2E7F0] bg-white px-4 py-3 dark:border-slate-700 dark:bg-slate-800 md:px-6">
           <button
             onClick={() => setMenuOpen(true)}
-            className="touch rounded-lg p-2.5 text-[#172033] transition-colors hover:bg-[#F4F6FA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B35D5]"
+            className="touch rounded-lg p-2.5 text-[#172033] transition-colors hover:bg-[#F4F6FA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B35D5] dark:text-slate-200 dark:hover:bg-slate-700"
             aria-label="Open menu"
           >
             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5" aria-hidden="true">
@@ -645,7 +647,7 @@ export function Layout() {
 
           {/* Search */}
           <div className="relative hidden w-full max-w-md sm:block">
-            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#667085]" aria-hidden="true">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#667085] dark:text-slate-400" aria-hidden="true">
               <circle cx="9" cy="9" r="5.5" />
               <path d="M13.5 13.5L17 17" strokeLinecap="round" />
             </svg>
@@ -653,17 +655,35 @@ export function Layout() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search anything... (e.g. supplier, batch, product, report)"
-              className="w-full rounded-xl border border-[#E2E7F0] bg-[#F7F8FC] py-2.5 pl-10 pr-4 text-sm text-[#172033] outline-none transition-shadow placeholder:text-[#667085]/70 focus-visible:ring-2 focus-visible:ring-[#5B35D5]/50"
+              className="w-full rounded-xl border border-[#E2E7F0] bg-[#F7F8FC] py-2.5 pl-10 pr-4 text-sm text-[#172033] outline-none transition-shadow placeholder:text-[#667085]/70 focus-visible:ring-2 focus-visible:ring-[#5B35D5]/50 dark:border-slate-700 dark:bg-slate-700 dark:text-slate-100 dark:placeholder:text-slate-400"
               aria-label="Search"
             />
           </div>
 
           <div className="ml-auto flex items-center gap-2 sm:gap-3">
+            {/* Theme toggle */}
+            <button
+              onClick={toggleTheme}
+              className="touch rounded-xl p-2.5 text-[#667085] transition-colors hover:bg-[#F4F6FA] hover:text-[#5B35D5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B35D5] dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-amber-400"
+              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              {theme === 'dark' ? (
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5" aria-hidden="true">
+                  <circle cx="10" cy="10" r="4" />
+                  <path d="M10 2v2M10 16v2M3.3 3.3l1.4 1.4M15.3 15.3l1.4 1.4M2 10h2M16 10h2M3.3 16.7l1.4-1.4M15.3 4.7l1.4-1.4" strokeLinecap="round" />
+                </svg>
+              ) : (
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5" aria-hidden="true">
+                  <path d="M16.5 13.5A7 7 0 016.5 3.5a7 7 0 1010 10z" strokeLinejoin="round" />
+                </svg>
+              )}
+            </button>
+
             {/* Notification bell + popover */}
             <div className="relative">
               <button
                 onClick={() => setNotifOpen((v) => !v)}
-                className="touch relative rounded-xl p-2.5 text-[#667085] transition-colors hover:bg-[#F4F6FA] hover:text-[#5B35D5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B35D5]"
+                className="touch relative rounded-xl p-2.5 text-[#667085] transition-colors hover:bg-[#F4F6FA] hover:text-[#5B35D5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B35D5] dark:text-slate-300 dark:hover:bg-slate-700"
                 aria-label="Notifications"
                 aria-expanded={notifOpen}
                 aria-haspopup="true"
@@ -672,7 +692,7 @@ export function Layout() {
                   <path d="M10 3a4.5 4.5 0 00-4.5 4.5c0 3-1 4-1.5 4.5h12C15.5 11.5 14.5 10.5 14.5 7.5A4.5 4.5 0 0010 3z" strokeLinejoin="round" />
                   <path d="M8 15a2 2 0 004 0" strokeLinecap="round" />
                 </svg>
-                <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white ring-2 ring-white">
+                <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white ring-2 ring-white dark:ring-slate-800">
                   3
                 </span>
               </button>
@@ -685,21 +705,21 @@ export function Layout() {
                     tabIndex={-1}
                   />
                   <div
-                    className="absolute right-0 z-50 mt-2 w-80 rounded-2xl border border-slate-100 bg-white p-2 shadow-[0_8px_30px_-6px_rgba(15,23,42,0.15)]"
+                    className="absolute right-0 z-50 mt-2 w-80 rounded-2xl border border-slate-100 bg-white p-2 shadow-[0_8px_30px_-6px_rgba(15,23,42,0.15)] dark:border-slate-700 dark:bg-slate-800"
                     role="menu"
                     aria-label="Notifications"
                   >
-                    <p className="px-3 pb-1 pt-2 text-sm font-bold text-slate-800">Notifications</p>
+                    <p className="px-3 pb-1 pt-2 text-sm font-bold text-slate-800 dark:text-slate-100">Notifications</p>
                     {[
                       { dot: 'bg-amber-500', title: 'QC sample flagged', sub: 'Moisture above threshold — review required' },
                       { dot: 'bg-rose-500', title: 'CAPA overdue', sub: 'Corrective action past due date' },
                       { dot: 'bg-violet-500', title: 'Duket yield alert', sub: 'Yield below 78% on latest shift' }
                     ].map((n) => (
-                      <div key={n.title} className="flex items-start gap-3 rounded-xl px-3 py-2.5 hover:bg-slate-50">
+                      <div key={n.title} className="flex items-start gap-3 rounded-xl px-3 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-700">
                         <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${n.dot}`} />
                         <div className="min-w-0">
-                          <p className="text-[13px] font-semibold text-slate-800">{n.title}</p>
-                          <p className="truncate text-xs text-slate-500">{n.sub}</p>
+                          <p className="text-[13px] font-semibold text-slate-800 dark:text-slate-100">{n.title}</p>
+                          <p className="truncate text-xs text-slate-500 dark:text-slate-400">{n.sub}</p>
                         </div>
                       </div>
                     ))}
@@ -710,7 +730,7 @@ export function Layout() {
 
             {/* App grid */}
             <button
-              className="touch rounded-xl p-2.5 text-[#667085] transition-colors hover:bg-[#F4F6FA] hover:text-[#5B35D5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B35D5]"
+              className="touch rounded-xl p-2.5 text-[#667085] transition-colors hover:bg-[#F4F6FA] hover:text-[#5B35D5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B35D5] dark:text-slate-300 dark:hover:bg-slate-700"
               aria-label="All modules"
             >
               <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5" aria-hidden="true">
@@ -721,17 +741,17 @@ export function Layout() {
               </svg>
             </button>
 
-            <div className="hidden h-8 w-px bg-[#E2E7F0] sm:block" aria-hidden="true" />
+            <div className="hidden h-8 w-px bg-[#E2E7F0] dark:bg-slate-700 sm:block" aria-hidden="true" />
 
             {/* Date / time */}
             <div className="hidden items-center gap-2 lg:flex" aria-label="Current date and time">
-              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5 text-[#667085]" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5 text-[#667085] dark:text-slate-400" aria-hidden="true">
                 <rect x="3" y="4.5" width="14" height="12" rx="2" />
                 <path d="M3 8.5h14M7 3v3M13 3v3" strokeLinecap="round" />
               </svg>
               <div className="text-left">
-                <p className="text-sm font-semibold leading-tight text-[#172033]">{dateStr}</p>
-                <p className="tnum text-xs leading-tight text-[#667085]">{timeStr}</p>
+                <p className="text-sm font-semibold leading-tight text-[#172033] dark:text-slate-100">{dateStr}</p>
+                <p className="tnum text-xs leading-tight text-[#667085] dark:text-slate-400">{timeStr}</p>
               </div>
             </div>
 
@@ -739,7 +759,7 @@ export function Layout() {
             <div className="relative">
               <button
                 onClick={() => setUserMenuOpen((v) => !v)}
-                className="touch flex items-center gap-2 rounded-lg p-1 transition-colors hover:bg-[#F4F6FA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B35D5]"
+                className="touch flex items-center gap-2 rounded-lg p-1 transition-colors hover:bg-[#F4F6FA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B35D5] dark:hover:bg-slate-700"
                 aria-label="Account menu"
                 aria-haspopup="menu"
                 aria-expanded={userMenuOpen}
@@ -748,17 +768,17 @@ export function Layout() {
                   {initial}
                 </div>
                 <div className="hidden text-left md:block">
-                  <p className="max-w-32 truncate text-sm font-semibold leading-tight text-[#172033]">
+                  <p className="max-w-32 truncate text-sm font-semibold leading-tight text-[#172033] dark:text-slate-100">
                     {user?.name ?? user?.email}
                   </p>
-                  <p className="max-w-32 truncate text-xs leading-tight text-[#667085]">{user?.role}</p>
+                  <p className="max-w-32 truncate text-xs leading-tight text-[#667085] dark:text-slate-400">{user?.role}</p>
                 </div>
                 <svg
                   viewBox="0 0 20 20"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth={2}
-                  className={`hidden h-4 w-4 text-[#667085] transition-transform duration-200 md:block ${userMenuOpen ? 'rotate-180' : ''}`}
+                  className={`hidden h-4 w-4 text-[#667085] transition-transform duration-200 dark:text-slate-400 md:block ${userMenuOpen ? 'rotate-180' : ''}`}
                   aria-hidden="true"
                 >
                   <path d="M5 7.5l5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
@@ -773,14 +793,14 @@ export function Layout() {
                     tabIndex={-1}
                   />
                   <div
-                    className="absolute right-0 z-50 mt-2 w-48 rounded-xl border border-[#E2E7F0] bg-white py-1 shadow-lg"
+                    className="absolute right-0 z-50 mt-2 w-48 rounded-xl border border-[#E2E7F0] bg-white py-1 shadow-lg dark:border-slate-700 dark:bg-slate-800"
                     role="menu"
                     aria-label="Account"
                   >
                     <button
                       onClick={handleLogout}
                       role="menuitem"
-                      className="touch flex w-full items-center px-4 py-2 text-left text-sm font-semibold text-[#172033] transition-colors hover:bg-[#F4F6FA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#5B35D5]"
+                      className="touch flex w-full items-center px-4 py-2 text-left text-sm font-semibold text-[#172033] transition-colors hover:bg-[#F4F6FA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#5B35D5] dark:text-slate-100 dark:hover:bg-slate-700"
                       aria-label="Log out"
                     >
                       Log out

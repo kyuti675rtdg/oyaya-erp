@@ -175,7 +175,7 @@ export function NcRegister() {
           { label: 'In filter', value: stats.total, tone: 'text-slate-800' }
         ].map((s) => (
           <div key={s.label} className={cardShell}>
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{s.label}</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{s.label}</p>
             <p className={`mt-1 text-2xl font-bold tabular-nums ${s.tone}`}>{s.value}</p>
           </div>
         ))}
@@ -318,21 +318,21 @@ export function NcRegister() {
                 <div className="space-y-3 md:hidden">
                   {rows.length === 0 ? (
                     <div className="rounded-xl border border-dashed border-line bg-alabaster px-6 py-10 text-center">
-                      <p className="font-semibold text-slate-700">No nonconformities</p>
+                      <p className="font-semibold text-slate-700 dark:text-slate-200">No nonconformities</p>
                     </div>
                   ) : (
                     rows.map((r) => (
                       <button
                         key={r.id}
                         onClick={() => openDetail(r)}
-                        className="w-full rounded-xl border border-line bg-white p-4 text-left shadow-sm"
+                        className="w-full rounded-xl border border-line bg-white dark:bg-slate-800 p-4 text-left shadow-sm"
                       >
                         <div className="flex items-center justify-between gap-2">
                           <span className="font-bold tabular-nums text-ink">{r.ncNo}</span>
                           <Badge tone={severityTone(r.severity)}>{NC_SEVERITY_LABEL[r.severity]}</Badge>
                         </div>
-                        <p className="mt-1 line-clamp-2 text-sm text-slate-600">{r.description}</p>
-                        <div className="mt-2 flex items-center justify-between text-xs text-slate-500">
+                        <p className="mt-1 line-clamp-2 text-sm text-slate-600 dark:text-slate-300">{r.description}</p>
+                        <div className="mt-2 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
                           <span>
                             {NC_SOURCE_LABEL[r.source]} · {fmtDate(r.dateDetected)}
                           </span>
@@ -350,11 +350,11 @@ export function NcRegister() {
 
       {detail ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
+          <div className="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-xl">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <h3 className="text-lg font-bold tabular-nums text-ink">{detail.ncNo}</h3>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-slate-500 dark:text-slate-400">
                   {NC_SOURCE_LABEL[detail.source]} · detected {fmtDate(detail.dateDetected)}
                   {detail.detectedBy ? ` by ${detail.detectedBy}` : ''}
                 </p>
@@ -364,36 +364,36 @@ export function NcRegister() {
                 <Badge tone={ncStatusTone(detail.status)}>{NC_STATUS_LABEL[detail.status]}</Badge>
               </div>
             </div>
-            <p className="mt-3 text-sm text-slate-700">{detail.description}</p>
+            <p className="mt-3 text-sm text-slate-700 dark:text-slate-200">{detail.description}</p>
             <dl className="mt-4 space-y-2 text-sm">
               <div className="flex justify-between">
-                <dt className="text-slate-500">Batch</dt>
+                <dt className="text-slate-500 dark:text-slate-400">Batch</dt>
                 <dd className="font-medium tabular-nums text-ink">{detail.batch?.batchNo ?? '—'}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-slate-500">Reference</dt>
+                <dt className="text-slate-500 dark:text-slate-400">Reference</dt>
                 <dd className="font-medium text-ink">{detail.reference ?? '—'}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-slate-500">Linked CAPA</dt>
+                <dt className="text-slate-500 dark:text-slate-400">Linked CAPA</dt>
                 <dd className="font-medium tabular-nums text-ink">{detail.linkedCapa?.capaNo ?? 'None'}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-slate-500">Root cause</dt>
+                <dt className="text-slate-500 dark:text-slate-400">Root cause</dt>
                 <dd className="font-medium text-ink">{detail.rootCause ? 'Recorded' : 'Not recorded'}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-slate-500">Disposition</dt>
+                <dt className="text-slate-500 dark:text-slate-400">Disposition</dt>
                 <dd className="font-medium text-ink">{detail.disposition ? 'Decided' : 'Not decided'}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-slate-500">Actions</dt>
+                <dt className="text-slate-500 dark:text-slate-400">Actions</dt>
                 <dd className="font-medium tabular-nums text-ink">{detail.actions?.length ?? 0}</dd>
               </div>
             </dl>
 
             {detail.status !== 'CLOSED' ? (
-              <div className="mt-5 space-y-3 rounded-xl bg-slate-50 p-4">
+              <div className="mt-5 space-y-3 rounded-xl bg-slate-50 dark:bg-slate-800 p-4">
                 {detail.status === 'OPEN' ? (
                   <Button variant="secondary" onClick={() => doAction('review')} loading={saving} className="w-full">
                     <Search size={14} /> Move to Under review
@@ -420,7 +420,7 @@ export function NcRegister() {
                 <Button onClick={() => doAction('close')} loading={saving} className="w-full">
                   <Lock size={14} /> Close nonconformity
                 </Button>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   Closure requires: root-cause analysis, product disposition and a completed dual sign-off.
                 </p>
               </div>

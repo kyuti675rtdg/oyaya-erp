@@ -80,7 +80,7 @@ export function GeneralLedger() {
               <span className="text-sm font-bold text-ink">
                 {ledgerQ.data.account.code} — {ledgerQ.data.account.name}
               </span>
-              <span className="tnum ml-auto text-sm text-slate-500">
+              <span className="tnum ml-auto text-sm text-slate-500 dark:text-slate-400">
                 Opening balance: <strong className="text-ink">{fmtBirr(ledgerQ.data.openingBalance)}</strong>
               </span>
             </div>
@@ -106,7 +106,7 @@ export function GeneralLedger() {
                 {
                   key: 'go',
                   label: '',
-                  render: (r) => <ChevronRight className="h-4 w-4 text-slate-400" />
+                  render: (r) => <ChevronRight className="h-4 w-4 text-slate-400 dark:text-slate-500" />
                 }
               ]}
               rows={ledgerQ.data.lines}
@@ -115,7 +115,7 @@ export function GeneralLedger() {
               emptyTitle="No postings in this period"
               emptySub="Journal entries posting to this account will appear here."
             />
-            <div className="flex flex-wrap justify-end gap-6 rounded-xl bg-slate-50 px-4 py-3 text-sm">
+            <div className="flex flex-wrap justify-end gap-6 rounded-xl bg-slate-50 dark:bg-slate-800 px-4 py-3 text-sm">
               <span className="tnum">
                 Total debit: <strong>{fmtBirr(ledgerQ.data.totals.debit)}</strong>
               </span>
@@ -145,7 +145,7 @@ export function GeneralLedger() {
             <Spinner label="Loading entry..." />
           ) : entryQ.data ? (
             <div>
-              <p className="mb-3 text-sm text-slate-500">
+              <p className="mb-3 text-sm text-slate-500 dark:text-slate-400">
                 {fmtDateTime(entryQ.data.entryDate)} · {entryQ.data.memo ?? '—'} · source{' '}
                 <strong>{entryQ.data.module}</strong>
               </p>
@@ -156,7 +156,7 @@ export function GeneralLedger() {
                     label: 'Account',
                     render: (r) => (
                       <span className="font-semibold text-ink">
-                        <span className="tnum mr-2 text-slate-400">{r.account.code}</span>
+                        <span className="tnum mr-2 text-slate-400 dark:text-slate-500">{r.account.code}</span>
                         {r.account.name}
                       </span>
                     )

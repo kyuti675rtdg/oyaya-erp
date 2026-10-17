@@ -83,7 +83,7 @@ export function TraceBatch() {
           {ch.upstream.sources.length === 0 && <li>No intake sources linked</li>}
         </ul>
       ),
-      badge: <span className="text-xs font-bold text-slate-500 tnum">{fmtQ(sourceQ)} Q total</span>,
+      badge: <span className="text-xs font-bold text-slate-500 dark:text-slate-400 tnum">{fmtQ(sourceQ)} Q total</span>,
       accent: 'bg-amber-100 text-amber-700'
     });
     if (ch.upstream.tankFills.length > 0 || ch.upstream.cycles.length > 0) {
@@ -238,9 +238,9 @@ export function TraceBatch() {
                   ['Pack runs', String(ch.downstream.packRuns.length)],
                   ['FG lots', String(ch.downstream.fgLots.length)]
                 ].map(([k, v]) => (
-                  <div key={k} className="rounded-xl bg-slate-50 px-4 py-3 text-center border border-slate-100">
-                    <p className="text-2xl font-black text-slate-800 tnum">{v}</p>
-                    <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">{k}</p>
+                  <div key={k} className="rounded-xl bg-slate-50 dark:bg-slate-800 px-4 py-3 text-center border border-slate-100 dark:border-slate-700">
+                    <p className="text-2xl font-black text-slate-800 dark:text-slate-100 tnum">{v}</p>
+                    <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">{k}</p>
                   </div>
                 ))}
               </div>

@@ -178,9 +178,9 @@ export function WhLineEditor({
   return (
     <div className="space-y-3">
       {lines.map((l, idx) => (
-        <div key={l.key} className="rounded-xl border border-slate-200 bg-slate-50/60 p-3">
+        <div key={l.key} className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/60 p-3">
           <div className="mb-2 flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500">Line {idx + 1}</span>
+            <span className="text-xs font-bold text-slate-500 dark:text-slate-400">Line {idx + 1}</span>
             {lines.length > 1 && (
               <button
                 type="button"
@@ -193,7 +193,7 @@ export function WhLineEditor({
           </div>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
             <label className="col-span-2 block">
-              <span className="mb-1 block text-[11px] font-semibold text-slate-500">Product *</span>
+              <span className="mb-1 block text-[11px] font-semibold text-slate-500 dark:text-slate-400">Product *</span>
               <Select value={l.productId} onChange={(e) => patch(l.key, 'productId', e.target.value)}>
                 <option value="">Select…</option>
                 {products.map((p) => (
@@ -204,11 +204,11 @@ export function WhLineEditor({
               </Select>
             </label>
             <label className="block">
-              <span className="mb-1 block text-[11px] font-semibold text-slate-500">Batch no</span>
+              <span className="mb-1 block text-[11px] font-semibold text-slate-500 dark:text-slate-400">Batch no</span>
               <TextInput value={l.batchNo} onChange={(e) => patch(l.key, 'batchNo', e.target.value)} placeholder="Optional" />
             </label>
             <label className="block">
-              <span className="mb-1 block text-[11px] font-semibold text-slate-500">
+              <span className="mb-1 block text-[11px] font-semibold text-slate-500 dark:text-slate-400">
                 Quintals {allowNegativeQty ? '(±)' : '*'}
               </span>
               <NumberInput
@@ -220,12 +220,12 @@ export function WhLineEditor({
               />
             </label>
             <label className="block">
-              <span className="mb-1 block text-[11px] font-semibold text-slate-500">Bags</span>
+              <span className="mb-1 block text-[11px] font-semibold text-slate-500 dark:text-slate-400">Bags</span>
               <NumberInput value={l.bags} min="0" step="1" onChange={(e) => patch(l.key, 'bags', e.target.value)} placeholder="0" />
             </label>
             {showLocation && (
               <label className="block">
-                <span className="mb-1 block text-[11px] font-semibold text-slate-500">Location *</span>
+                <span className="mb-1 block text-[11px] font-semibold text-slate-500 dark:text-slate-400">Location *</span>
                 <Select value={l.locationId} onChange={(e) => patch(l.key, 'locationId', e.target.value)}>
                   <option value="">Select…</option>
                   {locations
@@ -240,7 +240,7 @@ export function WhLineEditor({
             )}
             {showCost && (
               <label className="block">
-                <span className="mb-1 block text-[11px] font-semibold text-slate-500">Unit cost (Br/Qt)</span>
+                <span className="mb-1 block text-[11px] font-semibold text-slate-500 dark:text-slate-400">Unit cost (Br/Qt)</span>
                 <NumberInput
                   value={l.unitCostBirr}
                   min="0"
@@ -252,7 +252,7 @@ export function WhLineEditor({
             )}
             {showPackaging && (
               <label className="block">
-                <span className="mb-1 block text-[11px] font-semibold text-slate-500">Packaging</span>
+                <span className="mb-1 block text-[11px] font-semibold text-slate-500 dark:text-slate-400">Packaging</span>
                 <Select value={l.packagingKg} onChange={(e) => patch(l.key, 'packagingKg', e.target.value)}>
                   <option value="">—</option>
                   {[50, 25, 10, 5].map((kg) => (
@@ -265,7 +265,7 @@ export function WhLineEditor({
             )}
             {showReason && (
               <label className="block">
-                <span className="mb-1 block text-[11px] font-semibold text-slate-500">Reason *</span>
+                <span className="mb-1 block text-[11px] font-semibold text-slate-500 dark:text-slate-400">Reason *</span>
                 <Select value={l.reason} onChange={(e) => patch(l.key, 'reason', e.target.value)}>
                   {reasonOptions.map((r) => (
                     <option key={r} value={r}>
@@ -277,7 +277,7 @@ export function WhLineEditor({
             )}
             {showReservation && (
               <label className="col-span-2 block">
-                <span className="mb-1 block text-[11px] font-semibold text-slate-500">Linked reservation (optional)</span>
+                <span className="mb-1 block text-[11px] font-semibold text-slate-500 dark:text-slate-400">Linked reservation (optional)</span>
                 <TextInput
                   value={l.reservationId}
                   onChange={(e) => patch(l.key, 'reservationId', e.target.value)}

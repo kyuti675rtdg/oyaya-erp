@@ -176,7 +176,7 @@ export function QcChecks() {
                   type="datetime-local"
                   value={sampleTime}
                   onChange={(e) => setSampleTime(e.target.value)}
-                  className="touch w-full rounded-lg border border-line bg-white px-4 text-base focus:border-navy focus:outline-none focus:ring-2 focus:ring-navy/20"
+                  className="touch w-full rounded-lg border border-line bg-white dark:bg-slate-800 px-4 text-base focus:border-navy focus:outline-none focus:ring-2 focus:ring-navy/20"
                   required
                 />
               </Field>
@@ -229,23 +229,23 @@ export function QcChecks() {
         <Card className="p-5">
           <h3 className="mb-4 text-base font-bold text-ink">Shift & daily averages</h3>
           {checksQ.isLoading ? (
-            <p className="text-sm text-slate-500">Loading averages...</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Loading averages...</p>
           ) : (
             <div className="space-y-4">
               {Object.entries(averages).map(([title, avgs]) => (
                 <div key={title}>
-                  <p className="mb-2 text-xs font-bold uppercase tracking-wide text-slate-500">{title}</p>
+                  <p className="mb-2 text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">{title}</p>
                   {Object.keys(avgs).length > 0 ? (
                     <ul className="space-y-1 text-sm">
                       {Object.entries(avgs).map(([k, v]) => (
                         <li key={k} className="flex justify-between">
-                          <span className="text-slate-600">{k}</span>
+                          <span className="text-slate-600 dark:text-slate-300">{k}</span>
                           <span className="tnum font-semibold text-ink">{v.toFixed(2)}</span>
                         </li>
                       ))}
                     </ul>
                   ) : (
-                    <p className="text-sm text-slate-400">No data yet.</p>
+                    <p className="text-sm text-slate-400 dark:text-slate-500">No data yet.</p>
                   )}
                 </div>
               ))}

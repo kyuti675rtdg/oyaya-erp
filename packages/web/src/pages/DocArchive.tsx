@@ -81,8 +81,8 @@ export function DocArchive() {
                 <div key={d.id} className="flex items-center gap-3 py-2.5">
                   <FileText size={16} className="shrink-0 text-amber-600" />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold text-slate-800">{d.title}</p>
-                    <p className="text-xs text-slate-500">
+                    <p className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">{d.title}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
                       {d.docNo} · expires {fmtDate(d.retentionUntil)}
                     </p>
                   </div>
@@ -122,15 +122,15 @@ export function DocArchive() {
                 return diff >= p.days - 60 && diff <= p.days + 60;
               }).length;
               return (
-                <div key={p.label} className="rounded-xl border border-slate-100 bg-slate-50/60 p-3 text-center">
-                  <p className="text-lg font-extrabold tabular-nums text-slate-800">{count}</p>
-                  <p className="text-xs text-slate-500">{p.label} retention</p>
+                <div key={p.label} className="rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/60 p-3 text-center">
+                  <p className="text-lg font-extrabold tabular-nums text-slate-800 dark:text-slate-100">{count}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{p.label} retention</p>
                 </div>
               );
             })}
           </div>
         )}
-        <p className="mt-3 text-xs text-slate-500">
+        <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
           Assign a retention period per document from the library or the expiring list above.
         </p>
       </div>
@@ -149,12 +149,12 @@ export function DocArchive() {
           <div className="divide-y divide-slate-50">
             {(archivedQ.data ?? []).map((d) => (
               <div key={d.id} className="flex items-center gap-3 py-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400">
                   <FileText size={16} />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold text-slate-800">{d.title}</p>
-                  <p className="text-xs text-slate-500">
+                  <p className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">{d.title}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     {d.docNo} · v{d.version} · {fileKindLabel(d.mimeType, d.fileName)} · {formatFileSize(d.fileSize)} · archived {fmtDate(d.updatedAt)}
                   </p>
                 </div>
@@ -162,7 +162,7 @@ export function DocArchive() {
                   type="button"
                   onClick={() => download(d)}
                   title="Download"
-                  className="rounded-lg p-1.5 text-slate-400 hover:bg-violet-50 hover:text-violet-700"
+                  className="rounded-lg p-1.5 text-slate-400 dark:text-slate-500 hover:bg-violet-50 hover:text-violet-700"
                 >
                   <Download size={15} />
                 </button>
@@ -180,15 +180,15 @@ export function DocArchive() {
       {retentionDoc ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
           <div className={`${cardShell} w-full max-w-sm space-y-4 !p-6`}>
-            <h3 className="text-base font-bold text-slate-800">Set Retention Period</h3>
-            <p className="text-sm text-slate-600">{retentionDoc.title}</p>
+            <h3 className="text-base font-bold text-slate-800 dark:text-slate-100">Set Retention Period</h3>
+            <p className="text-sm text-slate-600 dark:text-slate-300">{retentionDoc.title}</p>
             <div className="grid grid-cols-2 gap-2">
               {RETENTION_PERIODS.map((p) => (
                 <button
                   key={p.label}
                   type="button"
                   onClick={() => setRetentionMut.mutate({ id: retentionDoc.id, days: p.days })}
-                  className="rounded-xl border border-slate-200 px-3 py-2.5 text-sm font-semibold text-slate-700 hover:border-violet-300 hover:bg-violet-50"
+                  className="rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:border-violet-300 hover:bg-violet-50"
                 >
                   {p.label}
                 </button>

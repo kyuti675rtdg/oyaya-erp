@@ -150,18 +150,18 @@ export function SOPs() {
             title={detail.title}
             subtitle={`${detail.docNo} · ${detail.module ?? 'General'} · Effective ${detail.effectiveDate ? fmtDate(detail.effectiveDate) : '—'}${detail.reviewDate ? ` · Review by ${fmtDate(detail.reviewDate)}` : ''}`}
           />
-          {detail.summary && <p className="mb-5 rounded-lg bg-slate-50 p-3 text-sm text-slate-600">{detail.summary}</p>}
+          {detail.summary && <p className="mb-5 rounded-lg bg-slate-50 dark:bg-slate-800 p-3 text-sm text-slate-600 dark:text-slate-300">{detail.summary}</p>}
           <ol className="space-y-4">
             {steps.map((step, i) => {
               const [heading, ...body] = step.split('\n');
               return (
-                <li key={i} className="flex gap-4 rounded-xl border border-slate-100 p-4">
+                <li key={i} className="flex gap-4 rounded-xl border border-slate-100 dark:border-slate-700 p-4">
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-violet-100 text-sm font-bold text-violet-700">
                     {i + 1}
                   </span>
                   <div className="min-w-0">
-                    <h4 className="font-bold text-slate-800">{heading.trim()}</h4>
-                    <p className="mt-1 whitespace-pre-wrap text-sm text-slate-600">{body.join('\n').trim()}</p>
+                    <h4 className="font-bold text-slate-800 dark:text-slate-100">{heading.trim()}</h4>
+                    <p className="mt-1 whitespace-pre-wrap text-sm text-slate-600 dark:text-slate-300">{body.join('\n').trim()}</p>
                   </div>
                 </li>
               );
@@ -172,7 +172,7 @@ export function SOPs() {
         <>
           <div className={`${cardShell} flex flex-col gap-3 sm:flex-row`}>
             <div className="relative flex-1">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
               <TextInput
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -207,11 +207,11 @@ export function SOPs() {
                   <button
                     key={d.id}
                     onClick={() => setViewId(d.id)}
-                    className="flex w-full items-center justify-between gap-3 py-3 text-left hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500"
+                    className="flex w-full items-center justify-between gap-3 py-3 text-left hover:bg-slate-50 dark:hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500"
                   >
                     <div className="min-w-0">
-                      <p className="truncate font-semibold text-slate-800">{d.title}</p>
-                      <p className="text-xs text-slate-500">
+                      <p className="truncate font-semibold text-slate-800 dark:text-slate-100">{d.title}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
                         {d.docNo} · v{d.version} · {d.module ?? 'General'} · Effective {d.effectiveDate ? fmtDate(d.effectiveDate) : '—'}
                       </p>
                     </div>
@@ -228,8 +228,8 @@ export function SOPs() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
           <div className={`${cardShell} max-h-[90vh] w-full max-w-2xl overflow-y-auto`}>
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-bold text-slate-800">New SOP</h3>
-              <button onClick={() => setShowForm(false)} className="text-slate-400 hover:text-slate-600">
+              <h3 className="font-bold text-slate-800 dark:text-slate-100">New SOP</h3>
+              <button onClick={() => setShowForm(false)} className="text-slate-400 dark:text-slate-500 hover:text-slate-600">
                 <X size={18} />
               </button>
             </div>

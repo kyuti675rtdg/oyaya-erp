@@ -12,10 +12,10 @@ const buttonStyles: Record<ButtonVariant, string> = {
   primary:
     'bg-harvest hover:bg-amber-700 text-white font-semibold shadow-sm disabled:opacity-50 hover:shadow-md active:scale-[0.98]',
   secondary:
-    'bg-white hover:bg-slate-50 text-slate-800 border border-line font-semibold disabled:opacity-50 hover:shadow-sm active:scale-[0.98]',
+    'bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 border border-line dark:border-slate-700 font-semibold disabled:opacity-50 hover:shadow-sm active:scale-[0.98]',
   danger:
     'bg-critical-text hover:bg-red-800 text-white font-semibold disabled:opacity-50 hover:shadow-md active:scale-[0.98]',
-  ghost: 'text-navy hover:bg-blue-50 font-semibold disabled:opacity-50 active:scale-[0.98]'
+  ghost: 'text-navy dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-700 font-semibold disabled:opacity-50 active:scale-[0.98]'
 };
 
 export function Button({ variant = 'primary', loading, className = '', children, ...rest }: ButtonProps) {
@@ -33,7 +33,7 @@ export function Button({ variant = 'primary', loading, className = '', children,
 /* ---------- Cards & sections ---------- */
 export function Card({ className = '', children }: { className?: string; children: ReactNode }) {
   return (
-    <div className={`rounded-xl border border-line bg-white shadow-sm ${className}`}>{children}</div>
+    <div className={`rounded-xl border border-line dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm ${className}`}>{children}</div>
   );
 }
 
@@ -50,7 +50,7 @@ export function SectionTitle({
     <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
       <div>
         <h2 className="text-xl font-bold text-ink">{title}</h2>
-        {sub ? <p className="mt-0.5 text-sm text-slate-500">{sub}</p> : null}
+        {sub ? <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">{sub}</p> : null}
       </div>
       {action}
     </div>
@@ -71,18 +71,18 @@ export function Field({
 }) {
   return (
     <label className="block">
-      <span className="mb-1.5 block text-sm font-semibold text-slate-700">
+      <span className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-200">
         {label}
         {required ? <span className="ml-1 text-critical-text">*</span> : null}
       </span>
       {children}
-      {hint ? <span className="mt-1 block text-xs text-slate-500">{hint}</span> : null}
+      {hint ? <span className="mt-1 block text-xs text-slate-500 dark:text-slate-400">{hint}</span> : null}
     </label>
   );
 }
 
 const inputBase =
-  'touch w-full rounded-lg border border-line bg-white px-4 text-base text-slate-900 placeholder:text-slate-400 focus:border-navy focus:outline-none focus:ring-2 focus:ring-navy/20';
+  'touch w-full rounded-lg border border-line dark:border-slate-700 bg-white dark:bg-slate-800 px-4 text-base text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-navy focus:outline-none focus:ring-2 focus:ring-navy/20';
 
 export function TextInput(props: InputHTMLAttributes<HTMLInputElement>) {
   return <input {...props} className={`${inputBase} ${props.className ?? ''}`} />;
@@ -103,7 +103,7 @@ export function TextArea(props: TextareaHTMLAttributes<HTMLTextAreaElement>) {
 /* ---------- Feedback ---------- */
 export function Spinner({ label = 'Loading...' }: { label?: string }) {
   return (
-    <div className="flex items-center justify-center gap-3 py-10 text-slate-500" role="status">
+    <div className="flex items-center justify-center gap-3 py-10 text-slate-500 dark:text-slate-400" role="status">
       <span className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-line border-t-navy" />
       <span className="text-sm font-medium">{label}</span>
     </div>
@@ -113,8 +113,8 @@ export function Spinner({ label = 'Loading...' }: { label?: string }) {
 export function EmptyState({ title, sub }: { title: string; sub?: string }) {
   return (
     <div className="rounded-xl border border-dashed border-line bg-alabaster px-6 py-10 text-center">
-      <p className="font-semibold text-slate-700">{title}</p>
-      {sub ? <p className="mt-1 text-sm text-slate-500">{sub}</p> : null}
+      <p className="font-semibold text-slate-700 dark:text-slate-200">{title}</p>
+      {sub ? <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{sub}</p> : null}
     </div>
   );
 }

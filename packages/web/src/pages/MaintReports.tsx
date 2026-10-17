@@ -77,8 +77,8 @@ export function MaintReports() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-slate-900">Overdue Maintenance Reports</h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Overdue Maintenance Reports</h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Overdue PMs, MTBF/MTTR summaries, breakdown analysis, and parts consumption.
           </p>
         </div>
@@ -113,28 +113,28 @@ export function MaintReports() {
       ) : kpis ? (
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           <div className={cardShell}>
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-500">MTBF</p>
-            <p className="tabular-nums mt-1 text-2xl font-bold text-slate-900">{fmtHours(kpis.mtbfMinutes)}</p>
-            <p className="mt-1 text-xs text-slate-400">Mean time between failures</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">MTBF</p>
+            <p className="tabular-nums mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">{fmtHours(kpis.mtbfMinutes)}</p>
+            <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">Mean time between failures</p>
           </div>
           <div className={cardShell}>
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-500">MTTR</p>
-            <p className="tabular-nums mt-1 text-2xl font-bold text-slate-900">{fmtHours(kpis.mttrMinutes)}</p>
-            <p className="mt-1 text-xs text-slate-400">Mean time to repair</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">MTTR</p>
+            <p className="tabular-nums mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">{fmtHours(kpis.mttrMinutes)}</p>
+            <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">Mean time to repair</p>
           </div>
           <div className={cardShell}>
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Total breakdowns</p>
-            <p className="tabular-nums mt-1 text-2xl font-bold text-slate-900">{kpis.totalBreakdowns}</p>
-            <p className="mt-1 text-xs text-slate-400">
+            <p className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">Total breakdowns</p>
+            <p className="tabular-nums mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">{kpis.totalBreakdowns}</p>
+            <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
               <span className="tabular-nums text-emerald-600">{kpis.resolvedCount} resolved</span>
               {' · '}
               <span className="tabular-nums text-rose-600">{kpis.openCount} open</span>
             </p>
           </div>
           <div className={cardShell}>
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Total downtime</p>
-            <p className="tabular-nums mt-1 text-2xl font-bold text-slate-900">{fmtHours(kpis.totalDowntimeMinutes)}</p>
-            <p className="mt-1 text-xs text-slate-400">Across resolved breakdowns</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">Total downtime</p>
+            <p className="tabular-nums mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">{fmtHours(kpis.totalDowntimeMinutes)}</p>
+            <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">Across resolved breakdowns</p>
           </div>
         </div>
       ) : null}

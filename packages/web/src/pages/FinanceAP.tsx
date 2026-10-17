@@ -16,7 +16,7 @@ const cardShell =
 function Kpi({ label, value, tone }: { label: string; value: string; tone?: string }) {
   return (
     <Card className="p-4">
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</p>
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</p>
       <p className={`tnum mt-1 text-xl font-extrabold ${tone ?? 'text-ink'}`}>{value}</p>
     </Card>
   );
@@ -40,7 +40,7 @@ export function FinanceAP() {
           action={
             <Link
               to="/accounts-payable"
-              className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-white px-4 py-2 text-sm font-semibold text-violet-700 hover:bg-slate-50"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-white dark:bg-slate-800 px-4 py-2 text-sm font-semibold text-violet-700 hover:bg-slate-50 dark:hover:bg-slate-700"
             >
               Manage in Procurement <ArrowUpRight className="h-4 w-4" />
             </Link>
@@ -74,7 +74,7 @@ export function FinanceAP() {
                 {
                   key: 'dueDate',
                   label: 'Due',
-                  render: (r) => (r.dueDate ? fmtDate(r.dueDate) : <span className="text-slate-400">—</span>)
+                  render: (r) => (r.dueDate ? fmtDate(r.dueDate) : <span className="text-slate-400 dark:text-slate-500">—</span>)
                 },
                 { key: 'total', label: 'Invoiced', mono: true, render: (r) => fmtBirr(r.total) },
                 { key: 'paid', label: 'Paid', mono: true, render: (r) => fmtBirr(r.paid) },
@@ -92,10 +92,10 @@ export function FinanceAP() {
                     r.balance > 0.005 ? (
                       <span className="flex items-center gap-2">
                         <BucketBadge bucket={r.bucket} />
-                        <span className="tnum text-xs text-slate-500">{r.daysOpen}d</span>
+                        <span className="tnum text-xs text-slate-500 dark:text-slate-400">{r.daysOpen}d</span>
                       </span>
                     ) : (
-                      <span className="text-xs text-slate-400">Settled</span>
+                      <span className="text-xs text-slate-400 dark:text-slate-500">Settled</span>
                     )
                 }
               ]}
@@ -104,7 +104,7 @@ export function FinanceAP() {
               emptySub="Procurement intakes create AP invoices that appear here for finance follow-up."
             />
 
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-400 dark:text-slate-500">
               Payment scheduling and settlements happen in Procurement → Accounts Payable; this
               page is the finance-side aging and balance view of the same invoices.
             </p>

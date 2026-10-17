@@ -92,23 +92,23 @@ export function TrialBalance() {
             {errMsg(tbQ.error)}
           </p>
         ) : tbQ.data ? (
-          <div className="overflow-x-auto rounded-xl border border-line bg-white">
+          <div className="overflow-x-auto rounded-xl border border-line bg-white dark:bg-slate-800">
             <table className="w-full min-w-[640px] text-left text-sm">
               <thead>
                 <tr className="border-b-2 border-line">
-                  <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-500">Code</th>
-                  <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-500">Account</th>
-                  <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-500">Type</th>
-                  <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wide text-slate-500">Debit</th>
-                  <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wide text-slate-500">Credit</th>
+                  <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Code</th>
+                  <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Account</th>
+                  <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Type</th>
+                  <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Debit</th>
+                  <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Credit</th>
                 </tr>
               </thead>
               <tbody>
                 {tbQ.data.accounts.map((r) => (
                   <tr key={r.code} className="border-t border-line">
-                    <td className="tnum px-4 py-2.5 text-slate-500">{r.code}</td>
+                    <td className="tnum px-4 py-2.5 text-slate-500 dark:text-slate-400">{r.code}</td>
                     <td className="px-4 py-2.5 font-medium text-ink">{r.name}</td>
-                    <td className="px-4 py-2.5 text-xs font-semibold uppercase text-slate-400">{r.type}</td>
+                    <td className="px-4 py-2.5 text-xs font-semibold uppercase text-slate-400 dark:text-slate-500">{r.type}</td>
                     <td className="tnum px-4 py-2.5 text-right">{fmtBirr(r.debit)}</td>
                     <td className="tnum px-4 py-2.5 text-right">{fmtBirr(r.credit)}</td>
                   </tr>

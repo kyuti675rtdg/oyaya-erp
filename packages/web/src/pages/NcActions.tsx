@@ -52,11 +52,11 @@ function ActionCard({
             </span>
           ) : null}
         </div>
-        <span className="text-xs text-slate-500 tabular-nums">Due {fmtDate(action.dueDate)}</span>
+        <span className="text-xs text-slate-500 dark:text-slate-400 tabular-nums">Due {fmtDate(action.dueDate)}</span>
       </div>
-      <p className="mt-2 text-sm text-slate-700">{action.description}</p>
-      <p className="mt-1 text-xs text-slate-500">
-        Owner: <span className="font-semibold text-slate-700">{action.owner}</span>
+      <p className="mt-2 text-sm text-slate-700 dark:text-slate-200">{action.description}</p>
+      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+        Owner: <span className="font-semibold text-slate-700 dark:text-slate-200">{action.owner}</span>
       </p>
       {action.verificationResult ? (
         <p className="mt-2 rounded-lg bg-pass-bg px-3 py-2 text-xs text-pass-text">
@@ -259,8 +259,8 @@ export function NcActions() {
 
       {!ncId ? (
         <div className="rounded-xl border border-dashed border-line bg-alabaster px-6 py-10 text-center">
-          <p className="font-semibold text-slate-700">No nonconformity selected</p>
-          <p className="mt-1 text-sm text-slate-500">Choose a record to manage its action plan.</p>
+          <p className="font-semibold text-slate-700 dark:text-slate-200">No nonconformity selected</p>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Choose a record to manage its action plan.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
@@ -295,8 +295,8 @@ export function NcActions() {
               <Spinner label="Loading actions..." />
             ) : actions.length === 0 ? (
               <div className="rounded-xl border border-dashed border-line bg-alabaster px-6 py-10 text-center">
-                <p className="font-semibold text-slate-700">No actions yet</p>
-                <p className="mt-1 text-sm text-slate-500">Add the corrective and preventive steps for this nonconformity.</p>
+                <p className="font-semibold text-slate-700 dark:text-slate-200">No actions yet</p>
+                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Add the corrective and preventive steps for this nonconformity.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
@@ -324,9 +324,9 @@ export function NcActions() {
 
       {verifyTarget ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+          <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-xl">
             <h3 className="text-lg font-bold text-ink">Verify action</h3>
-            <p className="mt-1 text-sm text-slate-600">{verifyTarget.description}</p>
+            <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{verifyTarget.description}</p>
             <form onSubmit={doVerify} className="mt-4 space-y-4">
               <Field label="Verification result" required hint="What was checked and found">
                 <TextArea value={verifyNote} onChange={(e) => setVerifyNote(e.target.value)} required />
@@ -346,9 +346,9 @@ export function NcActions() {
 
       {effectTarget ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+          <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-xl">
             <h3 className="text-lg font-bold text-ink">Effectiveness check</h3>
-            <p className="mt-1 text-sm text-slate-600">{effectTarget.description}</p>
+            <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{effectTarget.description}</p>
             <form onSubmit={doEffectiveness} className="mt-4 space-y-4">
               <Field label="Outcome" required>
                 <Select value={effectOk ? 'yes' : 'no'} onChange={(e) => setEffectOk(e.target.value === 'yes')}>

@@ -21,14 +21,14 @@ const TYPE_LABEL: Record<WhLocationType, string> = {
 };
 
 function UtilizationBar({ pct }: { pct: number | null }) {
-  if (pct == null) return <span className="text-xs text-slate-400">No capacity set</span>;
+  if (pct == null) return <span className="text-xs text-slate-400 dark:text-slate-500">No capacity set</span>;
   const tone = pct >= 90 ? 'bg-rose-500' : pct >= 70 ? 'bg-amber-500' : 'bg-emerald-500';
   return (
     <div className="flex items-center gap-2">
-      <div className="h-2 w-24 overflow-hidden rounded-full bg-slate-100">
+      <div className="h-2 w-24 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
         <div className={`h-full rounded-full ${tone}`} style={{ width: `${Math.min(100, pct)}%` }} />
       </div>
-      <span className="text-xs font-bold tabular-nums text-slate-600">{pct.toFixed(1)}%</span>
+      <span className="text-xs font-bold tabular-nums text-slate-600 dark:text-slate-300">{pct.toFixed(1)}%</span>
     </div>
   );
 }
@@ -161,10 +161,10 @@ export function WarehouseLocations() {
               sub: 'on hand ÷ capacity'
             }
           ].map((k) => (
-            <div key={k.label} className="rounded-xl border border-slate-100 bg-slate-50/60 p-3">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">{k.label}</p>
-              <p className="mt-1 text-lg font-bold tabular-nums text-slate-800">{k.value}</p>
-              <p className="text-[11px] text-slate-500">{k.sub}</p>
+            <div key={k.label} className="rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/60 p-3">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{k.label}</p>
+              <p className="mt-1 text-lg font-bold tabular-nums text-slate-800 dark:text-slate-100">{k.value}</p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">{k.sub}</p>
             </div>
           ))}
         </div>
@@ -197,7 +197,7 @@ export function WarehouseLocations() {
             <div className="hidden overflow-x-auto md:block">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-100 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500">
+                  <tr className="border-b border-slate-100 dark:border-slate-700 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                     <th className="py-2 pr-3">Code</th>
                     <th className="py-2 pr-3">Name / Zone</th>
                     <th className="py-2 pr-3">Type</th>
@@ -213,16 +213,16 @@ export function WarehouseLocations() {
                     <tr key={l.id} className="border-b border-slate-50 hover:bg-slate-50/50">
                       <td className="py-2.5 pr-3 font-mono text-xs font-bold text-violet-700">{l.code}</td>
                       <td className="py-2.5 pr-3">
-                        <p className="font-semibold text-slate-800">{l.name}</p>
+                        <p className="font-semibold text-slate-800 dark:text-slate-100">{l.name}</p>
                         {l.zone && (
-                          <p className="inline-flex items-center gap-1 text-[11px] text-slate-500">
+                          <p className="inline-flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400">
                             <MapPin size={11} /> {l.zone}
                           </p>
                         )}
                       </td>
-                      <td className="py-2.5 pr-3 text-slate-600">{TYPE_LABEL[l.type]}</td>
+                      <td className="py-2.5 pr-3 text-slate-600 dark:text-slate-300">{TYPE_LABEL[l.type]}</td>
                       <td className="py-2.5 pr-3 text-right tabular-nums">{fmtQ(l.capacityQ)}</td>
-                      <td className="py-2.5 pr-3 text-right font-bold tabular-nums text-slate-800">
+                      <td className="py-2.5 pr-3 text-right font-bold tabular-nums text-slate-800 dark:text-slate-100">
                         {fmtQ(l.onHandQ)}
                       </td>
                       <td className="py-2.5 pr-3">
@@ -234,7 +234,7 @@ export function WarehouseLocations() {
                             Active
                           </span>
                         ) : (
-                          <span className="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-bold text-slate-500">
+                          <span className="inline-flex rounded-full bg-slate-100 dark:bg-slate-700 px-2.5 py-0.5 text-[11px] font-bold text-slate-500 dark:text-slate-400">
                             Inactive
                           </span>
                         )}
@@ -243,7 +243,7 @@ export function WarehouseLocations() {
                         <td className="py-2.5 text-right">
                           <button
                             onClick={() => openEdit(l)}
-                            className="inline-flex items-center gap-1 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                            className="inline-flex items-center gap-1 rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700"
                           >
                             <Edit3 size={13} /> Edit
                           </button>
@@ -258,12 +258,12 @@ export function WarehouseLocations() {
             {/* Mobile cards */}
             <div className="space-y-3 md:hidden">
               {locations.map((l) => (
-                <div key={l.id} className="rounded-xl border border-slate-200 p-4">
+                <div key={l.id} className="rounded-xl border border-slate-200 dark:border-slate-700 p-4">
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <p className="font-mono text-xs font-bold text-violet-700">{l.code}</p>
-                      <p className="font-semibold text-slate-800">{l.name}</p>
-                      <p className="text-[11px] text-slate-500">
+                      <p className="font-semibold text-slate-800 dark:text-slate-100">{l.name}</p>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400">
                         {TYPE_LABEL[l.type]}
                         {l.zone ? ` · ${l.zone}` : ''}
                       </p>
@@ -271,7 +271,7 @@ export function WarehouseLocations() {
                     {canManage && (
                       <button
                         onClick={() => openEdit(l)}
-                        className="rounded-lg border border-slate-200 p-2 text-slate-600"
+                        className="rounded-lg border border-slate-200 dark:border-slate-700 p-2 text-slate-600 dark:text-slate-300"
                         aria-label="Edit location"
                       >
                         <Edit3 size={15} />
@@ -279,8 +279,8 @@ export function WarehouseLocations() {
                     )}
                   </div>
                   <div className="mt-3 flex items-center justify-between text-sm">
-                    <span className="text-slate-500">On hand</span>
-                    <span className="font-bold tabular-nums text-slate-800">{fmtQ(l.onHandQ)} / {fmtQ(l.capacityQ)} Qt</span>
+                    <span className="text-slate-500 dark:text-slate-400">On hand</span>
+                    <span className="font-bold tabular-nums text-slate-800 dark:text-slate-100">{fmtQ(l.onHandQ)} / {fmtQ(l.capacityQ)} Qt</span>
                   </div>
                   <div className="mt-2">
                     <UtilizationBar pct={l.utilizationPct} />
@@ -329,7 +329,7 @@ export function WarehouseLocations() {
                 <NumberInput value={form.capacityQ} min="0" step="1" onChange={(e) => setForm({ ...form, capacityQ: e.target.value })} placeholder="3000" />
               </Field>
               <div className="flex items-end pb-1">
-                <label className="inline-flex cursor-pointer items-center gap-2 text-sm font-semibold text-slate-700">
+                <label className="inline-flex cursor-pointer items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-200">
                   <input
                     type="checkbox"
                     checked={form.isActive}

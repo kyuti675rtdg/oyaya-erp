@@ -144,7 +144,7 @@ export function InventoryReports() {
           }
         />
 
-        <div className="mb-5 inline-flex rounded-lg border border-slate-200 bg-slate-50 p-1 text-sm font-semibold">
+        <div className="mb-5 inline-flex rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-1 text-sm font-semibold">
           {tabs.map((t) => (
             <button
               key={t.id}
@@ -165,9 +165,9 @@ export function InventoryReports() {
                 { label: 'Total stock value', value: fmtBirr(valuationTotals.value) },
                 { label: 'Products in stock', value: String(valuationTotals.products) }
               ].map((k) => (
-                <div key={k.label} className="rounded-xl border border-slate-100 bg-slate-50/60 p-3">
-                  <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">{k.label}</p>
-                  <p className="mt-1 text-lg font-bold tabular-nums text-slate-800">{k.value}</p>
+                <div key={k.label} className="rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/60 p-3">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{k.label}</p>
+                  <p className="mt-1 text-lg font-bold tabular-nums text-slate-800 dark:text-slate-100">{k.value}</p>
                 </div>
               ))}
             </div>
@@ -207,7 +207,7 @@ export function InventoryReports() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-slate-100 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500">
+                      <tr className="border-b border-slate-100 dark:border-slate-700 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                         <th className="py-2 pr-3">Location</th>
                         <th className="py-2 pr-3">Product</th>
                         <th className="py-2 pr-3">Batch</th>
@@ -220,11 +220,11 @@ export function InventoryReports() {
                       {(valuationQ.data ?? []).map((r, i) => (
                         <tr key={i} className="border-b border-slate-50 hover:bg-slate-50/50">
                           <td className="py-2.5 pr-3 font-mono text-xs font-semibold text-violet-700">{r.locationCode}</td>
-                          <td className="py-2.5 pr-3 font-semibold text-slate-800">{r.productName}</td>
-                          <td className="py-2.5 pr-3 text-slate-500">{r.batchNo ?? '—'}</td>
+                          <td className="py-2.5 pr-3 font-semibold text-slate-800 dark:text-slate-100">{r.productName}</td>
+                          <td className="py-2.5 pr-3 text-slate-500 dark:text-slate-400">{r.batchNo ?? '—'}</td>
                           <td className="py-2.5 pr-3 text-right font-bold tabular-nums">{fmtQ(r.quintals)}</td>
-                          <td className="py-2.5 pr-3 text-right tabular-nums text-slate-600">{fmtQ(r.avgCostBirr)}</td>
-                          <td className="py-2.5 text-right font-bold tabular-nums text-slate-800">{fmtBirr(r.valueBirr)}</td>
+                          <td className="py-2.5 pr-3 text-right tabular-nums text-slate-600 dark:text-slate-300">{fmtQ(r.avgCostBirr)}</td>
+                          <td className="py-2.5 text-right font-bold tabular-nums text-slate-800 dark:text-slate-100">{fmtBirr(r.valueBirr)}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -263,7 +263,7 @@ export function InventoryReports() {
                 <div className="mt-4 overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-slate-100 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500">
+                      <tr className="border-b border-slate-100 dark:border-slate-700 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                         <th className="py-2 pr-3">Movement</th>
                         <th className="py-2 pr-3 text-right">Lines</th>
                         <th className="py-2 pr-3 text-right">In (Qt)</th>
@@ -278,7 +278,7 @@ export function InventoryReports() {
                               className="inline-block h-2.5 w-2.5 rounded-full mr-2"
                               style={{ background: MOVEMENT_COLORS[m.movementType] ?? '#64748b' }}
                             />
-                            <span className="font-semibold text-slate-800">{m.movementType.replace(/_/g, ' ')}</span>
+                            <span className="font-semibold text-slate-800 dark:text-slate-100">{m.movementType.replace(/_/g, ' ')}</span>
                           </td>
                           <td className="py-2.5 pr-3 text-right tabular-nums">{m.lines}</td>
                           <td className="py-2.5 pr-3 text-right font-bold tabular-nums text-emerald-700">{fmtQ(m.inQ)}</td>
@@ -313,11 +313,11 @@ export function InventoryReports() {
           <>
             <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
               {(['0-30d', '31-60d', '61-90d', '90d+'] as WhAgingRow['bucket'][]).map((b) => (
-                <div key={b} className="rounded-xl border border-slate-100 bg-slate-50/60 p-3">
+                <div key={b} className="rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/60 p-3">
                   <p className="mb-1">
                     <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${BUCKET_TONES[b]}`}>{b}</span>
                   </p>
-                  <p className="text-lg font-bold tabular-nums text-slate-800">{fmtQ(agingTotals[b])} Qt</p>
+                  <p className="text-lg font-bold tabular-nums text-slate-800 dark:text-slate-100">{fmtQ(agingTotals[b])} Qt</p>
                 </div>
               ))}
             </div>
@@ -349,7 +349,7 @@ export function InventoryReports() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-slate-100 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500">
+                      <tr className="border-b border-slate-100 dark:border-slate-700 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                         <th className="py-2 pr-3">Location</th>
                         <th className="py-2 pr-3">Product</th>
                         <th className="py-2 pr-3 text-right">Qt</th>
@@ -361,12 +361,12 @@ export function InventoryReports() {
                       {(agingQ.data ?? []).map((r, i) => (
                         <tr key={i} className="border-b border-slate-50 hover:bg-slate-50/50">
                           <td className="py-2.5 pr-3 font-mono text-xs font-semibold text-violet-700">{r.locationCode}</td>
-                          <td className="py-2.5 pr-3 font-semibold text-slate-800">
+                          <td className="py-2.5 pr-3 font-semibold text-slate-800 dark:text-slate-100">
                             {r.productName}
-                            {r.batchNo ? <span className="block text-[11px] font-normal text-slate-500">Batch {r.batchNo}</span> : null}
+                            {r.batchNo ? <span className="block text-[11px] font-normal text-slate-500 dark:text-slate-400">Batch {r.batchNo}</span> : null}
                           </td>
                           <td className="py-2.5 pr-3 text-right font-bold tabular-nums">{fmtQ(r.quintals)}</td>
-                          <td className="py-2.5 pr-3 text-right tabular-nums text-slate-600">{r.daysOld}</td>
+                          <td className="py-2.5 pr-3 text-right tabular-nums text-slate-600 dark:text-slate-300">{r.daysOld}</td>
                           <td className="py-2">
                             <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold ${BUCKET_TONES[r.bucket]}`}>
                               {r.bucket}
@@ -421,7 +421,7 @@ export function InventoryReports() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-slate-100 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500">
+                      <tr className="border-b border-slate-100 dark:border-slate-700 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                         <th className="py-2 pr-3">Location</th>
                         <th className="py-2 pr-3">Product</th>
                         <th className="py-2 pr-3 text-right">On hand (Qt)</th>
@@ -434,12 +434,12 @@ export function InventoryReports() {
                       {(stockQ.data ?? []).map((r, i) => (
                         <tr key={i} className="border-b border-slate-50 hover:bg-slate-50/50">
                           <td className="py-2.5 pr-3 font-mono text-xs font-semibold text-violet-700">{r.locationCode}</td>
-                          <td className="py-2.5 pr-3 font-semibold text-slate-800">
+                          <td className="py-2.5 pr-3 font-semibold text-slate-800 dark:text-slate-100">
                             {r.productName}
-                            {r.batchNo ? <span className="block text-[11px] font-normal text-slate-500">Batch {r.batchNo}</span> : null}
+                            {r.batchNo ? <span className="block text-[11px] font-normal text-slate-500 dark:text-slate-400">Batch {r.batchNo}</span> : null}
                           </td>
                           <td className="py-2.5 pr-3 text-right font-bold tabular-nums">{fmtQ(r.quintals)}</td>
-                          <td className="py-2.5 pr-3 text-right tabular-nums text-slate-600">{r.bags}</td>
+                          <td className="py-2.5 pr-3 text-right tabular-nums text-slate-600 dark:text-slate-300">{r.bags}</td>
                           <td className="py-2.5 pr-3 text-right tabular-nums text-amber-700">{fmtQ(r.reservedQ)}</td>
                           <td className="py-2.5 text-right font-bold tabular-nums text-emerald-700">{fmtQ(r.availableQ)}</td>
                         </tr>

@@ -151,12 +151,12 @@ export function Vehicles() {
       {modalOpen ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setModalOpen(false)}>
           <div
-            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6"
+            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white dark:bg-slate-800 p-6"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-label={editing ? 'Edit vehicle' : 'Add vehicle'}
           >
-            <h3 className="mb-4 text-base font-bold text-slate-900">{editing ? 'Edit vehicle' : 'Add vehicle'}</h3>
+            <h3 className="mb-4 text-base font-bold text-slate-900 dark:text-slate-100">{editing ? 'Edit vehicle' : 'Add vehicle'}</h3>
             {formError ? (
               <div className="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{formError}</div>
             ) : null}
@@ -216,7 +216,7 @@ export function Vehicles() {
                 </Button>
               </div>
               {editing?.purchaseCostBirr ? (
-                <p className="text-xs text-slate-500 tabular-nums">
+                <p className="text-xs text-slate-500 dark:text-slate-400 tabular-nums">
                   Purchase cost: {fmtBirr(editing.purchaseCostBirr)}
                 </p>
               ) : null}

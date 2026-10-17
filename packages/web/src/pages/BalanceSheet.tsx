@@ -37,19 +37,19 @@ function AccountSection({
 }) {
   return (
     <div>
-      <h3 className="mb-2 text-sm font-bold uppercase tracking-wide text-slate-500">{title}</h3>
-      <div className="overflow-x-auto rounded-xl border border-line bg-white">
+      <h3 className="mb-2 text-sm font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">{title}</h3>
+      <div className="overflow-x-auto rounded-xl border border-line bg-white dark:bg-slate-800">
         <table className="w-full min-w-[480px] text-left text-sm">
           <tbody>
             {section.items.length === 0 ? (
               <tr>
-                <td className="px-4 py-3 text-slate-400">No balances as of this date.</td>
+                <td className="px-4 py-3 text-slate-400 dark:text-slate-500">No balances as of this date.</td>
               </tr>
             ) : (
               section.items.map((r) => (
                 <tr key={r.code} className="border-t border-line first:border-t-0">
-                  <td className="px-4 py-2.5 pl-6 text-slate-700">
-                    <span className="tnum mr-2 text-slate-400">{r.code}</span>
+                  <td className="px-4 py-2.5 pl-6 text-slate-700 dark:text-slate-200">
+                    <span className="tnum mr-2 text-slate-400 dark:text-slate-500">{r.code}</span>
                     {r.name}
                   </td>
                   <td className="tnum px-4 py-2.5 text-right text-ink">{fmtBirr(r.amount)}</td>
@@ -118,9 +118,9 @@ export function BalanceSheet() {
               totalLabel="Equity (before net income)"
             />
 
-            <div className="rounded-xl border border-line bg-white px-4 py-3">
+            <div className="rounded-xl border border-line bg-white dark:bg-slate-800 px-4 py-3">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-600">Net income (current period)</span>
+                <span className="text-slate-600 dark:text-slate-300">Net income (current period)</span>
                 <span className="tnum font-bold text-ink">{fmtBirr(d.netIncome)}</span>
               </div>
               <div className="mt-2 flex items-center justify-between border-t border-line pt-2">

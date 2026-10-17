@@ -332,11 +332,11 @@ export function Intake() {
         action={
           <Link
             to="/incoming-inspection"
-            className="touch inline-flex items-center gap-2 rounded-lg border border-line bg-white px-4 py-2.5 text-sm font-semibold text-slate-800 transition-all hover:bg-slate-50 hover:shadow-sm active:scale-[0.98]"
+            className="touch inline-flex items-center gap-2 rounded-lg border border-line bg-white dark:bg-slate-800 px-4 py-2.5 text-sm font-semibold text-slate-800 dark:text-slate-100 transition-all hover:bg-slate-50 dark:hover:bg-slate-700 hover:shadow-sm active:scale-[0.98]"
           >
             <FlaskConical size={16} className="text-violet-600" />
             Open lab workspace
-            <ArrowRight size={14} className="text-slate-400" />
+            <ArrowRight size={14} className="text-slate-400 dark:text-slate-500" />
           </Link>
         }
       />
@@ -425,10 +425,10 @@ export function Intake() {
               </Select>
             </Field>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-3">
-              <div className="mb-3 flex items-center gap-2 text-sm font-bold text-slate-700">
+            <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/60 p-3">
+              <div className="mb-3 flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-200">
                 <Scale size={15} className="text-violet-600" />
-                Weighbridge <span className="text-xs font-medium text-slate-400">(optional)</span>
+                Weighbridge <span className="text-xs font-medium text-slate-400 dark:text-slate-500">(optional)</span>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <Field label="Gross (kg)">
@@ -451,11 +451,11 @@ export function Intake() {
                 </Field>
               </div>
               {weighbridge.valid ? (
-                <div className="mt-2 flex items-center justify-between rounded-lg bg-white px-3 py-2 text-sm">
-                  <span className="font-semibold text-slate-600">Net weight</span>
-                  <span className="tnum text-base font-extrabold text-slate-900">
+                <div className="mt-2 flex items-center justify-between rounded-lg bg-white dark:bg-slate-800 px-3 py-2 text-sm">
+                  <span className="font-semibold text-slate-600 dark:text-slate-300">Net weight</span>
+                  <span className="tnum text-base font-extrabold text-slate-900 dark:text-slate-100">
                     {Number(weighbridge.net).toLocaleString('en-US')} kg
-                    <span className="ml-2 text-sm font-semibold text-slate-500">
+                    <span className="ml-2 text-sm font-semibold text-slate-500 dark:text-slate-400">
                       ≈ {fmtQ(weighbridge.net! / 100)} q
                     </span>
                   </span>
@@ -613,7 +613,7 @@ export function Intake() {
                   r.decision ? (
                     <Badge tone={DECISION_TONE[r.decision] ?? 'neutral'}>{decisionLabel(r.decision)}</Badge>
                   ) : (
-                    <span className="text-slate-400">—</span>
+                    <span className="text-slate-400 dark:text-slate-500">—</span>
                   )
               }
             ]}
@@ -646,8 +646,8 @@ export function Intake() {
                   <FileText size={17} />
                 </span>
                 <div>
-                  <h3 className="text-base font-bold text-slate-900">Quality Head decision</h3>
-                  <p className="tnum mt-0.5 text-sm text-slate-500">
+                  <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">Quality Head decision</h3>
+                  <p className="tnum mt-0.5 text-sm text-slate-500 dark:text-slate-400">
                     {decisionTarget.intakeNo} — {decisionTarget.truckPlate} · {fmtQ(decisionTarget.quintals)} q{' '}
                     {decisionTarget.wheatCategory}
                   </p>
@@ -656,7 +656,7 @@ export function Intake() {
               <button
                 type="button"
                 onClick={() => setDecisionTarget(null)}
-                className="touch rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                className="touch rounded-lg p-1.5 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-600"
                 aria-label="Close"
               >
                 <XCircle size={18} />
@@ -674,15 +674,15 @@ export function Intake() {
               </div>
             ) : null}
 
-            <ul className="mt-3 space-y-1.5 rounded-xl border border-slate-100 bg-slate-50/60 p-3">
+            <ul className="mt-3 space-y-1.5 rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/60 p-3">
               {INTAKE_THRESHOLDS.map((t) => {
                 const v = Number((decisionTarget as unknown as Record<string, number | null>)[t.key] ?? NaN);
                 const has = Number.isFinite(v);
                 const bad = has && paramBreached(t, v);
                 return (
                   <li key={t.key} className="flex items-center justify-between text-sm">
-                    <span className="text-slate-600">
-                      {t.label} <span className="text-xs text-slate-400">({t.hint})</span>
+                    <span className="text-slate-600 dark:text-slate-300">
+                      {t.label} <span className="text-xs text-slate-400 dark:text-slate-500">({t.hint})</span>
                     </span>
                     <span
                       className={`tnum font-bold ${
@@ -747,7 +747,7 @@ export function Intake() {
                 hint={estimatedInvoice !== null ? `Estimated invoice ≈ ${fmtBirr(estimatedInvoice)}` : 'Used to raise the supplier AP invoice'}
               >
                 <div className="relative">
-                  <Banknote size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <Banknote size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
                   <NumberInput
                     value={decisionPrice}
                     onChange={(e) => setDecisionPrice(e.target.value)}

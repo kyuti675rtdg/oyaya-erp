@@ -183,7 +183,7 @@ export function Stocktaking() {
             setCounts({});
             setRecountSelection(new Set());
           }}
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-600 hover:text-slate-900"
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900"
         >
           <ArrowLeft size={15} /> Back to sessions
         </button>
@@ -209,15 +209,15 @@ export function Stocktaking() {
                     <p className="text-[11px] font-semibold uppercase tracking-wide text-rose-700">Loss</p>
                     <p className="text-lg font-bold tabular-nums text-rose-700">−{fmtQ(varianceSummary.loss)} Qt</p>
                   </div>
-                  <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3">
-                    <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Not counted</p>
-                    <p className="text-lg font-bold tabular-nums text-slate-700">{varianceSummary.unsettled} lines</p>
+                  <div className="rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/60 p-3">
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Not counted</p>
+                    <p className="text-lg font-bold tabular-nums text-slate-700 dark:text-slate-200">{varianceSummary.unsettled} lines</p>
                   </div>
                 </div>
               )}
 
               {/* Mode tabs */}
-              <div className="mb-4 inline-flex rounded-lg border border-slate-200 bg-slate-50 p-1 text-sm font-semibold">
+              <div className="mb-4 inline-flex rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-1 text-sm font-semibold">
                 {(
                   [
                     { id: 'count', label: 'Blind count', enabled: !!editable },
@@ -241,17 +241,17 @@ export function Stocktaking() {
               {/* Count mode: blind — system quantities hidden */}
               {mode === 'count' && (
                 <>
-                  <p className="mb-3 text-xs text-slate-500">
+                  <p className="mb-3 text-xs text-slate-500 dark:text-slate-400">
                     Blind count: enter what you physically count. System quantities are hidden until you switch to
                     Review.
                   </p>
                   <div className="space-y-3">
                     {doc.lines.map((l) => (
-                      <div key={l.id} className="rounded-xl border border-slate-200 p-3">
+                      <div key={l.id} className="rounded-xl border border-slate-200 dark:border-slate-700 p-3">
                         <div className="flex items-center justify-between gap-2">
-                          <p className="font-semibold text-slate-800">
+                          <p className="font-semibold text-slate-800 dark:text-slate-100">
                             {l.productName}
-                            {l.batchNo ? <span className="ml-2 text-xs font-normal text-slate-500">Batch {l.batchNo}</span> : null}
+                            {l.batchNo ? <span className="ml-2 text-xs font-normal text-slate-500 dark:text-slate-400">Batch {l.batchNo}</span> : null}
                           </p>
                           {l.countedQ != null && (
                             <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-bold text-emerald-700">
@@ -261,7 +261,7 @@ export function Stocktaking() {
                         </div>
                         <div className="mt-2 grid grid-cols-2 gap-2">
                           <label className="block">
-                            <span className="mb-1 block text-[11px] font-semibold text-slate-500">Counted (Qt)</span>
+                            <span className="mb-1 block text-[11px] font-semibold text-slate-500 dark:text-slate-400">Counted (Qt)</span>
                             <NumberInput
                               value={counts[l.id]?.q ?? (l.countedQ != null ? String(l.countedQ) : '')}
                               min="0"
@@ -271,7 +271,7 @@ export function Stocktaking() {
                             />
                           </label>
                           <label className="block">
-                            <span className="mb-1 block text-[11px] font-semibold text-slate-500">Bags</span>
+                            <span className="mb-1 block text-[11px] font-semibold text-slate-500 dark:text-slate-400">Bags</span>
                             <NumberInput
                               value={counts[l.id]?.bags ?? (l.countedBags != null ? String(l.countedBags) : '')}
                               min="0"
@@ -303,7 +303,7 @@ export function Stocktaking() {
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="border-b border-slate-100 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500">
+                        <tr className="border-b border-slate-100 dark:border-slate-700 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                           {canRecount && canManage && <th className="w-8 py-2" />}
                           <th className="py-2 pr-3">Product</th>
                           <th className="py-2 pr-3 text-right">System (Qt)</th>
@@ -331,14 +331,14 @@ export function Stocktaking() {
                                 </td>
                               )}
                               <td className="py-2.5 pr-3">
-                                <span className="font-semibold text-slate-800">{l.productName}</span>
-                                {l.batchNo && <span className="block text-[11px] text-slate-500">Batch {l.batchNo}</span>}
+                                <span className="font-semibold text-slate-800 dark:text-slate-100">{l.productName}</span>
+                                {l.batchNo && <span className="block text-[11px] text-slate-500 dark:text-slate-400">Batch {l.batchNo}</span>}
                               </td>
-                              <td className="py-2.5 pr-3 text-right tabular-nums text-slate-600">{fmtQ(l.systemQ)}</td>
+                              <td className="py-2.5 pr-3 text-right tabular-nums text-slate-600 dark:text-slate-300">{fmtQ(l.systemQ)}</td>
                               <td className="py-2.5 pr-3 text-right font-semibold tabular-nums">
                                 {l.countedQ != null ? fmtQ(l.countedQ) : '—'}
                               </td>
-                              <td className="py-2.5 pr-3 text-right tabular-nums text-slate-600">
+                              <td className="py-2.5 pr-3 text-right tabular-nums text-slate-600 dark:text-slate-300">
                                 {l.recountQ != null ? fmtQ(l.recountQ) : '—'}
                               </td>
                               <td
@@ -382,25 +382,25 @@ export function Stocktaking() {
               {/* Recount mode */}
               {mode === 'recount' && (
                 <>
-                  <p className="mb-3 text-xs text-slate-500">
+                  <p className="mb-3 text-xs text-slate-500 dark:text-slate-400">
                     Enter the second (recount) quantities. The recount value wins over the first count when the
                     session is approved.
                   </p>
                   <div className="space-y-3">
                     {doc.lines.map((l) => (
-                      <div key={l.id} className="rounded-xl border border-slate-200 p-3">
+                      <div key={l.id} className="rounded-xl border border-slate-200 dark:border-slate-700 p-3">
                         <div className="flex items-center justify-between gap-2">
-                          <p className="font-semibold text-slate-800">
+                          <p className="font-semibold text-slate-800 dark:text-slate-100">
                             {l.productName}
-                            {l.batchNo ? <span className="ml-2 text-xs font-normal text-slate-500">Batch {l.batchNo}</span> : null}
+                            {l.batchNo ? <span className="ml-2 text-xs font-normal text-slate-500 dark:text-slate-400">Batch {l.batchNo}</span> : null}
                           </p>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
                             1st count: <span className="font-bold tabular-nums">{l.countedQ != null ? fmtQ(l.countedQ) : '—'}</span>
                           </p>
                         </div>
                         <div className="mt-2 grid grid-cols-2 gap-2">
                           <label className="block">
-                            <span className="mb-1 block text-[11px] font-semibold text-slate-500">Recount (Qt)</span>
+                            <span className="mb-1 block text-[11px] font-semibold text-slate-500 dark:text-slate-400">Recount (Qt)</span>
                             <NumberInput
                               value={counts[l.id]?.q ?? (l.recountQ != null ? String(l.recountQ) : '')}
                               min="0"
@@ -410,7 +410,7 @@ export function Stocktaking() {
                             />
                           </label>
                           <label className="block">
-                            <span className="mb-1 block text-[11px] font-semibold text-slate-500">Bags</span>
+                            <span className="mb-1 block text-[11px] font-semibold text-slate-500 dark:text-slate-400">Bags</span>
                             <NumberInput
                               value={counts[l.id]?.bags ?? (l.recountBags != null ? String(l.recountBags) : '')}
                               min="0"
@@ -518,7 +518,7 @@ export function Stocktaking() {
             <div className="hidden overflow-x-auto md:block">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-100 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500">
+                  <tr className="border-b border-slate-100 dark:border-slate-700 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                     <th className="py-2 pr-3">Session</th>
                     <th className="py-2 pr-3">Location</th>
                     <th className="py-2 pr-3">Scheduled</th>
@@ -539,8 +539,8 @@ export function Stocktaking() {
                       className="cursor-pointer border-b border-slate-50 hover:bg-slate-50/60"
                     >
                       <td className="py-2.5 pr-3 font-mono text-xs font-bold text-violet-700">{s.sessionNo}</td>
-                      <td className="py-2.5 pr-3 font-mono text-xs font-semibold text-slate-700">{s.locationCode}</td>
-                      <td className="py-2.5 pr-3 text-slate-600">{fmtDate(s.scheduledDate)}</td>
+                      <td className="py-2.5 pr-3 font-mono text-xs font-semibold text-slate-700 dark:text-slate-200">{s.locationCode}</td>
+                      <td className="py-2.5 pr-3 text-slate-600 dark:text-slate-300">{fmtDate(s.scheduledDate)}</td>
                       <td className="py-2.5 pr-3 text-right tabular-nums">
                         {s.countedLines}/{s.lineCount}
                       </td>
@@ -562,20 +562,20 @@ export function Stocktaking() {
                     setMode('count');
                     setCounts({});
                   }}
-                  className="w-full rounded-xl border border-slate-200 p-4 text-left"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 p-4 text-left"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <p className="font-mono text-xs font-bold text-violet-700">{s.sessionNo}</p>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
                         {s.locationCode} · {fmtDate(s.scheduledDate)}
                       </p>
                     </div>
                     <StatusBadge tone={docStatusTone(s.status)} label={s.status.replace('_', ' ')} />
                   </div>
-                  <p className="mt-2 text-sm tabular-nums text-slate-600">
+                  <p className="mt-2 text-sm tabular-nums text-slate-600 dark:text-slate-300">
                     Counted {s.countedLines}/{s.lineCount} · |var|{' '}
-                    <span className="font-bold text-slate-800">{fmtQ(s.totalAbsVariance)} Qt</span>
+                    <span className="font-bold text-slate-800 dark:text-slate-100">{fmtQ(s.totalAbsVariance)} Qt</span>
                   </p>
                 </button>
               ))}

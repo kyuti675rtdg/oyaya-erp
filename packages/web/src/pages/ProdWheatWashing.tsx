@@ -255,7 +255,7 @@ export function ProdWheatWashing() {
                       {
                         key: 'tankOrSilo',
                         label: 'Tank / Silo',
-                        render: (r) => <span className="font-semibold text-slate-800">{r.tankOrSilo}</span>
+                        render: (r) => <span className="font-semibold text-slate-800 dark:text-slate-100">{r.tankOrSilo}</span>
                       },
                       { key: 'startedAt', label: 'Start', render: (r) => fmtDateTime(r.startedAt) },
                       {
@@ -329,11 +329,11 @@ export function ProdWheatWashing() {
                       return (
                         <div key={r.id} className="rounded-xl border border-slate-200/70 p-4">
                           <div className="flex items-center justify-between">
-                            <span className="font-bold text-slate-800">{r.tankOrSilo}</span>
+                            <span className="font-bold text-slate-800 dark:text-slate-100">{r.tankOrSilo}</span>
                             {r.endedAt ? <Badge tone="pass">Done</Badge> : <Badge tone="advisory">Running</Badge>}
                           </div>
-                          <p className="tabular-nums mt-1 text-xs text-slate-500">{fmtDateTime(r.startedAt)}</p>
-                          <p className="tabular-nums mt-2 text-sm text-slate-600">
+                          <p className="tabular-nums mt-1 text-xs text-slate-500 dark:text-slate-400">{fmtDateTime(r.startedAt)}</p>
+                          <p className="tabular-nums mt-2 text-sm text-slate-600 dark:text-slate-300">
                             Water: {r.waterUsedL != null ? `${r.waterUsedL.toLocaleString('en-US')} L` : '-'} ·
                             Impurity: {num(r.impurityBeforePct) !== null ? fmtPct(num(r.impurityBeforePct)) : '-'} →{' '}
                             {after !== null ? (
@@ -344,7 +344,7 @@ export function ProdWheatWashing() {
                               '-'
                             )}
                           </p>
-                          <p className="mt-1 text-xs text-slate-500">{(r.operators ?? []).join(', ')}</p>
+                          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{(r.operators ?? []).join(', ')}</p>
                           {canManage && !r.endedAt ? (
                             <Button variant="secondary" className="mt-3 w-full" onClick={() => setClosingId(r.id)}>
                               Close wash
@@ -363,9 +363,9 @@ export function ProdWheatWashing() {
 
       {closingId ? (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/40 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
-            <h3 className="text-base font-bold text-slate-800">Close washing</h3>
-            <p className="mt-1 text-sm text-slate-500">Record end time, water used and post-wash impurity.</p>
+          <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-xl">
+            <h3 className="text-base font-bold text-slate-800 dark:text-slate-100">Close washing</h3>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Record end time, water used and post-wash impurity.</p>
             <form onSubmit={closeWash} className="mt-4 space-y-4">
               <Field label="End time">
                 <TextInput type="datetime-local" value={endedAt} onChange={(e) => setEndedAt(e.target.value)} />

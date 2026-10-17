@@ -102,7 +102,7 @@ export function PutAway() {
       <div className="space-y-5">
         <button
           onClick={() => setSelectedId(null)}
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-600 hover:text-slate-900"
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900"
         >
           <ArrowLeft size={15} /> Back to receiving
         </button>
@@ -119,12 +119,12 @@ export function PutAway() {
               />
               <div className="space-y-3">
                 {doc.items.map((it) => (
-                  <div key={it.id} className="rounded-xl border border-slate-200 p-4">
+                  <div key={it.id} className="rounded-xl border border-slate-200 dark:border-slate-700 p-4">
                     <div className="flex flex-wrap items-start justify-between gap-2">
                       <div>
-                        <p className="font-semibold text-slate-800">{it.productName}</p>
-                        <p className="text-xs text-slate-500">
-                          <span className="font-bold tabular-nums text-slate-700">{fmtQ(it.quintals)} Qt</span>
+                        <p className="font-semibold text-slate-800 dark:text-slate-100">{it.productName}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
+                          <span className="font-bold tabular-nums text-slate-700 dark:text-slate-200">{fmtQ(it.quintals)} Qt</span>
                           {' · '}
                           {it.bags} bags
                           {it.packagingKg ? ` · ${it.packagingKg} kg` : ''}
@@ -133,14 +133,14 @@ export function PutAway() {
                         </p>
                       </div>
                       <div className="text-right text-xs">
-                        <p className="text-slate-500">Suggested</p>
+                        <p className="text-slate-500 dark:text-slate-400">Suggested</p>
                         <p className="font-mono font-bold text-violet-700">{it.suggestedCode ?? '—'}</p>
                       </div>
                     </div>
                     <div className="mt-3">
                       {doc.status === 'DRAFT' && canManage ? (
                         <label className="block max-w-xs">
-                          <span className="mb-1 block text-[11px] font-semibold text-slate-500">Place at location</span>
+                          <span className="mb-1 block text-[11px] font-semibold text-slate-500 dark:text-slate-400">Place at location</span>
                           <Select
                             value={placements[it.id] ?? it.suggestedLocationId ?? ''}
                             onChange={(e) => setPlacements({ ...placements, [it.id]: e.target.value })}
@@ -154,7 +154,7 @@ export function PutAway() {
                           </Select>
                         </label>
                       ) : (
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
                           Placed at{' '}
                           <span className="font-mono font-bold text-emerald-700">{it.placedCode ?? '—'}</span>
                           {it.placedAt ? ` · ${fmtDateTime(it.placedAt)}` : ''}
@@ -252,7 +252,7 @@ export function PutAway() {
             <div className="hidden overflow-x-auto md:block">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-100 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500">
+                  <tr className="border-b border-slate-100 dark:border-slate-700 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                     <th className="py-2 pr-3">Doc no</th>
                     <th className="py-2 pr-3">Reference</th>
                     <th className="py-2 pr-3">Received</th>
@@ -269,8 +269,8 @@ export function PutAway() {
                       className="cursor-pointer border-b border-slate-50 hover:bg-slate-50/60"
                     >
                       <td className="py-2.5 pr-3 font-mono text-xs font-bold text-violet-700">{d.docNo}</td>
-                      <td className="py-2.5 pr-3 text-slate-600">{d.referenceDoc ?? '—'}</td>
-                      <td className="py-2.5 pr-3 text-slate-600">{fmtDateTime(d.receivedAt)}</td>
+                      <td className="py-2.5 pr-3 text-slate-600 dark:text-slate-300">{d.referenceDoc ?? '—'}</td>
+                      <td className="py-2.5 pr-3 text-slate-600 dark:text-slate-300">{fmtDateTime(d.receivedAt)}</td>
                       <td className="py-2.5 pr-3 text-right tabular-nums">{d.itemCount}</td>
                       <td className="py-2.5 pr-3 text-right font-bold tabular-nums">{fmtQ(d.totalQ)}</td>
                       <td className="py-2.5 pr-3">
@@ -286,16 +286,16 @@ export function PutAway() {
                 <button
                   key={d.id}
                   onClick={() => setSelectedId(d.id)}
-                  className="w-full rounded-xl border border-slate-200 p-4 text-left"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 p-4 text-left"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <p className="font-mono text-xs font-bold text-violet-700">{d.docNo}</p>
-                      <p className="text-xs text-slate-500">{d.referenceDoc ?? 'No reference'} · {fmtDateTime(d.receivedAt)}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">{d.referenceDoc ?? 'No reference'} · {fmtDateTime(d.receivedAt)}</p>
                     </div>
                     <StatusBadge tone={docStatusTone(d.status)} label={d.status} />
                   </div>
-                  <p className="mt-2 text-sm tabular-nums text-slate-700">
+                  <p className="mt-2 text-sm tabular-nums text-slate-700 dark:text-slate-200">
                     {d.itemCount} line(s) · <span className="font-bold">{fmtQ(d.totalQ)} Qt</span>
                   </p>
                 </button>

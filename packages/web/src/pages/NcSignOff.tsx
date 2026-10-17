@@ -81,8 +81,8 @@ export function NcSignOff() {
           </div>
         ) : rows.length === 0 ? (
           <div className="rounded-xl border border-dashed border-line bg-alabaster px-6 py-10 text-center">
-            <p className="font-semibold text-slate-700">Queue is clear</p>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="font-semibold text-slate-700 dark:text-slate-200">Queue is clear</p>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               {fStatus === 'PENDING' ? 'No pending sign-off requests.' : 'No sign-off requests found.'}
             </p>
           </div>
@@ -94,7 +94,7 @@ export function NcSignOff() {
                   <thead>
                     <tr>
                       {['NC', 'Kind', 'Severity', 'Disposition', 'Quality', 'Production', 'Status', ''].map((h) => (
-                        <th key={h} className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-500">
+                        <th key={h} className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                           {h}
                         </th>
                       ))}
@@ -105,7 +105,7 @@ export function NcSignOff() {
                       <tr key={s.id} className="border-t border-line hover:bg-alabaster">
                         <td className="px-4 py-3">
                           <span className="font-bold tabular-nums text-ink">{s.nc?.ncNo ?? '—'}</span>
-                          <span className="block max-w-xs truncate text-xs text-slate-500" title={s.nc?.description}>
+                          <span className="block max-w-xs truncate text-xs text-slate-500 dark:text-slate-400" title={s.nc?.description}>
                             {s.nc?.description}
                           </span>
                         </td>
@@ -117,7 +117,7 @@ export function NcSignOff() {
                         <td className="px-4 py-3">
                           {s.nc ? <Badge tone={severityTone(s.nc.severity)}>{NC_SEVERITY_LABEL[s.nc.severity]}</Badge> : '—'}
                         </td>
-                        <td className="px-4 py-3 text-xs text-slate-600">
+                        <td className="px-4 py-3 text-xs text-slate-600 dark:text-slate-300">
                           {s.nc?.disposition ? NC_DECISION_LABEL[s.nc.disposition.decision] : '—'}
                         </td>
                         <td className="px-4 py-3 text-xs">
@@ -133,7 +133,7 @@ export function NcSignOff() {
                               <PenLine size={12} /> {signing === s.id ? 'Signing…' : 'Sign'}
                             </Button>
                           ) : (
-                            <span className="text-slate-400">—</span>
+                            <span className="text-slate-400 dark:text-slate-500">—</span>
                           )}
                         </td>
                         <td className="px-4 py-3 text-xs">
@@ -149,13 +149,13 @@ export function NcSignOff() {
                               <PenLine size={12} /> {signing === s.id ? 'Signing…' : 'Sign'}
                             </Button>
                           ) : (
-                            <span className="text-slate-400">—</span>
+                            <span className="text-slate-400 dark:text-slate-500">—</span>
                           )}
                         </td>
                         <td className="px-4 py-3">
                           <Badge tone={signoffTone(s.status)}>{s.status === 'PENDING' ? 'Pending' : 'Completed'}</Badge>
                         </td>
-                        <td className="px-4 py-3 text-xs text-slate-400 tabular-nums">{fmtDateTime(s.createdAt)}</td>
+                        <td className="px-4 py-3 text-xs text-slate-400 dark:text-slate-500 tabular-nums">{fmtDateTime(s.createdAt)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -164,13 +164,13 @@ export function NcSignOff() {
             </div>
             <div className="space-y-3 md:hidden">
               {rows.map((s) => (
-                <div key={s.id} className="rounded-xl border border-line bg-white p-4 shadow-sm">
+                <div key={s.id} className="rounded-xl border border-line bg-white dark:bg-slate-800 p-4 shadow-sm">
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-bold tabular-nums text-ink">{s.nc?.ncNo ?? '—'}</span>
                     <Badge tone={signoffTone(s.status)}>{s.status === 'PENDING' ? 'Pending' : 'Completed'}</Badge>
                   </div>
-                  <p className="mt-1 line-clamp-2 text-sm text-slate-600">{s.nc?.description}</p>
-                  <p className="mt-1 text-xs text-slate-500">
+                  <p className="mt-1 line-clamp-2 text-sm text-slate-600 dark:text-slate-300">{s.nc?.description}</p>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                     {s.kind === 'CLOSURE' ? 'Closure' : 'Disposition'} sign-off
                     {s.nc?.disposition ? ` · ${NC_DECISION_LABEL[s.nc.disposition.decision]}` : ''}
                   </p>

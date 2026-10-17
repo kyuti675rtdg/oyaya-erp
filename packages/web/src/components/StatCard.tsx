@@ -21,13 +21,13 @@ export function StatCard({
     advisory: 'bg-advisory-text'
   };
   return (
-    <div className="relative overflow-hidden rounded-xl border border-line bg-white p-4 shadow-sm">
+    <div className="relative overflow-hidden rounded-xl border border-line bg-white dark:bg-slate-800 p-4 shadow-sm">
       <div className={`absolute inset-y-0 left-0 w-1 ${bar[accent]}`} />
       <div className="flex items-start justify-between gap-2 pl-2">
         <div className="min-w-0">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</p>
           <p className="tnum mt-1 truncate text-2xl font-bold text-ink">{value}</p>
-          {sub ? <div className="mt-1 text-xs text-slate-500">{sub}</div> : null}
+          {sub ? <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">{sub}</div> : null}
         </div>
         {icon}
       </div>

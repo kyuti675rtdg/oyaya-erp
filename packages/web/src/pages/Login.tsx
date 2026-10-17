@@ -90,12 +90,12 @@ interface FieldProps {
 function Field({ id, label, type = 'text', value, onChange, placeholder, autoComplete, required, icon, trailing }: FieldProps) {
   return (
     <div>
-      <label htmlFor={id} className="mb-1.5 block text-xs font-semibold text-stone-600">
+      <label htmlFor={id} className="mb-1.5 block text-xs font-semibold text-stone-600 dark:text-slate-300">
         {label}
-        {required ? <span className="ml-0.5 text-stone-400">*</span> : null}
+        {required ? <span className="ml-0.5 text-stone-400 dark:text-slate-500">*</span> : null}
       </label>
       <div className="relative">
-        <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-stone-400">
+        <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-stone-400 dark:text-slate-500">
           {icon}
         </span>
         <input
@@ -106,7 +106,7 @@ function Field({ id, label, type = 'text', value, onChange, placeholder, autoCom
           placeholder={placeholder}
           autoComplete={autoComplete}
           required={required}
-          className="h-12 w-full rounded-lg border border-stone-200 bg-white pl-11 pr-4 text-[15px] text-stone-900 shadow-sm transition-all duration-200 placeholder:text-stone-400 hover:border-stone-300 focus:border-stone-900 focus:outline-none focus:ring-2 focus:ring-stone-900/15"
+          className="h-12 w-full rounded-lg border border-stone-200 dark:border-slate-700 bg-white dark:bg-slate-800 pl-11 pr-4 text-[15px] text-stone-900 dark:text-slate-100 shadow-sm transition-all duration-200 placeholder:text-stone-400 dark:placeholder:text-slate-500 hover:border-stone-300 dark:hover:border-slate-600 focus:border-stone-900 focus:outline-none focus:ring-2 focus:ring-stone-900/15"
         />
         {trailing}
       </div>
@@ -167,11 +167,11 @@ export function Login() {
 
       {/* ── White sign-in card ────────────────────────────────────── */}
       <div className="animate-fade-in-up relative z-10 w-full max-w-sm">
-        <div className="rounded-2xl bg-white p-8 shadow-2xl">
-          <h1 className="text-2xl font-extrabold tracking-tight text-stone-900">
+        <div className="rounded-2xl bg-white dark:bg-slate-800 p-8 shadow-2xl">
+          <h1 className="text-2xl font-extrabold tracking-tight text-stone-900 dark:text-slate-100">
             Hi there, welcome back
           </h1>
-          <p className="mt-1 text-sm text-stone-500">Sign in to Oyaya Flour Factory ERP</p>
+          <p className="mt-1 text-sm text-stone-500 dark:text-slate-400">Sign in to Oyaya Flour Factory ERP</p>
 
           <form onSubmit={submit} className="mt-6">
             <div className="space-y-4">
@@ -199,7 +199,7 @@ export function Login() {
                   <button
                     type="button"
                     onClick={() => setShowPassword((v) => !v)}
-                    className="absolute inset-y-0 right-0 flex items-center rounded-r-lg pr-3.5 text-stone-400 transition-colors hover:text-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-900/30"
+                    className="absolute inset-y-0 right-0 flex items-center rounded-r-lg pr-3.5 text-stone-400 dark:text-slate-500 transition-colors hover:text-stone-700 dark:hover:text-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-900/30"
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                     aria-pressed={showPassword}
                   >
@@ -210,7 +210,7 @@ export function Login() {
             </div>
 
             <div className="mt-4 flex items-center justify-between">
-              <label className="group flex cursor-pointer select-none items-center gap-2 text-sm text-stone-600">
+              <label className="group flex cursor-pointer select-none items-center gap-2 text-sm text-stone-600 dark:text-slate-300">
                 <input
                   type="checkbox"
                   checked={rememberMe}
@@ -236,7 +236,7 @@ export function Login() {
               <button
                 type="button"
                 onClick={() => setShowForgotInfo((v) => !v)}
-                className="rounded text-sm font-medium text-stone-600 transition-colors hover:text-stone-900 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-900/30"
+                className="rounded text-sm font-medium text-stone-600 dark:text-slate-300 transition-colors hover:text-stone-900 dark:hover:text-slate-100 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-900/30"
                 aria-expanded={showForgotInfo}
               >
                 Forgot password?
@@ -250,8 +250,8 @@ export function Login() {
               }`}
             >
               <div className="overflow-hidden">
-                <div role="status" className="flex items-start gap-2.5 rounded-lg border border-stone-200 bg-stone-50 px-3.5 py-3 text-sm text-stone-700">
-                  <span className="text-stone-500"><InfoIcon /></span>
+                <div role="status" className="flex items-start gap-2.5 rounded-lg border border-stone-200 dark:border-slate-700 bg-stone-50 dark:bg-slate-800 px-3.5 py-3 text-sm text-stone-700 dark:text-slate-200">
+                  <span className="text-stone-500 dark:text-slate-400"><InfoIcon /></span>
                   <p>Contact your system administrator to reset your password.</p>
                 </div>
               </div>
@@ -291,7 +291,7 @@ export function Login() {
               </span>
             </button>
 
-            <p className="mt-5 text-center text-xs leading-relaxed text-stone-400">
+            <p className="mt-5 text-center text-xs leading-relaxed text-stone-400 dark:text-slate-500">
               Works offline — queued entries sync when connectivity returns.
             </p>
           </form>

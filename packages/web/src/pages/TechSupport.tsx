@@ -104,7 +104,7 @@ export function TechSupport() {
         <div className="col-span-12 space-y-5 lg:col-span-8">
           <div className={`${cardShell} flex flex-col gap-3 sm:flex-row`}>
             <div className="relative flex-1">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
               <TextInput
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -133,7 +133,7 @@ export function TechSupport() {
                 {filtered.map((r) => (
                   <div key={r.id} className="rounded-xl border border-slate-200/70 p-4">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <p className="font-bold text-slate-800">{r.title}</p>
+                      <p className="font-bold text-slate-800 dark:text-slate-100">{r.title}</p>
                       <div className="flex gap-2">
                         <Badge tone="neutral">{CATEGORIES[r.category]}</Badge>
                         {r.resolvedAt ? (
@@ -143,10 +143,10 @@ export function TechSupport() {
                         )}
                       </div>
                     </div>
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                       {r.recordNo} · {fmtDateTime(r.createdAt)}{r.durationMins ? ` · ${r.durationMins} min` : ''}
                     </p>
-                    <p className="mt-2 whitespace-pre-wrap text-sm text-slate-600">{r.description}</p>
+                    <p className="mt-2 whitespace-pre-wrap text-sm text-slate-600 dark:text-slate-300">{r.description}</p>
                     {r.resolution && (
                       <div className="mt-2 rounded-lg bg-emerald-50 p-3">
                         <p className="text-xs font-bold uppercase tracking-wider text-emerald-700">Resolution</p>
@@ -164,9 +164,9 @@ export function TechSupport() {
           <CardHeader icon={<CheckCircle2 size={16} />} title="Known Issues" subtitle="Quick fixes database" />
           <div className="space-y-3">
             {KNOWN_ISSUES.map((k, i) => (
-              <div key={i} className="rounded-lg bg-slate-50 p-3">
-                <p className="text-sm font-semibold text-slate-800">{k.issue}</p>
-                <p className="mt-1 text-sm text-slate-600">{k.fix}</p>
+              <div key={i} className="rounded-lg bg-slate-50 dark:bg-slate-800 p-3">
+                <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{k.issue}</p>
+                <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{k.fix}</p>
               </div>
             ))}
           </div>
@@ -177,8 +177,8 @@ export function TechSupport() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
           <div className={`${cardShell} max-h-[90vh] w-full max-w-lg overflow-y-auto`}>
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-bold text-slate-800">Log Support Session</h3>
-              <button onClick={() => setShowForm(false)} className="text-slate-400 hover:text-slate-600">
+              <h3 className="font-bold text-slate-800 dark:text-slate-100">Log Support Session</h3>
+              <button onClick={() => setShowForm(false)} className="text-slate-400 dark:text-slate-500 hover:text-slate-600">
                 <X size={18} />
               </button>
             </div>

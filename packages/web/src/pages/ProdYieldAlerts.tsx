@@ -129,7 +129,7 @@ export function ProdYieldAlerts() {
           { label: 'Acknowledged', value: counts.acked, tone: 'text-slate-800' }
         ].map((k) => (
           <div key={k.label} className={`${cardShell} !p-4`}>
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{k.label}</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{k.label}</p>
             <p className={`tabular-nums mt-1 text-2xl font-bold ${k.tone}`}>{k.value}</p>
           </div>
         ))}
@@ -158,7 +158,7 @@ export function ProdYieldAlerts() {
                   {
                     key: 'alertType',
                     label: 'Type',
-                    render: (r) => <span className="font-semibold text-slate-800">{ALERT_LABELS[r.alertType] ?? r.alertType}</span>
+                    render: (r) => <span className="font-semibold text-slate-800 dark:text-slate-100">{ALERT_LABELS[r.alertType] ?? r.alertType}</span>
                   },
                   { key: 'message', label: 'Details', render: (r) => <span className="text-sm">{r.message}</span> },
                   { key: 'createdAt', label: 'Raised', render: (r) => fmtDateTime(r.createdAt) },
@@ -187,7 +187,7 @@ export function ProdYieldAlerts() {
                           <CheckCircle2 size={13} /> Acknowledge
                         </button>
                       ) : r.status === 'ACKNOWLEDGED' && r.acknowledgedAt ? (
-                        <span className="tabular-nums text-xs text-slate-500">
+                        <span className="tabular-nums text-xs text-slate-500 dark:text-slate-400">
                           {fmtDateTime(r.acknowledgedAt)}
                         </span>
                       ) : null
@@ -211,10 +211,10 @@ export function ProdYieldAlerts() {
                   >
                     <div className="flex items-center justify-between gap-2">
                       <Badge tone={severityTone(r.severity)}>{r.severity}</Badge>
-                      <span className="tabular-nums text-xs text-slate-500">{fmtDateTime(r.createdAt)}</span>
+                      <span className="tabular-nums text-xs text-slate-500 dark:text-slate-400">{fmtDateTime(r.createdAt)}</span>
                     </div>
-                    <p className="mt-2 text-sm font-bold text-slate-800">{ALERT_LABELS[r.alertType] ?? r.alertType}</p>
-                    <p className="mt-1 text-sm text-slate-600">{r.message}</p>
+                    <p className="mt-2 text-sm font-bold text-slate-800 dark:text-slate-100">{ALERT_LABELS[r.alertType] ?? r.alertType}</p>
+                    <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{r.message}</p>
                     {r.status === 'OPEN' ? (
                       <Badge tone="advisory" className="mt-2">Open</Badge>
                     ) : (
@@ -225,7 +225,7 @@ export function ProdYieldAlerts() {
                         <CheckCircle2 size={14} /> Acknowledge
                       </Button>
                     ) : null}
-                    {r.ackNotes ? <p className="mt-2 text-xs italic text-slate-500">“{r.ackNotes}”</p> : null}
+                    {r.ackNotes ? <p className="mt-2 text-xs italic text-slate-500 dark:text-slate-400">“{r.ackNotes}”</p> : null}
                   </div>
                 ))
               )}
@@ -236,9 +236,9 @@ export function ProdYieldAlerts() {
 
       {ackId ? (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/40 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
-            <h3 className="text-base font-bold text-slate-800">Acknowledge alert</h3>
-            <p className="mt-1 text-sm text-slate-500">
+          <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-xl">
+            <h3 className="text-base font-bold text-slate-800 dark:text-slate-100">Acknowledge alert</h3>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               Confirming you have seen and actioned this alert. Requires production approval rights.
             </p>
             <form onSubmit={acknowledge} className="mt-4 space-y-4">
@@ -264,7 +264,7 @@ export function ProdYieldAlerts() {
       ) : null}
 
       {!canApprove ? (
-        <p className="mt-3 text-xs text-slate-500">
+        <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
           Acknowledging alerts requires <span className="font-semibold">production:approve</span> rights.
         </p>
       ) : null}

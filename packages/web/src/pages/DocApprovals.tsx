@@ -96,13 +96,13 @@ export function DocApprovals() {
         />
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           <div className={`${cardShell} !border-amber-100 !p-4`}>
-            <p className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-400">
+            <p className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
               Pending review ({(docsQ.data ?? []).length})
             </p>
             {docsQ.isLoading ? (
               <Spinner label="Loading…" />
             ) : (docsQ.data ?? []).length === 0 ? (
-              <p className="text-sm text-slate-500">No documents awaiting review.</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">No documents awaiting review.</p>
             ) : (
               <div className="space-y-2">
                 {(docsQ.data ?? []).map((d) => (
@@ -114,8 +114,8 @@ export function DocApprovals() {
                       docId === d.id ? 'border-violet-300 bg-violet-50/60' : 'border-slate-100 hover:border-slate-200'
                     }`}
                   >
-                    <p className="truncate text-sm font-semibold text-slate-800">{d.title}</p>
-                    <p className="text-xs text-slate-500">
+                    <p className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">{d.title}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
                       {d.docNo} · v{d.version}
                     </p>
                   </button>
@@ -124,7 +124,7 @@ export function DocApprovals() {
             )}
           </div>
           <div className={`${cardShell} !p-4`}>
-            <p className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-400">Review detail</p>
+            <p className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Review detail</p>
             {!docId ? (
               <EmptyState title="Select a document" sub="Choose from the pending list to review approvals." />
             ) : detailQ.isLoading ? (
@@ -135,15 +135,15 @@ export function DocApprovals() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-bold text-slate-800">{detailQ.data?.title}</p>
-                    <p className="text-xs text-slate-500">{detailQ.data?.docNo}</p>
+                    <p className="truncate text-sm font-bold text-slate-800 dark:text-slate-100">{detailQ.data?.title}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{detailQ.data?.docNo}</p>
                   </div>
                   <Badge tone={DOC_STATUS_TONE[detailQ.data?.status ?? ''] ?? 'neutral'}>
                     {(detailQ.data?.status ?? '').replace('_', ' ')}
                   </Badge>
                 </div>
                 {approvals.length === 0 ? (
-                  <p className="text-sm text-slate-500">No approvers assigned yet.</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">No approvers assigned yet.</p>
                 ) : (
                   <div className="divide-y divide-slate-50">
                     {approvals.map((a) => (
@@ -160,8 +160,8 @@ export function DocApprovals() {
                           {a.status === 'APPROVED' ? <CheckCircle2 size={15} /> : a.status === 'REJECTED' ? <XCircle size={15} /> : <ClipboardCheck size={15} />}
                         </span>
                         <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-semibold text-slate-700">{a.approverId}</p>
-                          <p className="text-xs text-slate-500">
+                          <p className="truncate text-sm font-semibold text-slate-700 dark:text-slate-200">{a.approverId}</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
                             {a.status}
                             {a.decidedAt ? ` · ${fmtDateTime(a.decidedAt)}` : ''}
                             {a.comment ? ` · “${a.comment}”` : ''}
@@ -201,10 +201,10 @@ export function DocApprovals() {
             .filter((d) => d.status === 'DRAFT')
             .slice(0, 9)
             .map((d) => (
-              <div key={d.id} className="flex items-center gap-2 rounded-xl border border-slate-100 p-3">
+              <div key={d.id} className="flex items-center gap-2 rounded-xl border border-slate-100 dark:border-slate-700 p-3">
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold text-slate-800">{d.title}</p>
-                  <p className="text-xs text-slate-500">{d.docNo}</p>
+                  <p className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">{d.title}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{d.docNo}</p>
                 </div>
                 <Button variant="secondary" className="!px-3 !py-1.5 !text-xs" onClick={() => setDocId(d.id)}>
                   Review
@@ -213,7 +213,7 @@ export function DocApprovals() {
             ))}
         </div>
         {(allDocsQ.data ?? []).filter((d) => d.status === 'DRAFT').length === 0 ? (
-          <p className="text-sm text-slate-500">No draft documents.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">No draft documents.</p>
         ) : null}
       </div>
 
@@ -221,8 +221,8 @@ export function DocApprovals() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
           <form onSubmit={submitAssign} className={`${cardShell} w-full max-w-md space-y-4 !p-6`}>
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-slate-800">Assign Approver</h3>
-              <button type="button" onClick={() => setShowAssign(false)} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100" aria-label="Close">
+              <h3 className="text-base font-bold text-slate-800 dark:text-slate-100">Assign Approver</h3>
+              <button type="button" onClick={() => setShowAssign(false)} className="rounded-lg p-1.5 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700" aria-label="Close">
                 <X size={18} />
               </button>
             </div>
@@ -253,8 +253,8 @@ export function DocApprovals() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
           <form onSubmit={submitDecide} className={`${cardShell} w-full max-w-md space-y-4 !p-6`}>
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-slate-800">Approval Decision</h3>
-              <button type="button" onClick={() => setDecideId(null)} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100" aria-label="Close">
+              <h3 className="text-base font-bold text-slate-800 dark:text-slate-100">Approval Decision</h3>
+              <button type="button" onClick={() => setDecideId(null)} className="rounded-lg p-1.5 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700" aria-label="Close">
                 <X size={18} />
               </button>
             </div>

@@ -439,14 +439,14 @@ export function Shifts() {
                   </Badge>
                 )}
               </div>
-              <p className="tnum mt-1 text-xs text-slate-500">
+              <p className="tnum mt-1 text-xs text-slate-500 dark:text-slate-400">
                 Flour output / total output x 100. Flagged below {EXTRACTION_MIN}%.
               </p>
               {(selectedShift.outputs ?? []).length > 0 ? (
                 <ul className="mt-3 space-y-1 text-sm">
                   {(selectedShift.outputs ?? []).map((o) => (
                     <li key={o.id} className="flex justify-between">
-                      <span className="text-slate-600">{o.product?.name ?? o.productId}</span>
+                      <span className="text-slate-600 dark:text-slate-300">{o.product?.name ?? o.productId}</span>
                       <span className="tnum font-semibold text-ink">{fmtQ(o.quintals)} q</span>
                     </li>
                   ))}
@@ -462,8 +462,8 @@ export function Shifts() {
         <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
           <Card className="p-5">
             <h3 className="mb-1 text-base font-bold text-ink">Operator assignment</h3>
-            <p className="mb-4 text-sm text-slate-500">
-              Current: <span className="font-semibold text-slate-700">{(selectedShift.operators ?? []).join(', ') || '—'}</span>
+            <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
+              Current: <span className="font-semibold text-slate-700 dark:text-slate-200">{(selectedShift.operators ?? []).join(', ') || '—'}</span>
             </p>
             <form onSubmit={saveOperators} className="space-y-3">
               <Field label="Reassign operators" hint="Comma separated — replaces the current list">
@@ -491,7 +491,7 @@ export function Shifts() {
             {handoversQ.isLoading ? (
               <Spinner label="Loading notes..." />
             ) : (handoversQ.data ?? []).length === 0 ? (
-              <p className="mb-4 text-sm text-slate-500">
+              <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
                 No notes yet — leave a handover for the next shift's crew.
               </p>
             ) : (
@@ -502,9 +502,9 @@ export function Shifts() {
                       <Badge tone={n.noteType === 'HANDOVER' ? 'advisory' : 'neutral'}>
                         {n.noteType === 'HANDOVER' ? 'Handover' : 'Operator note'}
                       </Badge>
-                      <span className="tnum text-xs text-slate-500">{fmtDateTime(n.createdAt)}</span>
+                      <span className="tnum text-xs text-slate-500 dark:text-slate-400">{fmtDateTime(n.createdAt)}</span>
                     </div>
-                    <p className="mt-1 text-sm text-slate-700">{n.content}</p>
+                    <p className="mt-1 text-sm text-slate-700 dark:text-slate-200">{n.content}</p>
                   </li>
                 ))}
               </ul>

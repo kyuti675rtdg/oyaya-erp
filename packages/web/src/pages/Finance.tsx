@@ -37,12 +37,12 @@ function sumLines(entry: JournalEntry, side: 'debit' | 'credit'): number {
 
 function ReportTable({ rows, total }: { rows: Array<[string, number]>; total?: [string, number] }) {
   return (
-    <div className="overflow-x-auto rounded-xl border border-line bg-white">
+    <div className="overflow-x-auto rounded-xl border border-line bg-white dark:bg-slate-800">
       <table className="w-full min-w-[560px] text-left text-sm">
         <tbody>
           {rows.map(([label, amount], i) => (
             <tr key={i} className="border-t border-line first:border-t-0">
-              <td className="px-4 py-2.5 pl-8 text-slate-700">{label}</td>
+              <td className="px-4 py-2.5 pl-8 text-slate-700 dark:text-slate-200">{label}</td>
               <td className="tnum px-4 py-2.5 text-right font-medium text-ink">{fmtBirr(amount)}</td>
             </tr>
           ))}
@@ -144,20 +144,20 @@ export function Finance() {
         trialQ.isLoading ? (
           <Spinner label="Loading trial balance..." />
         ) : trialQ.data ? (
-          <div className="overflow-x-auto rounded-xl border border-line bg-white">
+          <div className="overflow-x-auto rounded-xl border border-line bg-white dark:bg-slate-800">
             <table className="w-full min-w-[640px] text-left text-sm">
               <thead>
                 <tr className="border-b-2 border-line">
-                  <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-500">Code</th>
-                  <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-500">Account</th>
-                  <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wide text-slate-500">Debit</th>
-                  <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wide text-slate-500">Credit</th>
+                  <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Code</th>
+                  <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Account</th>
+                  <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Debit</th>
+                  <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Credit</th>
                 </tr>
               </thead>
               <tbody>
                 {trialQ.data.accounts.map((r) => (
                   <tr key={r.code} className="border-t border-line">
-                    <td className="tnum px-4 py-2.5 text-slate-500">{r.code}</td>
+                    <td className="tnum px-4 py-2.5 text-slate-500 dark:text-slate-400">{r.code}</td>
                     <td className="px-4 py-2.5 font-medium text-ink">{r.name}</td>
                     <td className="tnum px-4 py-2.5 text-right">{fmtBirr(r.debit)}</td>
                     <td className="tnum px-4 py-2.5 text-right">{fmtBirr(r.credit)}</td>

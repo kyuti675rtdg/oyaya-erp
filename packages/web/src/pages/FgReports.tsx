@@ -226,7 +226,7 @@ export function FgReports() {
                         key: 'sizes',
                         label: 'Breakdown',
                         render: (r) => (
-                          <span className="tnum text-xs text-slate-600">
+                          <span className="tnum text-xs text-slate-600 dark:text-slate-300">
                             {r.sizes.map((s) => `${s.bagLabel}: ${s.bags}`).join(' · ')}
                           </span>
                         )
@@ -239,7 +239,7 @@ export function FgReports() {
                     ]}
                     rows={position?.products ?? []}
                   />
-                  <p className="tnum mt-3 text-sm font-bold text-slate-800">
+                  <p className="tnum mt-3 text-sm font-bold text-slate-800 dark:text-slate-100">
                     Grand total: {fmtQ(position?.grandTotalQ ?? 0)} q
                   </p>
                 </>
@@ -304,7 +304,7 @@ export function FgReports() {
                       label: 'Bags/h',
                       mono: true,
                       render: (r) =>
-                        r.bagsPerHour === null ? <span className="text-slate-400">—</span> : <span className="font-bold">{Math.round(r.bagsPerHour).toLocaleString('en-US')}</span>
+                        r.bagsPerHour === null ? <span className="text-slate-400 dark:text-slate-500">—</span> : <span className="font-bold">{Math.round(r.bagsPerHour).toLocaleString('en-US')}</span>
                     }
                   ]}
                   rows={efficiencyQ.data ?? []}

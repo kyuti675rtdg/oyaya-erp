@@ -151,16 +151,16 @@ export function Departments() {
   function renderDept(d: HrDepartment, depth: number): React.ReactNode {
     return (
       <div key={d.id} className={depth > 0 ? 'ml-6 border-l-2 border-violet-100 pl-4' : ''}>
-        <div className="flex items-center justify-between gap-2 rounded-xl bg-slate-50 px-4 py-3">
+        <div className="flex items-center justify-between gap-2 rounded-xl bg-slate-50 dark:bg-slate-800 px-4 py-3">
           <div className="flex items-center gap-3">
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-100 text-violet-700">
               <Building2 className="h-4 w-4" />
             </span>
             <div>
-              <p className="text-sm font-bold text-slate-900">
-                {d.name} <span className="tnum font-normal text-slate-400">· {d.code}</span>
+              <p className="text-sm font-bold text-slate-900 dark:text-slate-100">
+                {d.name} <span className="tnum font-normal text-slate-400 dark:text-slate-500">· {d.code}</span>
               </p>
-              {d.description ? <p className="text-xs text-slate-500">{d.description}</p> : null}
+              {d.description ? <p className="text-xs text-slate-500 dark:text-slate-400">{d.description}</p> : null}
             </div>
           </div>
           {canManage ? (
@@ -188,8 +188,8 @@ export function Departments() {
           <Building2 className="h-5 w-5" />
         </span>
         <div>
-          <h1 className="text-xl font-bold text-slate-900">Departments & Positions</h1>
-          <p className="text-sm text-slate-500">Organization tree and position grades with salary bands</p>
+          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Departments & Positions</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Organization tree and position grades with salary bands</p>
         </div>
       </div>
 
@@ -211,7 +211,7 @@ export function Departments() {
           {treeQ.isLoading ? (
             <Spinner label="Loading departments..." />
           ) : tree.length === 0 ? (
-            <p className="py-8 text-center text-sm text-slate-500">No departments yet — create the first one.</p>
+            <p className="py-8 text-center text-sm text-slate-500 dark:text-slate-400">No departments yet — create the first one.</p>
           ) : (
             <div className="space-y-2">{tree.map((d) => renderDept(d, 0))}</div>
           )}

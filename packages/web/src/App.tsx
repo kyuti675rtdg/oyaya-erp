@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
+import { ThemeProvider } from './lib/theme';
 import { Layout } from './components/Layout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Login } from './pages/Login';
@@ -174,7 +175,8 @@ import { ReportBuilder } from './pages/bi/ReportBuilder';
 
 export function App() {
   return (
-    <Routes>
+    <ThemeProvider>
+      <Routes>
       <Route path="/login" element={<Login />} />
 
       <Route element={<Layout />}>
@@ -877,5 +879,6 @@ export function App() {
         <Route path="/trace/search" element={<ProtectedRoute claim="traceability:read"><TraceSearch /></ProtectedRoute>} />
       </Route>
     </Routes>
+    </ThemeProvider>
   );
 }

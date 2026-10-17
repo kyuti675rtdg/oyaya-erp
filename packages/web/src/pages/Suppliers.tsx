@@ -143,7 +143,7 @@ function errMsg(err: unknown): string {
 
 /** Star rating display (read-only). */
 function Stars({ value, size = 14 }: { value: number | null | undefined; size?: number }) {
-  if (!value || value < 1) return <span className="text-xs text-slate-400">Not rated</span>;
+  if (!value || value < 1) return <span className="text-xs text-slate-400 dark:text-slate-500">Not rated</span>;
   return (
     <span className="inline-flex items-center gap-0.5" aria-label={`Rated ${value} of 5`}>
       {[1, 2, 3, 4, 5].map((i) => (
@@ -193,7 +193,7 @@ function RatingInput({
         <button
           type="button"
           onClick={() => onChange(null)}
-          className="text-xs font-semibold text-slate-500 underline hover:text-slate-700"
+          className="text-xs font-semibold text-slate-500 dark:text-slate-400 underline hover:text-slate-700"
         >
           Clear
         </button>
@@ -234,8 +234,8 @@ function Toggle({
 function DetailRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex items-start justify-between gap-4 py-2">
-      <dt className="shrink-0 text-sm font-medium text-slate-500">{label}</dt>
-      <dd className="text-right text-sm font-semibold text-slate-800">{value}</dd>
+      <dt className="shrink-0 text-sm font-medium text-slate-500 dark:text-slate-400">{label}</dt>
+      <dd className="text-right text-sm font-semibold text-slate-800 dark:text-slate-100">{value}</dd>
     </div>
   );
 }
@@ -500,12 +500,12 @@ export function Suppliers() {
         mono: true,
         render: (s) =>
           s.phone ? (
-            <span className="inline-flex items-center gap-1.5 text-slate-700">
-              <Phone size={13} className="shrink-0 text-slate-400" />
+            <span className="inline-flex items-center gap-1.5 text-slate-700 dark:text-slate-200">
+              <Phone size={13} className="shrink-0 text-slate-400 dark:text-slate-500" />
               {s.phone}
             </span>
           ) : (
-            <span className="text-slate-400">—</span>
+            <span className="text-slate-400 dark:text-slate-500">—</span>
           )
       },
       {
@@ -513,12 +513,12 @@ export function Suppliers() {
         label: 'Region',
         render: (s) =>
           s.region ? (
-            <span className="inline-flex items-center gap-1.5 text-slate-700">
-              <MapPin size={13} className="shrink-0 text-slate-400" />
+            <span className="inline-flex items-center gap-1.5 text-slate-700 dark:text-slate-200">
+              <MapPin size={13} className="shrink-0 text-slate-400 dark:text-slate-500" />
               {s.region}
             </span>
           ) : (
-            <span className="text-slate-400">—</span>
+            <span className="text-slate-400 dark:text-slate-500">—</span>
           )
       },
       {
@@ -538,7 +538,7 @@ export function Suppliers() {
               ))}
             </span>
           ) : (
-            <span className="text-slate-400">—</span>
+            <span className="text-slate-400 dark:text-slate-500">—</span>
           )
       },
       {
@@ -551,8 +551,8 @@ export function Suppliers() {
         label: 'Intakes / POs',
         mono: true,
         render: (s) => (
-          <span className="text-slate-700">
-            {s._count?.intakes ?? 0} <span className="text-slate-400">/</span> {s._count?.purchaseOrders ?? 0}
+          <span className="text-slate-700 dark:text-slate-200">
+            {s._count?.intakes ?? 0} <span className="text-slate-400 dark:text-slate-500">/</span> {s._count?.purchaseOrders ?? 0}
           </span>
         )
       },
@@ -570,7 +570,7 @@ export function Suppliers() {
           <span className="inline-flex items-center gap-1">
             <button
               onClick={() => setSelected(s)}
-              className="touch rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-800"
+              className="touch rounded-lg p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-800"
               title="View details"
               aria-label={`View ${s.name}`}
             >
@@ -580,7 +580,7 @@ export function Suppliers() {
               <>
                 <button
                   onClick={() => openEdit(s)}
-                  className="touch rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-violet-700"
+                  className="touch rounded-lg p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-violet-700"
                   title="Edit supplier"
                   aria-label={`Edit ${s.name}`}
                 >
@@ -589,7 +589,7 @@ export function Suppliers() {
                 {s.isActive !== false ? (
                   <button
                     onClick={() => setDeactivateTarget(s)}
-                    className="touch rounded-lg p-2 text-slate-500 hover:bg-red-50 hover:text-red-700"
+                    className="touch rounded-lg p-2 text-slate-500 dark:text-slate-400 hover:bg-red-50 hover:text-red-700"
                     title="Deactivate supplier"
                     aria-label={`Deactivate ${s.name}`}
                   >
@@ -654,23 +654,23 @@ export function Suppliers() {
       ) : suppliersQ.isError ? null : (
         <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
           <div className={cardShell}>
-            <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
               <Truck size={14} /> Total suppliers
             </p>
             <p className="tnum mt-1 text-2xl font-bold text-ink">{stats.total}</p>
           </div>
           <div className={cardShell}>
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Active</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Active</p>
             <p className="tnum mt-1 text-2xl font-bold text-pass-text">{stats.active}</p>
           </div>
           <div className={cardShell}>
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Farmers / Coops / Traders</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Farmers / Coops / Traders</p>
             <p className="tnum mt-1 text-2xl font-bold text-ink">
               {stats.farmers}<span className="text-slate-300"> / </span>{stats.coops}<span className="text-slate-300"> / </span>{stats.traders}
             </p>
           </div>
           <div className={cardShell}>
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Inactive</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Inactive</p>
             <p className="tnum mt-1 text-2xl font-bold text-critical-text">{stats.inactive}</p>
           </div>
         </div>
@@ -680,7 +680,7 @@ export function Suppliers() {
       <Card className="mb-4 p-4">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <div className="relative">
-            <Search size={17} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Search size={17} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
             <TextInput
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -756,7 +756,7 @@ export function Suppliers() {
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <p className="truncate font-bold text-ink">{s.name}</p>
-                    <p className="mt-0.5 flex items-center gap-1.5 text-xs text-slate-500">
+                    <p className="mt-0.5 flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
                       {s.type === 'INDIVIDUAL_FARMER' ? (
                         <User size={12} />
                       ) : s.type === 'ASSOCIATION' ? (
@@ -776,20 +776,20 @@ export function Suppliers() {
                 </div>
                 <div className="tnum mt-3 grid grid-cols-2 gap-2 text-sm">
                   <div>
-                    <p className="text-xs text-slate-500">Phone</p>
-                    <p className="font-semibold text-slate-800">{s.phone ?? '—'}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Phone</p>
+                    <p className="font-semibold text-slate-800 dark:text-slate-100">{s.phone ?? '—'}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-slate-500">Rating</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Rating</p>
                     <Stars value={s.rating} />
                   </div>
                   <div>
-                    <p className="text-xs text-slate-500">Intakes</p>
-                    <p className="font-semibold text-slate-800">{fmtInt(s._count?.intakes ?? 0)}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Intakes</p>
+                    <p className="font-semibold text-slate-800 dark:text-slate-100">{fmtInt(s._count?.intakes ?? 0)}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-slate-500">Purchase orders</p>
-                    <p className="font-semibold text-slate-800">{fmtInt(s._count?.purchaseOrders ?? 0)}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Purchase orders</p>
+                    <p className="font-semibold text-slate-800 dark:text-slate-100">{fmtInt(s._count?.purchaseOrders ?? 0)}</p>
                   </div>
                 </div>
                 {s.wheatTypes && s.wheatTypes.length > 0 ? (
@@ -805,7 +805,7 @@ export function Suppliers() {
                     ))}
                   </div>
                 ) : null}
-                <div className="mt-3 flex items-center gap-2 border-t border-slate-100 pt-3">
+                <div className="mt-3 flex items-center gap-2 border-t border-slate-100 dark:border-slate-700 pt-3">
                   <Button variant="secondary" className="!px-3 !py-2 !text-sm" onClick={() => setSelected(s)}>
                     <Eye size={15} /> Details
                   </Button>
@@ -818,7 +818,7 @@ export function Suppliers() {
               </div>
             ))}
           </div>
-          <p className="tnum mt-3 text-xs text-slate-500">
+          <p className="tnum mt-3 text-xs text-slate-500 dark:text-slate-400">
             Showing {filtered.length} of {all.length} suppliers
           </p>
         </>
@@ -833,13 +833,13 @@ export function Suppliers() {
                 <h3 className="text-lg font-bold text-ink">
                   {editing ? 'Edit supplier' : 'Register supplier'}
                 </h3>
-                <p className="mt-0.5 text-sm text-slate-500">
+                <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
                   {editing ? 'Update the supplier registration details.' : 'Add a new wheat supplier to the mill register.'}
                 </p>
               </div>
               <button
                 onClick={() => setModalOpen(false)}
-                className="touch rounded-lg p-2 text-slate-500 hover:bg-slate-100"
+                className="touch rounded-lg p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
                 aria-label="Close"
               >
                 <X size={18} />
@@ -848,7 +848,7 @@ export function Suppliers() {
 
             <form onSubmit={submitForm} className="space-y-5">
               <fieldset className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <legend className="mb-2 text-sm font-bold uppercase tracking-wide text-slate-500">
+                <legend className="mb-2 text-sm font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                   Basic information
                 </legend>
                 <div className="sm:col-span-2">
@@ -920,7 +920,7 @@ export function Suppliers() {
               </fieldset>
 
               <fieldset className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <legend className="mb-2 text-sm font-bold uppercase tracking-wide text-slate-500">
+                <legend className="mb-2 text-sm font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                   Registration
                 </legend>
                 <Field label="TIN" hint="Tax identification number">
@@ -935,7 +935,7 @@ export function Suppliers() {
               </fieldset>
 
               <fieldset>
-                <legend className="mb-2 text-sm font-bold uppercase tracking-wide text-slate-500">
+                <legend className="mb-2 text-sm font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                   Wheat supplied
                 </legend>
                 <div className="flex flex-wrap gap-2">
@@ -963,7 +963,7 @@ export function Suppliers() {
               </fieldset>
 
               <fieldset className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <legend className="mb-2 text-sm font-bold uppercase tracking-wide text-slate-500">
+                <legend className="mb-2 text-sm font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                   Payment & banking
                 </legend>
                 <Field label="Payment terms" hint="e.g. Net 14 days, 50% advance">
@@ -992,18 +992,18 @@ export function Suppliers() {
               </fieldset>
 
               <fieldset className="flex flex-wrap items-center gap-6">
-                <legend className="mb-2 w-full text-sm font-bold uppercase tracking-wide text-slate-500">
+                <legend className="mb-2 w-full text-sm font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                   Assessment & status
                 </legend>
                 <div>
-                  <p className="mb-1.5 text-sm font-semibold text-slate-700">Rating</p>
+                  <p className="mb-1.5 text-sm font-semibold text-slate-700 dark:text-slate-200">Rating</p>
                   <RatingInput value={form.rating} onChange={(v) => setField('rating', v)} />
                 </div>
                 <div>
-                  <p className="mb-1.5 text-sm font-semibold text-slate-700">Active</p>
+                  <p className="mb-1.5 text-sm font-semibold text-slate-700 dark:text-slate-200">Active</p>
                   <div className="flex items-center gap-2">
                     <Toggle checked={form.isActive} onChange={(v) => setField('isActive', v)} label="Supplier active" />
-                    <span className="text-sm font-medium text-slate-600">
+                    <span className="text-sm font-medium text-slate-600 dark:text-slate-300">
                       {form.isActive ? 'Active' : 'Inactive'}
                     </span>
                   </div>
@@ -1028,8 +1028,8 @@ export function Suppliers() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <Card className="w-full max-w-md p-6">
             <h3 className="text-lg font-bold text-ink">Deactivate supplier?</h3>
-            <p className="mt-2 text-sm text-slate-600">
-              <span className="font-semibold text-slate-800">{deactivateTarget.name}</span> will be
+            <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+              <span className="font-semibold text-slate-800 dark:text-slate-100">{deactivateTarget.name}</span> will be
               deactivated. It will remain in the records but can no longer be used for new purchase
               orders or wheat intakes. This can be reversed by editing the supplier.
             </p>
@@ -1091,7 +1091,7 @@ function SupplierDrawer({
   return (
     <div className="fixed inset-0 z-50" role="dialog" aria-label={`Supplier details for ${supplier.name}`}>
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <aside className="absolute inset-y-0 right-0 flex w-full max-w-md flex-col bg-white shadow-2xl">
+      <aside className="absolute inset-y-0 right-0 flex w-full max-w-md flex-col bg-white dark:bg-slate-800 shadow-2xl">
         <div className="flex items-start justify-between gap-3 border-b border-line p-5">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
@@ -1109,7 +1109,7 @@ function SupplierDrawer({
           </div>
           <button
             onClick={onClose}
-            className="touch shrink-0 rounded-lg p-2 text-slate-500 hover:bg-slate-100"
+            className="touch shrink-0 rounded-lg p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
             aria-label="Close details"
           >
             <X size={18} />
@@ -1119,13 +1119,13 @@ function SupplierDrawer({
         <div className="flex-1 overflow-y-auto p-5">
           {/* Activity summary */}
           <div className="grid grid-cols-3 gap-2">
-            <div className="rounded-xl bg-slate-50 p-3 text-center">
+            <div className="rounded-xl bg-slate-50 dark:bg-slate-800 p-3 text-center">
               <p className="tnum text-xl font-bold text-ink">{fmtInt(supplier._count?.intakes ?? 0)}</p>
-              <p className="text-xs font-medium text-slate-500">Intakes</p>
+              <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Intakes</p>
             </div>
-            <div className="rounded-xl bg-slate-50 p-3 text-center">
+            <div className="rounded-xl bg-slate-50 dark:bg-slate-800 p-3 text-center">
               <p className="tnum text-xl font-bold text-ink">{fmtInt(supplier._count?.purchaseOrders ?? 0)}</p>
-              <p className="text-xs font-medium text-slate-500">Purchase orders</p>
+              <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Purchase orders</p>
             </div>
             <div className="rounded-xl bg-violet-50 p-3 text-center">
               <p className="tnum text-xl font-bold text-violet-700">
@@ -1141,7 +1141,7 @@ function SupplierDrawer({
                 label="Contact person"
                 value={
                   <span className="inline-flex items-center gap-1.5">
-                    <User size={13} className="text-slate-400" />
+                    <User size={13} className="text-slate-400 dark:text-slate-500" />
                     {supplier.contactPerson}
                   </span>
                 }
@@ -1152,7 +1152,7 @@ function SupplierDrawer({
                 label="Phone"
                 value={
                   <span className="tnum inline-flex items-center gap-1.5">
-                    <Phone size={13} className="text-slate-400" />
+                    <Phone size={13} className="text-slate-400 dark:text-slate-500" />
                     {supplier.phone}
                   </span>
                 }
@@ -1164,7 +1164,7 @@ function SupplierDrawer({
                 label="Region"
                 value={
                   <span className="inline-flex items-center gap-1.5">
-                    <MapPin size={13} className="text-slate-400" />
+                    <MapPin size={13} className="text-slate-400 dark:text-slate-500" />
                     {supplier.region}
                   </span>
                 }
@@ -1201,7 +1201,7 @@ function SupplierDrawer({
                 label="Bank"
                 value={
                   <span className="inline-flex items-center gap-1.5">
-                    <Landmark size={13} className="text-slate-400" />
+                    <Landmark size={13} className="text-slate-400 dark:text-slate-500" />
                     {supplier.bankName}
                   </span>
                 }
@@ -1213,7 +1213,7 @@ function SupplierDrawer({
           </dl>
 
           {/* Outstanding purchase orders */}
-          <h4 className="mb-2 mt-6 text-sm font-bold uppercase tracking-wide text-slate-500">
+          <h4 className="mb-2 mt-6 text-sm font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
             Outstanding purchase orders
           </h4>
           {posQ.isLoading ? (
@@ -1225,7 +1225,7 @@ function SupplierDrawer({
           ) : posQ.isError ? (
             <p className="text-sm text-critical-text">Could not load purchase orders.</p>
           ) : openPos.length === 0 ? (
-            <p className="text-sm text-slate-500">No outstanding purchase orders.</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">No outstanding purchase orders.</p>
           ) : (
             <ul className="space-y-2">
               {openPos.map((po) => (
@@ -1234,7 +1234,7 @@ function SupplierDrawer({
                     <p className="tnum text-sm font-bold text-ink">{po.poNo}</p>
                     <Badge tone={PO_STATUS_TONE[po.status] ?? 'neutral'}>{po.status.replace(/_/g, ' ')}</Badge>
                   </div>
-                  <p className="tnum mt-1 text-xs text-slate-500">
+                  <p className="tnum mt-1 text-xs text-slate-500 dark:text-slate-400">
                     {fmtQ(po.quantityQ)} q · {WHEAT_LABEL[po.wheatCategory] ?? po.wheatCategory} wheat
                     {po._count ? ` · ${po._count.intakes} intakes` : ''}
                   </p>
@@ -1244,7 +1244,7 @@ function SupplierDrawer({
           )}
 
           {/* Recent intakes */}
-          <h4 className="mb-2 mt-6 text-sm font-bold uppercase tracking-wide text-slate-500">
+          <h4 className="mb-2 mt-6 text-sm font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
             Recent intakes
           </h4>
           {intakesQ.isLoading ? (
@@ -1256,7 +1256,7 @@ function SupplierDrawer({
           ) : intakesQ.isError ? (
             <p className="text-sm text-critical-text">Could not load intakes.</p>
           ) : intakes.length === 0 ? (
-            <p className="text-sm text-slate-500">No intakes recorded yet.</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">No intakes recorded yet.</p>
           ) : (
             <ul className="space-y-2">
               {intakes.map((it) => (
@@ -1267,7 +1267,7 @@ function SupplierDrawer({
                       {it.status.replace(/_/g, ' ')}
                     </Badge>
                   </div>
-                  <p className="tnum mt-1 text-xs text-slate-500">
+                  <p className="tnum mt-1 text-xs text-slate-500 dark:text-slate-400">
                     {fmtDate(it.deliveryDate)} · {fmtQ(it.quintals)} q · {it.truckPlate}
                   </p>
                 </li>

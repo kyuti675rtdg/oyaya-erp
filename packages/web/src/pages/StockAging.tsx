@@ -75,8 +75,8 @@ export function StockAging() {
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           {BUCKETS.map((b) => (
             <div key={b} className={cardShell}>
-              <div className="h-4 w-20 animate-pulse rounded bg-slate-100" />
-              <div className="mt-3 h-8 w-24 animate-pulse rounded bg-slate-100" />
+              <div className="h-4 w-20 animate-pulse rounded bg-slate-100 dark:bg-slate-700" />
+              <div className="mt-3 h-8 w-24 animate-pulse rounded bg-slate-100 dark:bg-slate-700" />
             </div>
           ))}
         </div>
@@ -87,11 +87,11 @@ export function StockAging() {
           {summary.map((s) => (
             <div key={s.bucket} className={cardShell}>
               <div className="flex items-center justify-between">
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Age {s.bucket} days</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Age {s.bucket} days</p>
                 {bucketBadge(s.bucket)}
               </div>
-              <p className="tnum mt-2 text-2xl font-bold text-slate-900">{fmtQ(s.quintals)} <span className="text-base font-medium text-slate-500">q</span></p>
-              <p className="mt-1 text-xs text-slate-500">{s.lots} lot(s)</p>
+              <p className="tnum mt-2 text-2xl font-bold text-slate-900 dark:text-slate-100">{fmtQ(s.quintals)} <span className="text-base font-medium text-slate-500 dark:text-slate-400">q</span></p>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{s.lots} lot(s)</p>
             </div>
           ))}
         </div>
@@ -113,8 +113,8 @@ export function StockAging() {
                 <div key={f.productId} className="rounded-xl border border-violet-200 bg-violet-50/50 p-3.5">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <p className="text-sm font-bold text-slate-800">{f.productName}</p>
-                      <p className="tnum mt-0.5 text-xs text-slate-600">
+                      <p className="text-sm font-bold text-slate-800 dark:text-slate-100">{f.productName}</p>
+                      <p className="tnum mt-0.5 text-xs text-slate-600 dark:text-slate-300">
                         {f.batchNo} · {f.bagLabel} · {f.locationCode}
                       </p>
                     </div>
@@ -122,7 +122,7 @@ export function StockAging() {
                   </div>
                   <div className="tnum mt-2 flex items-center gap-3 text-xs">
                     <span className="font-bold text-violet-700">{fmtQ(f.quintals)} q available</span>
-                    <span className="text-slate-500">{f.agingDays}d old</span>
+                    <span className="text-slate-500 dark:text-slate-400">{f.agingDays}d old</span>
                   </div>
                 </div>
               ))}
@@ -181,21 +181,21 @@ export function StockAging() {
                 <thead>
                   <tr>
                     {['Product', 'Batch', 'Bag', 'Location', 'Qt', 'Age', 'Bucket', 'Expires', 'Status'].map((h) => (
-                      <th key={h} className="px-3 py-2 text-xs font-bold uppercase tracking-wide text-slate-500">{h}</th>
+                      <th key={h} className="px-3 py-2 text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {lots.map((l) => (
-                    <tr key={l.id} className="border-t border-slate-100 hover:bg-slate-50">
-                      <td className="px-3 py-2.5 font-semibold text-slate-800">{l.productName}</td>
-                      <td className="tnum px-3 py-2.5 text-slate-700">{l.batchNo}</td>
-                      <td className="px-3 py-2.5 text-slate-700">{l.bagLabel}</td>
-                      <td className="tnum px-3 py-2.5 text-slate-700">{l.locationCode}</td>
-                      <td className="tnum px-3 py-2.5 font-bold text-slate-900">{fmtQ(l.quintals)}</td>
-                      <td className="tnum px-3 py-2.5 text-slate-700">{l.agingDays}d</td>
+                    <tr key={l.id} className="border-t border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700">
+                      <td className="px-3 py-2.5 font-semibold text-slate-800 dark:text-slate-100">{l.productName}</td>
+                      <td className="tnum px-3 py-2.5 text-slate-700 dark:text-slate-200">{l.batchNo}</td>
+                      <td className="px-3 py-2.5 text-slate-700 dark:text-slate-200">{l.bagLabel}</td>
+                      <td className="tnum px-3 py-2.5 text-slate-700 dark:text-slate-200">{l.locationCode}</td>
+                      <td className="tnum px-3 py-2.5 font-bold text-slate-900 dark:text-slate-100">{fmtQ(l.quintals)}</td>
+                      <td className="tnum px-3 py-2.5 text-slate-700 dark:text-slate-200">{l.agingDays}d</td>
                       <td className="px-3 py-2.5">{bucketBadge(l.bucket)}</td>
-                      <td className="tnum px-3 py-2.5 text-slate-700">{fmtDate(l.expiryDate)}</td>
+                      <td className="tnum px-3 py-2.5 text-slate-700 dark:text-slate-200">{fmtDate(l.expiryDate)}</td>
                       <td className="px-3 py-2.5">{agingStatusBadge(l.status)}</td>
                     </tr>
                   ))}
@@ -204,16 +204,16 @@ export function StockAging() {
             </div>
             <div className="space-y-3 md:hidden">
               {lots.map((l) => (
-                <div key={l.id} className="rounded-xl border border-slate-200 p-3.5">
+                <div key={l.id} className="rounded-xl border border-slate-200 dark:border-slate-700 p-3.5">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="font-bold text-slate-800">{l.productName}</p>
+                    <p className="font-bold text-slate-800 dark:text-slate-100">{l.productName}</p>
                     {agingStatusBadge(l.status)}
                   </div>
-                  <p className="tnum mt-1 text-xs text-slate-500">{l.batchNo} · {l.bagLabel} · {l.locationCode}</p>
+                  <p className="tnum mt-1 text-xs text-slate-500 dark:text-slate-400">{l.batchNo} · {l.bagLabel} · {l.locationCode}</p>
                   <div className="tnum mt-2 flex items-center gap-3 text-sm">
-                    <span className="font-bold text-slate-900">{fmtQ(l.quintals)} q</span>
+                    <span className="font-bold text-slate-900 dark:text-slate-100">{fmtQ(l.quintals)} q</span>
                     {bucketBadge(l.bucket)}
-                    <span className="text-xs text-slate-500">expires {fmtDate(l.expiryDate)}</span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400">expires {fmtDate(l.expiryDate)}</span>
                   </div>
                 </div>
               ))}
@@ -223,7 +223,7 @@ export function StockAging() {
       </div>
 
       {lots.length > 0 && !agingQ.isLoading && (
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-slate-400 dark:text-slate-500">
           Expiry = receipt date + product shelf life ({BUCKETS.length} buckets). Near-expiry flags lots with ≤30 days left. <FgBadge tone="slate">FEFO</FgBadge> first-expiry-first-out.
         </p>
       )}

@@ -180,7 +180,7 @@ export function QualityReports() {
                 value={from}
                 max={to}
                 onChange={(e) => setFrom(e.target.value)}
-                className="touch w-full rounded-lg border border-line bg-white px-4 py-2 text-base focus:border-navy focus:outline-none"
+                className="touch w-full rounded-lg border border-line bg-white dark:bg-slate-800 px-4 py-2 text-base focus:border-navy focus:outline-none"
               />
             </Field>
           </div>
@@ -192,7 +192,7 @@ export function QualityReports() {
                 min={from}
                 max={isoDay(new Date())}
                 onChange={(e) => setTo(e.target.value)}
-                className="touch w-full rounded-lg border border-line bg-white px-4 py-2 text-base focus:border-navy focus:outline-none"
+                className="touch w-full rounded-lg border border-line bg-white dark:bg-slate-800 px-4 py-2 text-base focus:border-navy focus:outline-none"
               />
             </Field>
           </div>
@@ -221,7 +221,7 @@ export function QualityReports() {
           <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
             {kpis.map((k) => (
               <div key={k.label} className={cardShell}>
-                <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-slate-500">
+                <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                   <span className="text-violet-600">{k.icon}</span> {k.label}
                 </p>
                 <div className="mt-2 flex items-end justify-between">
@@ -230,7 +230,7 @@ export function QualityReports() {
                     {k.rate.toFixed(1)}% pass
                   </Badge>
                 </div>
-                <p className="mt-1 text-xs text-slate-400">inspections in range</p>
+                <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">inspections in range</p>
               </div>
             ))}
           </div>

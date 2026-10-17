@@ -56,7 +56,7 @@ function BlendBar({ hard, soft, foreign }: { hard: number; soft: number; foreign
   ].filter((p) => p.v > 0);
   const total = parts.reduce((s, p) => s + p.v, 0) || 1;
   return (
-    <div className="flex h-5 w-full max-w-[220px] overflow-hidden rounded-full bg-slate-100">
+    <div className="flex h-5 w-full max-w-[220px] overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
       {parts.map((p) => (
         <div
           key={p.k}
@@ -272,13 +272,13 @@ export function ProdWheatBlending() {
                   />
                 </Field>
               </div>
-              <div className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2">
-                <span className="text-sm text-slate-600">
+              <div className="flex items-center justify-between rounded-lg bg-slate-50 dark:bg-slate-800 px-3 py-2">
+                <span className="text-sm text-slate-600 dark:text-slate-300">
                   Sum: <span className={`tabular-nums font-bold ${pctValid ? 'text-emerald-700' : 'text-rose-600'}`}>
                     {pctSum.toFixed(1)}%
                   </span>
                 </span>
-                <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
+                <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200">
                   <input
                     type="checkbox"
                     checked={isActive}
@@ -314,7 +314,7 @@ export function ProdWheatBlending() {
                 <div className="hidden md:block">
                   <DataTable<BlendRecipe>
                     columns={[
-                      { key: 'name', label: 'Recipe', render: (r) => <span className="font-bold text-slate-800">{r.name}</span> },
+                      { key: 'name', label: 'Recipe', render: (r) => <span className="font-bold text-slate-800 dark:text-slate-100">{r.name}</span> },
                       { key: 'productType', label: 'Product', render: (r) => productLabel(r.productType) },
                       {
                         key: 'blend',
@@ -353,14 +353,14 @@ export function ProdWheatBlending() {
                     recipes.map((r) => (
                       <div key={r.id} className="rounded-xl border border-slate-200/70 p-4">
                         <div className="flex items-center justify-between">
-                          <span className="font-bold text-slate-800">{r.name}</span>
+                          <span className="font-bold text-slate-800 dark:text-slate-100">{r.name}</span>
                           {r.isActive ? <Badge tone="pass">Active</Badge> : <Badge tone="neutral">Inactive</Badge>}
                         </div>
-                        <p className="mt-1 text-sm text-slate-500">{productLabel(r.productType)}</p>
+                        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{productLabel(r.productType)}</p>
                         <div className="mt-2">
                           <BlendBar hard={num(r.hardPct)} soft={num(r.softPct)} foreign={num(r.foreignPct)} />
                         </div>
-                        <p className="tabular-nums mt-2 text-xs text-slate-500">
+                        <p className="tabular-nums mt-2 text-xs text-slate-500 dark:text-slate-400">
                           Hard {num(r.hardPct).toFixed(1)}% · Soft {num(r.softPct).toFixed(1)}% · Foreign {num(r.foreignPct).toFixed(1)}%
                         </p>
                         {canManage && !r.isActive ? (
@@ -423,7 +423,7 @@ export function ProdWheatBlending() {
               ) : (
                 <Badge tone="advisory">No active recipe — nothing to compare</Badge>
               )}
-              <span className="tabular-nums text-xs text-slate-500">
+              <span className="tabular-nums text-xs text-slate-500 dark:text-slate-400">
                 Tolerance ±{cmpResult.tolerancePct}%
               </span>
             </div>
@@ -435,8 +435,8 @@ export function ProdWheatBlending() {
                   { k: 'foreign', label: 'Foreign' }
                 ] as const
               ).map((p) => (
-                <div key={p.k} className="rounded-lg bg-slate-50 p-3">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{p.label}</p>
+                <div key={p.k} className="rounded-lg bg-slate-50 dark:bg-slate-800 p-3">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{p.label}</p>
                   <p className="tabular-nums mt-1 text-sm">
                     Actual <span className="font-bold">{cmpResult.actual[`${p.k}Pct`].toFixed(1)}%</span>
                   </p>
@@ -472,8 +472,8 @@ export function ProdWheatBlending() {
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {[...activeByProduct.entries()].map(([pt, r]) => (
               <div key={pt} className="rounded-xl border border-slate-200/70 p-4">
-                <p className="text-sm font-bold text-slate-800">{productLabel(pt)}</p>
-                <p className="text-xs text-slate-500">{r.name}</p>
+                <p className="text-sm font-bold text-slate-800 dark:text-slate-100">{productLabel(pt)}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">{r.name}</p>
                 <div className="mt-2">
                   <BlendBar hard={num(r.hardPct)} soft={num(r.softPct)} foreign={num(r.foreignPct)} />
                 </div>

@@ -226,7 +226,7 @@ export function ProdFlourOutput() {
                       : 'border-emerald-200 bg-emerald-50'
                   }`}
                 >
-                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                     Preview extraction
                   </p>
                   <p
@@ -263,11 +263,11 @@ export function ProdFlourOutput() {
                     : 'border-emerald-200 bg-emerald-50'
                 }`}
               >
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Last entry</p>
-                <p className="tabular-nums text-xl font-bold text-slate-800">
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Last entry</p>
+                <p className="tabular-nums text-xl font-bold text-slate-800 dark:text-slate-100">
                   {lastResult.extractionPct.toFixed(1)}%
                 </p>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   {productLabel(lastResult.productType)}{' '}
                   {lastResult.belowYieldFlag ? '— flagged' : '— within target'}
                 </p>
@@ -296,7 +296,7 @@ export function ProdFlourOutput() {
                       {
                         key: 'batchNo',
                         label: 'Batch',
-                        render: (r) => <span className="tabular-nums font-bold text-slate-800">{r.batchNo}</span>
+                        render: (r) => <span className="tabular-nums font-bold text-slate-800 dark:text-slate-100">{r.batchNo}</span>
                       },
                       { key: 'wheatQ', label: 'Wheat (q)', mono: true, render: (r) => fmtQ(r.wheatQ) },
                       { key: 'flourQ', label: 'Flour (q)', mono: true, render: (r) => fmtQ(r.flourQ) },
@@ -342,14 +342,14 @@ export function ProdFlourOutput() {
                     perBatch.map((r) => (
                       <div key={r.batchId} className="rounded-xl border border-slate-200/70 p-4">
                         <div className="flex items-center justify-between">
-                          <span className="tabular-nums font-bold text-slate-800">{r.batchNo}</span>
+                          <span className="tabular-nums font-bold text-slate-800 dark:text-slate-100">{r.batchNo}</span>
                           {r.flagged ? (
                             <Badge tone="critical">Low yield</Badge>
                           ) : (
                             <Badge tone="pass">OK</Badge>
                           )}
                         </div>
-                        <p className="tabular-nums mt-1 text-sm text-slate-600">
+                        <p className="tabular-nums mt-1 text-sm text-slate-600 dark:text-slate-300">
                           Flour {fmtQ(r.flourQ)} q / Wheat {fmtQ(r.wheatQ)} q
                         </p>
                         <p
@@ -378,13 +378,13 @@ export function ProdFlourOutput() {
                 {outputs.slice(0, 12).map((o) => (
                   <li key={o.id} className="flex items-center justify-between gap-3 py-2.5">
                     <div>
-                      <p className="text-sm font-semibold text-slate-800">{productLabel(o.productType)}</p>
-                      <p className="tabular-nums text-xs text-slate-500">
+                      <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{productLabel(o.productType)}</p>
+                      <p className="tabular-nums text-xs text-slate-500 dark:text-slate-400">
                         {batchById.get(o.batchId)?.batchNo ?? '—'} · {fmtDateTime(o.loggedAt)}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="tabular-nums text-sm font-bold text-slate-800">{fmtQ(o.quintals)} q</span>
+                      <span className="tabular-nums text-sm font-bold text-slate-800 dark:text-slate-100">{fmtQ(o.quintals)} q</span>
                       {o.belowYieldFlag ? (
                         <Badge tone="critical">{Number(o.extractionPct ?? 0).toFixed(1)}%</Badge>
                       ) : o.extractionPct != null ? (

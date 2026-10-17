@@ -101,7 +101,7 @@ export function StockTransfers() {
       <div className="space-y-5">
         <button
           onClick={() => setSelectedId(null)}
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-600 hover:text-slate-900"
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900"
         >
           <ArrowLeft size={15} /> Back to transfers
         </button>
@@ -116,11 +116,11 @@ export function StockTransfers() {
                 subtitle={`${doc.fromCode} → ${doc.toCode} · requested ${fmtDateTime(doc.createdAt)}`}
                 action={<StatusBadge tone={docStatusTone(doc.status)} label={doc.status} />}
               />
-              {doc.reason && <p className="mb-4 rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-600">{doc.reason}</p>}
+              {doc.reason && <p className="mb-4 rounded-lg bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm text-slate-600 dark:text-slate-300">{doc.reason}</p>}
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-slate-100 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500">
+                    <tr className="border-b border-slate-100 dark:border-slate-700 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                       <th className="py-2 pr-3">Product</th>
                       <th className="py-2 pr-3">Batch</th>
                       <th className="py-2 pr-3 text-right">Quintals</th>
@@ -130,8 +130,8 @@ export function StockTransfers() {
                   <tbody>
                     {doc.items.map((it) => (
                       <tr key={it.id} className="border-b border-slate-50">
-                        <td className="py-2.5 pr-3 font-semibold text-slate-800">{it.productName}</td>
-                        <td className="py-2.5 pr-3 text-slate-500">{it.batchNo ?? '—'}</td>
+                        <td className="py-2.5 pr-3 font-semibold text-slate-800 dark:text-slate-100">{it.productName}</td>
+                        <td className="py-2.5 pr-3 text-slate-500 dark:text-slate-400">{it.batchNo ?? '—'}</td>
                         <td className="py-2.5 pr-3 text-right font-bold tabular-nums">{fmtQ(it.quintals)}</td>
                         <td className="py-2.5 text-right tabular-nums">{it.bags}</td>
                       </tr>
@@ -263,7 +263,7 @@ export function StockTransfers() {
             <div className="hidden overflow-x-auto md:block">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-100 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500">
+                  <tr className="border-b border-slate-100 dark:border-slate-700 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                     <th className="py-2 pr-3">Doc no</th>
                     <th className="py-2 pr-3">Route</th>
                     <th className="py-2 pr-3">Requested</th>
@@ -275,12 +275,12 @@ export function StockTransfers() {
                   {(listQ.data ?? []).map((d) => (
                     <tr key={d.id} onClick={() => setSelectedId(d.id)} className="cursor-pointer border-b border-slate-50 hover:bg-slate-50/60">
                       <td className="py-2.5 pr-3 font-mono text-xs font-bold text-violet-700">{d.docNo}</td>
-                      <td className="py-2.5 pr-3 text-slate-700">
+                      <td className="py-2.5 pr-3 text-slate-700 dark:text-slate-200">
                         <span className="font-mono text-xs font-semibold">{d.fromCode}</span>
-                        <span className="mx-1.5 text-slate-400">→</span>
+                        <span className="mx-1.5 text-slate-400 dark:text-slate-500">→</span>
                         <span className="font-mono text-xs font-semibold">{d.toCode}</span>
                       </td>
-                      <td className="py-2.5 pr-3 text-slate-600">{fmtDateTime(d.createdAt)}</td>
+                      <td className="py-2.5 pr-3 text-slate-600 dark:text-slate-300">{fmtDateTime(d.createdAt)}</td>
                       <td className="py-2.5 pr-3 text-right font-bold tabular-nums">{fmtQ(d.totalQ)}</td>
                       <td className="py-2.5 pr-3">
                         <StatusBadge tone={docStatusTone(d.status)} label={d.status} />
@@ -292,20 +292,20 @@ export function StockTransfers() {
             </div>
             <div className="space-y-3 md:hidden">
               {(listQ.data ?? []).map((d) => (
-                <button key={d.id} onClick={() => setSelectedId(d.id)} className="w-full rounded-xl border border-slate-200 p-4 text-left">
+                <button key={d.id} onClick={() => setSelectedId(d.id)} className="w-full rounded-xl border border-slate-200 dark:border-slate-700 p-4 text-left">
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <p className="font-mono text-xs font-bold text-violet-700">{d.docNo}</p>
-                      <p className="text-sm font-semibold text-slate-700">
+                      <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">
                         <span className="font-mono text-xs">{d.fromCode}</span>
-                        <span className="mx-1 text-slate-400">→</span>
+                        <span className="mx-1 text-slate-400 dark:text-slate-500">→</span>
                         <span className="font-mono text-xs">{d.toCode}</span>
                       </p>
                     </div>
                     <StatusBadge tone={docStatusTone(d.status)} label={d.status} />
                   </div>
-                  <p className="mt-2 text-sm tabular-nums text-slate-600">
-                    <span className="font-bold text-slate-800">{fmtQ(d.totalQ)} Qt</span> · {fmtDateTime(d.createdAt)}
+                  <p className="mt-2 text-sm tabular-nums text-slate-600 dark:text-slate-300">
+                    <span className="font-bold text-slate-800 dark:text-slate-100">{fmtQ(d.totalQ)} Qt</span> · {fmtDateTime(d.createdAt)}
                   </p>
                 </button>
               ))}

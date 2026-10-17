@@ -100,7 +100,7 @@ export function Notifications() {
               <option value="warning">Warning</option>
               <option value="alert">Alert</option>
             </Select>
-            <label className="flex items-center gap-2 text-sm text-slate-700">
+            <label className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
               <input type="checkbox" checked={showUnreadOnly} onChange={(e) => setShowUnreadOnly(e.target.checked)} className="rounded" />
               Unread only
             </label>
@@ -126,12 +126,12 @@ export function Notifications() {
                   >
                     <span className={`mt-0.5 h-2.5 w-2.5 shrink-0 rounded-full ${n.read ? 'bg-slate-200' : 'bg-violet-500'}`} />
                     <div className="min-w-0 flex-1">
-                      <p className="flex flex-wrap items-center gap-2 font-semibold text-slate-800">
+                      <p className="flex flex-wrap items-center gap-2 font-semibold text-slate-800 dark:text-slate-100">
                         {n.title}
                         <Badge tone={TYPE_TONE[n.type] ?? 'neutral'}>{n.type}</Badge>
                       </p>
-                      {n.body && <p className="mt-0.5 text-sm text-slate-600">{n.body}</p>}
-                      <p className="mt-1 text-xs tabular-nums text-slate-400">{fmtDateTime(n.createdAt)}</p>
+                      {n.body && <p className="mt-0.5 text-sm text-slate-600 dark:text-slate-300">{n.body}</p>}
+                      <p className="mt-1 text-xs tabular-nums text-slate-400 dark:text-slate-500">{fmtDateTime(n.createdAt)}</p>
                     </div>
                   </button>
                 ))}
@@ -156,11 +156,11 @@ export function Notifications() {
                 {(smsQ.data ?? []).map((s) => (
                   <div key={s.id} className="py-3">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <p className="font-mono text-sm font-semibold text-slate-700">{s.to}</p>
+                      <p className="font-mono text-sm font-semibold text-slate-700 dark:text-slate-200">{s.to}</p>
                       <Badge tone={SMS_STATUS_TONE[s.status] ?? 'neutral'}>{s.status}</Badge>
                     </div>
-                    <p className="mt-1 text-sm text-slate-600">{s.message}</p>
-                    <p className="mt-1 text-xs tabular-nums text-slate-400">
+                    <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{s.message}</p>
+                    <p className="mt-1 text-xs tabular-nums text-slate-400 dark:text-slate-500">
                       {s.trigger ? `${s.trigger} · ` : ''}{fmtDateTime(s.createdAt)} · {s.attempts} attempt{s.attempts === 1 ? '' : 's'}
                     </p>
                   </div>
@@ -174,16 +174,16 @@ export function Notifications() {
               <CardHeader icon={<Smartphone size={16} />} title="SMS Configuration" subtitle="AfroMessage provider" />
               <div className="space-y-2 text-sm">
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-500">Provider</span>
-                  <span className="font-semibold text-slate-800">AfroMessage</span>
+                  <span className="text-slate-500 dark:text-slate-400">Provider</span>
+                  <span className="font-semibold text-slate-800 dark:text-slate-100">AfroMessage</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-500">API Token</span>
+                  <span className="text-slate-500 dark:text-slate-400">API Token</span>
                   <Badge tone="advisory">Awaiting token</Badge>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-500">Queue</span>
-                  <span className="font-semibold tabular-nums text-slate-800">
+                  <span className="text-slate-500 dark:text-slate-400">Queue</span>
+                  <span className="font-semibold tabular-nums text-slate-800 dark:text-slate-100">
                     {(smsQ.data ?? []).filter((s) => s.status === 'QUEUED').length} queued
                   </span>
                 </div>
@@ -197,8 +197,8 @@ export function Notifications() {
               <CardHeader icon={<Send size={16} />} title="Notification Templates" subtitle="SMS trigger events" />
               <div className="space-y-2 text-sm">
                 {['INTAKE_FLAGGED', 'LOW_YIELD', 'LAB_OVERDUE', 'CONDITIONING_DONE', 'STOCK_LOW', 'TICKET_ESCALATED'].map((t) => (
-                  <div key={t} className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2">
-                    <span className="font-mono text-xs font-semibold text-slate-700">{t}</span>
+                  <div key={t} className="flex items-center justify-between rounded-lg bg-slate-50 dark:bg-slate-800 px-3 py-2">
+                    <span className="font-mono text-xs font-semibold text-slate-700 dark:text-slate-200">{t}</span>
                     <Badge tone="pass">Enabled</Badge>
                   </div>
                 ))}
@@ -209,7 +209,7 @@ export function Notifications() {
               <CardHeader icon={<BellOff size={16} />} title="Preferences" subtitle="Per-user notification settings" />
               <div className="space-y-3">
                 {['Quality alerts', 'Production alerts', 'Ticket updates', 'Announcement digests'].map((p) => (
-                  <label key={p} className="flex items-center justify-between text-sm text-slate-700">
+                  <label key={p} className="flex items-center justify-between text-sm text-slate-700 dark:text-slate-200">
                     {p}
                     <input type="checkbox" defaultChecked className="h-4 w-4 rounded accent-violet-600" />
                   </label>

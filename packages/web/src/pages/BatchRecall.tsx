@@ -170,7 +170,7 @@ export function BatchRecall() {
             : impact.impact.customers.map((cu) => `${cu.name} (${fmtQ(cu.quintals)} Q)`).join(' · ')}
         </span>
       ),
-      badge: <span className="text-xs font-bold text-slate-500 tnum">{fmtQ(impact.impact.dispatchedQuintals)} Q dispatched</span>,
+      badge: <span className="text-xs font-bold text-slate-500 dark:text-slate-400 tnum">{fmtQ(impact.impact.dispatchedQuintals)} Q dispatched</span>,
       accent: 'bg-blue-100 text-blue-700'
     });
   }
@@ -214,9 +214,9 @@ export function BatchRecall() {
                   ['Dispatches', impact.impact.dispatchLineCount],
                   ['Customers', impact.impact.customerCount]
                 ].map(([k, v]) => (
-                  <div key={k} className="rounded-xl bg-slate-50 px-3 py-3 text-center border border-slate-100">
-                    <p className="text-2xl font-black text-slate-800 tnum">{v}</p>
-                    <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">{k}</p>
+                  <div key={k} className="rounded-xl bg-slate-50 dark:bg-slate-800 px-3 py-3 text-center border border-slate-100 dark:border-slate-700">
+                    <p className="text-2xl font-black text-slate-800 dark:text-slate-100 tnum">{v}</p>
+                    <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">{k}</p>
                   </div>
                 ))}
               </div>
@@ -238,7 +238,7 @@ export function BatchRecall() {
           ) : (
             <form onSubmit={createCase} className="space-y-4">
               <div>
-                <label className="mb-1 block text-xs font-bold uppercase tracking-wide text-slate-500">Severity</label>
+                <label className="mb-1 block text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Severity</label>
                 <Select value={severity} onChange={(e) => setSeverity(e.target.value)}>
                   <option value="CLASS_I">Class I — serious health risk</option>
                   <option value="CLASS_II">Class II — reversible / quality risk</option>
@@ -246,7 +246,7 @@ export function BatchRecall() {
                 </Select>
               </div>
               <div>
-                <label className="mb-1 block text-xs font-bold uppercase tracking-wide text-slate-500">Reason</label>
+                <label className="mb-1 block text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Reason</label>
                 <TextArea value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Describe the defect, complaint or finding…" />
               </div>
               <button
@@ -256,7 +256,7 @@ export function BatchRecall() {
               >
                 {saving ? 'Creating…' : 'Create recall case with auto-computed impact'}
               </button>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-400 dark:text-slate-500">
                 Affected lots, dispatches and customers are snapshotted onto the case at creation.
               </p>
             </form>
@@ -309,14 +309,14 @@ export function BatchRecall() {
                 {c && (
                   <button
                     onClick={() => exportCaseCsv(c)}
-                    className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+                    className="rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
                   >
                     Export CSV
                   </button>
                 )}
                 <button
                   onClick={() => setCaseId(null)}
-                  className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+                  className="rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
                 >
                   Close
                 </button>
@@ -331,13 +331,13 @@ export function BatchRecall() {
                 <StatusBadge value={c.status} />
                 <StatusBadge value={c.severity} />
                 {c.disposition && <StatusBadge value={c.disposition} />}
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-slate-400 dark:text-slate-500">
                   Opened {fmtDateTime(c.createdAt)}{c.closedAt ? ` · closed ${fmtDateTime(c.closedAt)}` : ''}
                 </span>
               </div>
 
               <div>
-                <p className="mb-2 text-xs font-bold uppercase tracking-wide text-slate-500">
+                <p className="mb-2 text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                   Affected items ({c.items?.length ?? 0})
                 </p>
                 <DataTable
@@ -354,15 +354,15 @@ export function BatchRecall() {
               </div>
 
               <div>
-                <p className="mb-2 text-xs font-bold uppercase tracking-wide text-slate-500">Investigation log</p>
+                <p className="mb-2 text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Investigation log</p>
                 {(c.investigationLog ?? []).length === 0 ? (
                   <EmptyState title="No investigation steps yet" sub="Log each step of the investigation below." />
                 ) : (
                   <ol className="space-y-2">
                     {(c.investigationLog ?? []).map((s, i) => (
-                      <li key={i} className="rounded-xl border border-slate-100 bg-slate-50/60 px-4 py-3 text-sm">
-                        <p className="text-slate-800">{s.step}</p>
-                        <p className="mt-1 text-[11px] text-slate-400 tnum">{fmtDateTime(s.at)} · {s.by}</p>
+                      <li key={i} className="rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/60 px-4 py-3 text-sm">
+                        <p className="text-slate-800 dark:text-slate-100">{s.step}</p>
+                        <p className="mt-1 text-[11px] text-slate-400 dark:text-slate-500 tnum">{fmtDateTime(s.at)} · {s.by}</p>
                       </li>
                     ))}
                   </ol>
@@ -371,8 +371,8 @@ export function BatchRecall() {
 
               {canManage && c.status !== 'CLOSED' && (
                 <div className="grid gap-4 md:grid-cols-2">
-                  <div className="rounded-xl border border-slate-100 p-4">
-                    <p className="mb-2 text-xs font-bold uppercase tracking-wide text-slate-500">Add investigation step</p>
+                  <div className="rounded-xl border border-slate-100 dark:border-slate-700 p-4">
+                    <p className="mb-2 text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Add investigation step</p>
                     <TextArea value={stepNote} onChange={(e) => setStepNote(e.target.value)} placeholder="Finding, test result, customer call…" />
                     <button
                       onClick={() => stepNote.trim() && patchCase({ investigationNote: stepNote.trim(), status: 'INVESTIGATING' })}
@@ -381,8 +381,8 @@ export function BatchRecall() {
                       Log step
                     </button>
                   </div>
-                  <div className="rounded-xl border border-slate-100 p-4">
-                    <p className="mb-2 text-xs font-bold uppercase tracking-wide text-slate-500">Disposition decision</p>
+                  <div className="rounded-xl border border-slate-100 dark:border-slate-700 p-4">
+                    <p className="mb-2 text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Disposition decision</p>
                     <Select value={disposition} onChange={(e) => setDisposition(e.target.value)}>
                       <option value="">Select disposition…</option>
                       <option value="RELEASE">Release — product is safe</option>

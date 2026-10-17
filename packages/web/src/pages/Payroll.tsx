@@ -160,7 +160,7 @@ export function Payroll() {
         </Card>
 
         <div className="lg:col-span-2">
-          <h3 className="mb-3 text-sm font-bold uppercase tracking-widest text-slate-500">Payroll runs</h3>
+          <h3 className="mb-3 text-sm font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Payroll runs</h3>
           {runsQ.isLoading ? (
             <Spinner label="Loading payroll runs..." />
           ) : (
@@ -191,7 +191,7 @@ export function Payroll() {
 
           {selectedRunId ? (
             <div className="mt-6">
-              <h3 className="mb-3 text-sm font-bold uppercase tracking-widest text-slate-500">
+              <h3 className="mb-3 text-sm font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                 Run lines {runQ.data ? `— ${periodLabel(runQ.data)}` : ''}
               </h3>
               {runQ.isLoading ? (

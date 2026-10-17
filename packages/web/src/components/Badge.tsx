@@ -3,10 +3,10 @@ import type { ReactNode } from 'react';
 export type BadgeTone = 'pass' | 'advisory' | 'critical' | 'neutral';
 
 const toneStyles: Record<BadgeTone, string> = {
-  pass: 'bg-pass-bg text-pass-text',
-  advisory: 'bg-advisory-bg text-advisory-text',
-  critical: 'bg-critical-bg text-critical-text border border-critical-text/50 badge-critical-pulse',
-  neutral: 'bg-slate-100 text-slate-600'
+  pass: 'bg-pass-bg dark:bg-emerald-900/30 text-pass-text dark:text-emerald-400',
+  advisory: 'bg-advisory-bg dark:bg-amber-900/30 text-advisory-text dark:text-amber-400',
+  critical: 'bg-critical-bg dark:bg-rose-900/30 text-critical-text dark:text-rose-400 border border-critical-text/50 badge-critical-pulse',
+  neutral: 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
 };
 
 export function Badge({

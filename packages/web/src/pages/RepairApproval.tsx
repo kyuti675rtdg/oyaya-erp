@@ -47,7 +47,7 @@ function Step({ done, current, label, detail }: { done: boolean; current: boolea
       </span>
       <div>
         <p className={`text-sm font-semibold ${done || current ? 'text-slate-800' : 'text-slate-400'}`}>{label}</p>
-        {detail ? <p className="text-xs text-slate-500">{detail}</p> : null}
+        {detail ? <p className="text-xs text-slate-500 dark:text-slate-400">{detail}</p> : null}
       </div>
     </div>
   );
@@ -136,12 +136,12 @@ export function RepairApproval() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-slate-900">Repair Approval &amp; Sign-Off</h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Repair Approval &amp; Sign-Off</h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Technician sign-off → supervisor approval → back in service.
           </p>
         </div>
-        <label className="flex cursor-pointer items-center gap-1.5 text-xs font-medium text-slate-600">
+        <label className="flex cursor-pointer items-center gap-1.5 text-xs font-medium text-slate-600 dark:text-slate-300">
           <input
             type="checkbox"
             checked={showAll}
@@ -183,8 +183,8 @@ export function RepairApproval() {
                 <div key={a.id} className="rounded-xl border border-slate-200/70 p-4">
                   <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                     <div>
-                      <p className="font-mono text-sm font-bold text-slate-900">{wo?.woNumber ?? '—'}</p>
-                      <p className="text-xs text-slate-500">
+                      <p className="font-mono text-sm font-bold text-slate-900 dark:text-slate-100">{wo?.woNumber ?? '—'}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
                         {wo?.equipment?.name ?? '—'} · {wo?.kind ? wo.kind.toLowerCase() : ''}
                       </p>
                     </div>
@@ -247,13 +247,13 @@ export function RepairApproval() {
       {signoffFor ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setSignoffFor(null)}>
           <div
-            className="w-full max-w-md rounded-2xl bg-white p-6"
+            className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 p-6"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-label="Technician sign-off"
           >
-            <h3 className="mb-1 text-base font-bold text-slate-900">Technician sign-off</h3>
-            <p className="mb-4 text-xs text-slate-500">{signoffFor.workOrder?.woNumber} · {signoffFor.workOrder?.equipment?.name}</p>
+            <h3 className="mb-1 text-base font-bold text-slate-900 dark:text-slate-100">Technician sign-off</h3>
+            <p className="mb-4 text-xs text-slate-500 dark:text-slate-400">{signoffFor.workOrder?.woNumber} · {signoffFor.workOrder?.equipment?.name}</p>
             {formError ? (
               <div className="mb-4 rounded-lg bg-critical-bg px-4 py-3 text-sm text-critical-text">{formError}</div>
             ) : null}
@@ -274,13 +274,13 @@ export function RepairApproval() {
       {decideFor ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setDecideFor(null)}>
           <div
-            className="w-full max-w-md rounded-2xl bg-white p-6"
+            className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 p-6"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-label="Supervisor decision"
           >
-            <h3 className="mb-1 text-base font-bold text-slate-900">Supervisor decision</h3>
-            <p className="mb-4 text-xs text-slate-500">{decideFor.workOrder?.woNumber} · {decideFor.workOrder?.equipment?.name}</p>
+            <h3 className="mb-1 text-base font-bold text-slate-900 dark:text-slate-100">Supervisor decision</h3>
+            <p className="mb-4 text-xs text-slate-500 dark:text-slate-400">{decideFor.workOrder?.woNumber} · {decideFor.workOrder?.equipment?.name}</p>
             {formError ? (
               <div className="mb-4 rounded-lg bg-critical-bg px-4 py-3 text-sm text-critical-text">{formError}</div>
             ) : null}

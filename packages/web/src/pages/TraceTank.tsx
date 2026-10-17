@@ -133,7 +133,7 @@ export function TraceTank() {
                       });
                     }
                     return (
-                      <div key={cycle.id} className="rounded-xl border border-slate-100 p-4">
+                      <div key={cycle.id} className="rounded-xl border border-slate-100 dark:border-slate-700 p-4">
                         <ChainTimeline steps={steps} />
                       </div>
                     );
@@ -142,19 +142,19 @@ export function TraceTank() {
               )}
               {tank.fills.length > 0 && (
                 <div className="mt-4">
-                  <p className="mb-2 text-xs font-bold uppercase tracking-wide text-slate-500">
+                  <p className="mb-2 text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                     Recent fills ({tank.fills.length})
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {tank.fills.slice(0, 12).map((f) => (
-                      <span key={f.id} className="rounded-lg bg-slate-50 px-3 py-1.5 text-xs text-slate-600 tnum border border-slate-100">
+                      <span key={f.id} className="rounded-lg bg-slate-50 dark:bg-slate-800 px-3 py-1.5 text-xs text-slate-600 dark:text-slate-300 tnum border border-slate-100 dark:border-slate-700">
                         {fmtQ(f.quintals)} Q · {fmtDateTime(f.filledAt)}
                       </span>
                     ))}
                   </div>
                 </div>
               )}
-              <p className="mt-3 text-xs text-slate-400">
+              <p className="mt-3 text-xs text-slate-400 dark:text-slate-500">
                 Duket extraction below {fmtPct(78)} on batches milled from a cycle auto-raises a yield flag.
               </p>
             </div>

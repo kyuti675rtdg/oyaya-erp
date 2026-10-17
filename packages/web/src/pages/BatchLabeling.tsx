@@ -45,18 +45,18 @@ function LabelPreview({
     <div className="rounded-xl border-2 border-dashed border-violet-300 bg-violet-50/50 p-4">
       <p className="text-xs font-bold uppercase tracking-wide text-violet-700">Label preview</p>
       <div className="tnum mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
-        <p className="text-slate-500">Product</p>
-        <p className="font-bold text-slate-900">{productName}</p>
-        <p className="text-slate-500">Batch no</p>
-        <p className="font-bold text-slate-900">{batchNo}</p>
-        <p className="text-slate-500">Net weight</p>
-        <p className="font-bold text-slate-900">{bagLabel}{bagKg !== null ? ` (${bagKg} kg)` : ''}</p>
-        <p className="text-slate-500">Production date</p>
-        <p className="font-bold text-slate-900">{fmtDate(productionDate)}</p>
-        <p className="text-slate-500">Expiry date</p>
-        <p className="font-bold text-slate-900">{fmtDate(expiryDate)}</p>
-        <p className="text-slate-500">Copies</p>
-        <p className="font-bold text-slate-900">{copies}</p>
+        <p className="text-slate-500 dark:text-slate-400">Product</p>
+        <p className="font-bold text-slate-900 dark:text-slate-100">{productName}</p>
+        <p className="text-slate-500 dark:text-slate-400">Batch no</p>
+        <p className="font-bold text-slate-900 dark:text-slate-100">{batchNo}</p>
+        <p className="text-slate-500 dark:text-slate-400">Net weight</p>
+        <p className="font-bold text-slate-900 dark:text-slate-100">{bagLabel}{bagKg !== null ? ` (${bagKg} kg)` : ''}</p>
+        <p className="text-slate-500 dark:text-slate-400">Production date</p>
+        <p className="font-bold text-slate-900 dark:text-slate-100">{fmtDate(productionDate)}</p>
+        <p className="text-slate-500 dark:text-slate-400">Expiry date</p>
+        <p className="font-bold text-slate-900 dark:text-slate-100">{fmtDate(expiryDate)}</p>
+        <p className="text-slate-500 dark:text-slate-400">Copies</p>
+        <p className="font-bold text-slate-900 dark:text-slate-100">{copies}</p>
       </div>
     </div>
   );

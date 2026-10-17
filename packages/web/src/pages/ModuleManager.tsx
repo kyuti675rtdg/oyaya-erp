@@ -58,7 +58,7 @@ export function ModuleManager() {
           <DataTable<ModuleToggle>
             columns={[
               { key: 'name', label: 'Module', render: (r) => <span className="font-medium">{r.name}</span> },
-              { key: 'description', label: 'Description', render: (r) => <span className="text-sm text-slate-500">{r.description ?? '—'}</span> },
+              { key: 'description', label: 'Description', render: (r) => <span className="text-sm text-slate-500 dark:text-slate-400">{r.description ?? '—'}</span> },
               {
                 key: 'enabled', label: 'Status',
                 render: (r) => <Badge tone={r.enabled ? 'pass' : 'neutral'}>{r.enabled ? 'Enabled' : 'Disabled'}</Badge>,

@@ -131,7 +131,7 @@ export function StockDispatch() {
         <div className="print:hidden">
           <button
             onClick={() => setSelectedId(null)}
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-600 hover:text-slate-900"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900"
           >
             <ArrowLeft size={15} /> Back to dispatches
           </button>
@@ -155,16 +155,16 @@ export function StockDispatch() {
                   { label: 'Driver', value: doc.driverName ?? '—' },
                   { label: 'Total quantity', value: `${fmtQ(totalQ)} Qt` }
                 ].map((k) => (
-                  <div key={k.label} className="rounded-xl border border-slate-100 bg-slate-50/60 p-3">
-                    <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">{k.label}</p>
-                    <p className="mt-1 text-sm font-bold tabular-nums text-slate-800">{k.value}</p>
+                  <div key={k.label} className="rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/60 p-3">
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{k.label}</p>
+                    <p className="mt-1 text-sm font-bold tabular-nums text-slate-800 dark:text-slate-100">{k.value}</p>
                   </div>
                 ))}
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-slate-100 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500">
+                    <tr className="border-b border-slate-100 dark:border-slate-700 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                       <th className="py-2 pr-3">Product</th>
                       <th className="py-2 pr-3">Batch</th>
                       <th className="py-2 pr-3">Location</th>
@@ -175,9 +175,9 @@ export function StockDispatch() {
                   <tbody>
                     {doc.items.map((it) => (
                       <tr key={it.id} className="border-b border-slate-50">
-                        <td className="py-2.5 pr-3 font-semibold text-slate-800">{it.productName}</td>
-                        <td className="py-2.5 pr-3 text-slate-500">{it.batchNo ?? '—'}</td>
-                        <td className="py-2.5 pr-3 font-mono text-xs font-semibold text-slate-700">{it.locationCode}</td>
+                        <td className="py-2.5 pr-3 font-semibold text-slate-800 dark:text-slate-100">{it.productName}</td>
+                        <td className="py-2.5 pr-3 text-slate-500 dark:text-slate-400">{it.batchNo ?? '—'}</td>
+                        <td className="py-2.5 pr-3 font-mono text-xs font-semibold text-slate-700 dark:text-slate-200">{it.locationCode}</td>
                         <td className="py-2.5 pr-3 text-right font-bold tabular-nums">{fmtQ(it.quintals)}</td>
                         <td className="py-2.5 text-right tabular-nums">{it.bags}</td>
                       </tr>
@@ -187,7 +187,7 @@ export function StockDispatch() {
               </div>
 
               {doc.status === 'DRAFT' && canManage && (
-                <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50/60 p-4">
+                <div className="mt-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/60 p-4">
                   <Field label="Consume reservations on pick" hint="Comma-separated reservation record IDs (optional)">
                     <TextInput
                       value={reservationIds}
@@ -235,10 +235,10 @@ export function StockDispatch() {
         {/* Printable dispatch note */}
         {doc && printing && (
           <div className="hidden print:block">
-            <div className="mx-auto max-w-2xl p-6 text-slate-900">
+            <div className="mx-auto max-w-2xl p-6 text-slate-900 dark:text-slate-100">
               <div className="border-b-2 border-slate-900 pb-4 text-center">
                 <h1 className="text-xl font-bold">OYAYA FLOUR MILL — DISPATCH NOTE</h1>
-                <p className="text-sm text-slate-600">Orbit Technology Solution PLC · Dispatch document {doc.docNo}</p>
+                <p className="text-sm text-slate-600 dark:text-slate-300">Orbit Technology Solution PLC · Dispatch document {doc.docNo}</p>
               </div>
               <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
                 <p><b>Doc no:</b> {doc.docNo}</p>
@@ -260,7 +260,7 @@ export function StockDispatch() {
                 </thead>
                 <tbody>
                   {doc.items.map((it, i) => (
-                    <tr key={it.id} className="border-b border-slate-200">
+                    <tr key={it.id} className="border-b border-slate-200 dark:border-slate-700">
                       <td className="py-2">{i + 1}</td>
                       <td className="py-2">{it.productName}</td>
                       <td className="py-2">{it.batchNo ?? '—'}</td>
@@ -375,7 +375,7 @@ export function StockDispatch() {
             <div className="hidden overflow-x-auto md:block">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-100 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500">
+                  <tr className="border-b border-slate-100 dark:border-slate-700 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                     <th className="py-2 pr-3">Doc no</th>
                     <th className="py-2 pr-3">Sales order</th>
                     <th className="py-2 pr-3">Vehicle / Driver</th>
@@ -387,8 +387,8 @@ export function StockDispatch() {
                   {(listQ.data ?? []).map((d) => (
                     <tr key={d.id} onClick={() => setSelectedId(d.id)} className="cursor-pointer border-b border-slate-50 hover:bg-slate-50/60">
                       <td className="py-2.5 pr-3 font-mono text-xs font-bold text-violet-700">{d.docNo}</td>
-                      <td className="py-2.5 pr-3 text-slate-600">{d.reference ?? '—'}</td>
-                      <td className="py-2.5 pr-3 text-slate-600">
+                      <td className="py-2.5 pr-3 text-slate-600 dark:text-slate-300">{d.reference ?? '—'}</td>
+                      <td className="py-2.5 pr-3 text-slate-600 dark:text-slate-300">
                         {d.vehiclePlate ?? '—'}
                         {d.driverName ? ` · ${d.driverName}` : ''}
                       </td>
@@ -403,19 +403,19 @@ export function StockDispatch() {
             </div>
             <div className="space-y-3 md:hidden">
               {(listQ.data ?? []).map((d) => (
-                <button key={d.id} onClick={() => setSelectedId(d.id)} className="w-full rounded-xl border border-slate-200 p-4 text-left">
+                <button key={d.id} onClick={() => setSelectedId(d.id)} className="w-full rounded-xl border border-slate-200 dark:border-slate-700 p-4 text-left">
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <p className="font-mono text-xs font-bold text-violet-700">{d.docNo}</p>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
                         {d.reference ?? 'No order ref'}
                         {d.vehiclePlate ? ` · ${d.vehiclePlate}` : ''}
                       </p>
                     </div>
                     <StatusBadge tone={docStatusTone(d.status)} label={d.status} />
                   </div>
-                  <p className="mt-2 text-sm tabular-nums text-slate-600">
-                    <span className="font-bold text-slate-800">{fmtQ(d.totalQ)} Qt</span>
+                  <p className="mt-2 text-sm tabular-nums text-slate-600 dark:text-slate-300">
+                    <span className="font-bold text-slate-800 dark:text-slate-100">{fmtQ(d.totalQ)} Qt</span>
                   </p>
                 </button>
               ))}

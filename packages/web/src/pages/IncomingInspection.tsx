@@ -152,9 +152,9 @@ export function IncomingInspection() {
         action={
           <Link
             to="/intake"
-            className="touch inline-flex items-center gap-2 rounded-lg border border-line bg-white px-4 py-2.5 text-sm font-semibold text-slate-800 transition-all hover:bg-slate-50 hover:shadow-sm active:scale-[0.98]"
+            className="touch inline-flex items-center gap-2 rounded-lg border border-line bg-white dark:bg-slate-800 px-4 py-2.5 text-sm font-semibold text-slate-800 dark:text-slate-100 transition-all hover:bg-slate-50 dark:hover:bg-slate-700 hover:shadow-sm active:scale-[0.98]"
           >
-            <ArrowLeft size={15} className="text-slate-400" />
+            <ArrowLeft size={15} className="text-slate-400 dark:text-slate-500" />
             Gate intake
           </Link>
         }
@@ -220,28 +220,28 @@ export function IncomingInspection() {
                       }`}
                     >
                       <div className="flex items-center justify-between gap-2">
-                        <span className="tnum text-sm font-extrabold text-slate-900">{i.intakeNo}</span>
+                        <span className="tnum text-sm font-extrabold text-slate-900 dark:text-slate-100">{i.intakeNo}</span>
                         <Badge tone="advisory">Pending lab</Badge>
                       </div>
-                      <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
-                        <span className="tnum inline-flex items-center gap-1 font-semibold text-slate-700">
+                      <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
+                        <span className="tnum inline-flex items-center gap-1 font-semibold text-slate-700 dark:text-slate-200">
                           <Truck size={13} />
                           {i.truckPlate}
                         </span>
                         <span>{i.supplier?.name ?? '—'}</span>
-                        <span className="rounded bg-slate-100 px-1.5 py-0.5 font-bold uppercase tracking-wide text-slate-600">
+                        <span className="rounded bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">
                           {i.wheatCategory}
                         </span>
                         <span className="tnum font-semibold">{fmtQ(i.quintals)} q</span>
                       </div>
-                      <div className="mt-1.5 flex items-center gap-1.5 text-xs text-slate-400">
+                      <div className="mt-1.5 flex items-center gap-1.5 text-xs text-slate-400 dark:text-slate-500">
                         <Clock3 size={12} />
                         Arrived {fmtDateTime(i.deliveryDate)} · waiting {fmtElapsed(waitingMs(i.deliveryDate))}
                       </div>
                       {i.moistureQuick !== null && i.moistureQuick !== undefined ? (
-                        <div className="mt-1.5 text-xs text-slate-500">
+                        <div className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">
                           Gate moisture:{' '}
-                          <span className="tnum font-bold text-slate-700">
+                          <span className="tnum font-bold text-slate-700 dark:text-slate-200">
                             {Number(i.moistureQuick).toFixed(1)}%
                           </span>
                         </div>
@@ -268,18 +268,18 @@ export function IncomingInspection() {
             />
           ) : (
             <form onSubmit={submitLab} className="space-y-4">
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 rounded-xl border border-slate-100 bg-slate-50/60 px-3.5 py-2.5 text-sm">
-                <span className="tnum font-bold text-slate-900">{selected.intakeNo}</span>
-                <span className="text-slate-500">{selected.supplier?.name ?? '—'}</span>
-                <span className="tnum font-semibold text-slate-700">{fmtQ(selected.quintals)} q</span>
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/60 px-3.5 py-2.5 text-sm">
+                <span className="tnum font-bold text-slate-900 dark:text-slate-100">{selected.intakeNo}</span>
+                <span className="text-slate-500 dark:text-slate-400">{selected.supplier?.name ?? '—'}</span>
+                <span className="tnum font-semibold text-slate-700 dark:text-slate-200">{fmtQ(selected.quintals)} q</span>
                 {selected.netKg ? (
-                  <span className="tnum inline-flex items-center gap-1 text-slate-500">
+                  <span className="tnum inline-flex items-center gap-1 text-slate-500 dark:text-slate-400">
                     <Scale size={13} />
                     Net {Number(selected.netKg).toLocaleString('en-US')} kg
                   </span>
                 ) : null}
                 {selected.purchaseOrder ? (
-                  <span className="tnum text-slate-500">PO {selected.purchaseOrder.poNo}</span>
+                  <span className="tnum text-slate-500 dark:text-slate-400">PO {selected.purchaseOrder.poNo}</span>
                 ) : null}
               </div>
 
@@ -331,7 +331,7 @@ export function IncomingInspection() {
                     </ul>
                   </div>
                 ) : (
-                  <p className="text-sm font-medium text-slate-500">
+                  <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
                     Enter all 5 parameters to preview the verdict — {enteredCount}/5 entered.
                   </p>
                 )}

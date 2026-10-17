@@ -169,8 +169,8 @@ export function Employees() {
             <Users className="h-5 w-5" />
           </span>
           <div>
-            <h1 className="text-xl font-bold text-slate-900">Employee Records</h1>
-            <p className="text-sm text-slate-500">
+            <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Employee Records</h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               Staff registry — fixed salary, piece-rate and driver payroll modes, bank details
             </p>
           </div>

@@ -172,7 +172,7 @@ export function DeliveryTrips() {
                 label: 'Vehicle',
                 render: (r) => (
                   <span className="inline-flex items-center gap-1">
-                    <Truck className="h-3.5 w-3.5 text-slate-400" />
+                    <Truck className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
                     <span className="tnum font-semibold">{r.vehicle?.plateNo ?? '—'}</span>
                   </span>
                 )
@@ -183,7 +183,7 @@ export function DeliveryTrips() {
                 label: 'Route',
                 render: (r) => (
                   <span className="inline-flex items-center gap-1">
-                    <MapPin className="h-3.5 w-3.5 text-slate-400" /> {r.area}
+                    <MapPin className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" /> {r.area}
                   </span>
                 )
               },
@@ -205,7 +205,7 @@ export function DeliveryTrips() {
                       <PackageCheck className="h-3.5 w-3.5" /> {r.podSignedBy ?? 'Signed'}
                     </span>
                   ) : (
-                    <span className="text-xs text-slate-400">Pending</span>
+                    <span className="text-xs text-slate-400 dark:text-slate-500">Pending</span>
                   )
               },
               {

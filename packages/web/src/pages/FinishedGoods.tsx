@@ -205,28 +205,28 @@ export function FinishedGoods() {
               <table className="w-full min-w-[720px] text-left text-sm">
                 <thead>
                   <tr>
-                    <th className="px-3 py-2 text-xs font-bold uppercase tracking-wide text-slate-500">Product</th>
+                    <th className="px-3 py-2 text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Product</th>
                     {SIZE_ORDER.map((s) => (
-                      <th key={s} className="tnum px-3 py-2 text-right text-xs font-bold uppercase tracking-wide text-slate-500">
+                      <th key={s} className="tnum px-3 py-2 text-right text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                         {s}
                       </th>
                     ))}
-                    <th className="tnum px-3 py-2 text-right text-xs font-bold uppercase tracking-wide text-slate-500">Total</th>
-                    <th className="px-3 py-2 text-xs font-bold uppercase tracking-wide text-slate-500">Status</th>
+                    <th className="tnum px-3 py-2 text-right text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Total</th>
+                    <th className="px-3 py-2 text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Status</th>
                   </tr>
                 </thead>
                 <tbody>
                   {matrix.map((m) => (
-                    <tr key={m.productId} className="border-t border-slate-100 hover:bg-slate-50">
-                      <td className="px-3 py-2.5 font-semibold text-slate-800">{m.productName}</td>
+                    <tr key={m.productId} className="border-t border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700">
+                      <td className="px-3 py-2.5 font-semibold text-slate-800 dark:text-slate-100">{m.productName}</td>
                       {SIZE_ORDER.map((s) => {
                         const cell = m.sizes[s];
                         return (
-                          <td key={s} className="tnum px-3 py-2.5 text-right text-slate-700">
+                          <td key={s} className="tnum px-3 py-2.5 text-right text-slate-700 dark:text-slate-200">
                             {cell ? (
                               <>
                                 <span className="font-semibold">{cell.bags.toLocaleString('en-US')}</span>
-                                <span className="text-slate-400"> / </span>
+                                <span className="text-slate-400 dark:text-slate-500"> / </span>
                                 <span>{fmtQ(cell.quintals)} q</span>
                               </>
                             ) : (
@@ -235,8 +235,8 @@ export function FinishedGoods() {
                           </td>
                         );
                       })}
-                      <td className="tnum px-3 py-2.5 text-right font-bold text-slate-900">
-                        {m.totalBags.toLocaleString('en-US')} <span className="font-normal text-slate-400">/ {fmtQ(m.totalQ)} q</span>
+                      <td className="tnum px-3 py-2.5 text-right font-bold text-slate-900 dark:text-slate-100">
+                        {m.totalBags.toLocaleString('en-US')} <span className="font-normal text-slate-400 dark:text-slate-500">/ {fmtQ(m.totalQ)} q</span>
                       </td>
                       <td className="px-3 py-2.5">
                         {m.totalQ < LOW_STOCK_Q ? <FgBadge tone="rose">Low</FgBadge> : <FgBadge tone="emerald">OK</FgBadge>}
@@ -249,18 +249,18 @@ export function FinishedGoods() {
             {/* Mobile stacked cards */}
             <div className="space-y-3 md:hidden">
               {matrix.map((m) => (
-                <div key={m.productId} className="rounded-xl border border-slate-200 p-3.5">
+                <div key={m.productId} className="rounded-xl border border-slate-200 dark:border-slate-700 p-3.5">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="font-bold text-slate-800">{m.productName}</p>
+                    <p className="font-bold text-slate-800 dark:text-slate-100">{m.productName}</p>
                     {m.totalQ < LOW_STOCK_Q ? <FgBadge tone="rose">Low</FgBadge> : <FgBadge tone="emerald">OK</FgBadge>}
                   </div>
                   <div className="mt-2 grid grid-cols-2 gap-2">
                     {SIZE_ORDER.map((s) => {
                       const cell = m.sizes[s];
                       return (
-                        <div key={s} className="tnum rounded-lg bg-slate-50 px-2.5 py-1.5 text-xs">
-                          <span className="font-bold text-slate-500">{s}</span>
-                          <div className="text-slate-700">
+                        <div key={s} className="tnum rounded-lg bg-slate-50 dark:bg-slate-800 px-2.5 py-1.5 text-xs">
+                          <span className="font-bold text-slate-500 dark:text-slate-400">{s}</span>
+                          <div className="text-slate-700 dark:text-slate-200">
                             {cell ? (
                               <>
                                 <span className="font-semibold">{cell.bags.toLocaleString('en-US')}</span> bags · {fmtQ(cell.quintals)} q
@@ -273,7 +273,7 @@ export function FinishedGoods() {
                       );
                     })}
                   </div>
-                  <p className="tnum mt-2 text-sm font-bold text-slate-900">
+                  <p className="tnum mt-2 text-sm font-bold text-slate-900 dark:text-slate-100">
                     Total: {m.totalBags.toLocaleString('en-US')} bags · {fmtQ(m.totalQ)} q
                   </p>
                 </div>

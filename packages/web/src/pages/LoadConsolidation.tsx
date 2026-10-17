@@ -194,7 +194,7 @@ export function LoadConsolidation() {
                   const u = utilization(r);
                   return (
                     <span className="inline-flex items-center gap-2">
-                      <span className="h-2 w-20 overflow-hidden rounded-full bg-slate-100">
+                      <span className="h-2 w-20 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
                         <span
                           className={`block h-full rounded-full ${u.pct > 100 ? 'bg-critical-text' : u.pct >= 80 ? 'bg-pass-text' : 'bg-advisory-text'}`}
                           style={{ width: `${Math.min(100, u.pct)}%` }}
@@ -270,12 +270,12 @@ export function LoadConsolidation() {
                 {(expandedLoad.items ?? []).map((it) => {
                   const o = orderById.get(it.orderId);
                   return (
-                    <li key={it.id} className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2 text-sm">
+                    <li key={it.id} className="flex items-center justify-between rounded-lg bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm">
                       <span>
                         <span className="tnum font-bold">{o?.orderNo ?? it.orderId}</span>
-                        <span className="ml-2 text-slate-500">{o?.customer?.name ?? ''}</span>
+                        <span className="ml-2 text-slate-500 dark:text-slate-400">{o?.customer?.name ?? ''}</span>
                         <span className="tnum ml-2 font-semibold">{fmtQ(it.quintals)} q</span>
-                        {it.bags > 0 ? <span className="tnum ml-1 text-xs text-slate-500">({it.bags} bags)</span> : null}
+                        {it.bags > 0 ? <span className="tnum ml-1 text-xs text-slate-500 dark:text-slate-400">({it.bags} bags)</span> : null}
                       </span>
                       {expandedLoad.status === 'BUILDING' ? (
                         <button onClick={() => removeItem(it.id)} className="text-critical-text" aria-label="Remove">
@@ -287,7 +287,7 @@ export function LoadConsolidation() {
                 })}
               </ul>
             ) : (
-              <p className="flex items-center gap-2 text-sm text-slate-500">
+              <p className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
                 <Layers className="h-4 w-4" /> No orders in this load yet.
               </p>
             )}

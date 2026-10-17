@@ -57,27 +57,27 @@ export function Support() {
       {/* KPI strip */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <Link to="/support/tickets" className={`${cardShell} transition-all hover:shadow-md`}>
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Open Tickets</p>
-          <p className="mt-1 text-2xl font-extrabold tabular-nums text-slate-900">{ticketsQ.isLoading ? '…' : openTickets}</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Open Tickets</p>
+          <p className="mt-1 text-2xl font-extrabold tabular-nums text-slate-900 dark:text-slate-100">{ticketsQ.isLoading ? '…' : openTickets}</p>
         </Link>
         <Link to="/support/announcements" className={`${cardShell} transition-all hover:shadow-md`}>
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Urgent Notices</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Urgent Notices</p>
           <p className="mt-1 flex items-center gap-2 text-2xl font-extrabold tabular-nums text-red-600">
             {urgentAnn.length > 0 && <AlertTriangle size={20} />}
             {urgentAnn.length}
           </p>
         </Link>
         <Link to="/support/notifications" className={`${cardShell} transition-all hover:shadow-md`}>
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Unread Notifications</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Unread Notifications</p>
           <p className="mt-1 text-2xl font-extrabold tabular-nums text-violet-700">{unreadNotif}</p>
         </Link>
         <div className={cardShell}>
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Offline Docs</p>
-          <p className="mt-1 flex items-center gap-2 text-lg font-extrabold text-slate-900">
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Offline Docs</p>
+          <p className="mt-1 flex items-center gap-2 text-lg font-extrabold text-slate-900 dark:text-slate-100">
             {isOnline ? <Wifi size={20} className="text-emerald-500" /> : <WifiOff size={20} className="text-amber-500" />}
             {isOnline ? 'Online' : 'Offline'}
           </p>
-          <p className="mt-1 text-xs text-slate-500">Docs cached via PWA</p>
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Docs cached via PWA</p>
         </div>
       </div>
 
@@ -112,8 +112,8 @@ export function Support() {
             <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${m.tint}`}>
               <m.icon size={20} />
             </span>
-            <p className="mt-3 font-bold text-slate-800 group-hover:text-violet-700">{m.label}</p>
-            <p className="mt-0.5 text-xs text-slate-500">{m.desc}</p>
+            <p className="mt-3 font-bold text-slate-800 dark:text-slate-100 group-hover:text-violet-700">{m.label}</p>
+            <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{m.desc}</p>
           </Link>
         ))}
       </div>
@@ -130,17 +130,17 @@ export function Support() {
           }
         />
         {(annQ.data ?? []).length === 0 ? (
-          <p className="text-sm text-slate-500">No announcements published.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">No announcements published.</p>
         ) : (
           <div className="divide-y divide-slate-100">
             {(annQ.data ?? []).slice(0, 3).map((a) => (
               <div key={a.id} className="flex items-center justify-between gap-3 py-2.5">
                 <div className="min-w-0">
-                  <p className="flex items-center gap-2 truncate font-semibold text-slate-800">
+                  <p className="flex items-center gap-2 truncate font-semibold text-slate-800 dark:text-slate-100">
                     {a.urgent && <Badge tone="critical">URGENT</Badge>}
                     {a.title}
                   </p>
-                  <p className="text-xs tabular-nums text-slate-400">{a.publishedAt ? fmtDateTime(a.publishedAt) : ''}</p>
+                  <p className="text-xs tabular-nums text-slate-400 dark:text-slate-500">{a.publishedAt ? fmtDateTime(a.publishedAt) : ''}</p>
                 </div>
               </div>
             ))}
@@ -151,7 +151,7 @@ export function Support() {
       {/* Offline access note */}
       <div className={`${cardShell} border-dashed`}>
         <CardHeader icon={<Wifi size={16} />} title="Offline Documentation Access" subtitle="PWA service worker caching" />
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-slate-600 dark:text-slate-300">
           Manuals, SOPs and knowledge-base articles are cached by the app service worker. When the device
           goes offline, previously opened documents remain readable. The indicator above shows the current
           connection state.

@@ -139,8 +139,8 @@ export function SpareParts() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-slate-900">Spare Parts Inventory &amp; Verification</h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Spare Parts Inventory &amp; Verification</h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Parts catalog by part number, stock levels, and periodic physical verification.
           </p>
         </div>
@@ -174,7 +174,7 @@ export function SpareParts() {
                 onChange={(e) => setSearch(e.target.value)}
                 className="!w-48"
               />
-              <label className="flex cursor-pointer items-center gap-1.5 text-xs font-medium text-slate-600">
+              <label className="flex cursor-pointer items-center gap-1.5 text-xs font-medium text-slate-600 dark:text-slate-300">
                 <input
                   type="checkbox"
                   checked={lowStockOnly}
@@ -207,7 +207,7 @@ export function SpareParts() {
                 )
               },
               { key: 'name', label: 'Name', render: (r) => <span className="font-medium">{r.name}</span> },
-              { key: 'compatibleTypes', label: 'Compatible equipment', render: (r) => <span className="text-sm text-slate-600">{r.compatibleTypes ?? '—'}</span> },
+              { key: 'compatibleTypes', label: 'Compatible equipment', render: (r) => <span className="text-sm text-slate-600 dark:text-slate-300">{r.compatibleTypes ?? '—'}</span> },
               {
                 key: 'stockQty',
                 label: 'Stock',
@@ -262,12 +262,12 @@ export function SpareParts() {
       {modalOpen ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setModalOpen(false)}>
           <div
-            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6"
+            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white dark:bg-slate-800 p-6"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-label={editing ? 'Edit spare part' : 'Add spare part'}
           >
-            <h3 className="mb-4 text-base font-bold text-slate-900">{editing ? 'Edit spare part' : 'Add spare part'}</h3>
+            <h3 className="mb-4 text-base font-bold text-slate-900 dark:text-slate-100">{editing ? 'Edit spare part' : 'Add spare part'}</h3>
             {formError ? (
               <div className="mb-4 rounded-lg bg-critical-bg px-4 py-3 text-sm text-critical-text">{formError}</div>
             ) : null}
@@ -324,13 +324,13 @@ export function SpareParts() {
       {adjustFor ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setAdjustFor(null)}>
           <div
-            className="w-full max-w-md rounded-2xl bg-white p-6"
+            className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 p-6"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-label={`Adjust stock for ${adjustFor.partNumber}`}
           >
-            <h3 className="mb-1 text-base font-bold text-slate-900">Adjust stock</h3>
-            <p className="mb-4 text-xs text-slate-500">
+            <h3 className="mb-1 text-base font-bold text-slate-900 dark:text-slate-100">Adjust stock</h3>
+            <p className="mb-4 text-xs text-slate-500 dark:text-slate-400">
               {adjustFor.partNumber} · current <span className="tabular-nums font-semibold">{adjustFor.stockQty} {adjustFor.unit}</span>
             </p>
             {formError ? (
@@ -356,15 +356,15 @@ export function SpareParts() {
       {verifyFor ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setVerifyFor(null)}>
           <div
-            className="w-full max-w-md rounded-2xl bg-white p-6"
+            className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 p-6"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-label={`Verify stock for ${verifyFor.partNumber}`}
           >
-            <h3 className="mb-1 flex items-center gap-2 text-base font-bold text-slate-900">
+            <h3 className="mb-1 flex items-center gap-2 text-base font-bold text-slate-900 dark:text-slate-100">
               <ClipboardCheck size={16} /> Physical verification
             </h3>
-            <p className="mb-4 text-xs text-slate-500">
+            <p className="mb-4 text-xs text-slate-500 dark:text-slate-400">
               {verifyFor.partNumber} · system stock <span className="tabular-nums font-semibold">{verifyFor.stockQty} {verifyFor.unit}</span>
             </p>
             {formError ? (
@@ -390,13 +390,13 @@ export function SpareParts() {
       {historyFor ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setHistoryFor(null)}>
           <div
-            className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-6"
+            className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white dark:bg-slate-800 p-6"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-label={`Verification history for ${historyFor.partNumber}`}
           >
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-base font-bold text-slate-900">Verification history — {historyFor.partNumber}</h3>
+              <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">Verification history — {historyFor.partNumber}</h3>
               <Button variant="secondary" onClick={() => setHistoryFor(null)}>Close</Button>
             </div>
             {historyQ.isLoading ? (
@@ -418,7 +418,7 @@ export function SpareParts() {
                       </span>
                     )
                   },
-                  { key: 'notes', label: 'Notes', render: (r) => <span className="text-sm text-slate-500">{r.notes ?? '—'}</span> }
+                  { key: 'notes', label: 'Notes', render: (r) => <span className="text-sm text-slate-500 dark:text-slate-400">{r.notes ?? '—'}</span> }
                 ]}
                 rows={historyQ.data ?? []}
                 emptyTitle="No verifications recorded yet."

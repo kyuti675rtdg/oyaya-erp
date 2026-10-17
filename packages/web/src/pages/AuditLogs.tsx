@@ -193,7 +193,7 @@ export function AuditLogs() {
           <>
             <DataTable<AuditEntry>
               columns={[
-                { key: 'createdAt', label: 'Timestamp', render: (r) => <span className="whitespace-nowrap text-sm text-slate-500">{fmtDateTime(r.createdAt)}</span> },
+                { key: 'createdAt', label: 'Timestamp', render: (r) => <span className="whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">{fmtDateTime(r.createdAt)}</span> },
                 {
                   key: 'user', label: 'User',
                   render: (r) => (
@@ -201,21 +201,21 @@ export function AuditLogs() {
                       {r.user ? (
                         <>
                           <span className="font-semibold text-ink">{r.user.name}</span>
-                          <span className="block text-xs text-slate-400">{r.user.email}</span>
+                          <span className="block text-xs text-slate-400 dark:text-slate-500">{r.user.email}</span>
                         </>
                       ) : (
-                        <span className="text-slate-400">System</span>
+                        <span className="text-slate-400 dark:text-slate-500">System</span>
                       )}
                     </span>
                   ),
                 },
                 { key: 'action', label: 'Action', render: (r) => <Badge tone={ACTION_TONE[r.action] ?? 'neutral'}>{r.action}</Badge> },
                 { key: 'entityType', label: 'Entity', render: (r) => <span className="text-sm">{r.entityType}</span> },
-                { key: 'entityId', label: 'Entity ID', render: (r) => <span className="font-mono text-xs text-slate-500">{r.entityId ?? '—'}</span> },
+                { key: 'entityId', label: 'Entity ID', render: (r) => <span className="font-mono text-xs text-slate-500 dark:text-slate-400">{r.entityId ?? '—'}</span> },
                 {
                   key: 'changes', label: 'Changes',
                   render: (r) => (
-                    <span className="block max-w-[320px] truncate font-mono text-xs text-slate-500" title={JSON.stringify(r.changes ?? {})}>
+                    <span className="block max-w-[320px] truncate font-mono text-xs text-slate-500 dark:text-slate-400" title={JSON.stringify(r.changes ?? {})}>
                       {JSON.stringify(r.changes ?? {})}
                     </span>
                   ),
@@ -229,7 +229,7 @@ export function AuditLogs() {
                 <Button variant="secondary" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
                   Previous
                 </Button>
-                <span className="text-sm tabular-nums text-slate-500">
+                <span className="text-sm tabular-nums text-slate-500 dark:text-slate-400">
                   Page {pagination.page} of {pagination.totalPages}
                 </span>
                 <Button variant="secondary" disabled={page >= pagination.totalPages} onClick={() => setPage((p) => p + 1)}>

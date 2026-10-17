@@ -186,15 +186,15 @@ export function HygieneApproval() {
         ) : (
           <div className="space-y-3">
             {(listQ.data ?? []).map((a) => (
-              <div key={a.id} className="rounded-xl border border-line bg-white p-4">
+              <div key={a.id} className="rounded-xl border border-line bg-white dark:bg-slate-800 p-4">
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
                       <Badge tone={subjectBadgeTone(a.subjectType)}>{a.subjectType}</Badge>
                       <Badge tone={APPROVAL_TONE[a.status]}>{a.status.replace('_', ' ')}</Badge>
                     </div>
-                    <p className="mt-1.5 font-bold text-slate-800">{a.subjectLabel ?? a.subjectId}</p>
-                    <p className="text-xs tabular-nums text-slate-500">Requested {fmtDateTime(a.createdAt)}</p>
+                    <p className="mt-1.5 font-bold text-slate-800 dark:text-slate-100">{a.subjectLabel ?? a.subjectId}</p>
+                    <p className="text-xs tabular-nums text-slate-500 dark:text-slate-400">Requested {fmtDateTime(a.createdAt)}</p>
                   </div>
                   <div className="flex gap-2">
                     {canSign(a, 'supervisor') ? (
@@ -214,15 +214,15 @@ export function HygieneApproval() {
                     const s = signoffState(a, role);
                     return (
                       <div key={role} className={`rounded-lg border px-3 py-2 ${s.done ? 'border-emerald-200 bg-emerald-50/50' : 'border-line bg-alabaster'}`}>
-                        <p className="text-xs font-bold uppercase tracking-wide text-slate-500">{role}</p>
+                        <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">{role}</p>
                         {s.done ? (
                           <>
-                            <p className="text-sm font-semibold text-slate-800">{s.by}</p>
-                            <p className="text-xs tabular-nums text-slate-500">{s.at ? fmtDateTime(s.at) : ''}</p>
-                            {s.note ? <p className="mt-1 text-xs text-slate-600">{s.note}</p> : null}
+                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{s.by}</p>
+                            <p className="text-xs tabular-nums text-slate-500 dark:text-slate-400">{s.at ? fmtDateTime(s.at) : ''}</p>
+                            {s.note ? <p className="mt-1 text-xs text-slate-600 dark:text-slate-300">{s.note}</p> : null}
                           </>
                         ) : (
-                          <p className="text-sm text-slate-400">Awaiting sign-off</p>
+                          <p className="text-sm text-slate-400 dark:text-slate-500">Awaiting sign-off</p>
                         )}
                       </div>
                     );
@@ -272,7 +272,7 @@ export function HygieneApproval() {
                 <h3 className="text-lg font-bold text-ink">
                   {signoffFor.role === 'supervisor' ? 'Supervisor' : 'Quality'} sign-off
                 </h3>
-                <p className="text-sm text-slate-600">{signoffFor.item.subjectLabel ?? signoffFor.item.subjectId}</p>
+                <p className="text-sm text-slate-600 dark:text-slate-300">{signoffFor.item.subjectLabel ?? signoffFor.item.subjectId}</p>
               </div>
               <Button variant="ghost" className="px-2 py-1" onClick={() => setSignoffFor(null)} aria-label="Close">
                 <X size={18} />

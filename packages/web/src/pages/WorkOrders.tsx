@@ -156,8 +156,8 @@ export function WorkOrders() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-slate-900">Maintenance Work Orders</h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Maintenance Work Orders</h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Open → Assigned → In Progress → Completed → Verified, with parts usage.
           </p>
         </div>
@@ -256,12 +256,12 @@ export function WorkOrders() {
       {createModal ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setCreateModal(false)}>
           <div
-            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6"
+            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white dark:bg-slate-800 p-6"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-label="New work order"
           >
-            <h3 className="mb-4 text-base font-bold text-slate-900">New work order</h3>
+            <h3 className="mb-4 text-base font-bold text-slate-900 dark:text-slate-100">New work order</h3>
             {formError ? (
               <div className="mb-4 rounded-lg bg-critical-bg px-4 py-3 text-sm text-critical-text">{formError}</div>
             ) : null}
@@ -328,24 +328,24 @@ export function WorkOrders() {
       {partsFor ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setPartsFor(null)}>
           <div
-            className="w-full max-w-md rounded-2xl bg-white p-6"
+            className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 p-6"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-label={`Record parts for ${partsFor.woNumber}`}
           >
-            <h3 className="mb-1 flex items-center gap-2 text-base font-bold text-slate-900">
+            <h3 className="mb-1 flex items-center gap-2 text-base font-bold text-slate-900 dark:text-slate-100">
               <Package size={16} /> Record parts used
             </h3>
-            <p className="mb-4 text-xs text-slate-500">
+            <p className="mb-4 text-xs text-slate-500 dark:text-slate-400">
               {partsFor.woNumber} · {partsFor.equipment?.name} — stock is decremented on save.
             </p>
             {formError ? (
               <div className="mb-4 rounded-lg bg-critical-bg px-4 py-3 text-sm text-critical-text">{formError}</div>
             ) : null}
             {(partsFor.partsUsed ?? []).length > 0 ? (
-              <ul className="mb-4 space-y-1 rounded-xl bg-slate-50 p-3 text-sm">
+              <ul className="mb-4 space-y-1 rounded-xl bg-slate-50 dark:bg-slate-800 p-3 text-sm">
                 {(partsFor.partsUsed ?? []).map((p, i) => (
-                  <li key={i} className="flex justify-between gap-2 text-slate-600">
+                  <li key={i} className="flex justify-between gap-2 text-slate-600 dark:text-slate-300">
                     <span>{p.partNumber} — {p.name}</span>
                     <span className="tabular-nums font-semibold">×{p.qty}</span>
                   </li>

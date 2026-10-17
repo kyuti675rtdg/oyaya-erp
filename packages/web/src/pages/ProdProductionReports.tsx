@@ -169,10 +169,10 @@ export function ProdProductionReports() {
       ) : report ? (
         <>
           <div className="print:mb-4">
-            <h2 className="hidden print:block text-xl font-bold text-slate-900">
+            <h2 className="hidden print:block text-xl font-bold text-slate-900 dark:text-slate-100">
               Oyaya Flour Mill — Daily Production Report
             </h2>
-            <p className="hidden print:block text-sm text-slate-500 tabular-nums">{fmtDate(report.date)}</p>
+            <p className="hidden print:block text-sm text-slate-500 dark:text-slate-400 tabular-nums">{fmtDate(report.date)}</p>
           </div>
 
           {/* KPIs */}
@@ -211,7 +211,7 @@ export function ProdProductionReports() {
               }
             ].map((k) => (
               <div key={k.label} className={`${cardShell} !p-4`}>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{k.label}</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{k.label}</p>
                 <p className={`tabular-nums mt-1 text-2xl font-bold ${k.tone}`}>{k.value}</p>
               </div>
             ))}
@@ -255,7 +255,7 @@ export function ProdProductionReports() {
                   <DataTable
                     keyOf={(r) => r.batchId}
                     columns={[
-                      { key: 'batchNo', label: 'Batch', render: (r) => <span className="tabular-nums font-bold text-slate-800">{r.batchNo}</span> },
+                      { key: 'batchNo', label: 'Batch', render: (r) => <span className="tabular-nums font-bold text-slate-800 dark:text-slate-100">{r.batchNo}</span> },
                       { key: 'productType', label: 'Product', render: (r) => r.productType.replace('_', ' ') },
                       { key: 'wheatWeighedQ', label: 'Wheat (q)', mono: true, render: (r) => fmtQ(r.wheatWeighedQ) },
                       { key: 'flourOutputQ', label: 'Flour (q)', mono: true, render: (r) => fmtQ(r.flourOutputQ) },
@@ -287,10 +287,10 @@ export function ProdProductionReports() {
                   {report.perBatch.map((b) => (
                     <div key={b.batchId} className="rounded-xl border border-slate-200/70 p-4">
                       <div className="flex items-center justify-between">
-                        <span className="tabular-nums font-bold text-slate-800">{b.batchNo}</span>
+                        <span className="tabular-nums font-bold text-slate-800 dark:text-slate-100">{b.batchNo}</span>
                         {b.flagged ? <Badge tone="critical">Low yield</Badge> : <Badge tone="pass">OK</Badge>}
                       </div>
-                      <p className="tabular-nums mt-1 text-sm text-slate-600">
+                      <p className="tabular-nums mt-1 text-sm text-slate-600 dark:text-slate-300">
                         {fmtQ(b.flourOutputQ)} q flour / {fmtQ(b.wheatWeighedQ)} q wheat
                       </p>
                       <p className={`tabular-nums text-lg font-bold ${(b.extractionPct ?? 100) < EXTRACTION_MIN ? 'text-rose-600' : 'text-emerald-700'}`}>
@@ -365,10 +365,10 @@ export function ProdProductionReports() {
                   {rows.map((s) => (
                     <div key={s.shiftRunId} className="rounded-xl border border-slate-200/70 p-4">
                       <div className="flex items-center justify-between">
-                        <span className="font-bold text-slate-800">{s.shift} shift</span>
-                        <span className="tabular-nums text-xs text-slate-500">{fmtDateTime(s.shiftDate)}</span>
+                        <span className="font-bold text-slate-800 dark:text-slate-100">{s.shift} shift</span>
+                        <span className="tabular-nums text-xs text-slate-500 dark:text-slate-400">{fmtDateTime(s.shiftDate)}</span>
                       </div>
-                      <p className="mt-1 text-sm text-slate-600">
+                      <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
                         Batch {s.batchNo ?? '—'} · {s.operators.join(', ') || 'no operators'}
                       </p>
                       <p className="tabular-nums mt-1 text-sm">
@@ -388,7 +388,7 @@ export function ProdProductionReports() {
               );
             })()}
             {shiftReport ? (
-              <div className="mt-4 flex gap-4 border-t border-slate-100 pt-4 text-sm">
+              <div className="mt-4 flex gap-4 border-t border-slate-100 dark:border-slate-700 pt-4 text-sm">
                 <p className="tabular-nums">
                   Shift total output: <span className="font-bold">{fmtQ(shiftReport.totalOutputQ)} q</span>
                 </p>

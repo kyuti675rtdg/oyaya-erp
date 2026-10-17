@@ -230,11 +230,11 @@ export function SamplingSchedule() {
                       }`}
                     >
                       <div className="min-w-0">
-                        <p className="flex items-center gap-2 text-sm font-bold text-slate-800">
+                        <p className="flex items-center gap-2 text-sm font-bold text-slate-800 dark:text-slate-100">
                           <span className="text-violet-600">{kind.icon}</span>
                           <span className="truncate">{r.label}</span>
                         </p>
-                        <p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                        <p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
                           <span>{kind.label}</span>
                           <span>·</span>
                           <span className={`tabular-nums font-semibold ${overdue ? 'text-critical-text' : ''}`}>

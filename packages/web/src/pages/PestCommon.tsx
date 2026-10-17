@@ -107,9 +107,9 @@ export function PestKpi({
   };
   return (
     <div className={cardShell}>
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</p>
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</p>
       <p className={`mt-1 text-2xl font-bold tabular-nums ${toneText[tone]}`}>{value}</p>
-      {sub ? <p className="mt-1 text-xs text-slate-500">{sub}</p> : null}
+      {sub ? <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{sub}</p> : null}
     </div>
   );
 }

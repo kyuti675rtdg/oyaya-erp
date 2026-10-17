@@ -156,7 +156,7 @@ export function QualityStandards() {
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-xl font-bold text-ink">Quality Standards &amp; Thresholds</h2>
-          <p className="mt-0.5 text-sm text-slate-500">
+          <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
             Configurable lab thresholds with a full audit trail. Intake, in-process and flour
             standards are kept separate.
           </p>
@@ -215,10 +215,10 @@ export function QualityStandards() {
                   <table className="w-full min-w-[720px] text-left text-sm">
                     <thead>
                       <tr>
-                        <th className="px-3 py-2 text-xs font-bold uppercase tracking-wide text-slate-500">Parameter</th>
-                        <th className="px-3 py-2 text-xs font-bold uppercase tracking-wide text-slate-500">Standard</th>
-                        <th className="px-3 py-2 text-xs font-bold uppercase tracking-wide text-slate-500">Status</th>
-                        <th className="px-3 py-2 text-right text-xs font-bold uppercase tracking-wide text-slate-500">Actions</th>
+                        <th className="px-3 py-2 text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Parameter</th>
+                        <th className="px-3 py-2 text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Standard</th>
+                        <th className="px-3 py-2 text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Status</th>
+                        <th className="px-3 py-2 text-right text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Actions</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -265,20 +265,20 @@ export function QualityStandards() {
       {/* Audit trail panel */}
       {auditId ? (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 p-4 sm:items-center">
-          <div className="w-full max-w-lg rounded-2xl bg-white p-5 shadow-xl">
+          <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-slate-800 p-5 shadow-xl">
             <div className="mb-3 flex items-center justify-between">
               <h3 className="flex items-center gap-2 text-base font-bold text-ink">
                 <History size={16} /> Audit trail
               </h3>
               <button
                 onClick={() => setAuditId(null)}
-                className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100"
+                className="rounded-lg p-1.5 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
                 aria-label="Close"
               >
                 <X size={18} />
               </button>
             </div>
-            <p className="mb-4 font-mono text-xs text-slate-500">{auditTarget?.code}</p>
+            <p className="mb-4 font-mono text-xs text-slate-500 dark:text-slate-400">{auditTarget?.code}</p>
             {auditQ.isLoading ? (
               <Spinner label="Loading audit trail..." />
             ) : (auditQ.data ?? []).length === 0 ? (
@@ -286,13 +286,13 @@ export function QualityStandards() {
             ) : (
               <ul className="max-h-80 space-y-2 overflow-y-auto">
                 {(auditQ.data ?? []).map((a) => (
-                  <li key={a.id} className="rounded-lg border border-slate-100 bg-slate-50/60 p-3 text-sm">
+                  <li key={a.id} className="rounded-lg border border-slate-100 dark:border-slate-700 bg-slate-50/60 p-3 text-sm">
                     <div className="flex items-center justify-between gap-2">
                       <Badge tone={a.action === 'CREATE' ? 'pass' : 'advisory'}>{a.action}</Badge>
-                      <span className="tabular-nums text-xs text-slate-500">{fmtDateTime(a.createdAt)}</span>
+                      <span className="tabular-nums text-xs text-slate-500 dark:text-slate-400">{fmtDateTime(a.createdAt)}</span>
                     </div>
                     {a.changes ? (
-                      <pre className="mt-2 max-h-24 overflow-auto rounded bg-white p-2 font-mono text-[11px] text-slate-600">
+                      <pre className="mt-2 max-h-24 overflow-auto rounded bg-white dark:bg-slate-800 p-2 font-mono text-[11px] text-slate-600 dark:text-slate-300">
                         {JSON.stringify(a.changes, null, 2)}
                       </pre>
                     ) : null}
@@ -317,36 +317,36 @@ export function QualityStandards() {
             className="flex items-center justify-between rounded-xl border border-slate-200/70 p-4 hover:border-violet-300 hover:bg-violet-50/50"
           >
             <span>
-              <span className="flex items-center gap-2 text-sm font-bold text-slate-800">
+              <span className="flex items-center gap-2 text-sm font-bold text-slate-800 dark:text-slate-100">
                 <Sprout size={15} className="text-violet-600" /> Incoming inspection
               </span>
-              <span className="mt-1 block text-xs text-slate-500">Intake wheat lab tests per truck</span>
+              <span className="mt-1 block text-xs text-slate-500 dark:text-slate-400">Intake wheat lab tests per truck</span>
             </span>
-            <ArrowRight size={16} className="text-slate-400" />
+            <ArrowRight size={16} className="text-slate-400 dark:text-slate-500" />
           </Link>
           <Link
             to="/qc"
             className="flex items-center justify-between rounded-xl border border-slate-200/70 p-4 hover:border-violet-300 hover:bg-violet-50/50"
           >
             <span>
-              <span className="flex items-center gap-2 text-sm font-bold text-slate-800">
+              <span className="flex items-center gap-2 text-sm font-bold text-slate-800 dark:text-slate-100">
                 <Wheat size={15} className="text-violet-600" /> In-process lab checks
               </span>
-              <span className="mt-1 block text-xs text-slate-500">2-hour shift checks on the mill floor</span>
+              <span className="mt-1 block text-xs text-slate-500 dark:text-slate-400">2-hour shift checks on the mill floor</span>
             </span>
-            <ArrowRight size={16} className="text-slate-400" />
+            <ArrowRight size={16} className="text-slate-400 dark:text-slate-500" />
           </Link>
           <Link
             to="/quality/flour-tests"
             className="flex items-center justify-between rounded-xl border border-slate-200/70 p-4 hover:border-violet-300 hover:bg-violet-50/50"
           >
             <span>
-              <span className="flex items-center gap-2 text-sm font-bold text-slate-800">
+              <span className="flex items-center gap-2 text-sm font-bold text-slate-800 dark:text-slate-100">
                 <FlaskConical size={15} className="text-violet-600" /> Flour quality tests
               </span>
-              <span className="mt-1 block text-xs text-slate-500">Finished flour per batch per product</span>
+              <span className="mt-1 block text-xs text-slate-500 dark:text-slate-400">Finished flour per batch per product</span>
             </span>
-            <ArrowRight size={16} className="text-slate-400" />
+            <ArrowRight size={16} className="text-slate-400 dark:text-slate-500" />
           </Link>
         </div>
       </div>
@@ -372,7 +372,7 @@ function EditForm({
   return (
     <form onSubmit={onSave} className="flex flex-wrap items-end gap-2">
       <div className="w-24">
-        <label className="mb-1 block text-[11px] font-semibold text-slate-500">Min</label>
+        <label className="mb-1 block text-[11px] font-semibold text-slate-500 dark:text-slate-400">Min</label>
         <NumberInput
           value={edit.minValue}
           onChange={(e) => setEdit({ ...edit, minValue: e.target.value })}
@@ -381,7 +381,7 @@ function EditForm({
         />
       </div>
       <div className="w-24">
-        <label className="mb-1 block text-[11px] font-semibold text-slate-500">Max</label>
+        <label className="mb-1 block text-[11px] font-semibold text-slate-500 dark:text-slate-400">Max</label>
         <NumberInput
           value={edit.maxValue}
           onChange={(e) => setEdit({ ...edit, maxValue: e.target.value })}
@@ -390,7 +390,7 @@ function EditForm({
         />
       </div>
       <div className="w-24">
-        <label className="mb-1 block text-[11px] font-semibold text-slate-500">Unit</label>
+        <label className="mb-1 block text-[11px] font-semibold text-slate-500 dark:text-slate-400">Unit</label>
         <TextInput
           value={edit.unit}
           onChange={(e) => setEdit({ ...edit, unit: e.target.value })}
@@ -399,7 +399,7 @@ function EditForm({
         />
       </div>
       <div className="w-28">
-        <label className="mb-1 block text-[11px] font-semibold text-slate-500">Status</label>
+        <label className="mb-1 block text-[11px] font-semibold text-slate-500 dark:text-slate-400">Status</label>
         <Select
           value={edit.isActive ? 'on' : 'off'}
           onChange={(e) => setEdit({ ...edit, isActive: e.target.value === 'on' })}
@@ -433,10 +433,10 @@ function ThresholdRowDesktop(props: {
 }) {
   const { t, editing } = props;
   return (
-    <tr className="border-t border-slate-100 align-top hover:bg-slate-50/60">
+    <tr className="border-t border-slate-100 dark:border-slate-700 align-top hover:bg-slate-50/60">
       <td className="px-3 py-3">
-        <p className="font-semibold text-slate-800">{t.param}</p>
-        <p className="font-mono text-[11px] text-slate-400">{t.code}</p>
+        <p className="font-semibold text-slate-800 dark:text-slate-100">{t.param}</p>
+        <p className="font-mono text-[11px] text-slate-400 dark:text-slate-500">{t.code}</p>
       </td>
       <td className="px-3 py-3">
         {editing ? (
@@ -460,7 +460,7 @@ function ThresholdRowDesktop(props: {
           {!editing ? (
             <button
               onClick={props.onEdit}
-              className="rounded-lg p-2 text-slate-500 hover:bg-violet-50 hover:text-violet-700"
+              className="rounded-lg p-2 text-slate-500 dark:text-slate-400 hover:bg-violet-50 hover:text-violet-700"
               title="Edit threshold"
             >
               <Pencil size={15} />
@@ -468,7 +468,7 @@ function ThresholdRowDesktop(props: {
           ) : null}
           <button
             onClick={props.onAudit}
-            className="rounded-lg p-2 text-slate-500 hover:bg-violet-50 hover:text-violet-700"
+            className="rounded-lg p-2 text-slate-500 dark:text-slate-400 hover:bg-violet-50 hover:text-violet-700"
             title="Audit trail"
           >
             <History size={15} />
@@ -495,8 +495,8 @@ function ThresholdRowMobile(props: {
     <div className="rounded-xl border border-slate-200/70 p-4">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <p className="text-sm font-bold text-slate-800">{t.param}</p>
-          <p className="font-mono text-[11px] text-slate-400">{t.code}</p>
+          <p className="text-sm font-bold text-slate-800 dark:text-slate-100">{t.param}</p>
+          <p className="font-mono text-[11px] text-slate-400 dark:text-slate-500">{t.code}</p>
         </div>
         <Badge tone={t.isActive ? 'pass' : 'neutral'}>{t.isActive ? 'Active' : 'Inactive'}</Badge>
       </div>

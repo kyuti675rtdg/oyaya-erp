@@ -204,7 +204,7 @@ export function StockReservation() {
             <div className="hidden overflow-x-auto md:block">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-100 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500">
+                  <tr className="border-b border-slate-100 dark:border-slate-700 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                     <th className="py-2 pr-3">Ref no</th>
                     <th className="py-2 pr-3">Reference</th>
                     <th className="py-2 pr-3">Product</th>
@@ -219,14 +219,14 @@ export function StockReservation() {
                   {(listQ.data ?? []).map((r) => (
                     <tr key={r.id} className="border-b border-slate-50 hover:bg-slate-50/50">
                       <td className="py-2.5 pr-3 font-mono text-xs font-bold text-violet-700">{r.refNo}</td>
-                      <td className="py-2.5 pr-3 text-slate-600">{r.reference ?? '—'}</td>
+                      <td className="py-2.5 pr-3 text-slate-600 dark:text-slate-300">{r.reference ?? '—'}</td>
                       <td className="py-2.5 pr-3">
-                        <span className="font-semibold text-slate-800">{r.productName}</span>
-                        {r.batchNo && <span className="text-xs text-slate-500"> · {r.batchNo}</span>}
+                        <span className="font-semibold text-slate-800 dark:text-slate-100">{r.productName}</span>
+                        {r.batchNo && <span className="text-xs text-slate-500 dark:text-slate-400"> · {r.batchNo}</span>}
                       </td>
-                      <td className="py-2.5 pr-3 font-mono text-xs font-semibold text-slate-700">{r.locationCode}</td>
+                      <td className="py-2.5 pr-3 font-mono text-xs font-semibold text-slate-700 dark:text-slate-200">{r.locationCode}</td>
                       <td className="py-2.5 pr-3 text-right font-bold tabular-nums">{fmtQ(r.quintals)}</td>
-                      <td className="py-2.5 pr-3 text-slate-600">
+                      <td className="py-2.5 pr-3 text-slate-600 dark:text-slate-300">
                         {r.expiresAt ? (
                           <span className={isExpiringSoon(r) ? 'font-bold text-amber-700' : ''}>{fmtDate(r.expiresAt)}</span>
                         ) : (
@@ -242,7 +242,7 @@ export function StockReservation() {
                             <div className="inline-flex gap-1.5">
                               <button
                                 onClick={() => rowMut.mutate({ id: r.id, action: 'release' })}
-                                className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                                className="rounded-lg border border-slate-200 dark:border-slate-700 px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700"
                               >
                                 <span className="inline-flex items-center gap-1">
                                   <RotateCcw size={12} /> Release
@@ -256,7 +256,7 @@ export function StockReservation() {
                               </button>
                             </div>
                           ) : (
-                            <span className="text-xs text-slate-400">—</span>
+                            <span className="text-xs text-slate-400 dark:text-slate-500">—</span>
                           )}
                         </td>
                       )}
@@ -267,12 +267,12 @@ export function StockReservation() {
             </div>
             <div className="space-y-3 md:hidden">
               {(listQ.data ?? []).map((r) => (
-                <div key={r.id} className="rounded-xl border border-slate-200 p-4">
+                <div key={r.id} className="rounded-xl border border-slate-200 dark:border-slate-700 p-4">
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <p className="font-mono text-xs font-bold text-violet-700">{r.refNo}</p>
-                      <p className="font-semibold text-slate-800">{r.productName}</p>
-                      <p className="text-xs text-slate-500">
+                      <p className="font-semibold text-slate-800 dark:text-slate-100">{r.productName}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
                         {r.locationCode}
                         {r.reference ? ` · ${r.reference}` : ''}
                         {r.expiresAt ? ` · exp ${fmtDate(r.expiresAt)}` : ''}
@@ -281,12 +281,12 @@ export function StockReservation() {
                     <StatusBadge tone={docStatusTone(r.status)} label={r.status} />
                   </div>
                   <div className="mt-2 flex items-center justify-between">
-                    <span className="text-sm font-bold tabular-nums text-slate-800">{fmtQ(r.quintals)} Qt</span>
+                    <span className="text-sm font-bold tabular-nums text-slate-800 dark:text-slate-100">{fmtQ(r.quintals)} Qt</span>
                     {canManage && r.status === 'ACTIVE' && (
                       <div className="inline-flex gap-1.5">
                         <button
                           onClick={() => rowMut.mutate({ id: r.id, action: 'release' })}
-                          className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-semibold text-slate-700"
+                          className="rounded-lg border border-slate-200 dark:border-slate-700 px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200"
                         >
                           Release
                         </button>
@@ -307,7 +307,7 @@ export function StockReservation() {
         {rowMut.isError && (
           <ErrorBox message={(rowMut.error as Error)?.message ?? 'Action failed'} onRetry={() => rowMut.reset()} />
         )}
-        <p className="mt-4 text-[11px] text-slate-400">
+        <p className="mt-4 text-[11px] text-slate-400 dark:text-slate-500">
           Tip: "Consume" marks the reservation used when its goods are picked into a dispatch.
         </p>
       </div>

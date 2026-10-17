@@ -143,7 +143,7 @@ export function DocSharing() {
                         {s.token ? <Badge tone="pass">Link</Badge> : null}
                         {expired ? <Badge tone="critical">Expired</Badge> : null}
                       </div>
-                      <p className="mt-1 text-xs text-slate-500">
+                      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                         {s.accessCount} access{s.accessCount === 1 ? '' : 'es'}
                         {s.expiresAt ? ` · expires ${fmtDate(s.expiresAt)}` : ' · no expiry'} · created{' '}
                         {fmtDateTime(s.createdAt)}
@@ -157,7 +157,7 @@ export function DocSharing() {
                         type="button"
                         onClick={() => copyLink(s.token, s.id)}
                         title="Copy link"
-                        className="rounded-lg p-1.5 text-slate-400 hover:bg-violet-50 hover:text-violet-700"
+                        className="rounded-lg p-1.5 text-slate-400 dark:text-slate-500 hover:bg-violet-50 hover:text-violet-700"
                       >
                         {copied === s.id ? <Check size={15} className="text-emerald-600" /> : <Copy size={15} />}
                       </button>
@@ -167,7 +167,7 @@ export function DocSharing() {
                         type="button"
                         onClick={() => deleteMut.mutate(s.id)}
                         title="Revoke"
-                        className="rounded-lg p-1.5 text-slate-400 hover:bg-rose-50 hover:text-rose-600"
+                        className="rounded-lg p-1.5 text-slate-400 dark:text-slate-500 hover:bg-rose-50 hover:text-rose-600"
                       >
                         <Trash2 size={15} />
                       </button>
@@ -177,7 +177,7 @@ export function DocSharing() {
               })}
             </div>
           )}
-          <p className="mt-4 rounded-xl bg-slate-50 p-3 text-xs text-slate-500">
+          <p className="mt-4 rounded-xl bg-slate-50 dark:bg-slate-800 p-3 text-xs text-slate-500 dark:text-slate-400">
             Link shares work without login — anyone with the link can open the file until it expires or is revoked.
             User/role shares are recorded for audit.
           </p>
@@ -188,8 +188,8 @@ export function DocSharing() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
           <form onSubmit={submit} className={`${cardShell} w-full max-w-md space-y-4 !p-6`}>
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-slate-800">New Share</h3>
-              <button type="button" onClick={() => setShowShare(false)} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100" aria-label="Close">
+              <h3 className="text-base font-bold text-slate-800 dark:text-slate-100">New Share</h3>
+              <button type="button" onClick={() => setShowShare(false)} className="rounded-lg p-1.5 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700" aria-label="Close">
                 <X size={18} />
               </button>
             </div>
@@ -202,7 +202,7 @@ export function DocSharing() {
             <Field label="Expiry date (optional)">
               <TextInput type="date" value={form.expiresAt} onChange={(e) => setForm({ ...form, expiresAt: e.target.value })} />
             </Field>
-            <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-700">
+            <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
               <input
                 type="checkbox"
                 checked={form.createLink}

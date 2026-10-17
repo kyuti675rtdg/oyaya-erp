@@ -108,8 +108,8 @@ export function PayrollProcessing() {
           <ClipboardList className="h-5 w-5" />
         </span>
         <div>
-          <h1 className="text-xl font-bold text-slate-900">Payroll Processing & Approval</h1>
-          <p className="text-sm text-slate-500">
+          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Payroll Processing & Approval</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             Compute → review → approve → post to finance. Posted runs are locked.
           </p>
         </div>
@@ -130,14 +130,14 @@ export function PayrollProcessing() {
               </button>
             </form>
           ) : (
-            <p className="text-sm text-slate-500">You need payroll management rights to compute a run.</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">You need payroll management rights to compute a run.</p>
           )}
 
-          <h3 className="mb-3 mt-8 text-sm font-bold uppercase tracking-widest text-slate-500">Workflow</h3>
-          <ol className="space-y-2 text-sm text-slate-600">
+          <h3 className="mb-3 mt-8 text-sm font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Workflow</h3>
+          <ol className="space-y-2 text-sm text-slate-600 dark:text-slate-300">
             <li className="flex gap-2"><span className="tnum font-bold text-violet-700">1.</span> Compute creates a DRAFT run with one line per active employee.</li>
             <li className="flex gap-2"><span className="tnum font-bold text-violet-700">2.</span> Review the lines and totals below.</li>
-            <li className="flex gap-2"><span className="tnum font-bold text-violet-700">3.</span> Approve (requires <code className="rounded bg-slate-100 px-1">hr:approve</code>) moves DRAFT → APPROVED.</li>
+            <li className="flex gap-2"><span className="tnum font-bold text-violet-700">3.</span> Approve (requires <code className="rounded bg-slate-100 dark:bg-slate-700 px-1">hr:approve</code>) moves DRAFT → APPROVED.</li>
             <li className="flex gap-2"><span className="tnum font-bold text-violet-700">4.</span> Post writes the payroll journal to Finance (Dr 6000 / Cr 2000) and generates payslips — the run locks.</li>
           </ol>
         </div>
@@ -216,19 +216,19 @@ export function PayrollProcessing() {
                         <option value="TRIP_BASED">Drivers</option>
                       </Select>
                     </Field>
-                    <p className="text-xs text-slate-500">Review lines for one payroll mode at a time.</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Review lines for one payroll mode at a time.</p>
                   </div>
                   <div className="tnum mb-4 grid grid-cols-2 gap-3 text-sm lg:grid-cols-4">
-                    <div className="rounded-xl bg-slate-50 px-4 py-3">
-                      <p className="text-xs text-slate-500">Gross</p>
+                    <div className="rounded-xl bg-slate-50 dark:bg-slate-800 px-4 py-3">
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Gross</p>
                       <p className="font-bold">{fmtBirr(totals.gross)}</p>
                     </div>
-                    <div className="rounded-xl bg-slate-50 px-4 py-3">
-                      <p className="text-xs text-slate-500">Allowances</p>
+                    <div className="rounded-xl bg-slate-50 dark:bg-slate-800 px-4 py-3">
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Allowances</p>
                       <p className="font-bold text-emerald-700">+{fmtBirr(totals.allow)}</p>
                     </div>
-                    <div className="rounded-xl bg-slate-50 px-4 py-3">
-                      <p className="text-xs text-slate-500">Deductions</p>
+                    <div className="rounded-xl bg-slate-50 dark:bg-slate-800 px-4 py-3">
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Deductions</p>
                       <p className="font-bold text-red-700">−{fmtBirr(totals.ded)}</p>
                     </div>
                     <div className="rounded-xl bg-violet-50 px-4 py-3">

@@ -135,7 +135,7 @@ export function CleaningTracking() {
       label: 'Action',
       render: (r: CleaningAction) => (
         <span>
-          <span className="font-semibold text-slate-800">{r.action}</span>
+          <span className="font-semibold text-slate-800 dark:text-slate-100">{r.action}</span>
           {isOverdue(r) ? <Badge tone="critical" className="ml-2">Overdue</Badge> : null}
         </span>
       )
@@ -232,10 +232,10 @@ export function CleaningTracking() {
               {(listQ.data ?? []).map((r) => (
                 <div key={r.id} className={`rounded-xl border bg-white p-4 ${isOverdue(r) ? 'border-rose-300' : 'border-line'}`}>
                   <div className="flex items-start justify-between gap-2">
-                    <p className="font-bold text-slate-800">{r.action}</p>
+                    <p className="font-bold text-slate-800 dark:text-slate-100">{r.action}</p>
                     <Badge tone={ACTION_STATUS_TONE[r.status]}>{r.status.replace('_', ' ')}</Badge>
                   </div>
-                  <p className="mt-1 text-xs text-slate-500">
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                     {r.owner} · Due <span className={`tabular-nums ${isOverdue(r) ? 'font-bold text-rose-700' : ''}`}>{fmtDate(r.dueDate)}</span>
                     {isOverdue(r) ? ' · OVERDUE' : ''}
                   </p>
@@ -294,14 +294,14 @@ export function CleaningTracking() {
               </Button>
             </div>
             <dl className="space-y-2 text-sm">
-              <div className="flex justify-between"><dt className="text-slate-500">Owner</dt><dd className="font-medium">{detail.owner}</dd></div>
-              <div className="flex justify-between"><dt className="text-slate-500">Due date</dt><dd className="font-medium tabular-nums">{fmtDate(detail.dueDate)}</dd></div>
-              <div className="flex justify-between"><dt className="text-slate-500">Status</dt><dd><Badge tone={ACTION_STATUS_TONE[detail.status]}>{detail.status.replace('_', ' ')}</Badge></dd></div>
+              <div className="flex justify-between"><dt className="text-slate-500 dark:text-slate-400">Owner</dt><dd className="font-medium">{detail.owner}</dd></div>
+              <div className="flex justify-between"><dt className="text-slate-500 dark:text-slate-400">Due date</dt><dd className="font-medium tabular-nums">{fmtDate(detail.dueDate)}</dd></div>
+              <div className="flex justify-between"><dt className="text-slate-500 dark:text-slate-400">Status</dt><dd><Badge tone={ACTION_STATUS_TONE[detail.status]}>{detail.status.replace('_', ' ')}</Badge></dd></div>
               {detail.verificationNotes ? (
-                <div><dt className="text-slate-500">Verification</dt><dd className="font-medium">{detail.verificationNotes}</dd></div>
+                <div><dt className="text-slate-500 dark:text-slate-400">Verification</dt><dd className="font-medium">{detail.verificationNotes}</dd></div>
               ) : null}
               {detail.verifiedAt ? (
-                <div className="flex justify-between"><dt className="text-slate-500">Verified at</dt><dd className="font-medium tabular-nums">{fmtDate(detail.verifiedAt)}</dd></div>
+                <div className="flex justify-between"><dt className="text-slate-500 dark:text-slate-400">Verified at</dt><dd className="font-medium tabular-nums">{fmtDate(detail.verifiedAt)}</dd></div>
               ) : null}
             </dl>
             <div className="mt-4 flex flex-wrap gap-2">
@@ -324,7 +324,7 @@ export function CleaningTracking() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <Card className="w-full max-w-lg p-6">
             <h3 className="text-lg font-bold text-ink">Verify action</h3>
-            <p className="mt-1 text-sm text-slate-600">{verifyFor.action}</p>
+            <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{verifyFor.action}</p>
             <div className="mt-3">
               <Field label="Verification notes" required>
                 <TextArea value={verificationNotes} onChange={(e) => setVerificationNotes(e.target.value)} placeholder="How was completion verified?" />

@@ -191,7 +191,7 @@ export function ProdDowntimeLogs() {
                 onChange={(e) => setFromDate(e.target.value)}
                 aria-label="From date"
               />
-              <span className="text-xs text-slate-400">to</span>
+              <span className="text-xs text-slate-400 dark:text-slate-500">to</span>
               <TextInput
                 type="date"
                 value={toDate}
@@ -208,23 +208,23 @@ export function ProdDowntimeLogs() {
         ) : (
           <>
             <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-              <div className="rounded-xl bg-slate-50 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Avg uptime</p>
+              <div className="rounded-xl bg-slate-50 dark:bg-slate-800 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Avg uptime</p>
                 <p className={`tabular-nums mt-1 text-2xl font-bold ${totals.uptime >= 95 ? 'text-emerald-700' : totals.uptime >= 90 ? 'text-amber-700' : 'text-rose-600'}`}>
                   {totals.uptime.toFixed(1)}%
                 </p>
               </div>
-              <div className="rounded-xl bg-slate-50 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Minutes lost</p>
-                <p className="tabular-nums mt-1 text-2xl font-bold text-slate-800">{fmtMinutes(totals.minutes)}</p>
+              <div className="rounded-xl bg-slate-50 dark:bg-slate-800 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Minutes lost</p>
+                <p className="tabular-nums mt-1 text-2xl font-bold text-slate-800 dark:text-slate-100">{fmtMinutes(totals.minutes)}</p>
               </div>
-              <div className="rounded-xl bg-slate-50 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Events</p>
-                <p className="tabular-nums mt-1 text-2xl font-bold text-slate-800">{fmtInt(totals.events)}</p>
+              <div className="rounded-xl bg-slate-50 dark:bg-slate-800 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Events</p>
+                <p className="tabular-nums mt-1 text-2xl font-bold text-slate-800 dark:text-slate-100">{fmtInt(totals.events)}</p>
               </div>
-              <div className="rounded-xl bg-slate-50 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Machines affected</p>
-                <p className="tabular-nums mt-1 text-2xl font-bold text-slate-800">{fmtInt(totals.machines)}</p>
+              <div className="rounded-xl bg-slate-50 dark:bg-slate-800 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Machines affected</p>
+                <p className="tabular-nums mt-1 text-2xl font-bold text-slate-800 dark:text-slate-100">{fmtInt(totals.machines)}</p>
               </div>
             </div>
             {(summaryQ.data ?? []).length > 0 ? (
@@ -232,14 +232,14 @@ export function ProdDowntimeLogs() {
                 <DataTable<DowntimeSummaryRow>
                   keyOf={(r) => r.machineLine}
                   columns={[
-                    { key: 'machineLine', label: 'Machine / Line', render: (r) => <span className="font-bold text-slate-800">{r.machineLine}</span> },
+                    { key: 'machineLine', label: 'Machine / Line', render: (r) => <span className="font-bold text-slate-800 dark:text-slate-100">{r.machineLine}</span> },
                     { key: 'events', label: 'Events', mono: true },
                     { key: 'minutesLost', label: 'Lost', mono: true, render: (r) => fmtMinutes(r.minutesLost) },
                     {
                       key: 'byCategory',
                       label: 'By category',
                       render: (r) => (
-                        <span className="tabular-nums text-xs text-slate-600">
+                        <span className="tabular-nums text-xs text-slate-600 dark:text-slate-300">
                           {Object.entries(r.byCategory)
                             .map(([c, m]) => `${c}: ${m}m`)
                             .join(' · ')}
@@ -372,7 +372,7 @@ export function ProdDowntimeLogs() {
                       {
                         key: 'machineLine',
                         label: 'Machine / Line',
-                        render: (r) => <span className="font-bold text-slate-800">{r.machineLine}</span>
+                        render: (r) => <span className="font-bold text-slate-800 dark:text-slate-100">{r.machineLine}</span>
                       },
                       { key: 'startedAt', label: 'Start', render: (r) => fmtDateTime(r.startedAt) },
                       { key: 'minutesLost', label: 'Lost', mono: true, render: (r) => fmtMinutes(r.minutesLost) },
@@ -396,14 +396,14 @@ export function ProdDowntimeLogs() {
                     (logsQ.data ?? []).map((r) => (
                       <div key={r.id} className="rounded-xl border border-slate-200/70 p-4">
                         <div className="flex items-center justify-between">
-                          <span className="font-bold text-slate-800">{r.machineLine}</span>
+                          <span className="font-bold text-slate-800 dark:text-slate-100">{r.machineLine}</span>
                           <Badge tone={categoryTone(r.reasonCategory)}>{r.reasonCategory}</Badge>
                         </div>
-                        <p className="tabular-nums mt-1 text-xs text-slate-500">
+                        <p className="tabular-nums mt-1 text-xs text-slate-500 dark:text-slate-400">
                           {fmtDateTime(r.startedAt)} · lost {fmtMinutes(r.minutesLost)}
                         </p>
-                        {r.description ? <p className="mt-1 text-sm text-slate-600">{r.description}</p> : null}
-                        {r.resolvedBy ? <p className="mt-1 text-xs text-slate-500">Resolved by {r.resolvedBy}</p> : null}
+                        {r.description ? <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{r.description}</p> : null}
+                        {r.resolvedBy ? <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Resolved by {r.resolvedBy}</p> : null}
                       </div>
                     ))
                   )}

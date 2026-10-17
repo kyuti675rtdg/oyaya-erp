@@ -196,8 +196,8 @@ export function AccountsPayable() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-extrabold text-slate-900">Accounts Payable</h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <h1 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100">Accounts Payable</h1>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
           Supplier invoice balances, aging and settlement for wheat procurement.
         </p>
       </div>
@@ -217,9 +217,9 @@ export function AccountsPayable() {
               <span className={`rounded-xl p-2.5 ${c.accent}`}>
                 <c.icon className="h-5 w-5" />
               </span>
-              <p className="text-sm font-medium text-slate-500">{c.label}</p>
+              <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{c.label}</p>
             </div>
-            <p className="tnum mt-3 text-2xl font-extrabold text-slate-900">
+            <p className="tnum mt-3 text-2xl font-extrabold text-slate-900 dark:text-slate-100">
               {invoicesQ.isLoading ? '—' : c.value}
             </p>
           </div>
@@ -254,7 +254,7 @@ export function AccountsPayable() {
             <div className="min-w-56 flex-1 sm:max-w-xs">
               <Field label="Search supplier / invoice">
                 <div className="relative">
-                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
                   <TextInput
                     value={supplierSearch}
                     onChange={(e) => setSupplierSearch(e.target.value)}
@@ -269,15 +269,15 @@ export function AccountsPayable() {
           {/* Aging table */}
           <div className={cardShell}>
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-bold text-slate-900">AP aging</h2>
-              <span className="text-sm text-slate-500">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">AP aging</h2>
+              <span className="text-sm text-slate-500 dark:text-slate-400">
                 {filtered.length} of {enriched.length} invoices
               </span>
             </div>
             <div className="-mx-5 overflow-x-auto px-5">
               <table className="w-full min-w-[960px] text-sm">
                 <thead>
-                  <tr className="border-b border-slate-100 text-left text-xs uppercase tracking-wide text-slate-500">
+                  <tr className="border-b border-slate-100 dark:border-slate-700 text-left text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
                     <th className="py-2 pr-3">Invoice</th>
                     <th className="py-2 pr-3">Supplier</th>
                     <th className="py-2 pr-3">Intake</th>
@@ -298,25 +298,25 @@ export function AccountsPayable() {
                       key={inv.id}
                       className="border-b border-slate-50 last:border-0 hover:bg-slate-50/60"
                     >
-                      <td className="tnum py-3 pr-3 font-bold text-slate-900">{inv.invoiceNo}</td>
+                      <td className="tnum py-3 pr-3 font-bold text-slate-900 dark:text-slate-100">{inv.invoiceNo}</td>
                       <td className="py-3 pr-3">{inv.intake?.supplier?.name ?? '—'}</td>
-                      <td className="tnum py-3 pr-3 text-slate-600">
+                      <td className="tnum py-3 pr-3 text-slate-600 dark:text-slate-300">
                         {inv.intake?.intakeNo ?? '—'}
                       </td>
-                      <td className="py-3 pr-3 text-slate-600">{fmtDate(inv.issuedAt)}</td>
-                      <td className="py-3 pr-3 text-slate-600">
+                      <td className="py-3 pr-3 text-slate-600 dark:text-slate-300">{fmtDate(inv.issuedAt)}</td>
+                      <td className="py-3 pr-3 text-slate-600 dark:text-slate-300">
                         {inv.dueDate ? fmtDate(inv.dueDate) : '—'}
                       </td>
                       <td className="tnum py-3 pr-3 text-right">{fmtBirr(inv.amountBirr)}</td>
-                      <td className="tnum py-3 pr-3 text-right text-slate-600">{fmtBirr(paid)}</td>
-                      <td className="tnum py-3 pr-3 text-right font-bold text-slate-900">
+                      <td className="tnum py-3 pr-3 text-right text-slate-600 dark:text-slate-300">{fmtBirr(paid)}</td>
+                      <td className="tnum py-3 pr-3 text-right font-bold text-slate-900 dark:text-slate-100">
                         {fmtBirr(bal)}
                       </td>
                       <td className="tnum py-3 pr-3 text-right">
                         {overdue > 0 ? (
                           <span className="font-semibold text-red-600">{overdue} d</span>
                         ) : (
-                          <span className="text-slate-400">—</span>
+                          <span className="text-slate-400 dark:text-slate-500">—</span>
                         )}
                       </td>
                       <td className="py-3 pr-3">
@@ -335,7 +335,7 @@ export function AccountsPayable() {
                             Pay
                           </button>
                         ) : (
-                          <span className="text-xs text-slate-400">Settled</span>
+                          <span className="text-xs text-slate-400 dark:text-slate-500">Settled</span>
                         )}
                       </td>
                     </tr>
@@ -352,14 +352,14 @@ export function AccountsPayable() {
 
           {/* Payments with voucher links */}
           <div className={cardShell}>
-            <h2 className="mb-4 text-lg font-bold text-slate-900">Recent payments</h2>
+            <h2 className="mb-4 text-lg font-bold text-slate-900 dark:text-slate-100">Recent payments</h2>
             {enriched.every((r) => (r.inv.payments ?? []).length === 0) ? (
               <EmptyState title="No payments recorded yet" sub="Recorded payments will appear here with links to their printable vouchers." />
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[720px] text-sm">
                   <thead>
-                    <tr className="border-b border-slate-100 text-left text-xs uppercase tracking-wide text-slate-500">
+                    <tr className="border-b border-slate-100 dark:border-slate-700 text-left text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
                       <th className="py-2 pr-3">Voucher</th>
                       <th className="py-2 pr-3">Invoice</th>
                       <th className="py-2 pr-3">Supplier</th>
@@ -388,10 +388,10 @@ export function AccountsPayable() {
                               {p.voucherNo}
                             </Link>
                           </td>
-                          <td className="tnum py-2.5 pr-3 text-slate-600">{inv.invoiceNo}</td>
+                          <td className="tnum py-2.5 pr-3 text-slate-600 dark:text-slate-300">{inv.invoiceNo}</td>
                           <td className="py-2.5 pr-3">{inv.intake?.supplier?.name ?? '—'}</td>
-                          <td className="py-2.5 pr-3 text-slate-600">{fmtDate(p.paidAt)}</td>
-                          <td className="py-2.5 pr-3 text-slate-600">
+                          <td className="py-2.5 pr-3 text-slate-600 dark:text-slate-300">{fmtDate(p.paidAt)}</td>
+                          <td className="py-2.5 pr-3 text-slate-600 dark:text-slate-300">
                             {p.method === 'BANK_TRANSFER' ? 'Bank transfer' : p.method === 'CHEQUE' ? 'Cheque' : p.method}
                           </td>
                           <td className="tnum py-2.5 text-right font-bold">{fmtBirr(p.amountBirr)}</td>
@@ -405,7 +405,7 @@ export function AccountsPayable() {
 
           {/* Supplier balances */}
           <div className={cardShell}>
-            <h2 className="mb-4 text-lg font-bold text-slate-900">Supplier balances</h2>
+            <h2 className="mb-4 text-lg font-bold text-slate-900 dark:text-slate-100">Supplier balances</h2>
             {supplierBalances.length === 0 ? (
               <EmptyState title="No outstanding supplier balances" sub="All supplier invoices are settled." />
             ) : (
@@ -413,13 +413,13 @@ export function AccountsPayable() {
                 {supplierBalances.map((s) => (
                   <div
                     key={s.name}
-                    className="rounded-xl border border-slate-100 bg-slate-50/60 p-4"
+                    className="rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/60 p-4"
                   >
-                    <p className="truncate font-bold text-slate-900">{s.name}</p>
+                    <p className="truncate font-bold text-slate-900 dark:text-slate-100">{s.name}</p>
                     <p className="tnum mt-1 text-xl font-extrabold text-violet-700">
                       {fmtBirr(s.outstanding)}
                     </p>
-                    <p className="mt-0.5 text-xs text-slate-500">
+                    <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
                       {s.invoices} open invoice{s.invoices === 1 ? '' : 's'}
                     </p>
                   </div>
@@ -496,20 +496,20 @@ function PayModal({
       aria-label={`Record payment for ${invoice.invoiceNo}`}
     >
       <div
-        className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
+        className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="text-lg font-extrabold text-slate-900">Record payment</h3>
-        <p className="mt-1 text-sm text-slate-500">
-          Invoice <span className="tnum font-bold text-slate-700">{invoice.invoiceNo}</span> —{' '}
+        <h3 className="text-lg font-extrabold text-slate-900 dark:text-slate-100">Record payment</h3>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          Invoice <span className="tnum font-bold text-slate-700 dark:text-slate-200">{invoice.invoiceNo}</span> —{' '}
           {invoice.intake?.supplier?.name ?? 'Supplier'}
         </p>
-        <div className="mt-4 rounded-xl bg-slate-50 px-4 py-3 text-sm">
-          <div className="flex justify-between text-slate-600">
+        <div className="mt-4 rounded-xl bg-slate-50 dark:bg-slate-800 px-4 py-3 text-sm">
+          <div className="flex justify-between text-slate-600 dark:text-slate-300">
             <span>Invoice total</span>
             <span className="tnum font-semibold">{fmtBirr(invoice.amountBirr)}</span>
           </div>
-          <div className="mt-1 flex justify-between font-bold text-slate-900">
+          <div className="mt-1 flex justify-between font-bold text-slate-900 dark:text-slate-100">
             <span>Remaining</span>
             <span className="tnum">{fmtBirr(remaining)}</span>
           </div>

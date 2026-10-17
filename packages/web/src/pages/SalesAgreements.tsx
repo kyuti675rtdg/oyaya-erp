@@ -294,10 +294,10 @@ export function SalesAgreements() {
                     Add tier
                   </Button>
                 </div>
-                <div className="flex items-end text-xs text-slate-500">
+                <div className="flex items-end text-xs text-slate-500 dark:text-slate-400">
                   {draftTiers.length > 0
                     ? draftTiers.map((t, i) => (
-                        <span key={i} className="mr-1 rounded bg-slate-100 px-2 py-1">
+                        <span key={i} className="mr-1 rounded bg-slate-100 dark:bg-slate-700 px-2 py-1">
                           ≥{t.minBags} bags: {t.discountPct ?? 0}%
                         </span>
                       ))
@@ -308,11 +308,11 @@ export function SalesAgreements() {
               {lines.length > 0 ? (
                 <ul className="mt-3 space-y-1">
                   {lines.map((l, i) => (
-                    <li key={i} className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2 text-sm">
+                    <li key={i} className="flex items-center justify-between rounded-lg bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm">
                       <span>
                         {productNameBy.get(l.productId)} {l.packagingSizeId ? `· ${packLabelBy.get(l.packagingSizeId)}` : ''} —{' '}
                         <span className="tnum font-bold">{fmtBirr(Number(l.priceBirr))}/q</span>
-                        {l.tiers.length > 0 ? <span className="ml-2 text-xs text-slate-500">+{l.tiers.length} tier(s)</span> : null}
+                        {l.tiers.length > 0 ? <span className="ml-2 text-xs text-slate-500 dark:text-slate-400">+{l.tiers.length} tier(s)</span> : null}
                       </span>
                       <button
                         type="button"
@@ -376,24 +376,24 @@ export function SalesAgreements() {
               Look up price
             </Button>
             {quote ? (
-              <div className="rounded-xl bg-slate-50 px-4 py-3 text-sm">
+              <div className="rounded-xl bg-slate-50 dark:bg-slate-800 px-4 py-3 text-sm">
                 {quote.agreementNo ? (
                   <>
                     <div className="flex justify-between">
-                      <span className="text-slate-500">Agreement</span>
+                      <span className="text-slate-500 dark:text-slate-400">Agreement</span>
                       <span className="tnum font-bold">{quote.agreementNo}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-500">Price</span>
+                      <span className="text-slate-500 dark:text-slate-400">Price</span>
                       <span className="tnum text-lg font-extrabold text-ink">{fmtBirr(quote.priceBirr)}/q</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-500">Discount</span>
+                      <span className="text-slate-500 dark:text-slate-400">Discount</span>
                       <span className="tnum font-semibold">{quote.discountPct}%</span>
                     </div>
                   </>
                 ) : (
-                  <p className="text-slate-500">No active agreement covers this customer/product.</p>
+                  <p className="text-slate-500 dark:text-slate-400">No active agreement covers this customer/product.</p>
                 )}
               </div>
             ) : null}
@@ -465,7 +465,7 @@ export function SalesAgreements() {
             />
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-xs text-slate-500">
+                <tr className="text-left text-xs text-slate-500 dark:text-slate-400">
                   <th className="py-1">Product</th>
                   <th className="py-1">Pack size</th>
                   <th className="py-1 text-right">Price (ETB/q)</th>
@@ -478,9 +478,9 @@ export function SalesAgreements() {
                     <td className="py-1">{l.product?.name ?? l.productId}</td>
                     <td className="py-1">{l.packagingSize?.label ?? 'Any'}</td>
                     <td className="tnum py-1 text-right font-semibold">{fmtBirr(l.priceBirr)}</td>
-                    <td className="py-1 text-xs text-slate-500">
+                    <td className="py-1 text-xs text-slate-500 dark:text-slate-400">
                       {(l.tiers ?? []).map((t, i) => (
-                        <span key={i} className="mr-1 rounded bg-slate-100 px-2 py-0.5">
+                        <span key={i} className="mr-1 rounded bg-slate-100 dark:bg-slate-700 px-2 py-0.5">
                           ≥{t.minBags} bags → {t.priceBirr !== undefined ? fmtBirr(t.priceBirr) : `${t.discountPct ?? 0}% off`}
                         </span>
                       ))}

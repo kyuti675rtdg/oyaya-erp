@@ -215,7 +215,7 @@ export function Vouchers() {
               {
                 key: 'cash',
                 label: 'Cash / bank',
-                render: (r) => r.cashBankAccount?.name ?? <span className="text-slate-400">Cash & Bank</span>
+                render: (r) => r.cashBankAccount?.name ?? <span className="text-slate-400 dark:text-slate-500">Cash & Bank</span>
               },
               {
                 key: 'posting',
@@ -280,7 +280,7 @@ export function Vouchers() {
                 <h3 className="text-lg font-bold text-ink">
                   New {kind === 'PAYMENT' ? 'payment' : 'receipt'} voucher
                 </h3>
-                <p className="mt-0.5 text-sm text-slate-500">
+                <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
                   {kind === 'PAYMENT'
                     ? 'Debit an expense/payable account, credit cash or bank.'
                     : 'Debit cash or bank, credit a revenue/receivable account.'}
@@ -288,7 +288,7 @@ export function Vouchers() {
               </div>
               <button
                 onClick={() => setModalOpen(false)}
-                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100"
+                className="rounded-lg p-1.5 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700"
                 aria-label="Close"
               >
                 <X className="h-5 w-5" />
@@ -485,11 +485,11 @@ function FinanceVoucherDetail({ voucher: v, onPrint }: { voucher: FinanceVoucher
                 <FileText className="h-5 w-5" />
               </span>
               <div>
-                <h1 className="text-xl font-extrabold text-slate-900">
+                <h1 className="text-xl font-extrabold text-slate-900 dark:text-slate-100">
                   {isPayment ? 'Payment' : 'Receipt'} voucher{' '}
                   <span className="tnum font-mono text-violet-700">{v.voucherNo}</span>
                 </h1>
-                <p className="mt-0.5 text-sm text-slate-500">
+                <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
                   {fmtBirr(v.amountBirr)} {isPayment ? 'to' : 'from'} {v.counterparty}
                 </p>
               </div>
@@ -514,12 +514,12 @@ function FinanceVoucherDetail({ voucher: v, onPrint }: { voucher: FinanceVoucher
             </Button>
           </div>
         </div>
-        {notice ? <p className="mt-3 text-sm font-semibold text-slate-600">{notice}</p> : null}
+        {notice ? <p className="mt-3 text-sm font-semibold text-slate-600 dark:text-slate-300">{notice}</p> : null}
       </div>
 
       <div className={`${cardShell} no-print`}>
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-bold text-slate-900">Approval workflow</h2>
+          <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Approval workflow</h2>
           <StatusBadge status={v.status} />
         </div>
         <ol className="grid gap-3 sm:grid-cols-3">
@@ -538,9 +538,9 @@ function FinanceVoucherDetail({ voucher: v, onPrint }: { voucher: FinanceVoucher
                 >
                   {s.done ? <Check className="h-3.5 w-3.5" /> : '•'}
                 </span>
-                <p className="font-bold text-slate-900">{s.label}</p>
+                <p className="font-bold text-slate-900 dark:text-slate-100">{s.label}</p>
               </div>
-              <p className="mt-1 text-xs text-slate-500">{s.desc}</p>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{s.desc}</p>
               <p className={`tnum mt-2 text-xs font-semibold ${s.done ? 'text-emerald-700' : 'text-slate-400'}`}>
                 {s.when}
               </p>
@@ -549,10 +549,10 @@ function FinanceVoucherDetail({ voucher: v, onPrint }: { voucher: FinanceVoucher
         </ol>
       </div>
 
-      <div className="print-sheet mx-auto max-w-3xl rounded-xl border border-line bg-white p-8 shadow-sm">
+      <div className="print-sheet mx-auto max-w-3xl rounded-xl border border-line bg-white dark:bg-slate-800 p-8 shadow-sm">
         <div className="border-b-2 border-ink pb-4 text-center">
           <h1 className="text-2xl font-extrabold text-ink">OYAYA FLOUR FACTORY</h1>
-          <p className="text-sm text-slate-600">{isPayment ? 'Payment Voucher' : 'Receipt Voucher'}</p>
+          <p className="text-sm text-slate-600 dark:text-slate-300">{isPayment ? 'Payment Voucher' : 'Receipt Voucher'}</p>
         </div>
         <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
           <p>
@@ -655,10 +655,10 @@ function ApPaymentVoucherDetail({
                 <FileText className="h-5 w-5" />
               </span>
               <div>
-                <h1 className="text-xl font-extrabold text-slate-900">
+                <h1 className="text-xl font-extrabold text-slate-900 dark:text-slate-100">
                   Payment voucher <span className="tnum font-mono text-violet-700">{v.voucherNo}</span>
                 </h1>
-                <p className="mt-0.5 text-sm text-slate-500">
+                <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
                   {fmtBirr(v.amountBirr)} to {payee} — {inv.invoiceNo} (supplier settlement)
                 </p>
               </div>
@@ -677,7 +677,7 @@ function ApPaymentVoucherDetail({
 
       <div className={`${cardShell} no-print`}>
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-bold text-slate-900">Approval workflow</h2>
+          <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Approval workflow</h2>
           {isPaid ? (
             <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold uppercase tracking-wide text-emerald-700">
               <BadgeCheck className="h-4 w-4" /> Approved
@@ -700,9 +700,9 @@ function ApPaymentVoucherDetail({
                 >
                   {s.done ? <Check className="h-3.5 w-3.5" /> : '•'}
                 </span>
-                <p className="font-bold text-slate-900">{s.label}</p>
+                <p className="font-bold text-slate-900 dark:text-slate-100">{s.label}</p>
               </div>
-              <p className="mt-1 text-xs text-slate-500">{s.desc}</p>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{s.desc}</p>
               <p className={`tnum mt-2 text-xs font-semibold ${s.done ? 'text-emerald-700' : 'text-slate-400'}`}>
                 {s.when}
               </p>
@@ -711,10 +711,10 @@ function ApPaymentVoucherDetail({
         </ol>
       </div>
 
-      <div className="print-sheet mx-auto max-w-3xl rounded-xl border border-line bg-white p-8 shadow-sm">
+      <div className="print-sheet mx-auto max-w-3xl rounded-xl border border-line bg-white dark:bg-slate-800 p-8 shadow-sm">
         <div className="border-b-2 border-ink pb-4 text-center">
           <h1 className="text-2xl font-extrabold text-ink">OYAYA FLOUR FACTORY</h1>
-          <p className="text-sm text-slate-600">Payment Voucher</p>
+          <p className="text-sm text-slate-600 dark:text-slate-300">Payment Voucher</p>
         </div>
         <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
           <p>

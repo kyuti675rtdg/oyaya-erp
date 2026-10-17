@@ -121,7 +121,7 @@ export function KnowledgeBase() {
               <Button variant="secondary" onClick={() => setViewId(null)}>
                 <ChevronLeft size={16} /> Back
               </Button>
-              <span className="inline-flex items-center gap-1 text-xs text-slate-500">
+              <span className="inline-flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
                 <Eye size={14} /> {fmtInt(detail.views)} views
               </span>
             </div>
@@ -133,25 +133,25 @@ export function KnowledgeBase() {
             {detail.tags.length > 0 && (
               <div className="mb-4 flex flex-wrap gap-1.5">
                 {detail.tags.map((t) => (
-                  <span key={t} className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
+                  <span key={t} className="rounded-full bg-slate-100 dark:bg-slate-700 px-2.5 py-0.5 text-xs font-medium text-slate-600 dark:text-slate-300">
                     {t}
                   </span>
                 ))}
               </div>
             )}
-            <div className="whitespace-pre-wrap text-sm leading-relaxed text-slate-700">{detail.content}</div>
+            <div className="whitespace-pre-wrap text-sm leading-relaxed text-slate-700 dark:text-slate-200">{detail.content}</div>
           </div>
           <div className={`${cardShell} col-span-12 h-fit lg:col-span-4`}>
-            <h3 className="mb-3 text-sm font-bold text-slate-800">Related Articles</h3>
+            <h3 className="mb-3 text-sm font-bold text-slate-800 dark:text-slate-100">Related Articles</h3>
             {related.length === 0 ? (
-              <p className="text-sm text-slate-500">No related articles.</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">No related articles.</p>
             ) : (
               <div className="space-y-2">
                 {related.map((a) => (
                   <button
                     key={a.id}
                     onClick={() => setViewId(a.id)}
-                    className="block w-full rounded-lg border border-slate-200/70 p-3 text-left text-sm font-medium text-slate-700 hover:border-violet-300"
+                    className="block w-full rounded-lg border border-slate-200/70 p-3 text-left text-sm font-medium text-slate-700 dark:text-slate-200 hover:border-violet-300"
                   >
                     {a.title}
                   </button>
@@ -165,7 +165,7 @@ export function KnowledgeBase() {
           <div className="col-span-12 space-y-5 lg:col-span-8">
             <div className={`${cardShell} flex flex-col gap-3 sm:flex-row`}>
               <div className="relative flex-1">
-                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
                 <TextInput
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
@@ -194,18 +194,18 @@ export function KnowledgeBase() {
                     <button
                       key={a.id}
                       onClick={() => setViewId(a.id)}
-                      className="flex w-full items-center justify-between gap-3 py-3 text-left hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500"
+                      className="flex w-full items-center justify-between gap-3 py-3 text-left hover:bg-slate-50 dark:hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500"
                     >
                       <div className="flex min-w-0 items-center gap-3">
                         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-violet-50 text-violet-600">
                           {a.faq ? <HelpCircle size={16} /> : <LifeBuoy size={16} />}
                         </span>
                         <div className="min-w-0">
-                          <p className="flex items-center gap-2 truncate font-semibold text-slate-800">
+                          <p className="flex items-center gap-2 truncate font-semibold text-slate-800 dark:text-slate-100">
                             {a.pinned && <Pin size={13} className="shrink-0 text-amber-500" />}
                             {a.title}
                           </p>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
                             {CATEGORIES[a.category]} · {fmtInt(a.views)} views
                           </p>
                         </div>
@@ -219,21 +219,21 @@ export function KnowledgeBase() {
           </div>
 
           <div className={`${cardShell} col-span-12 h-fit lg:col-span-4`}>
-            <h3 className="mb-3 flex items-center gap-2 text-sm font-bold text-slate-800">
+            <h3 className="mb-3 flex items-center gap-2 text-sm font-bold text-slate-800 dark:text-slate-100">
               <Star size={15} className="text-amber-500" /> Popular Articles
             </h3>
             {popular.length === 0 ? (
-              <p className="text-sm text-slate-500">No articles yet.</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">No articles yet.</p>
             ) : (
               <div className="space-y-2">
                 {popular.map((a, i) => (
                   <button
                     key={a.id}
                     onClick={() => setViewId(a.id)}
-                    className="flex w-full items-start gap-2 rounded-lg p-2 text-left text-sm hover:bg-slate-50"
+                    className="flex w-full items-start gap-2 rounded-lg p-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-700"
                   >
                     <span className="font-bold tabular-nums text-slate-300">{i + 1}</span>
-                    <span className="font-medium text-slate-700">{a.title}</span>
+                    <span className="font-medium text-slate-700 dark:text-slate-200">{a.title}</span>
                   </button>
                 ))}
               </div>
@@ -246,8 +246,8 @@ export function KnowledgeBase() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
           <div className={`${cardShell} max-h-[90vh] w-full max-w-2xl overflow-y-auto`}>
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-bold text-slate-800">New Article</h3>
-              <button onClick={() => setShowForm(false)} className="text-slate-400 hover:text-slate-600">
+              <h3 className="font-bold text-slate-800 dark:text-slate-100">New Article</h3>
+              <button onClick={() => setShowForm(false)} className="text-slate-400 dark:text-slate-500 hover:text-slate-600">
                 <X size={18} />
               </button>
             </div>
@@ -268,11 +268,11 @@ export function KnowledgeBase() {
                 </Field>
               </div>
               <div className="flex gap-4">
-                <label className="flex items-center gap-2 text-sm text-slate-700">
+                <label className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
                   <input type="checkbox" checked={form.faq} onChange={(e) => setForm({ ...form, faq: e.target.checked })} className="rounded" />
                   Mark as FAQ
                 </label>
-                <label className="flex items-center gap-2 text-sm text-slate-700">
+                <label className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
                   <input type="checkbox" checked={form.pinned} onChange={(e) => setForm({ ...form, pinned: e.target.checked })} className="rounded" />
                   Pin to top
                 </label>

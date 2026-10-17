@@ -33,7 +33,7 @@ export function NumPad({
   const backspace = () => onChange(value.slice(0, -1));
 
   return (
-    <div className="rounded-xl border border-line bg-white p-3">
+    <div className="rounded-xl border border-line bg-white dark:bg-slate-800 p-3">
       <div
         className={`tnum mb-3 flex min-h-[64px] items-center justify-end rounded-lg border bg-alabaster px-4 text-3xl font-bold text-ink transition-colors ${
           flash ? 'border-harvest' : 'border-line'
@@ -42,7 +42,7 @@ export function NumPad({
       >
         {value === '' ? <span className="text-slate-300">0</span> : value}
       </div>
-      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</p>
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</p>
       <div className="grid grid-cols-3 gap-2">
         {KEYS.map((k) => (
           <button

@@ -74,7 +74,7 @@ export function BatchDetail() {
         <Link to="/batches" className="font-semibold text-navy hover:underline">
           Back to batches
         </Link>
-        <p className="mt-4 text-slate-500">Loading batch…</p>
+        <p className="mt-4 text-slate-500 dark:text-slate-400">Loading batch…</p>
       </div>
     );
 
@@ -96,7 +96,7 @@ export function BatchDetail() {
         <Link to="/batches" className="font-semibold text-navy hover:underline">
           Back to batches
         </Link>
-        <p className="mt-4 text-slate-500">Batch not found.</p>
+        <p className="mt-4 text-slate-500 dark:text-slate-400">Batch not found.</p>
       </div>
     );
 
@@ -151,24 +151,24 @@ export function BatchDetail() {
             {blendRows.map(([label, pct, q]) => (
               <div key={label}>
                 <div className="mb-1 flex justify-between text-sm">
-                  <span className="font-medium text-slate-600">{label}</span>
+                  <span className="font-medium text-slate-600 dark:text-slate-300">{label}</span>
                   <span className="tnum font-bold text-ink">
                     {fmtPct(Number(pct))} ({fmtQ(q)} q)
                   </span>
                 </div>
-                <div className="h-3 overflow-hidden rounded-full bg-slate-100">
+                <div className="h-3 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
                   <div className="h-full rounded-full bg-harvest" style={{ width: `${Math.min(100, Number(pct))}%` }} />
                 </div>
               </div>
             ))}
-            <p className="pt-1 text-xs text-slate-500">
+            <p className="pt-1 text-xs text-slate-500 dark:text-slate-400">
               The blend ratio is set fresh for every batch by the laboratory and locked permanently.
             </p>
           </div>
 
           {editable ? (
             <form onSubmit={saveBlend} className="mt-5 space-y-4 border-t border-line pt-5">
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-slate-500 dark:text-slate-400">
                 Update the blend while the batch is still OPEN — percentages are computed automatically.
               </p>
               <Field label="Soft wheat (q)" required>
@@ -198,7 +198,7 @@ export function BatchDetail() {
                 </span>
                 <div className="min-w-0">
                   <p className="text-sm font-semibold text-ink">{label}</p>
-                  <p className="truncate text-sm text-slate-500" title={text}>
+                  <p className="truncate text-sm text-slate-500 dark:text-slate-400" title={text}>
                     {text}
                   </p>
                 </div>

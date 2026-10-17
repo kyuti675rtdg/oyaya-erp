@@ -108,27 +108,27 @@ export function FleetReports() {
         ) : (
           <>
             <div className="mb-4 flex flex-wrap gap-3">
-              <div className="rounded-xl border border-slate-200 px-4 py-3">
-                <p className="text-xs font-semibold text-slate-500">Fleet cost (period)</p>
-                <p className="text-xl font-bold text-slate-800 tabular-nums">{fmtBirr(fleetTotal.total)}</p>
+              <div className="rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3">
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">Fleet cost (period)</p>
+                <p className="text-xl font-bold text-slate-800 dark:text-slate-100 tabular-nums">{fmtBirr(fleetTotal.total)}</p>
               </div>
-              <div className="rounded-xl border border-slate-200 px-4 py-3">
-                <p className="text-xs font-semibold text-slate-500">Total km</p>
-                <p className="text-xl font-bold text-slate-800 tabular-nums">{fleetTotal.km.toLocaleString('en-US')}</p>
+              <div className="rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3">
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">Total km</p>
+                <p className="text-xl font-bold text-slate-800 dark:text-slate-100 tabular-nums">{fleetTotal.km.toLocaleString('en-US')}</p>
               </div>
-              <div className="rounded-xl border border-slate-200 px-4 py-3">
-                <p className="text-xs font-semibold text-slate-500">Avg cost / km</p>
-                <p className="text-xl font-bold text-slate-800 tabular-nums">{avgCostPerKm != null ? fmtBirr(avgCostPerKm) : '—'}</p>
+              <div className="rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3">
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">Avg cost / km</p>
+                <p className="text-xl font-bold text-slate-800 dark:text-slate-100 tabular-nums">{avgCostPerKm != null ? fmtBirr(avgCostPerKm) : '—'}</p>
               </div>
-              <div className="rounded-xl border border-slate-200 px-4 py-3">
-                <p className="text-xs font-semibold text-slate-500">Avg fuel efficiency</p>
-                <p className="text-xl font-bold text-slate-800 tabular-nums">
+              <div className="rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3">
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">Avg fuel efficiency</p>
+                <p className="text-xl font-bold text-slate-800 dark:text-slate-100 tabular-nums">
                   {avgKmPerL != null ? `${avgKmPerL.toFixed(2)} km/L` : '—'}
                 </p>
               </div>
-              <div className="rounded-xl border border-slate-200 px-4 py-3">
-                <p className="text-xs font-semibold text-slate-500">Trips</p>
-                <p className="text-xl font-bold text-slate-800 tabular-nums">{fleetTotal.trips}</p>
+              <div className="rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3">
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">Trips</p>
+                <p className="text-xl font-bold text-slate-800 dark:text-slate-100 tabular-nums">{fleetTotal.trips}</p>
               </div>
             </div>
 
@@ -158,7 +158,7 @@ export function FleetReports() {
               emptyTitle="No report data for this period."
               emptySub="Log trips with odometer readings, fuel and costs to build the summary."
             />
-            <p className="mt-3 text-xs text-slate-500">
+            <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
               Cost / km = (fuel + operating expenses + maintenance) ÷ odometer km in the period. See the Utilization page for per-vehicle utilization percentages.
             </p>
           </>

@@ -61,11 +61,11 @@ function TankTimeline({ code }: { code: string }) {
   const events = eventsQ.data ?? [];
 
   return (
-    <div className="mt-3 border-t border-slate-100 pt-3">
+    <div className="mt-3 border-t border-slate-100 dark:border-slate-700 pt-3">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-between text-sm font-semibold text-slate-600 hover:text-slate-900"
+        className="flex w-full items-center justify-between text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900"
       >
         <span className="inline-flex items-center gap-1.5">
           <History size={15} /> Event timeline
@@ -76,22 +76,22 @@ function TankTimeline({ code }: { code: string }) {
         eventsQ.isLoading ? (
           <Spinner label="Loading events..." />
         ) : events.length === 0 ? (
-          <p className="mt-2 text-sm text-slate-500">No events recorded for this tank yet.</p>
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">No events recorded for this tank yet.</p>
         ) : (
           <ol className="mt-2 space-y-2">
             {events.map((ev, i) => (
-              <li key={i} className="flex items-start gap-2.5 rounded-lg bg-slate-50 px-3 py-2">
+              <li key={i} className="flex items-start gap-2.5 rounded-lg bg-slate-50 dark:bg-slate-800 px-3 py-2">
                 <span
                   className={`mt-0.5 shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide ${eventBadgeStyle(ev.event)}`}
                 >
                   {ev.event}
                 </span>
                 <div className="min-w-0 text-sm">
-                  <p className="tabular-nums font-semibold text-slate-800">
+                  <p className="tabular-nums font-semibold text-slate-800 dark:text-slate-100">
                     {ev.quintals !== null && ev.quintals !== undefined ? `${fmtQ(ev.quintals)} q` : '—'}
-                    <span className="ml-2 font-normal text-slate-500">{fmtDateTime(ev.occurredAt)}</span>
+                    <span className="ml-2 font-normal text-slate-500 dark:text-slate-400">{fmtDateTime(ev.occurredAt)}</span>
                   </p>
-                  {ev.note ? <p className="truncate text-xs text-slate-500">{ev.note}</p> : null}
+                  {ev.note ? <p className="truncate text-xs text-slate-500 dark:text-slate-400">{ev.note}</p> : null}
                 </div>
               </li>
             ))}
@@ -153,15 +153,15 @@ function TankCard({
         }
       />
 
-      <p className="mt-2 text-sm text-slate-600">
-        <span className="font-semibold text-slate-800">Level:</span>{' '}
-        <span className="tabular-nums font-bold text-slate-900">
+      <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+        <span className="font-semibold text-slate-800 dark:text-slate-100">Level:</span>{' '}
+        <span className="tabular-nums font-bold text-slate-900 dark:text-slate-100">
           {fmtQ(tank.levelQ)} / {fmtQ(tank.capacityQ)} q
         </span>
         {blend ? (
           <>
             <br />
-            <span className="font-semibold text-slate-800">Blend:</span>{' '}
+            <span className="font-semibold text-slate-800 dark:text-slate-100">Blend:</span>{' '}
             <span className="tabular-nums">{blendSummary(blend)}</span>
           </>
         ) : null}
@@ -403,7 +403,7 @@ export function Tanks() {
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-xl font-bold text-ink">Conditioning Tanks</h2>
-          <p className="mt-0.5 text-sm text-slate-500">
+          <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
             Wet conditioning tanks A, B and C — partial fills supported, advisory rest guidance only
           </p>
         </div>
@@ -500,15 +500,15 @@ export function Tanks() {
             >
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <span className="mb-1 block text-xs font-medium text-slate-500">Soft</span>
+                  <span className="mb-1 block text-xs font-medium text-slate-500 dark:text-slate-400">Soft</span>
                   <NumberInput value={blendSoft} onChange={(e) => setBlendSoft(e.target.value)} min={0} max={100} placeholder="0" />
                 </div>
                 <div>
-                  <span className="mb-1 block text-xs font-medium text-slate-500">Hard</span>
+                  <span className="mb-1 block text-xs font-medium text-slate-500 dark:text-slate-400">Hard</span>
                   <NumberInput value={blendHard} onChange={(e) => setBlendHard(e.target.value)} min={0} max={100} placeholder="0" />
                 </div>
                 <div>
-                  <span className="mb-1 block text-xs font-medium text-slate-500">Foreign</span>
+                  <span className="mb-1 block text-xs font-medium text-slate-500 dark:text-slate-400">Foreign</span>
                   <NumberInput value={blendForeign} onChange={(e) => setBlendForeign(e.target.value)} min={0} max={100} placeholder="0" />
                 </div>
               </div>
@@ -568,10 +568,10 @@ export function Tanks() {
           aria-modal="true"
           aria-label={`Empty tank ${emptyTank.code.replace('TANK_', '')}`}
         >
-          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
+          <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-base font-bold text-ink">Empty Tank {emptyTank.code.replace('TANK_', '')}</h3>
-            <p className="mt-1 text-sm text-slate-500">
-              Current level: <span className="font-semibold tabular-nums text-slate-800">{fmtQ(emptyTank.levelQ)} q</span>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+              Current level: <span className="font-semibold tabular-nums text-slate-800 dark:text-slate-100">{fmtQ(emptyTank.levelQ)} q</span>
             </p>
             <form onSubmit={submitEmptyModal} className="mt-4 space-y-4">
               <Field label="Quantity (quintals)" required hint="1–2 q residual after emptying is tolerated, not flagged.">
@@ -584,7 +584,7 @@ export function Tanks() {
                   autoFocus
                 />
               </Field>
-              <label className="flex cursor-pointer items-center gap-2.5 text-sm font-medium text-slate-700">
+              <label className="flex cursor-pointer items-center gap-2.5 text-sm font-medium text-slate-700 dark:text-slate-200">
                 <input
                   type="checkbox"
                   checked={emptyPartial}

@@ -112,13 +112,13 @@ export function DocTemplates() {
                   <LayoutTemplate size={18} />
                 </div>
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-bold text-slate-800">{t.name}</p>
-                  <p className="text-xs text-slate-500">
+                  <p className="truncate text-sm font-bold text-slate-800 dark:text-slate-100">{t.name}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     {t.category} · {fmtDate(t.updatedAt)}
                   </p>
-                  {t.description ? <p className="mt-1 line-clamp-2 text-xs text-slate-500">{t.description}</p> : null}
+                  {t.description ? <p className="mt-1 line-clamp-2 text-xs text-slate-500 dark:text-slate-400">{t.description}</p> : null}
                 </div>
-                <div className="mt-auto flex items-center gap-2 border-t border-slate-100 pt-3">
+                <div className="mt-auto flex items-center gap-2 border-t border-slate-100 dark:border-slate-700 pt-3">
                   <button
                     type="button"
                     onClick={() => {
@@ -134,7 +134,7 @@ export function DocTemplates() {
                       type="button"
                       onClick={() => deleteMut.mutate(t.id)}
                       title="Delete"
-                      className="rounded-lg p-1.5 text-slate-400 hover:bg-rose-50 hover:text-rose-600"
+                      className="rounded-lg p-1.5 text-slate-400 dark:text-slate-500 hover:bg-rose-50 hover:text-rose-600"
                     >
                       <Trash2 size={15} />
                     </button>
@@ -150,8 +150,8 @@ export function DocTemplates() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
           <form onSubmit={submit} className={`${cardShell} max-h-[90vh] w-full max-w-2xl space-y-4 overflow-y-auto !p-6`}>
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-slate-800">New Template</h3>
-              <button type="button" onClick={() => setShowForm(false)} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100" aria-label="Close">
+              <h3 className="text-base font-bold text-slate-800 dark:text-slate-100">New Template</h3>
+              <button type="button" onClick={() => setShowForm(false)} className="rounded-lg p-1.5 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700" aria-label="Close">
                 <X size={18} />
               </button>
             </div>
@@ -192,12 +192,12 @@ export function DocTemplates() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
           <form onSubmit={submitUse} className={`${cardShell} w-full max-w-md space-y-4 !p-6`}>
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-slate-800">Create from Template</h3>
-              <button type="button" onClick={() => setUseTpl(null)} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100" aria-label="Close">
+              <h3 className="text-base font-bold text-slate-800 dark:text-slate-100">Create from Template</h3>
+              <button type="button" onClick={() => setUseTpl(null)} className="rounded-lg p-1.5 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700" aria-label="Close">
                 <X size={18} />
               </button>
             </div>
-            <p className="text-sm text-slate-600">
+            <p className="text-sm text-slate-600 dark:text-slate-300">
               Template: <span className="font-semibold">{useTpl.name}</span>
             </p>
             <Field label="New document title">

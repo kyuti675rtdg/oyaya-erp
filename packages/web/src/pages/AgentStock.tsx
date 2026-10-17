@@ -160,7 +160,7 @@ export function AgentStock() {
           { label: 'Settled value', value: fmtBirr(totals.value) }
         ].map((k) => (
           <Card key={k.label} className="p-4">
-            <p className="text-xs text-slate-500">{k.label}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">{k.label}</p>
             <p className="tnum mt-1 text-xl font-extrabold text-ink">{k.value}</p>
           </Card>
         ))}
@@ -312,7 +312,7 @@ export function AgentStock() {
         )}
       </div>
 
-      <p className="mt-3 text-xs text-slate-400">
+      <p className="mt-3 text-xs text-slate-400 dark:text-slate-500">
         Settlement posts Dr 1000 (Cash) / Cr 4000 (Revenue) to the finance GL. Today: {todayISO()}.
       </p>
     </div>

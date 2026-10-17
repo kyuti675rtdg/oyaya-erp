@@ -179,7 +179,7 @@ export function PestTreatments() {
         </div>
 
         {showForm && canManage ? (
-          <form onSubmit={create} className="mt-4 space-y-4 border-t border-slate-100 pt-4">
+          <form onSubmit={create} className="mt-4 space-y-4 border-t border-slate-100 dark:border-slate-700 pt-4">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               <Field label="Pest type" required>
                 <Select value={pestType} onChange={(e) => setPestType(e.target.value as PestType)} required>
@@ -213,7 +213,7 @@ export function PestTreatments() {
               <TextArea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Droppings, gnaw marks, live insects, termite tunnels…" />
             </Field>
             <div>
-              <p className="mb-2 text-sm font-semibold text-slate-700">Treatment applied</p>
+              <p className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-200">Treatment applied</p>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 <Field label="Method">
                   <Select value={treatment} onChange={(e) => setTreatment(e.target.value as TreatmentType | '')}>
@@ -265,7 +265,7 @@ export function PestTreatments() {
                   render: (r) => (
                     <span className="text-sm">
                       {r.treatment ? pretty(r.treatment) : '—'}
-                      {r.chemical ? <span className="block text-xs text-slate-500">{r.chemical}{r.dosage ? ` · ${r.dosage}` : ''}</span> : null}
+                      {r.chemical ? <span className="block text-xs text-slate-500 dark:text-slate-400">{r.chemical}{r.dosage ? ` · ${r.dosage}` : ''}</span> : null}
                     </span>
                   )
                 },
@@ -293,11 +293,11 @@ export function PestTreatments() {
                 <div key={r.id} className={cardShell}>
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <p className="font-bold text-slate-800">
-                        {pretty(r.pestType)} <span className="font-normal text-slate-500">· <span className="capitalize">{r.location}</span></span>
+                      <p className="font-bold text-slate-800 dark:text-slate-100">
+                        {pretty(r.pestType)} <span className="font-normal text-slate-500 dark:text-slate-400">· <span className="capitalize">{r.location}</span></span>
                       </p>
-                      <p className="mt-0.5 text-xs text-slate-500 tabular-nums">{fmtDate(r.observedAt)}</p>
-                      <p className="mt-0.5 text-xs text-slate-500">
+                      <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400 tabular-nums">{fmtDate(r.observedAt)}</p>
+                      <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
                         Treatment: {r.treatment ? pretty(r.treatment) : '—'}
                         {r.chemical ? ` · ${r.chemical}` : ''}
                       </p>
@@ -322,37 +322,37 @@ export function PestTreatments() {
           <div className={`${cardShell} max-h-[90vh] w-full max-w-lg overflow-y-auto !p-6`}>
             <div className="flex items-start justify-between gap-2">
               <div>
-                <h3 className="text-lg font-bold text-slate-800">
-                  {pretty(detail.pestType)} <span className="font-normal text-slate-500">· <span className="capitalize">{detail.location}</span></span>
+                <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">
+                  {pretty(detail.pestType)} <span className="font-normal text-slate-500 dark:text-slate-400">· <span className="capitalize">{detail.location}</span></span>
                 </h3>
-                <p className="text-sm text-slate-500 tabular-nums">Observed {fmtDateTime(detail.observedAt)}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 tabular-nums">Observed {fmtDateTime(detail.observedAt)}</p>
               </div>
               <EvidenceStatusBadge status={detail.status} />
             </div>
-            {detail.description ? <p className="mt-3 text-sm text-slate-700">{detail.description}</p> : null}
+            {detail.description ? <p className="mt-3 text-sm text-slate-700 dark:text-slate-200">{detail.description}</p> : null}
             <dl className="mt-4 space-y-2 text-sm">
               <div className="flex justify-between gap-4">
-                <dt className="text-slate-500">Severity</dt>
+                <dt className="text-slate-500 dark:text-slate-400">Severity</dt>
                 <dd><SeverityBadge severity={detail.severity} /></dd>
               </div>
               <div className="flex justify-between gap-4">
-                <dt className="text-slate-500">Treatment</dt>
+                <dt className="text-slate-500 dark:text-slate-400">Treatment</dt>
                 <dd className="font-medium">{detail.treatment ? pretty(detail.treatment) : '—'}</dd>
               </div>
               <div className="flex justify-between gap-4">
-                <dt className="text-slate-500">Chemical / dosage</dt>
+                <dt className="text-slate-500 dark:text-slate-400">Chemical / dosage</dt>
                 <dd className="text-right font-medium">{detail.chemical ?? '—'}{detail.dosage ? ` · ${detail.dosage}` : ''}</dd>
               </div>
               <div className="flex justify-between gap-4">
-                <dt className="text-slate-500">Applicator</dt>
+                <dt className="text-slate-500 dark:text-slate-400">Applicator</dt>
                 <dd className="font-medium">{detail.applicator ?? '—'}</dd>
               </div>
               <div className="flex justify-between gap-4">
-                <dt className="text-slate-500">Treated at</dt>
+                <dt className="text-slate-500 dark:text-slate-400">Treated at</dt>
                 <dd className="font-medium tabular-nums">{detail.treatedAt ? fmtDate(detail.treatedAt) : '—'}</dd>
               </div>
               <div className="flex justify-between gap-4">
-                <dt className="text-slate-500">Follow-ups</dt>
+                <dt className="text-slate-500 dark:text-slate-400">Follow-ups</dt>
                 <dd className="font-medium tabular-nums">{detail.followUps?.length ?? 0}</dd>
               </div>
             </dl>

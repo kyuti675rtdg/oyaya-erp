@@ -140,9 +140,9 @@ export function TraceQuality() {
         node: (
           <div key={qi} className="mb-6 last:mb-0">
             <div className="mb-3 flex items-center justify-between">
-              <p className="text-sm font-bold text-slate-800">
+              <p className="text-sm font-bold text-slate-800 dark:text-slate-100">
                 Batch {q.batch?.batchNo ?? '—'}{' '}
-                <span className="font-normal text-slate-500">
+                <span className="font-normal text-slate-500 dark:text-slate-400">
                   · {q.labChecks.length} lab checks · {q.flourTests.length} flour tests · {q.nonconformities.length} NCs · {q.capas.length} CAPAs
                 </span>
               </p>
@@ -186,7 +186,7 @@ export function TraceQuality() {
           sections.map((s) => s.node)
         )}
       </div>
-      <p className="text-xs text-slate-400">
+      <p className="text-xs text-slate-400 dark:text-slate-500">
         Duket extraction below 78% on a batch auto-raises a yield flag — see Yield Alerts under Production & Blending. Values in quintals: {fmtQ(0)}.
       </p>
     </div>

@@ -41,7 +41,7 @@ export function KpiCard({
 
   return (
     <div
-      className="animate-fade-in-up rounded-xl border border-line bg-white p-5 shadow-sm"
+      className="animate-fade-in-up rounded-xl border border-line bg-white dark:bg-slate-800 p-5 shadow-sm"
       style={{ animationDelay: `${index * 60}ms`, ...style }}
     >
       <div className="flex items-start gap-3.5">
@@ -49,7 +49,7 @@ export function KpiCard({
           {icon}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-[13px] font-medium text-slate-500">{label}</p>
+          <p className="truncate text-[13px] font-medium text-slate-500 dark:text-slate-400">{label}</p>
           <p className="tnum mt-1 truncate text-[28px] font-extrabold leading-none tracking-tight text-ink">
             {value}
           </p>
@@ -64,7 +64,7 @@ export function KpiCard({
           >
             {flat ? '→' : positive ? '↑' : '↓'} {Math.abs(trendPct ?? 0).toFixed(0)}%
           </span>
-          <span className="text-xs text-slate-400">vs. last week</span>
+          <span className="text-xs text-slate-400 dark:text-slate-500">vs. last week</span>
         </div>
       ) : null}
     </div>

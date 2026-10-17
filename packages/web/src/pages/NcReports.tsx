@@ -199,8 +199,8 @@ export function NcReports() {
             ].map((k) => (
               <div key={k.label} className={cardShell}>
                 <div className="flex items-center justify-between">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{k.label}</p>
-                  <span className="text-slate-400">{k.icon}</span>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{k.label}</p>
+                  <span className="text-slate-400 dark:text-slate-500">{k.icon}</span>
                 </div>
                 <p className={`mt-1 text-2xl font-bold tabular-nums ${k.tone}`}>{k.value}</p>
               </div>
@@ -211,7 +211,7 @@ export function NcReports() {
             <div className={cardShell}>
               <CardHeader icon={<BarChart3 size={16} />} title="Recurrence by source" subtitle="All nonconformities" />
               {sourceChart.length === 0 ? (
-                <p className="text-sm text-slate-500">No data yet.</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">No data yet.</p>
               ) : (
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
@@ -229,7 +229,7 @@ export function NcReports() {
             <div className={cardShell}>
               <CardHeader icon={<BarChart3 size={16} />} title="Severity mix" subtitle="All nonconformities" />
               {severityChart.length === 0 ? (
-                <p className="text-sm text-slate-500">No data yet.</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">No data yet.</p>
               ) : (
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
@@ -277,12 +277,12 @@ export function NcReports() {
               </div>
               <div className="space-y-3 md:hidden">
                 {(agingQ.data ?? []).map((r) => (
-                  <div key={r.id} className="rounded-xl border border-line bg-white p-4 shadow-sm">
+                  <div key={r.id} className="rounded-xl border border-line bg-white dark:bg-slate-800 p-4 shadow-sm">
                     <div className="flex items-center justify-between">
                       <span className="font-bold tabular-nums text-ink">{r.ncNo}</span>
                       <Badge tone={severityTone(r.severity)}>{r.severity}</Badge>
                     </div>
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                       {NC_SOURCE_LABEL[r.source as keyof typeof NC_SOURCE_LABEL] ?? r.source} · detected {fmtDate(r.dateDetected)}
                     </p>
                     <p className={`mt-1 text-sm font-bold tabular-nums ${r.ageDays > 14 ? 'text-critical-text' : 'text-slate-700'}`}>
@@ -291,7 +291,7 @@ export function NcReports() {
                   </div>
                 ))}
                 {(agingQ.data ?? []).length === 0 ? (
-                  <p className="py-6 text-center text-sm text-slate-500">No open nonconformities.</p>
+                  <p className="py-6 text-center text-sm text-slate-500 dark:text-slate-400">No open nonconformities.</p>
                 ) : null}
               </div>
             </div>
@@ -326,19 +326,19 @@ export function NcReports() {
               </div>
               <div className="space-y-3 md:hidden">
                 {(overdueQ.data ?? []).map((a) => (
-                  <div key={a.id} className="rounded-xl border border-critical-text/40 bg-white p-4 shadow-sm">
+                  <div key={a.id} className="rounded-xl border border-critical-text/40 bg-white dark:bg-slate-800 p-4 shadow-sm">
                     <div className="flex items-center justify-between">
                       <span className="font-bold tabular-nums text-ink">{a.nc?.ncNo ?? a.capa?.capaNo ?? '—'}</span>
                       <span className="text-xs font-bold text-critical-text tabular-nums">{a.daysOverdue}d overdue</span>
                     </div>
-                    <p className="mt-1 line-clamp-2 text-sm text-slate-600">{a.description}</p>
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 line-clamp-2 text-sm text-slate-600 dark:text-slate-300">{a.description}</p>
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                       Owner: {a.owner} · due {fmtDate(a.dueDate)}
                     </p>
                   </div>
                 ))}
                 {(overdueQ.data ?? []).length === 0 ? (
-                  <p className="py-6 text-center text-sm text-slate-500">No overdue actions.</p>
+                  <p className="py-6 text-center text-sm text-slate-500 dark:text-slate-400">No overdue actions.</p>
                 ) : null}
               </div>
             </div>

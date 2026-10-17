@@ -45,7 +45,7 @@ function toneForLatency(ms: number | null): 'pass' | 'advisory' | 'critical' | '
 
 function HealthBars({ history }: { history: HealthLog[] }) {
   const last24 = history.slice(0, 24).reverse();
-  if (last24.length === 0) return <span className="text-xs text-slate-400">No checks yet</span>;
+  if (last24.length === 0) return <span className="text-xs text-slate-400 dark:text-slate-500">No checks yet</span>;
   return (
     <div className="flex h-8 items-end gap-[3px]" aria-label="Recent check history">
       {last24.map((h, i) => (
@@ -147,28 +147,28 @@ export function ApiHealth() {
             </span>
             <div>
               <p className="text-2xl font-bold tabular-nums text-ink">
-                {onlineCount}<span className="text-base text-slate-400">/{totalCount}</span>
+                {onlineCount}<span className="text-base text-slate-400 dark:text-slate-500">/{totalCount}</span>
               </p>
-              <p className="text-xs text-slate-500">Integrations online</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Integrations online</p>
             </div>
           </div>
         </Card>
         <Card className="p-4">
           <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
               <Gauge className="h-5 w-5" />
             </span>
             <div>
               <p className="text-2xl font-bold tabular-nums text-ink">
                 {avgLatency != null ? `${avgLatency} ms` : '—'}
               </p>
-              <p className="text-xs text-slate-500">Average latency</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Average latency</p>
             </div>
           </div>
         </Card>
         <Card className="p-4">
           <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
               <Clock3 className="h-5 w-5" />
             </span>
             <div>
@@ -177,7 +177,7 @@ export function ApiHealth() {
                   ? `${(((integrations ?? []).reduce((a, i) => a + (i.uptimePct ?? 0), 0) / totalCount)).toFixed(1)}%`
                   : '—'}
               </p>
-              <p className="text-xs text-slate-500">Average uptime (rolling)</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Average uptime (rolling)</p>
             </div>
           </div>
         </Card>
@@ -195,7 +195,7 @@ export function ApiHealth() {
           <DataTable<ApiIntegration>
             columns={[
               { key: 'name', label: 'Integration', render: (r) => <span className="font-semibold text-ink">{r.name}</span> },
-              { key: 'baseUrl', label: 'Endpoint', render: (r) => <span className="font-mono text-xs text-slate-500">{r.baseUrl ?? '—'}</span> },
+              { key: 'baseUrl', label: 'Endpoint', render: (r) => <span className="font-mono text-xs text-slate-500 dark:text-slate-400">{r.baseUrl ?? '—'}</span> },
               {
                 key: 'status', label: 'Status',
                 render: (r) => <Badge tone={STATUS_TONE[r.status] ?? 'neutral'}>{r.status}</Badge>,
@@ -205,7 +205,7 @@ export function ApiHealth() {
                 render: (r) => <Badge tone={toneForLatency(r.latencyMs)}>{r.latencyMs != null ? `${r.latencyMs} ms` : '—'}</Badge>,
               },
               { key: 'uptimePct', label: 'Uptime', mono: true, render: (r) => <span className="tabular-nums">{r.uptimePct != null ? `${r.uptimePct.toFixed(1)}%` : '—'}</span> },
-              { key: 'lastCheckedAt', label: 'Last check', render: (r) => <span className="text-sm text-slate-500">{r.lastCheckedAt ? fmtDateTime(r.lastCheckedAt) : 'Never'}</span> },
+              { key: 'lastCheckedAt', label: 'Last check', render: (r) => <span className="text-sm text-slate-500 dark:text-slate-400">{r.lastCheckedAt ? fmtDateTime(r.lastCheckedAt) : 'Never'}</span> },
               {
                 key: 'id', label: 'Recent checks',
                 render: (r) => <HealthBars history={historyById.get(r.id) ?? []} />,

@@ -183,7 +183,7 @@ export function UserManagement() {
                 key: 'role', label: 'Role',
                 render: (r) => (
                   <span className="inline-flex items-center gap-1.5 text-sm">
-                    <ShieldCheck className="h-3.5 w-3.5 text-slate-400" />
+                    <ShieldCheck className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
                     {r.role?.name ?? '—'}
                   </span>
                 ),
@@ -196,7 +196,7 @@ export function UserManagement() {
                 key: 'mfaEnabled', label: 'MFA',
                 render: (r) => <Badge tone={r.mfaEnabled ? 'pass' : 'neutral'}>{r.mfaEnabled ? 'On' : 'Off'}</Badge>,
               },
-              { key: 'createdAt', label: 'Created', render: (r) => <span className="text-sm text-slate-500">{fmtDateTime(r.createdAt)}</span> },
+              { key: 'createdAt', label: 'Created', render: (r) => <span className="text-sm text-slate-500 dark:text-slate-400">{fmtDateTime(r.createdAt)}</span> },
               ...(canManage
                 ? [
                     {

@@ -377,7 +377,7 @@ function ThresholdsEditor() {
             return (
               <div key={t.id} className="rounded-lg border border-line p-3">
                 <p className="mb-2 text-sm font-semibold text-ink">
-                  {t.param} <span className="ml-1 text-xs font-normal text-slate-500">({t.category}{t.unit ? `, ${t.unit}` : ''})</span>
+                  {t.param} <span className="ml-1 text-xs font-normal text-slate-500 dark:text-slate-400">({t.category}{t.unit ? `, ${t.unit}` : ''})</span>
                 </p>
                 <div className="grid grid-cols-2 gap-2">
                   <Field label="Min">

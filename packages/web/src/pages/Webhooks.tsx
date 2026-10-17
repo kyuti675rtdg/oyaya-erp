@@ -214,13 +214,13 @@ export function Webhooks() {
           <DataTable<Webhook>
             columns={[
               { key: 'name', label: 'Name', render: (r) => <span className="font-semibold text-ink">{r.name}</span> },
-              { key: 'url', label: 'URL', render: (r) => <span className="font-mono text-xs text-slate-500">{r.url}</span> },
+              { key: 'url', label: 'URL', render: (r) => <span className="font-mono text-xs text-slate-500 dark:text-slate-400">{r.url}</span> },
               {
                 key: 'events', label: 'Events',
                 render: (r) => (
                   <div className="flex max-w-[220px] flex-wrap gap-1">
                     {r.events.map((e) => (
-                      <span key={e} className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[11px] text-slate-600">{e}</span>
+                      <span key={e} className="rounded bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 font-mono text-[11px] text-slate-600 dark:text-slate-300">{e}</span>
                     ))}
                   </div>
                 ),
@@ -235,10 +235,10 @@ export function Webhooks() {
                   r.lastDelivery ? (
                     <span className="flex items-center gap-1.5">
                       <Badge tone={DELIVERY_TONE[r.lastDelivery.status] ?? 'neutral'}>{r.lastDelivery.status}</Badge>
-                      <span className="text-xs text-slate-400">{fmtDateTime(r.lastDelivery.createdAt)}</span>
+                      <span className="text-xs text-slate-400 dark:text-slate-500">{fmtDateTime(r.lastDelivery.createdAt)}</span>
                     </span>
                   ) : (
-                    <span className="text-sm text-slate-400">Never</span>
+                    <span className="text-sm text-slate-400 dark:text-slate-500">Never</span>
                   ),
               },
               ...(canManage
@@ -319,7 +319,7 @@ export function Webhooks() {
                 ))}
               </div>
             </Field>
-            <label className="flex cursor-pointer items-center gap-2 text-sm font-semibold text-slate-800">
+            <label className="flex cursor-pointer items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-100">
               <input
                 type="checkbox"
                 className="h-4 w-4 accent-[#5B35D5]"
@@ -343,12 +343,12 @@ export function Webhooks() {
           ) : (
             <DataTable<Delivery>
               columns={[
-                { key: 'createdAt', label: 'Time', render: (r) => <span className="text-sm text-slate-500">{fmtDateTime(r.createdAt)}</span> },
+                { key: 'createdAt', label: 'Time', render: (r) => <span className="text-sm text-slate-500 dark:text-slate-400">{fmtDateTime(r.createdAt)}</span> },
                 { key: 'event', label: 'Event', render: (r) => <span className="font-mono text-xs">{r.event}</span> },
                 { key: 'status', label: 'Status', render: (r) => <Badge tone={DELIVERY_TONE[r.status] ?? 'neutral'}>{r.status}</Badge> },
                 { key: 'httpStatus', label: 'HTTP', mono: true, render: (r) => <span className="tabular-nums">{r.httpStatus ?? '—'}</span> },
                 { key: 'attempts', label: 'Attempts', mono: true, render: (r) => <span className="tabular-nums">{r.attempts}</span> },
-                { key: 'error', label: 'Error', render: (r) => <span className="text-sm text-slate-500">{r.error ?? '—'}</span> },
+                { key: 'error', label: 'Error', render: (r) => <span className="text-sm text-slate-500 dark:text-slate-400">{r.error ?? '—'}</span> },
                 ...(canManage
                   ? [
                       {

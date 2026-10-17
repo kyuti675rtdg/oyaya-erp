@@ -44,12 +44,12 @@ export function HrModal({
       >
         <div className="mb-4 flex items-start justify-between gap-3">
           <div>
-            <h3 className="text-base font-bold text-slate-900">{title}</h3>
-            {subtitle ? <p className="mt-0.5 text-sm text-slate-500">{subtitle}</p> : null}
+            <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">{title}</h3>
+            {subtitle ? <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">{subtitle}</p> : null}
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg px-2 py-1 text-lg font-bold text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+            className="rounded-lg px-2 py-1 text-lg font-bold text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-700"
             aria-label="Close"
           >
             ×
@@ -78,10 +78,10 @@ export function HrKpi({
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-violet-50 text-violet-600">
           {icon}
         </span>
-        <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">{label}</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">{label}</p>
       </div>
-      <p className="tnum mt-3 text-2xl font-bold text-slate-900">{value}</p>
-      {sub ? <p className="mt-1 text-xs text-slate-500">{sub}</p> : null}
+      <p className="tnum mt-3 text-2xl font-bold text-slate-900 dark:text-slate-100">{value}</p>
+      {sub ? <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{sub}</p> : null}
     </div>
   );
 }

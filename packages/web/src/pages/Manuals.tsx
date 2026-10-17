@@ -144,14 +144,14 @@ export function Manuals() {
             title={detail.title}
             subtitle={`${detail.docNo} · v${detail.version} · ${detail.module ?? 'General'} · Effective ${detail.effectiveDate ? fmtDate(detail.effectiveDate) : '—'}`}
           />
-          {detail.summary && <p className="mb-4 text-sm text-slate-600">{detail.summary}</p>}
-          <div className="whitespace-pre-wrap text-sm leading-relaxed text-slate-700">{detail.content}</div>
+          {detail.summary && <p className="mb-4 text-sm text-slate-600 dark:text-slate-300">{detail.summary}</p>}
+          <div className="whitespace-pre-wrap text-sm leading-relaxed text-slate-700 dark:text-slate-200">{detail.content}</div>
         </div>
       ) : (
         <>
           <div className={`${cardShell} flex flex-col gap-3 sm:flex-row`}>
             <div className="relative flex-1">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
               <TextInput
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -188,8 +188,8 @@ export function Manuals() {
                       </span>
                       <Badge tone={STATUS_TONE[m.status] ?? 'neutral'}>{m.status.replace('_', ' ')}</Badge>
                     </div>
-                    <h3 className="font-bold text-slate-800">{m.title}</h3>
-                    <p className="mt-1 text-xs text-slate-500">
+                    <h3 className="font-bold text-slate-800 dark:text-slate-100">{m.title}</h3>
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                       {m.docNo} · v{m.version} · {m.module ?? 'General'}
                     </p>
                   </button>
@@ -204,8 +204,8 @@ export function Manuals() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
           <div className={`${cardShell} max-h-[90vh] w-full max-w-2xl overflow-y-auto`}>
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-bold text-slate-800">New Manual</h3>
-              <button onClick={() => setShowForm(false)} className="text-slate-400 hover:text-slate-600">
+              <h3 className="font-bold text-slate-800 dark:text-slate-100">New Manual</h3>
+              <button onClick={() => setShowForm(false)} className="text-slate-400 dark:text-slate-500 hover:text-slate-600">
                 <X size={18} />
               </button>
             </div>

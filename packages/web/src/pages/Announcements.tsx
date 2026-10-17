@@ -101,7 +101,7 @@ export function Announcements() {
                   className={`rounded-xl border p-4 ${a.urgent ? 'border-red-200 bg-red-50/50' : isRead ? 'border-slate-200/70' : 'border-violet-200 bg-violet-50/40'}`}
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="flex items-center gap-2 font-bold text-slate-800">
+                    <p className="flex items-center gap-2 font-bold text-slate-800 dark:text-slate-100">
                       {a.urgent && <AlertTriangle size={16} className="text-red-500" />}
                       {a.title}
                     </p>
@@ -116,8 +116,8 @@ export function Announcements() {
                       )}
                     </div>
                   </div>
-                  <p className="mt-2 whitespace-pre-wrap text-sm text-slate-600">{a.body}</p>
-                  <p className="mt-2 text-xs text-slate-400">
+                  <p className="mt-2 whitespace-pre-wrap text-sm text-slate-600 dark:text-slate-300">{a.body}</p>
+                  <p className="mt-2 text-xs text-slate-400 dark:text-slate-500">
                     {a.publishedAt ? fmtDateTime(a.publishedAt) : ''}
                     {a.targetRoles.length > 0 ? ` · Roles: ${a.targetRoles.join(', ')}` : ' · All roles'}
                     {a.expiresAt ? ` · Expires ${fmtDateTime(a.expiresAt)}` : ''}
@@ -133,8 +133,8 @@ export function Announcements() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
           <div className={`${cardShell} w-full max-w-lg`}>
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-bold text-slate-800">New Announcement</h3>
-              <button onClick={() => setShowForm(false)} className="text-slate-400 hover:text-slate-600">
+              <h3 className="font-bold text-slate-800 dark:text-slate-100">New Announcement</h3>
+              <button onClick={() => setShowForm(false)} className="text-slate-400 dark:text-slate-500 hover:text-slate-600">
                 <X size={18} />
               </button>
             </div>

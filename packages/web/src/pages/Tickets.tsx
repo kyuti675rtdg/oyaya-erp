@@ -129,7 +129,7 @@ export function Tickets() {
   };
 
   const columns: Column<Ticket>[] = [
-    { key: 'ticketNo', label: 'Ticket', render: (r) => <span className="font-mono text-sm font-semibold text-slate-700">{r.ticketNo}</span> },
+    { key: 'ticketNo', label: 'Ticket', render: (r) => <span className="font-mono text-sm font-semibold text-slate-700 dark:text-slate-200">{r.ticketNo}</span> },
     {
       key: 'title', label: 'Title',
       render: (r) => (
@@ -151,7 +151,7 @@ export function Tickets() {
         );
       }
     },
-    { key: 'createdAt', label: 'Created', render: (r) => <span className="text-sm tabular-nums text-slate-500">{fmtDateTime(r.createdAt)}</span> }
+    { key: 'createdAt', label: 'Created', render: (r) => <span className="text-sm tabular-nums text-slate-500 dark:text-slate-400">{fmtDateTime(r.createdAt)}</span> }
   ];
 
   const detail = detailQ.data;
@@ -199,18 +199,18 @@ export function Tickets() {
               </div>
             }
           />
-          <p className="whitespace-pre-wrap text-sm text-slate-600">{detail.description}</p>
-          <div className="mt-5 space-y-3 border-t border-slate-100 pt-4">
-            <h4 className="text-sm font-bold text-slate-700">Activity Timeline</h4>
+          <p className="whitespace-pre-wrap text-sm text-slate-600 dark:text-slate-300">{detail.description}</p>
+          <div className="mt-5 space-y-3 border-t border-slate-100 dark:border-slate-700 pt-4">
+            <h4 className="text-sm font-bold text-slate-700 dark:text-slate-200">Activity Timeline</h4>
             {detail.comments.map((c) => (
-              <div key={c.id} className="rounded-lg bg-slate-50 p-3">
-                <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
+              <div key={c.id} className="rounded-lg bg-slate-50 dark:bg-slate-800 p-3">
+                <div className="flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-slate-400">
                   <User size={12} /> {c.author.name} · {fmtDateTime(c.createdAt)}
                 </div>
-                <p className="mt-1 text-sm text-slate-700">{c.body}</p>
+                <p className="mt-1 text-sm text-slate-700 dark:text-slate-200">{c.body}</p>
               </div>
             ))}
-            {detail.comments.length === 0 && <p className="text-sm text-slate-400">No comments yet.</p>}
+            {detail.comments.length === 0 && <p className="text-sm text-slate-400 dark:text-slate-500">No comments yet.</p>}
           </div>
           <div className="mt-4 flex gap-2">
             <TextInput
@@ -232,7 +232,7 @@ export function Tickets() {
               { label: 'Urgent Active', value: stats.urgent, tone: 'text-violet-700' }
             ].map((s) => (
               <div key={s.label} className={cardShell}>
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">{s.label}</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">{s.label}</p>
                 <p className={`mt-1 text-2xl font-extrabold tabular-nums ${s.tone}`}>{s.value}</p>
               </div>
             ))}
@@ -274,8 +274,8 @@ export function Tickets() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
           <div className={`${cardShell} w-full max-w-lg`}>
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-bold text-slate-800">New Support Ticket</h3>
-              <button onClick={() => setShowForm(false)} className="text-slate-400 hover:text-slate-600">
+              <h3 className="font-bold text-slate-800 dark:text-slate-100">New Support Ticket</h3>
+              <button onClick={() => setShowForm(false)} className="text-slate-400 dark:text-slate-500 hover:text-slate-600">
                 <X size={18} />
               </button>
             </div>

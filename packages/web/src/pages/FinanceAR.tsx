@@ -15,7 +15,7 @@ const cardShell =
 function Kpi({ label, value, tone }: { label: string; value: string; tone?: string }) {
   return (
     <Card className="p-4">
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</p>
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</p>
       <p className={`tnum mt-1 text-xl font-extrabold ${tone ?? 'text-ink'}`}>{value}</p>
     </Card>
   );
@@ -71,11 +71,11 @@ export function FinanceAR() {
                   return (
                     <Card key={key} className="p-4">
                       <div className="flex items-center justify-between">
-                        <p className="text-xs font-semibold text-slate-500">{label}</p>
+                        <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">{label}</p>
                         <BucketBadge bucket={key} />
                       </div>
                       <p className="tnum mt-1 text-lg font-extrabold text-ink">{fmtBirr(b.total)}</p>
-                      <p className="text-xs text-slate-400">{b.count} open invoice{b.count === 1 ? '' : 's'}</p>
+                      <p className="text-xs text-slate-400 dark:text-slate-500">{b.count} open invoice{b.count === 1 ? '' : 's'}</p>
                     </Card>
                   );
                 })}
@@ -108,10 +108,10 @@ export function FinanceAR() {
                     r.balance > 0.005 ? (
                       <span className="flex items-center gap-2">
                         <BucketBadge bucket={r.bucket} />
-                        <span className="tnum text-xs text-slate-500">{r.daysOpen}d</span>
+                        <span className="tnum text-xs text-slate-500 dark:text-slate-400">{r.daysOpen}d</span>
                       </span>
                     ) : (
-                      <span className="text-xs text-slate-400">Collected</span>
+                      <span className="text-xs text-slate-400 dark:text-slate-500">Collected</span>
                     )
                 }
               ]}

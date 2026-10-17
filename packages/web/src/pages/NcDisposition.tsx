@@ -136,14 +136,14 @@ export function NcDisposition() {
               ) : null}
             </div>
           )}
-          {nc ? <p className="mt-2 text-sm text-slate-600">{nc.description}</p> : null}
+          {nc ? <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{nc.description}</p> : null}
         </div>
       </div>
 
       {!ncId ? (
         <div className="rounded-xl border border-dashed border-line bg-alabaster px-6 py-10 text-center">
-          <p className="font-semibold text-slate-700">No nonconformity selected</p>
-          <p className="mt-1 text-sm text-slate-500">Choose a record to decide the product disposition.</p>
+          <p className="font-semibold text-slate-700 dark:text-slate-200">No nonconformity selected</p>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Choose a record to decide the product disposition.</p>
         </div>
       ) : detailQ.isLoading ? (
         <Spinner label="Loading disposition..." />
@@ -154,15 +154,15 @@ export function NcDisposition() {
             {disp ? (
               <div className="space-y-2 text-sm">
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-500">Decision</span>
+                  <span className="text-slate-500 dark:text-slate-400">Decision</span>
                   <Badge tone="advisory">{NC_DECISION_LABEL[disp.decision]}</Badge>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Quantity affected</span>
+                  <span className="text-slate-500 dark:text-slate-400">Quantity affected</span>
                   <span className="font-bold tabular-nums text-ink">{fmtQ(disp.quantityQ)} Qt</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Approved</span>
+                  <span className="text-slate-500 dark:text-slate-400">Approved</span>
                   <span className="font-medium text-ink">
                     {fmtDate(disp.approvedAt)}
                     {disp.approverName ? ` by ${disp.approverName}` : ''}
@@ -171,14 +171,14 @@ export function NcDisposition() {
                 {disp.executedAt ? (
                   <>
                     <div className="flex justify-between">
-                      <span className="text-slate-500">Executed</span>
+                      <span className="text-slate-500 dark:text-slate-400">Executed</span>
                       <span className="font-medium text-ink">
                         {fmtDate(disp.executedAt)}
                         {disp.executedBy ? ` by ${disp.executedBy}` : ''}
                       </span>
                     </div>
                     {disp.executionNote ? (
-                      <p className="rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-600">{disp.executionNote}</p>
+                      <p className="rounded-lg bg-slate-50 dark:bg-slate-800 px-3 py-2 text-xs text-slate-600 dark:text-slate-300">{disp.executionNote}</p>
                     ) : null}
                   </>
                 ) : null}
@@ -217,7 +217,7 @@ export function NcDisposition() {
           <div className={cardShell}>
             <CardHeader icon={<PackageCheck size={16} />} title="Execution tracking" subtitle="Record when the decision is carried out" />
             {!disp ? (
-              <p className="text-sm text-slate-500">Approve a disposition decision first.</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Approve a disposition decision first.</p>
             ) : disp.executedAt ? (
               <div className="rounded-xl bg-pass-bg px-4 py-3 text-sm font-medium text-pass-text">
                 Executed {fmtDate(disp.executedAt)}

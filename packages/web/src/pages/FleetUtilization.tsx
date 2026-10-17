@@ -62,14 +62,14 @@ export function FleetUtilization() {
         />
         <div className="flex flex-wrap gap-3">
           {['AVAILABLE', 'ON_TRIP', 'IN_MAINTENANCE', 'OFF_DUTY'].map((s) => (
-            <div key={s} className="flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2">
+            <div key={s} className="flex items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2">
               <Badge tone={statusTone[s] ?? 'neutral'}>{s.replace('_', ' ')}</Badge>
-              <span className="text-lg font-bold text-slate-800 tabular-nums">{statusCounts[s] ?? 0}</span>
+              <span className="text-lg font-bold text-slate-800 dark:text-slate-100 tabular-nums">{statusCounts[s] ?? 0}</span>
             </div>
           ))}
-          <div className="flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2">
-            <span className="text-xs font-semibold text-slate-500">Fleet total</span>
-            <span className="text-lg font-bold text-slate-800 tabular-nums">{activeVehicles.length}</span>
+          <div className="flex items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2">
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Fleet total</span>
+            <span className="text-lg font-bold text-slate-800 dark:text-slate-100 tabular-nums">{activeVehicles.length}</span>
           </div>
         </div>
       </div>
@@ -101,19 +101,19 @@ export function FleetUtilization() {
         ) : (
           <>
             <div className="mb-4 flex flex-wrap gap-3">
-              <div className="rounded-xl border border-slate-200 px-4 py-3">
-                <p className="text-xs font-semibold text-slate-500">Average utilization</p>
-                <p className="text-xl font-bold text-slate-800 tabular-nums">{fmtPct(avgUtil)}</p>
+              <div className="rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3">
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">Average utilization</p>
+                <p className="text-xl font-bold text-slate-800 dark:text-slate-100 tabular-nums">{fmtPct(avgUtil)}</p>
               </div>
-              <div className="rounded-xl border border-slate-200 px-4 py-3">
-                <p className="text-xs font-semibold text-slate-500">Total km (period)</p>
-                <p className="text-xl font-bold text-slate-800 tabular-nums">
+              <div className="rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3">
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">Total km (period)</p>
+                <p className="text-xl font-bold text-slate-800 dark:text-slate-100 tabular-nums">
                   {(utilQ.data ?? []).reduce((s, u) => s + u.totalKm, 0).toLocaleString('en-US')}
                 </p>
               </div>
-              <div className="rounded-xl border border-slate-200 px-4 py-3">
-                <p className="text-xs font-semibold text-slate-500">Cargo moved (Qt)</p>
-                <p className="text-xl font-bold text-slate-800 tabular-nums">
+              <div className="rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3">
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">Cargo moved (Qt)</p>
+                <p className="text-xl font-bold text-slate-800 dark:text-slate-100 tabular-nums">
                   {(utilQ.data ?? []).reduce((s, u) => s + u.cargoQt, 0).toLocaleString('en-US')}
                 </p>
               </div>
@@ -129,7 +129,7 @@ export function FleetUtilization() {
                   label: 'Utilization',
                   render: (u) => (
                     <div className="flex items-center gap-2">
-                      <div className="h-2 w-24 overflow-hidden rounded-full bg-slate-100">
+                      <div className="h-2 w-24 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
                         <div
                           className={`h-full rounded-full ${u.utilizationPct >= 60 ? 'bg-emerald-500' : u.utilizationPct >= 30 ? 'bg-amber-500' : 'bg-red-400'}`}
                           style={{ width: `${Math.min(100, u.utilizationPct)}%` }}
@@ -146,7 +146,7 @@ export function FleetUtilization() {
             />
           </>
         )}
-        <p className="mt-4 flex items-center gap-2 text-xs text-slate-500">
+        <p className="mt-4 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
           <Fuel size={13} />
           Utilization = active trip-days ÷ days in period. Distances come from trip odometer readings; fuel efficiency from consecutive fuel logs.
         </p>

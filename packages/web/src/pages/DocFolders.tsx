@@ -140,8 +140,8 @@ export function DocFolders() {
                   <FolderOpen size={17} />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold text-slate-800">{folder.name}</p>
-                  <p className="text-xs text-slate-500">
+                  <p className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">{folder.name}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     {folder.module ?? 'General'} · {folder._count?.documents ?? 0} docs · {fmtDate(folder.createdAt)}
                   </p>
                 </div>
@@ -154,7 +154,7 @@ export function DocFolders() {
                       type="button"
                       onClick={() => openEdit(folder)}
                       title="Rename"
-                      className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                      className="rounded-lg p-1.5 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-600"
                     >
                       <Pencil size={15} />
                     </button>
@@ -162,7 +162,7 @@ export function DocFolders() {
                       type="button"
                       onClick={() => deleteMut.mutate(folder.id)}
                       title="Delete"
-                      className="rounded-lg p-1.5 text-slate-400 hover:bg-rose-50 hover:text-rose-600"
+                      className="rounded-lg p-1.5 text-slate-400 dark:text-slate-500 hover:bg-rose-50 hover:text-rose-600"
                     >
                       <Trash2 size={15} />
                     </button>
@@ -178,11 +178,11 @@ export function DocFolders() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
           <form onSubmit={submit} className={`${cardShell} w-full max-w-md space-y-4 !p-6`}>
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-slate-800">{editing ? 'Rename Folder' : 'New Folder'}</h3>
+              <h3 className="text-base font-bold text-slate-800 dark:text-slate-100">{editing ? 'Rename Folder' : 'New Folder'}</h3>
               <button
                 type="button"
                 onClick={() => setShowForm(false)}
-                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100"
+                className="rounded-lg p-1.5 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700"
                 aria-label="Close"
               >
                 <X size={18} />

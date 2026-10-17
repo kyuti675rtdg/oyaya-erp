@@ -74,7 +74,7 @@ const pct = (n: number, d: number): number => (d > 0 ? (n / d) * 100 : 0);
 function UtilizationBar({ value, color = 'bg-amber-500' }: { value: number; color?: string }) {
   const v = Math.max(0, Math.min(100, value));
   return (
-    <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100 print:bg-slate-200">
+    <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700 print:bg-slate-200">
       <div className={`h-full rounded-full ${color}`} style={{ width: `${v}%` }} />
     </div>
   );
@@ -348,12 +348,12 @@ export function StorageReports() {
               </Field>
             </>
           )}
-          <span className="pb-2.5 text-xs text-slate-500">
+          <span className="pb-2.5 text-xs text-slate-500 dark:text-slate-400">
             {fmtDate(range.from)} → {fmtDate(range.to)}
           </span>
         </div>
         {/* Tabs */}
-        <div className="mt-4 flex flex-wrap gap-2 border-t border-slate-100 pt-4">
+        <div className="mt-4 flex flex-wrap gap-2 border-t border-slate-100 dark:border-slate-700 pt-4">
           {TABS.map((t) => (
             <button
               key={t.key}
@@ -388,10 +388,10 @@ export function StorageReports() {
               <CardHeader icon={<Boxes className="h-4 w-4" />} title="Stock Position" subtitle={`As of ${fmtDateTime(range.to)}`} />
               <div>
                 <div className="mb-2 flex items-center justify-between text-sm">
-                  <span className="font-semibold text-slate-800">Dry pool</span>
-                  <span className="font-semibold tabular-nums text-slate-800">
+                  <span className="font-semibold text-slate-800 dark:text-slate-100">Dry pool</span>
+                  <span className="font-semibold tabular-nums text-slate-800 dark:text-slate-100">
                     {(dryPool?.balanceQ ?? 0).toLocaleString()} / {(dryPool?.capacityQ ?? 0).toLocaleString()} Qt
-                    <span className="ml-2 text-slate-500">{(dryPool?.pct ?? 0).toFixed(1)}%</span>
+                    <span className="ml-2 text-slate-500 dark:text-slate-400">{(dryPool?.pct ?? 0).toFixed(1)}%</span>
                   </span>
                 </div>
                 <UtilizationBar value={dryPool?.pct ?? 0} color="bg-sky-500" />
@@ -406,21 +406,21 @@ export function StorageReports() {
                 )}
               </div>
               <div>
-                <h3 className="mb-3 text-sm font-bold text-slate-800">Conditioning tanks</h3>
+                <h3 className="mb-3 text-sm font-bold text-slate-800 dark:text-slate-100">Conditioning tanks</h3>
                 <div className="grid gap-4 md:grid-cols-3">
                   {tanks.map((t) => (
                     <div key={t.code} className="rounded-xl border border-slate-200/70 p-4">
                       <div className="mb-2 flex items-center justify-between">
-                        <span className="font-bold text-slate-800">Tank {t.code}</span>
-                        <span className="text-xs text-slate-500">{t.status}</span>
+                        <span className="font-bold text-slate-800 dark:text-slate-100">Tank {t.code}</span>
+                        <span className="text-xs text-slate-500 dark:text-slate-400">{t.status}</span>
                       </div>
-                      <div className="mb-2 text-sm font-semibold tabular-nums text-slate-800">
-                        {t.levelQ.toLocaleString()} <span className="font-normal text-slate-500">/ {t.capacityQ.toLocaleString()} Qt</span>
-                        <span className="ml-2 text-slate-500">{pct(t.levelQ, t.capacityQ).toFixed(1)}%</span>
+                      <div className="mb-2 text-sm font-semibold tabular-nums text-slate-800 dark:text-slate-100">
+                        {t.levelQ.toLocaleString()} <span className="font-normal text-slate-500 dark:text-slate-400">/ {t.capacityQ.toLocaleString()} Qt</span>
+                        <span className="ml-2 text-slate-500 dark:text-slate-400">{pct(t.levelQ, t.capacityQ).toFixed(1)}%</span>
                       </div>
                       <UtilizationBar value={pct(t.levelQ, t.capacityQ)} />
                       {t.activeCycle && (
-                        <p className="mt-2 text-xs text-slate-500">
+                        <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
                           Batch <span className="font-semibold tabular-nums">{t.activeCycle.batchNo}</span>
                         </p>
                       )}
@@ -429,14 +429,14 @@ export function StorageReports() {
                 </div>
               </div>
               <div>
-                <h3 className="mb-3 text-sm font-bold text-slate-800">Dry pool wheat type breakdown</h3>
+                <h3 className="mb-3 text-sm font-bold text-slate-800 dark:text-slate-100">Dry pool wheat type breakdown</h3>
                 {Object.keys(dryPool?.breakdown ?? {}).length === 0 ? (
-                  <p className="text-sm text-slate-500">No breakdown data available.</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">No breakdown data available.</p>
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full min-w-[320px] text-sm">
                       <thead>
-                        <tr className="text-left text-xs uppercase tracking-wide text-slate-400">
+                        <tr className="text-left text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500">
                           <th className="pb-2 pr-4 font-semibold">Wheat type</th>
                           <th className="pb-2 pr-4 font-semibold">Quantity (Qt)</th>
                           <th className="pb-2 font-semibold">Share</th>
@@ -444,10 +444,10 @@ export function StorageReports() {
                       </thead>
                       <tbody>
                         {Object.entries(dryPool!.breakdown).map(([type, q]) => (
-                          <tr key={type} className="border-t border-slate-100">
-                            <td className="py-2.5 pr-4 font-semibold text-slate-800">{type}</td>
-                            <td className="py-2.5 pr-4 font-semibold tabular-nums text-slate-800">{q.toLocaleString()}</td>
-                            <td className="py-2.5 tabular-nums text-slate-600">{pct(q, dryPool!.balanceQ).toFixed(1)}%</td>
+                          <tr key={type} className="border-t border-slate-100 dark:border-slate-700">
+                            <td className="py-2.5 pr-4 font-semibold text-slate-800 dark:text-slate-100">{type}</td>
+                            <td className="py-2.5 pr-4 font-semibold tabular-nums text-slate-800 dark:text-slate-100">{q.toLocaleString()}</td>
+                            <td className="py-2.5 tabular-nums text-slate-600 dark:text-slate-300">{pct(q, dryPool!.balanceQ).toFixed(1)}%</td>
                           </tr>
                         ))}
                       </tbody>
@@ -465,7 +465,7 @@ export function StorageReports() {
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[640px] text-sm">
                   <thead>
-                    <tr className="text-left text-xs uppercase tracking-wide text-slate-400">
+                    <tr className="text-left text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500">
                       <th className="pb-2 pr-4 font-semibold">Tank</th>
                       <th className="pb-2 pr-4 font-semibold">Capacity (Qt)</th>
                       <th className="pb-2 pr-4 font-semibold">Avg level (Qt)*</th>
@@ -476,24 +476,24 @@ export function StorageReports() {
                   </thead>
                   <tbody>
                     {utilization.map((u) => (
-                      <tr key={u.tank.code} className="border-t border-slate-100">
-                        <td className="py-3 pr-4 font-semibold text-slate-800">Tank {u.tank.code}</td>
-                        <td className="py-3 pr-4 font-semibold tabular-nums text-slate-800">{u.tank.capacityQ.toLocaleString()}</td>
-                        <td className="py-3 pr-4 tabular-nums text-slate-600">{u.avgLevelQ.toLocaleString()}</td>
+                      <tr key={u.tank.code} className="border-t border-slate-100 dark:border-slate-700">
+                        <td className="py-3 pr-4 font-semibold text-slate-800 dark:text-slate-100">Tank {u.tank.code}</td>
+                        <td className="py-3 pr-4 font-semibold tabular-nums text-slate-800 dark:text-slate-100">{u.tank.capacityQ.toLocaleString()}</td>
+                        <td className="py-3 pr-4 tabular-nums text-slate-600 dark:text-slate-300">{u.avgLevelQ.toLocaleString()}</td>
                         <td className="py-3 pr-4">
                           <div className="flex items-center gap-2">
                             <div className="w-24"><UtilizationBar value={pct(u.avgLevelQ, u.tank.capacityQ)} /></div>
-                            <span className="text-xs tabular-nums text-slate-500">{pct(u.avgLevelQ, u.tank.capacityQ).toFixed(1)}%</span>
+                            <span className="text-xs tabular-nums text-slate-500 dark:text-slate-400">{pct(u.avgLevelQ, u.tank.capacityQ).toFixed(1)}%</span>
                           </div>
                         </td>
-                        <td className="py-3 pr-4 font-semibold tabular-nums text-slate-800">{u.fills}</td>
-                        <td className="py-3 font-semibold tabular-nums text-slate-800">{u.cyclesCompleted}</td>
+                        <td className="py-3 pr-4 font-semibold tabular-nums text-slate-800 dark:text-slate-100">{u.fills}</td>
+                        <td className="py-3 font-semibold tabular-nums text-slate-800 dark:text-slate-100">{u.cyclesCompleted}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
-              <p className="mt-3 text-xs text-slate-400">
+              <p className="mt-3 text-xs text-slate-400 dark:text-slate-500">
                 * Average level is approximated from the current tank level; per-fill level history is not retained by the server.
               </p>
             </div>
@@ -513,16 +513,16 @@ export function StorageReports() {
                       { icon: <Droplets className="h-4 w-4 text-teal-600" />, label: 'Moisture compliance', value: `${cycleStats.moisturePct.toFixed(0)}%`, sub: `${cycleStats.moistN}/${cycleStats.moistD} within ${MOIST_MIN.toFixed(1)}–${MOIST_MAX.toFixed(1)}%` }
                     ].map((k, i) => (
                       <div key={i} className="rounded-xl border border-slate-200/70 p-4">
-                        <div className="mb-2 flex items-center gap-2">{k.icon}<span className="text-xs font-semibold text-slate-500">{k.label}</span></div>
-                        <div className="text-xl font-bold tabular-nums text-slate-900">{k.value}</div>
-                        <div className="mt-1 text-xs text-slate-500">{k.sub}</div>
+                        <div className="mb-2 flex items-center gap-2">{k.icon}<span className="text-xs font-semibold text-slate-500 dark:text-slate-400">{k.label}</span></div>
+                        <div className="text-xl font-bold tabular-nums text-slate-900 dark:text-slate-100">{k.value}</div>
+                        <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">{k.sub}</div>
                       </div>
                     ))}
                   </div>
                   <div className="overflow-x-auto">
                     <table className="w-full min-w-[720px] text-sm">
                       <thead>
-                        <tr className="text-left text-xs uppercase tracking-wide text-slate-400">
+                        <tr className="text-left text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500">
                           <th className="pb-2 pr-4 font-semibold">Batch</th>
                           <th className="pb-2 pr-4 font-semibold">Tank</th>
                           <th className="pb-2 pr-4 font-semibold">Started</th>
@@ -542,19 +542,19 @@ export function StorageReports() {
                           const onTime = elapsedHrs != null && elapsedHrs <= (c.requiredHrs ?? 0);
                           const compliant = c.moistureAfter != null && c.moistureAfter >= MOIST_MIN && c.moistureAfter <= MOIST_MAX;
                           return (
-                            <tr key={c.id} className="border-t border-slate-100">
-                              <td className="py-2.5 pr-4 font-semibold tabular-nums text-slate-800">{c.batchNo}</td>
-                              <td className="py-2.5 pr-4 text-slate-600">Tank {c.tankCode}</td>
-                              <td className="py-2.5 pr-4 text-slate-600">{fmtDateTime(c.startedAt)}</td>
-                              <td className="py-2.5 pr-4 tabular-nums text-slate-600">{c.requiredHrs}</td>
-                              <td className="py-2.5 pr-4 text-slate-600">{fmtDateTime(c.completedAt)}</td>
-                              <td className="py-2.5 pr-4 tabular-nums text-slate-600">{elapsedHrs != null ? elapsedHrs.toFixed(1) : '—'}</td>
+                            <tr key={c.id} className="border-t border-slate-100 dark:border-slate-700">
+                              <td className="py-2.5 pr-4 font-semibold tabular-nums text-slate-800 dark:text-slate-100">{c.batchNo}</td>
+                              <td className="py-2.5 pr-4 text-slate-600 dark:text-slate-300">Tank {c.tankCode}</td>
+                              <td className="py-2.5 pr-4 text-slate-600 dark:text-slate-300">{fmtDateTime(c.startedAt)}</td>
+                              <td className="py-2.5 pr-4 tabular-nums text-slate-600 dark:text-slate-300">{c.requiredHrs}</td>
+                              <td className="py-2.5 pr-4 text-slate-600 dark:text-slate-300">{fmtDateTime(c.completedAt)}</td>
+                              <td className="py-2.5 pr-4 tabular-nums text-slate-600 dark:text-slate-300">{elapsedHrs != null ? elapsedHrs.toFixed(1) : '—'}</td>
                               <td className={`py-2.5 pr-4 font-semibold tabular-nums ${c.moistureAfter == null ? 'text-slate-400' : compliant ? 'text-emerald-700' : 'text-amber-700'}`}>
                                 {c.moistureAfter != null ? `${c.moistureAfter.toFixed(1)}%` : '—'}
                               </td>
                               <td className="py-2.5">
                                 {elapsedHrs == null ? (
-                                  <span className="text-xs text-slate-400">running</span>
+                                  <span className="text-xs text-slate-400 dark:text-slate-500">running</span>
                                 ) : (
                                   <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${onTime ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>
                                     {onTime ? 'Yes' : 'Late'}
@@ -569,7 +569,7 @@ export function StorageReports() {
                   </div>
                 </>
               ) : (
-                <p className="rounded-xl bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
+                <p className="rounded-xl bg-slate-50 dark:bg-slate-800 px-4 py-6 text-center text-sm text-slate-500 dark:text-slate-400">
                   No conditioning cycles in this period.
                 </p>
               )}
@@ -587,7 +587,7 @@ export function StorageReports() {
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[640px] text-sm">
                   <thead>
-                    <tr className="text-left text-xs uppercase tracking-wide text-slate-400">
+                    <tr className="text-left text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500">
                       <th className="pb-2 pr-4 font-semibold">Tank</th>
                       <th className="pb-2 pr-4 font-semibold">Batch</th>
                       <th className="pb-2 pr-4 font-semibold">Soft % (target 50)</th>
@@ -598,16 +598,16 @@ export function StorageReports() {
                   </thead>
                   <tbody>
                     {blendRows.map((r) => (
-                      <tr key={r.tank.code} className="border-t border-slate-100">
-                        <td className="py-3 pr-4 font-semibold text-slate-800">Tank {r.tank.code}</td>
-                        <td className="py-3 pr-4 tabular-nums text-slate-600">{r.batchNo ?? '—'}</td>
+                      <tr key={r.tank.code} className="border-t border-slate-100 dark:border-slate-700">
+                        <td className="py-3 pr-4 font-semibold text-slate-800 dark:text-slate-100">Tank {r.tank.code}</td>
+                        <td className="py-3 pr-4 tabular-nums text-slate-600 dark:text-slate-300">{r.batchNo ?? '—'}</td>
                         {(['soft', 'hard', 'foreign'] as const).map((k) => {
                           const d = r.dev?.[k];
                           const bad = d != null && Math.abs(d) > DEVIATION_TOL;
                           return (
                             <td key={k} className={`py-3 pr-4 tabular-nums ${r.blend == null ? 'text-slate-400' : bad ? 'font-semibold text-red-600' : 'text-slate-600'}`}>
                               {r.blend != null ? (
-                                <>{r.blend[k].toFixed(1)} <span className="text-xs text-slate-400">({d! >= 0 ? '+' : ''}{d!.toFixed(1)})</span></>
+                                <>{r.blend[k].toFixed(1)} <span className="text-xs text-slate-400 dark:text-slate-500">({d! >= 0 ? '+' : ''}{d!.toFixed(1)})</span></>
                               ) : (
                                 '—'
                               )}
@@ -635,20 +635,20 @@ export function StorageReports() {
                 {([
                   { label: 'IN', icon: <ArrowDownToLine className="h-4 w-4 text-emerald-600" />, value: movementSummary.totals.IN, cls: 'text-emerald-700' },
                   { label: 'OUT', icon: <ArrowUpFromLine className="h-4 w-4 text-red-500" />, value: movementSummary.totals.OUT, cls: 'text-red-600' },
-                  { label: 'ADJUST', icon: <Shuffle className="h-4 w-4 text-slate-500" />, value: movementSummary.totals.ADJUST, cls: 'text-slate-700' }
+                  { label: 'ADJUST', icon: <Shuffle className="h-4 w-4 text-slate-500 dark:text-slate-400" />, value: movementSummary.totals.ADJUST, cls: 'text-slate-700' }
                 ] as const).map((k) => (
                   <div key={k.label} className="rounded-xl border border-slate-200/70 p-4">
-                    <div className="mb-2 flex items-center gap-2">{k.icon}<span className="text-xs font-semibold text-slate-500">{k.label}</span></div>
+                    <div className="mb-2 flex items-center gap-2">{k.icon}<span className="text-xs font-semibold text-slate-500 dark:text-slate-400">{k.label}</span></div>
                     <div className={`text-xl font-bold tabular-nums ${k.cls}`}>{k.value.toLocaleString()} Qt</div>
                   </div>
                 ))}
               </div>
               <div>
-                <h3 className="mb-3 text-sm font-bold text-slate-800">By location</h3>
+                <h3 className="mb-3 text-sm font-bold text-slate-800 dark:text-slate-100">By location</h3>
                 <div className="overflow-x-auto">
                   <table className="w-full min-w-[520px] text-sm">
                     <thead>
-                      <tr className="text-left text-xs uppercase tracking-wide text-slate-400">
+                      <tr className="text-left text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500">
                         <th className="pb-2 pr-4 font-semibold">Location</th>
                         <th className="pb-2 pr-4 font-semibold">IN (Qt)</th>
                         <th className="pb-2 pr-4 font-semibold">OUT (Qt)</th>
@@ -658,15 +658,15 @@ export function StorageReports() {
                     </thead>
                     <tbody>
                       {movementSummary.byLoc.length === 0 ? (
-                        <tr><td colSpan={5} className="py-4 text-center text-sm text-slate-500">No movements in this period.</td></tr>
+                        <tr><td colSpan={5} className="py-4 text-center text-sm text-slate-500 dark:text-slate-400">No movements in this period.</td></tr>
                       ) : (
                         movementSummary.byLoc.map(([loc, v]) => (
-                          <tr key={loc} className="border-t border-slate-100">
-                            <td className="py-2.5 pr-4 font-semibold text-slate-800">{loc}</td>
+                          <tr key={loc} className="border-t border-slate-100 dark:border-slate-700">
+                            <td className="py-2.5 pr-4 font-semibold text-slate-800 dark:text-slate-100">{loc}</td>
                             <td className="py-2.5 pr-4 tabular-nums text-emerald-700">{v.IN.toLocaleString()}</td>
                             <td className="py-2.5 pr-4 tabular-nums text-red-600">{v.OUT.toLocaleString()}</td>
-                            <td className="py-2.5 pr-4 tabular-nums text-slate-600">{v.ADJUST.toLocaleString()}</td>
-                            <td className="py-2.5 font-semibold tabular-nums text-slate-800">{(v.IN - v.OUT).toLocaleString()}</td>
+                            <td className="py-2.5 pr-4 tabular-nums text-slate-600 dark:text-slate-300">{v.ADJUST.toLocaleString()}</td>
+                            <td className="py-2.5 font-semibold tabular-nums text-slate-800 dark:text-slate-100">{(v.IN - v.OUT).toLocaleString()}</td>
                           </tr>
                         ))
                       )}
@@ -675,11 +675,11 @@ export function StorageReports() {
                 </div>
               </div>
               <div>
-                <h3 className="mb-3 text-sm font-bold text-slate-800">By wheat type</h3>
+                <h3 className="mb-3 text-sm font-bold text-slate-800 dark:text-slate-100">By wheat type</h3>
                 <div className="overflow-x-auto">
                   <table className="w-full min-w-[520px] text-sm">
                     <thead>
-                      <tr className="text-left text-xs uppercase tracking-wide text-slate-400">
+                      <tr className="text-left text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500">
                         <th className="pb-2 pr-4 font-semibold">Wheat type</th>
                         <th className="pb-2 pr-4 font-semibold">IN (Qt)</th>
                         <th className="pb-2 pr-4 font-semibold">OUT (Qt)</th>
@@ -689,15 +689,15 @@ export function StorageReports() {
                     </thead>
                     <tbody>
                       {movementSummary.byType.length === 0 ? (
-                        <tr><td colSpan={5} className="py-4 text-center text-sm text-slate-500">No movements in this period.</td></tr>
+                        <tr><td colSpan={5} className="py-4 text-center text-sm text-slate-500 dark:text-slate-400">No movements in this period.</td></tr>
                       ) : (
                         movementSummary.byType.map(([type, v]) => (
-                          <tr key={type} className="border-t border-slate-100">
-                            <td className="py-2.5 pr-4 font-semibold text-slate-800">{type}</td>
+                          <tr key={type} className="border-t border-slate-100 dark:border-slate-700">
+                            <td className="py-2.5 pr-4 font-semibold text-slate-800 dark:text-slate-100">{type}</td>
                             <td className="py-2.5 pr-4 tabular-nums text-emerald-700">{v.IN.toLocaleString()}</td>
                             <td className="py-2.5 pr-4 tabular-nums text-red-600">{v.OUT.toLocaleString()}</td>
-                            <td className="py-2.5 pr-4 tabular-nums text-slate-600">{v.ADJUST.toLocaleString()}</td>
-                            <td className="py-2.5 font-semibold tabular-nums text-slate-800">{(v.IN - v.OUT).toLocaleString()}</td>
+                            <td className="py-2.5 pr-4 tabular-nums text-slate-600 dark:text-slate-300">{v.ADJUST.toLocaleString()}</td>
+                            <td className="py-2.5 font-semibold tabular-nums text-slate-800 dark:text-slate-100">{(v.IN - v.OUT).toLocaleString()}</td>
                           </tr>
                         ))
                       )}

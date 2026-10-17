@@ -184,7 +184,7 @@ export function PestAlerts() {
               </div>
               <div className="space-y-3 md:hidden">
                 {(alertsQ.data ?? []).length === 0 ? (
-                  <div className="rounded-xl border border-dashed border-slate-200 px-6 py-10 text-center text-sm text-slate-500">
+                  <div className="rounded-xl border border-dashed border-slate-200 dark:border-slate-700 px-6 py-10 text-center text-sm text-slate-500 dark:text-slate-400">
                     No alerts.
                   </div>
                 ) : (
@@ -192,10 +192,10 @@ export function PestAlerts() {
                     <div key={r.id} className={cardShell}>
                       <div className="flex items-start justify-between gap-2">
                         <AlertSeverityBadge severity={r.severity} />
-                        <span className="text-xs text-slate-500 tabular-nums">{fmtDateTime(r.createdAt)}</span>
+                        <span className="text-xs text-slate-500 dark:text-slate-400 tabular-nums">{fmtDateTime(r.createdAt)}</span>
                       </div>
-                      <p className="mt-2 text-sm font-semibold text-slate-800">{ALERT_TYPE_LABEL[r.type] ?? pretty(r.type)}</p>
-                      <p className="mt-0.5 text-sm text-slate-600">{r.message}</p>
+                      <p className="mt-2 text-sm font-semibold text-slate-800 dark:text-slate-100">{ALERT_TYPE_LABEL[r.type] ?? pretty(r.type)}</p>
+                      <p className="mt-0.5 text-sm text-slate-600 dark:text-slate-300">{r.message}</p>
                       {canManage && !r.acknowledged ? (
                         <Button variant="secondary" className="mt-3 w-full py-2 text-xs" onClick={() => acknowledge(r.id)}>
                           Acknowledge

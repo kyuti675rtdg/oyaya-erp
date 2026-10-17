@@ -123,8 +123,8 @@ export function BreakdownRecords() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-slate-900">Machine Breakdown &amp; Repair Records</h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Machine Breakdown &amp; Repair Records</h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Breakdown log with failure categories, downtime tracking, and repair notes.
           </p>
         </div>
@@ -174,7 +174,7 @@ export function BreakdownRecords() {
               },
               { key: 'equipment', label: 'Equipment', render: (r) => <span className="font-medium">{r.equipment?.name ?? '—'}</span> },
               { key: 'category', label: 'Category', render: (r) => <Badge tone={CATEGORY_TONE[r.category] ?? 'neutral'}>{r.category.charAt(0) + r.category.slice(1).toLowerCase()}</Badge> },
-              { key: 'symptom', label: 'Symptom', render: (r) => <span className="max-w-xs truncate text-sm text-slate-600" title={r.symptom}>{r.symptom}</span> },
+              { key: 'symptom', label: 'Symptom', render: (r) => <span className="max-w-xs truncate text-sm text-slate-600 dark:text-slate-300" title={r.symptom}>{r.symptom}</span> },
               { key: 'reportedByName', label: 'Reported by', render: (r) => <span className="text-sm">{r.reportedByName ?? '—'}</span> },
               {
                 key: 'downtimeMinutes',
@@ -195,7 +195,7 @@ export function BreakdownRecords() {
                         Resolve
                       </Button>
                     ) : (
-                      <span className="tabular-nums text-xs text-slate-400">
+                      <span className="tabular-nums text-xs text-slate-400 dark:text-slate-500">
                         {r.resolvedAt ? fmtDateTime(r.resolvedAt) : ''}
                       </span>
                     )
@@ -212,12 +212,12 @@ export function BreakdownRecords() {
       {reportModal ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setReportModal(false)}>
           <div
-            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6"
+            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white dark:bg-slate-800 p-6"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-label="Report breakdown"
           >
-            <h3 className="mb-4 text-base font-bold text-slate-900">Report breakdown</h3>
+            <h3 className="mb-4 text-base font-bold text-slate-900 dark:text-slate-100">Report breakdown</h3>
             {formError ? (
               <div className="mb-4 rounded-lg bg-critical-bg px-4 py-3 text-sm text-critical-text">{formError}</div>
             ) : null}
@@ -265,13 +265,13 @@ export function BreakdownRecords() {
       {resolveFor ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setResolveFor(null)}>
           <div
-            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6"
+            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white dark:bg-slate-800 p-6"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-label="Resolve breakdown"
           >
-            <h3 className="mb-1 text-base font-bold text-slate-900">Resolve breakdown</h3>
-            <p className="mb-4 text-xs text-slate-500">
+            <h3 className="mb-1 text-base font-bold text-slate-900 dark:text-slate-100">Resolve breakdown</h3>
+            <p className="mb-4 text-xs text-slate-500 dark:text-slate-400">
               {resolveFor.equipment?.name ?? ''} · failed {fmtDateTime(resolveFor.failureTime)}
             </p>
             {formError ? (

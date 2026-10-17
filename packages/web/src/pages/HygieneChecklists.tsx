@@ -161,7 +161,7 @@ export function HygieneChecklists() {
   };
 
   const columns = [
-    { key: 'name', label: 'Template', render: (r: CleaningChecklistTemplate) => <span className="font-semibold text-slate-800">{r.name}</span> },
+    { key: 'name', label: 'Template', render: (r: CleaningChecklistTemplate) => <span className="font-semibold text-slate-800 dark:text-slate-100">{r.name}</span> },
     { key: 'equipment', label: 'Equipment' },
     { key: 'frequency', label: 'Frequency', render: (r: CleaningChecklistTemplate) => <Badge tone="neutral">{FREQUENCY_LABEL[r.frequency]}</Badge> },
     { key: 'items', label: 'Tasks', mono: true, render: (r: CleaningChecklistTemplate) => <span className="tabular-nums">{r._count?.items ?? r.items?.length ?? 0}</span> },
@@ -243,15 +243,15 @@ export function HygieneChecklists() {
             </div>
             <div className="grid grid-cols-1 gap-3 md:hidden">
               {(listQ.data ?? []).map((r) => (
-                <div key={r.id} className="rounded-xl border border-line bg-white p-4">
+                <div key={r.id} className="rounded-xl border border-line bg-white dark:bg-slate-800 p-4">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <p className="font-bold text-slate-800">{r.name}</p>
-                      <p className="text-xs text-slate-500">{r.equipment}{r.area ? ` · ${r.area}` : ''}</p>
+                      <p className="font-bold text-slate-800 dark:text-slate-100">{r.name}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">{r.equipment}{r.area ? ` · ${r.area}` : ''}</p>
                     </div>
                     <Badge tone="neutral">{FREQUENCY_LABEL[r.frequency]}</Badge>
                   </div>
-                  <p className="mt-2 text-sm tabular-nums text-slate-600">{r._count?.items ?? 0} tasks · {r.assignedTo ?? 'Unassigned'}</p>
+                  <p className="mt-2 text-sm tabular-nums text-slate-600 dark:text-slate-300">{r._count?.items ?? 0} tasks · {r.assignedTo ?? 'Unassigned'}</p>
                   <div className="mt-3 flex gap-2">
                     <Button variant="secondary" className="flex-1 py-1.5 text-sm" onClick={() => openDetail(r)}>View</Button>
                     {canManage ? (
@@ -300,11 +300,11 @@ export function HygieneChecklists() {
             </Field>
           </div>
           <div className="mt-4">
-            <p className="mb-2 text-sm font-semibold text-slate-700">Task items</p>
+            <p className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-200">Task items</p>
             <div className="space-y-2">
               {items.map((it, i) => (
                 <div key={i} className="flex items-start gap-2">
-                  <span className="mt-2.5 flex h-6 w-6 shrink-0 items-center justify-center rounded border border-slate-300 text-xs font-bold tabular-nums text-slate-500">{i + 1}</span>
+                  <span className="mt-2.5 flex h-6 w-6 shrink-0 items-center justify-center rounded border border-slate-300 text-xs font-bold tabular-nums text-slate-500 dark:text-slate-400">{i + 1}</span>
                   <div className="flex-1 space-y-2">
                     <TextInput value={it.title} onChange={(e) => setItems((p) => p.map((x, j) => (j === i ? { ...x, title: e.target.value } : x)))} placeholder="Task — e.g. Brush and blow down roller surfaces" />
                     <TextArea value={it.detail} onChange={(e) => setItems((p) => p.map((x, j) => (j === i ? { ...x, detail: e.target.value } : x)))} placeholder="Detail / method (optional)" rows={1} />
@@ -338,7 +338,7 @@ export function HygieneChecklists() {
             <div className="mb-2 flex items-start justify-between">
               <div>
                 <h3 className="text-lg font-bold text-ink">{detail.name}</h3>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-slate-500 dark:text-slate-400">
                   {detail.equipment}{detail.area ? ` · ${detail.area}` : ''} · {FREQUENCY_LABEL[detail.frequency]}
                 </p>
               </div>
@@ -376,10 +376,10 @@ export function HygieneChecklists() {
               <ul className="space-y-2">
                 {(detail.items ?? []).map((it, i) => (
                   <li key={it.id} className="flex items-start gap-3 rounded-lg border border-line bg-alabaster px-3 py-2.5">
-                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border border-slate-300 bg-white text-[11px] font-bold tabular-nums text-slate-500">{i + 1}</span>
+                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border border-slate-300 bg-white dark:bg-slate-800 text-[11px] font-bold tabular-nums text-slate-500 dark:text-slate-400">{i + 1}</span>
                     <div>
-                      <p className="text-sm font-semibold text-slate-800">{it.title}</p>
-                      {it.detail ? <p className="text-xs text-slate-500">{it.detail}</p> : null}
+                      <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{it.title}</p>
+                      {it.detail ? <p className="text-xs text-slate-500 dark:text-slate-400">{it.detail}</p> : null}
                     </div>
                   </li>
                 ))}

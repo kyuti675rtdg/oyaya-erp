@@ -233,13 +233,13 @@ export function SalesLoading() {
                     <span className="ml-2">
                       <Badge tone="neutral">{String(o.status)}</Badge>
                     </span>
-                    <span className="tnum ml-2 text-slate-500">
+                    <span className="tnum ml-2 text-slate-500 dark:text-slate-400">
                       {o.lines && o.lines.length > 0 ? `${o.lines.reduce((s, l) => s + l.bags, 0)} bags` : ''} · {fmtQ(o.quintals)} q
                     </span>
                   </span>
                 </label>
               ))}
-              {loadableOrders.length === 0 ? <p className="text-sm text-slate-500">No loadable orders.</p> : null}
+              {loadableOrders.length === 0 ? <p className="text-sm text-slate-500 dark:text-slate-400">No loadable orders.</p> : null}
             </div>
           )}
           <Button onClick={buildLines} disabled={picked.length === 0} className="mt-4 w-full">
@@ -293,7 +293,7 @@ export function SalesLoading() {
                 </div>
               </>
             ) : (
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-slate-500 dark:text-slate-400">
                 Orders will be added to the existing load plan. Vehicle and route come from the load.
               </p>
             )}
@@ -311,7 +311,7 @@ export function SalesLoading() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-xs text-slate-500">
+                <tr className="text-left text-xs text-slate-500 dark:text-slate-400">
                   <th className="py-2">Order</th>
                   <th className="py-2">Product</th>
                   <th className="py-2">Pack</th>

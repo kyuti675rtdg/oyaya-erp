@@ -72,15 +72,15 @@ export function PayrollJournal() {
           <div className="space-y-4">
             <div className="grid gap-3 sm:grid-cols-3">
               <Card className="p-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Posted to GL</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Posted to GL</p>
                 <p className="tnum mt-1 text-xl font-extrabold text-pass-text">{fmtBirr(totalPosted)}</p>
               </Card>
               <Card className="p-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Approved, awaiting posting</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Approved, awaiting posting</p>
                 <p className="tnum mt-1 text-xl font-extrabold text-advisory-text">{fmtInt(pending.length)}</p>
               </Card>
               <Card className="p-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Total runs</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Total runs</p>
                 <p className="tnum mt-1 text-xl font-extrabold text-ink">{fmtInt(runsQ.data?.length ?? 0)}</p>
               </Card>
             </div>
@@ -106,7 +106,7 @@ export function PayrollJournal() {
                     r.journalPosted ? (
                       <span className="tnum font-bold text-pass-text">{r.journalEntryNo ?? 'Posted'}</span>
                     ) : (
-                      <span className="text-sm text-slate-400">Not posted</span>
+                      <span className="text-sm text-slate-400 dark:text-slate-500">Not posted</span>
                     )
                 },
                 {
@@ -129,7 +129,7 @@ export function PayrollJournal() {
               emptySub="Payroll runs created in the Payroll module appear here for GL posting."
             />
 
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-400 dark:text-slate-500">
               Only approved (POSTED) runs can be posted. Each run posts once — duplicates are
               rejected. Approve runs in <Link to="/payroll" className="font-semibold text-violet-700 hover:underline">Payroll</Link> first.
             </p>
@@ -147,7 +147,7 @@ export function PayrollJournal() {
                 label: 'Account',
                 render: (r) => (
                   <span className="font-semibold text-ink">
-                    <span className="tnum mr-2 text-slate-400">{r.account.code}</span>
+                    <span className="tnum mr-2 text-slate-400 dark:text-slate-500">{r.account.code}</span>
                     {r.account.name}
                   </span>
                 )

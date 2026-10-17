@@ -224,7 +224,7 @@ export function FlourQualityTesting() {
               const latest = latestPerProduct.get(p);
               return (
                 <div key={p} className="rounded-xl border border-slate-200/70 p-3 text-center">
-                  <p className="text-xs font-bold text-slate-700">{p}</p>
+                  <p className="text-xs font-bold text-slate-700 dark:text-slate-200">{p}</p>
                   <div className="mt-2">
                     {latest ? (
                       <Badge tone={VERDICT_TONE[latest.verdict]}>{latest.verdict}</Badge>
@@ -233,7 +233,7 @@ export function FlourQualityTesting() {
                     )}
                   </div>
                   {latest ? (
-                    <p className="mt-1.5 tabular-nums text-[11px] text-slate-400">
+                    <p className="mt-1.5 tabular-nums text-[11px] text-slate-400 dark:text-slate-500">
                       {fmtDateTime(latest.sampleTime)}
                     </p>
                   ) : null}
@@ -273,7 +273,7 @@ export function FlourQualityTesting() {
                   type="datetime-local"
                   value={sampleTime}
                   onChange={(e) => setSampleTime(e.target.value)}
-                  className="touch w-full rounded-lg border border-line bg-white px-4 text-base focus:border-navy focus:outline-none focus:ring-2 focus:ring-navy/20"
+                  className="touch w-full rounded-lg border border-line bg-white dark:bg-slate-800 px-4 text-base focus:border-navy focus:outline-none focus:ring-2 focus:ring-navy/20"
                   required
                 />
               </Field>
@@ -307,8 +307,8 @@ export function FlourQualityTesting() {
               <TextArea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Observations, equipment used, ..." />
             </Field>
 
-            <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-slate-50 px-4 py-3">
-              <span className="text-sm text-slate-600">
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-slate-50 dark:bg-slate-800 px-4 py-3">
+              <span className="text-sm text-slate-600 dark:text-slate-300">
                 Auto verdict: {enteredCount} parameter(s) entered
               </span>
               <Badge tone={VERDICT_TONE[previewVerdict]} className="text-sm">{previewVerdict}</Badge>
@@ -326,17 +326,17 @@ export function FlourQualityTesting() {
             title="About these standards"
             subtitle="Flour category thresholds — configurable"
           />
-          <ul className="space-y-2 text-sm text-slate-600">
+          <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-300">
             {PARAMS.map((p) => (
               <li key={p.key} className="flex items-center justify-between gap-2">
                 <span>{p.label}</span>
-                <span className="tabular-nums font-semibold text-slate-800">
+                <span className="tabular-nums font-semibold text-slate-800 dark:text-slate-100">
                   {thresholdHint(thresholdByCode.get(p.code), p.fallbackHint).replace('Standard: ', '')}
                 </span>
               </li>
             ))}
           </ul>
-          <p className="mt-3 text-xs text-slate-400">
+          <p className="mt-3 text-xs text-slate-400 dark:text-slate-500">
             A FAIL verdict automatically opens a CAPA and alerts the lab and production heads.
             Adjust the numbers in Quality Standards if the mill's specification changes.
           </p>
@@ -375,23 +375,23 @@ export function FlourQualityTesting() {
             {/* Mobile stacked cards */}
             <div className="space-y-3 md:hidden">
               {tests.map((t) => (
-                <div key={t.id} className="rounded-xl border border-slate-200/70 bg-white p-4">
+                <div key={t.id} className="rounded-xl border border-slate-200/70 bg-white dark:bg-slate-800 p-4">
                   <div className="flex items-center justify-between gap-2">
                     <div>
-                      <p className="text-sm font-bold text-slate-800">{t.productLabel}</p>
-                      <p className="tabular-nums text-xs text-slate-500">
+                      <p className="text-sm font-bold text-slate-800 dark:text-slate-100">{t.productLabel}</p>
+                      <p className="tabular-nums text-xs text-slate-500 dark:text-slate-400">
                         {t.batch?.batchNo ?? '—'} · {fmtDateTime(t.sampleTime)}
                       </p>
                     </div>
                     <Badge tone={VERDICT_TONE[t.verdict]}>{t.verdict}</Badge>
                   </div>
                   <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
-                    <div className="flex justify-between"><dt className="text-slate-500">Moisture</dt><dd className="tabular-nums font-semibold">{fmtVal(t.flourMoisturePct)}%</dd></div>
-                    <div className="flex justify-between"><dt className="text-slate-500">Wet gluten</dt><dd className="tabular-nums font-semibold">{fmtVal(t.wetGlutenPct)}%</dd></div>
-                    <div className="flex justify-between"><dt className="text-slate-500">Dry gluten</dt><dd className="tabular-nums font-semibold">{fmtVal(t.dryGlutenPct)}%</dd></div>
-                    <div className="flex justify-between"><dt className="text-slate-500">Ash</dt><dd className="tabular-nums font-semibold">{fmtVal(t.ashPct)}%</dd></div>
-                    <div className="flex justify-between"><dt className="text-slate-500">Color</dt><dd className="tabular-nums font-semibold">{fmtVal(t.colorScore)}</dd></div>
-                    <div className="flex justify-between"><dt className="text-slate-500">Granulation</dt><dd className="tabular-nums font-semibold">{fmtVal(t.granulationPct)}%</dd></div>
+                    <div className="flex justify-between"><dt className="text-slate-500 dark:text-slate-400">Moisture</dt><dd className="tabular-nums font-semibold">{fmtVal(t.flourMoisturePct)}%</dd></div>
+                    <div className="flex justify-between"><dt className="text-slate-500 dark:text-slate-400">Wet gluten</dt><dd className="tabular-nums font-semibold">{fmtVal(t.wetGlutenPct)}%</dd></div>
+                    <div className="flex justify-between"><dt className="text-slate-500 dark:text-slate-400">Dry gluten</dt><dd className="tabular-nums font-semibold">{fmtVal(t.dryGlutenPct)}%</dd></div>
+                    <div className="flex justify-between"><dt className="text-slate-500 dark:text-slate-400">Ash</dt><dd className="tabular-nums font-semibold">{fmtVal(t.ashPct)}%</dd></div>
+                    <div className="flex justify-between"><dt className="text-slate-500 dark:text-slate-400">Color</dt><dd className="tabular-nums font-semibold">{fmtVal(t.colorScore)}</dd></div>
+                    <div className="flex justify-between"><dt className="text-slate-500 dark:text-slate-400">Granulation</dt><dd className="tabular-nums font-semibold">{fmtVal(t.granulationPct)}%</dd></div>
                   </dl>
                   {t.outOfRange.length > 0 ? (
                     <p className="mt-2 text-xs font-medium text-critical-text">{t.outOfRange.join('; ')}</p>

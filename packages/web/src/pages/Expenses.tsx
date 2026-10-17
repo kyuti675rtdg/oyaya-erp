@@ -298,7 +298,7 @@ export function Expenses() {
                 key: 'glAccountCode',
                 label: 'Default GL account',
                 mono: true,
-                render: (r) => r.glAccountCode ?? <span className="text-slate-400">—</span>
+                render: (r) => r.glAccountCode ?? <span className="text-slate-400 dark:text-slate-500">—</span>
               },
               {
                 key: 'isActive',
@@ -320,13 +320,13 @@ export function Expenses() {
             <div className="mb-4 flex items-start justify-between">
               <div>
                 <h3 className="text-lg font-bold text-ink">New expense claim</h3>
-                <p className="mt-0.5 text-sm text-slate-500">
+                <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
                   Created as DRAFT, then submitted for approval.
                 </p>
               </div>
               <button
                 onClick={() => setClaimModal(false)}
-                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100"
+                className="rounded-lg p-1.5 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700"
                 aria-label="Close"
               >
                 <X className="h-5 w-5" />
@@ -403,7 +403,7 @@ export function Expenses() {
               <h3 className="text-lg font-bold text-ink">New expense category</h3>
               <button
                 onClick={() => setCatModal(false)}
-                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100"
+                className="rounded-lg p-1.5 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700"
                 aria-label="Close"
               >
                 <X className="h-5 w-5" />

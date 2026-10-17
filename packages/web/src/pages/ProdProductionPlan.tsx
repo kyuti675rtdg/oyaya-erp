@@ -247,8 +247,8 @@ export function ProdProductionPlan() {
           { label: 'Completed', value: summary.completed }
         ].map((k) => (
           <div key={k.label} className={`${cardShell} !p-4`}>
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{k.label}</p>
-            <p className="tabular-nums mt-1 text-2xl font-bold text-slate-800">{k.value}</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{k.label}</p>
+            <p className="tabular-nums mt-1 text-2xl font-bold text-slate-800 dark:text-slate-100">{k.value}</p>
           </div>
         ))}
       </div>
@@ -283,7 +283,7 @@ export function ProdProductionPlan() {
                 </Select>
               </Field>
               <div>
-                <p className="mb-2 text-sm font-semibold text-slate-700">Target products</p>
+                <p className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-200">Target products</p>
                 <div className="space-y-2">
                   {targets.map((t, i) => (
                     <div key={i} className="flex items-center gap-2">
@@ -390,7 +390,7 @@ export function ProdProductionPlan() {
                       {
                         key: 'planNo',
                         label: 'Plan',
-                        render: (r) => <span className="tabular-nums font-bold text-slate-800">{r.planNo}</span>
+                        render: (r) => <span className="tabular-nums font-bold text-slate-800 dark:text-slate-100">{r.planNo}</span>
                       },
                       {
                         key: 'targets',
@@ -458,11 +458,11 @@ export function ProdProductionPlan() {
                     plans.map((r) => (
                       <div key={r.id} className="rounded-xl border border-slate-200/70 p-4">
                         <div className="flex items-center justify-between">
-                          <span className="tabular-nums font-bold text-slate-800">{r.planNo}</span>
+                          <span className="tabular-nums font-bold text-slate-800 dark:text-slate-100">{r.planNo}</span>
                           <Badge tone={statusTone(r.status)}>{r.status.replace('_', ' ')}</Badge>
                         </div>
-                        <p className="mt-2 text-sm text-slate-600">{planTargetSummary(r)}</p>
-                        <p className="tabular-nums mt-1 text-xs text-slate-500">
+                        <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{planTargetSummary(r)}</p>
+                        <p className="tabular-nums mt-1 text-xs text-slate-500 dark:text-slate-400">
                           Wheat {fmtQ(r.plannedWheatQ)} q · {fmtDate(r.scheduledDate)} ·{' '}
                           {r.shift === 'MORNING' ? 'Morning' : 'Night'} shift
                         </p>
@@ -488,9 +488,9 @@ export function ProdProductionPlan() {
 
       {completingId ? (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/40 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
-            <h3 className="text-base font-bold text-slate-800">Complete plan</h3>
-            <p className="mt-1 text-sm text-slate-500">
+          <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-xl">
+            <h3 className="text-base font-bold text-slate-800 dark:text-slate-100">Complete plan</h3>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               Record actual quantities. A yield alert is raised automatically when output falls below
               90% of the plan.
             </p>

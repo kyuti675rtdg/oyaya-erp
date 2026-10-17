@@ -617,7 +617,7 @@ export function ProcurementReports() {
   if (loadError) {
     return (
       <div>
-        <h1 className="text-2xl font-extrabold text-slate-900">Procurement Reports</h1>
+        <h1 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100">Procurement Reports</h1>
         <div className="mt-6">
           <ErrorBox
             message={loadError instanceof Error ? loadError.message : 'Failed to load report data.'}
@@ -648,8 +648,8 @@ export function ProcurementReports() {
       {/* Header */}
       <div className="mb-5 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900">Procurement Reports</h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100">Procurement Reports</h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Supplier performance, pricing and payables · {fmtDate(fromISO)} – {fmtDate(toISO)}
           </p>
         </div>
@@ -666,7 +666,7 @@ export function ProcurementReports() {
       {/* Period selector */}
       <div className={`${cardShell} no-print mb-5`}>
         <div className="flex flex-wrap items-center gap-3">
-          <span className="inline-flex items-center gap-2 text-sm font-bold text-slate-700">
+          <span className="inline-flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-200">
             <CalendarDays size={16} className="text-violet-600" /> Reporting period
           </span>
           <div className="flex flex-wrap gap-2">
@@ -715,26 +715,26 @@ export function ProcurementReports() {
       {/* KPI strip */}
       <div className="mb-5 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <div className={cardShell}>
-          <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Intakes in period</p>
-          <p className="tnum mt-2 text-3xl font-extrabold text-slate-900">{fmtInt(kpis.intakeCount)}</p>
-          <p className="mt-1 text-xs text-slate-500">All delivery statuses</p>
+          <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Intakes in period</p>
+          <p className="tnum mt-2 text-3xl font-extrabold text-slate-900 dark:text-slate-100">{fmtInt(kpis.intakeCount)}</p>
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">All delivery statuses</p>
         </div>
         <div className={cardShell}>
-          <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Accepted volume</p>
-          <p className="tnum mt-2 text-3xl font-extrabold text-slate-900">{fmtQ(kpis.quintals)} Qt</p>
-          <p className="mt-1 text-xs text-slate-500">QC-accepted deliveries</p>
+          <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Accepted volume</p>
+          <p className="tnum mt-2 text-3xl font-extrabold text-slate-900 dark:text-slate-100">{fmtQ(kpis.quintals)} Qt</p>
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">QC-accepted deliveries</p>
         </div>
         <div className={cardShell}>
-          <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Procurement spend</p>
-          <p className="tnum mt-2 text-3xl font-extrabold text-slate-900">{fmtBirr(kpis.spend)}</p>
-          <p className="mt-1 text-xs text-slate-500">AP invoices issued in period</p>
+          <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Procurement spend</p>
+          <p className="tnum mt-2 text-3xl font-extrabold text-slate-900 dark:text-slate-100">{fmtBirr(kpis.spend)}</p>
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">AP invoices issued in period</p>
         </div>
         <div className={cardShell}>
-          <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Acceptance rate</p>
-          <p className="tnum mt-2 text-3xl font-extrabold text-slate-900">
+          <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Acceptance rate</p>
+          <p className="tnum mt-2 text-3xl font-extrabold text-slate-900 dark:text-slate-100">
             {kpis.acceptanceRate === null ? '—' : fmtPct(kpis.acceptanceRate * 100)}
           </p>
-          <p className="mt-1 text-xs text-slate-500">Accepted of decided intakes</p>
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Accepted of decided intakes</p>
         </div>
       </div>
 
@@ -802,10 +802,10 @@ export function ProcurementReports() {
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-              <div className="overflow-x-auto rounded-xl border border-slate-100">
+              <div className="overflow-x-auto rounded-xl border border-slate-100 dark:border-slate-700">
                 <table className="w-full min-w-[860px] text-sm">
                   <thead>
-                    <tr className="bg-slate-50">
+                    <tr className="bg-slate-50 dark:bg-slate-800">
                       <th className={thClass} onClick={() => toggleSort('name')}>Supplier{sortIcon('name')}</th>
                       <th className={thClass} onClick={() => toggleSort('intakes')}>Intakes{sortIcon('intakes')}</th>
                       <th className={thClass} onClick={() => toggleSort('quintals')}>Volume (Qt){sortIcon('quintals')}</th>
@@ -821,31 +821,31 @@ export function ProcurementReports() {
                   </thead>
                   <tbody>
                     {sortedPerf.map((r) => (
-                      <tr key={r.id} className="border-t border-slate-100 hover:bg-slate-50/60">
+                      <tr key={r.id} className="border-t border-slate-100 dark:border-slate-700 hover:bg-slate-50/60">
                         <td className="px-4 py-3">
-                          <p className="font-semibold text-slate-800">{r.name}</p>
-                          <p className="text-xs text-slate-400">{r.type.replace(/_/g, ' ')}</p>
+                          <p className="font-semibold text-slate-800 dark:text-slate-100">{r.name}</p>
+                          <p className="text-xs text-slate-400 dark:text-slate-500">{r.type.replace(/_/g, ' ')}</p>
                         </td>
-                        <td className="tnum px-4 py-3 font-medium text-slate-700">{fmtInt(r.intakes)}</td>
-                        <td className="tnum px-4 py-3 font-medium text-slate-700">{fmtQ(r.quintals)}</td>
+                        <td className="tnum px-4 py-3 font-medium text-slate-700 dark:text-slate-200">{fmtInt(r.intakes)}</td>
+                        <td className="tnum px-4 py-3 font-medium text-slate-700 dark:text-slate-200">{fmtQ(r.quintals)}</td>
                         <td className="px-4 py-3">
                           {r.acceptanceRate === null ? (
-                            <span className="text-slate-400">—</span>
+                            <span className="text-slate-400 dark:text-slate-500">—</span>
                           ) : (
                             <Badge tone={r.acceptanceRate >= 0.9 ? 'pass' : r.acceptanceRate >= 0.7 ? 'advisory' : 'critical'}>
                               {fmtPct(r.acceptanceRate * 100)}
                             </Badge>
                           )}
                         </td>
-                        <td className="tnum px-4 py-3 font-medium text-slate-700">
-                          {r.avgPrice === null ? <span className="text-slate-400">—</span> : fmtBirr(r.avgPrice)}
+                        <td className="tnum px-4 py-3 font-medium text-slate-700 dark:text-slate-200">
+                          {r.avgPrice === null ? <span className="text-slate-400 dark:text-slate-500">—</span> : fmtBirr(r.avgPrice)}
                         </td>
-                        <td className="tnum px-4 py-3 font-medium text-slate-700">{fmtBirr(r.spendBirr)}</td>
+                        <td className="tnum px-4 py-3 font-medium text-slate-700 dark:text-slate-200">{fmtBirr(r.spendBirr)}</td>
                         <td className="px-4 py-3">
                           {r.rating === null ? (
-                            <span className="text-slate-400">—</span>
+                            <span className="text-slate-400 dark:text-slate-500">—</span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 font-semibold text-slate-700">
+                            <span className="inline-flex items-center gap-1 font-semibold text-slate-700 dark:text-slate-200">
                               <Star size={13} className="fill-amber-400 text-amber-400" /> {r.rating.toFixed(1)}
                             </span>
                           )}
@@ -900,30 +900,30 @@ export function ProcurementReports() {
                   </PieChart>
                 </ResponsiveContainer>
                 <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-                  <p className="tnum text-2xl font-extrabold text-slate-900">{fmtQ(wheatMixTotal)}</p>
-                  <p className="text-xs font-semibold text-slate-500">Qt accepted</p>
+                  <p className="tnum text-2xl font-extrabold text-slate-900 dark:text-slate-100">{fmtQ(wheatMixTotal)}</p>
+                  <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">Qt accepted</p>
                 </div>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="bg-slate-50">
-                      <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wide text-slate-500">
+                    <tr className="bg-slate-50 dark:bg-slate-800">
+                      <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                         Wheat type
                       </th>
-                      <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wide text-slate-500">
+                      <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                         Quintals
                       </th>
-                      <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wide text-slate-500">
+                      <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                         Share
                       </th>
                     </tr>
                   </thead>
                   <tbody>
                     {wheatMix.map((m) => (
-                      <tr key={m.category} className="border-t border-slate-100">
+                      <tr key={m.category} className="border-t border-slate-100 dark:border-slate-700">
                         <td className="px-4 py-3">
-                          <span className="inline-flex items-center gap-2 font-semibold text-slate-800">
+                          <span className="inline-flex items-center gap-2 font-semibold text-slate-800 dark:text-slate-100">
                             <span
                               className="inline-block h-3 w-3 rounded-full"
                               style={{ backgroundColor: CATEGORY_COLOR[m.category] }}
@@ -931,14 +931,14 @@ export function ProcurementReports() {
                             {m.label}
                           </span>
                         </td>
-                        <td className="tnum px-4 py-3 text-right font-medium text-slate-700">{fmtQ(m.quintals)}</td>
-                        <td className="tnum px-4 py-3 text-right font-bold text-slate-900">{fmtPct(m.share * 100)}</td>
+                        <td className="tnum px-4 py-3 text-right font-medium text-slate-700 dark:text-slate-200">{fmtQ(m.quintals)}</td>
+                        <td className="tnum px-4 py-3 text-right font-bold text-slate-900 dark:text-slate-100">{fmtPct(m.share * 100)}</td>
                       </tr>
                     ))}
-                    <tr className="border-t-2 border-slate-200 bg-slate-50/60">
-                      <td className="px-4 py-3 font-bold text-slate-800">Total</td>
-                      <td className="tnum px-4 py-3 text-right font-bold text-slate-900">{fmtQ(wheatMixTotal)}</td>
-                      <td className="tnum px-4 py-3 text-right font-bold text-slate-900">100.0%</td>
+                    <tr className="border-t-2 border-slate-200 dark:border-slate-700 bg-slate-50/60">
+                      <td className="px-4 py-3 font-bold text-slate-800 dark:text-slate-100">Total</td>
+                      <td className="tnum px-4 py-3 text-right font-bold text-slate-900 dark:text-slate-100">{fmtQ(wheatMixTotal)}</td>
+                      <td className="tnum px-4 py-3 text-right font-bold text-slate-900 dark:text-slate-100">100.0%</td>
                     </tr>
                   </tbody>
                 </table>
@@ -1026,17 +1026,17 @@ export function ProcurementReports() {
                   </LineChart>
                 </ResponsiveContainer>
               </div>
-              <div className="overflow-x-auto rounded-xl border border-slate-100">
+              <div className="overflow-x-auto rounded-xl border border-slate-100 dark:border-slate-700">
                 <table className="w-full min-w-[640px] text-sm">
                   <thead>
-                    <tr className="bg-slate-50">
-                      <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wide text-slate-500">
+                    <tr className="bg-slate-50 dark:bg-slate-800">
+                      <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                         Week of
                       </th>
                       {CATEGORIES.map((c) => (
                         <th
                           key={c}
-                          className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wide text-slate-500"
+                          className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400"
                         >
                           {CATEGORY_LABEL[c]} (ETB/Qt)
                         </th>
@@ -1045,11 +1045,11 @@ export function ProcurementReports() {
                   </thead>
                   <tbody>
                     {priceTrend.map((p) => (
-                      <tr key={p.week} className="border-t border-slate-100 hover:bg-slate-50/60">
-                        <td className="px-4 py-3 font-semibold text-slate-800">{p.label}</td>
+                      <tr key={p.week} className="border-t border-slate-100 dark:border-slate-700 hover:bg-slate-50/60">
+                        <td className="px-4 py-3 font-semibold text-slate-800 dark:text-slate-100">{p.label}</td>
                         {CATEGORIES.map((c) => (
-                          <td key={c} className="tnum px-4 py-3 text-right font-medium text-slate-700">
-                            {p[c] === null ? <span className="text-slate-400">—</span> : fmtBirr(p[c] as number)}
+                          <td key={c} className="tnum px-4 py-3 text-right font-medium text-slate-700 dark:text-slate-200">
+                            {p[c] === null ? <span className="text-slate-400 dark:text-slate-500">—</span> : fmtBirr(p[c] as number)}
                           </td>
                         ))}
                       </tr>
@@ -1079,59 +1079,59 @@ export function ProcurementReports() {
           ) : (
             <>
               <div className="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
-                <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-4">
-                  <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Total ordered</p>
-                  <p className="tnum mt-1 text-xl font-extrabold text-slate-900">{fmtQ(varianceSummary.ordered)} Qt</p>
+                <div className="rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/60 p-4">
+                  <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Total ordered</p>
+                  <p className="tnum mt-1 text-xl font-extrabold text-slate-900 dark:text-slate-100">{fmtQ(varianceSummary.ordered)} Qt</p>
                 </div>
-                <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-4">
-                  <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Total received</p>
-                  <p className="tnum mt-1 text-xl font-extrabold text-slate-900">{fmtQ(varianceSummary.received)} Qt</p>
+                <div className="rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/60 p-4">
+                  <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Total received</p>
+                  <p className="tnum mt-1 text-xl font-extrabold text-slate-900 dark:text-slate-100">{fmtQ(varianceSummary.received)} Qt</p>
                 </div>
-                <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-4">
-                  <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Fulfillment</p>
-                  <p className="tnum mt-1 text-xl font-extrabold text-slate-900">
+                <div className="rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/60 p-4">
+                  <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Fulfillment</p>
+                  <p className="tnum mt-1 text-xl font-extrabold text-slate-900 dark:text-slate-100">
                     {varianceSummary.fulfillment === null ? '—' : fmtPct(varianceSummary.fulfillment * 100)}
                   </p>
                 </div>
-                <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-4">
-                  <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Under / over receipts</p>
-                  <p className="tnum mt-1 text-xl font-extrabold text-slate-900">
+                <div className="rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/60 p-4">
+                  <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Under / over receipts</p>
+                  <p className="tnum mt-1 text-xl font-extrabold text-slate-900 dark:text-slate-100">
                     <span className="text-red-600">{varianceSummary.under}</span>
-                    <span className="text-slate-400"> / </span>
+                    <span className="text-slate-400 dark:text-slate-500"> / </span>
                     <span className="text-emerald-600">{varianceSummary.over}</span>
                   </p>
                 </div>
               </div>
-              <div className="overflow-x-auto rounded-xl border border-slate-100">
+              <div className="overflow-x-auto rounded-xl border border-slate-100 dark:border-slate-700">
                 <table className="w-full min-w-[880px] text-sm">
                   <thead>
-                    <tr className="bg-slate-50">
-                      <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wide text-slate-500">PO No</th>
-                      <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wide text-slate-500">Supplier</th>
-                      <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wide text-slate-500">Wheat</th>
-                      <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wide text-slate-500">
+                    <tr className="bg-slate-50 dark:bg-slate-800">
+                      <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">PO No</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Supplier</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Wheat</th>
+                      <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                         Ordered (Qt)
                       </th>
-                      <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wide text-slate-500">
+                      <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                         Received (Qt)
                       </th>
-                      <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wide text-slate-500">
+                      <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                         Variance (Qt)
                       </th>
-                      <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wide text-slate-500">
+                      <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                         Variance %
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wide text-slate-500">Status</th>
+                      <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Status</th>
                     </tr>
                   </thead>
                   <tbody>
                     {poVariance.map((p) => (
-                      <tr key={p.id} className="border-t border-slate-100 hover:bg-slate-50/60">
-                        <td className="px-4 py-3 font-semibold text-slate-800">{p.poNo}</td>
-                        <td className="px-4 py-3 text-slate-700">{p.supplierName}</td>
-                        <td className="px-4 py-3 text-slate-700">{CATEGORY_LABEL[p.wheatCategory]}</td>
-                        <td className="tnum px-4 py-3 text-right font-medium text-slate-700">{fmtQ(p.ordered)}</td>
-                        <td className="tnum px-4 py-3 text-right font-medium text-slate-700">{fmtQ(p.received)}</td>
+                      <tr key={p.id} className="border-t border-slate-100 dark:border-slate-700 hover:bg-slate-50/60">
+                        <td className="px-4 py-3 font-semibold text-slate-800 dark:text-slate-100">{p.poNo}</td>
+                        <td className="px-4 py-3 text-slate-700 dark:text-slate-200">{p.supplierName}</td>
+                        <td className="px-4 py-3 text-slate-700 dark:text-slate-200">{CATEGORY_LABEL[p.wheatCategory]}</td>
+                        <td className="tnum px-4 py-3 text-right font-medium text-slate-700 dark:text-slate-200">{fmtQ(p.ordered)}</td>
+                        <td className="tnum px-4 py-3 text-right font-medium text-slate-700 dark:text-slate-200">{fmtQ(p.received)}</td>
                         <td
                           className={`tnum px-4 py-3 text-right font-bold ${
                             p.varianceQ < -0.001 ? 'text-red-600' : p.varianceQ > 0.001 ? 'text-emerald-600' : 'text-slate-700'
@@ -1159,7 +1159,7 @@ export function ProcurementReports() {
                   </tbody>
                 </table>
               </div>
-              <p className="mt-3 text-xs text-slate-400">
+              <p className="mt-3 text-xs text-slate-400 dark:text-slate-500">
                 Summary totals exclude cancelled and draft purchase orders.
               </p>
             </>
@@ -1215,52 +1215,52 @@ export function ProcurementReports() {
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-              <div className="overflow-x-auto rounded-xl border border-slate-100">
+              <div className="overflow-x-auto rounded-xl border border-slate-100 dark:border-slate-700">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="bg-slate-50">
-                      <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wide text-slate-500">
+                    <tr className="bg-slate-50 dark:bg-slate-800">
+                      <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                         Bucket
                       </th>
-                      <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wide text-slate-500">
+                      <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                         Invoices
                       </th>
-                      <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wide text-slate-500">
+                      <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                         Outstanding
                       </th>
-                      <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wide text-slate-500">
+                      <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                         Share
                       </th>
                     </tr>
                   </thead>
                   <tbody>
                     {aging.map((b) => (
-                      <tr key={b.key} className="border-t border-slate-100 hover:bg-slate-50/60">
+                      <tr key={b.key} className="border-t border-slate-100 dark:border-slate-700 hover:bg-slate-50/60">
                         <td className="px-4 py-3">
-                          <span className="inline-flex items-center gap-2 font-semibold text-slate-800">
+                          <span className="inline-flex items-center gap-2 font-semibold text-slate-800 dark:text-slate-100">
                             <span className="inline-block h-3 w-3 rounded-full" style={{ backgroundColor: b.color }} />
                             {b.label}
                           </span>
                         </td>
-                        <td className="tnum px-4 py-3 text-right font-medium text-slate-700">{fmtInt(b.count)}</td>
-                        <td className="tnum px-4 py-3 text-right font-bold text-slate-900">{fmtBirr(b.amount)}</td>
-                        <td className="tnum px-4 py-3 text-right font-medium text-slate-700">
+                        <td className="tnum px-4 py-3 text-right font-medium text-slate-700 dark:text-slate-200">{fmtInt(b.count)}</td>
+                        <td className="tnum px-4 py-3 text-right font-bold text-slate-900 dark:text-slate-100">{fmtBirr(b.amount)}</td>
+                        <td className="tnum px-4 py-3 text-right font-medium text-slate-700 dark:text-slate-200">
                           {agingTotal > 0 ? fmtPct((b.amount / agingTotal) * 100) : '—'}
                         </td>
                       </tr>
                     ))}
-                    <tr className="border-t-2 border-slate-200 bg-slate-50/60">
-                      <td className="px-4 py-3 font-bold text-slate-800">Total outstanding</td>
-                      <td className="tnum px-4 py-3 text-right font-bold text-slate-900">
+                    <tr className="border-t-2 border-slate-200 dark:border-slate-700 bg-slate-50/60">
+                      <td className="px-4 py-3 font-bold text-slate-800 dark:text-slate-100">Total outstanding</td>
+                      <td className="tnum px-4 py-3 text-right font-bold text-slate-900 dark:text-slate-100">
                         {fmtInt(aging.reduce((s, b) => s + b.count, 0))}
                       </td>
-                      <td className="tnum px-4 py-3 text-right font-bold text-slate-900">{fmtBirr(agingTotal)}</td>
-                      <td className="tnum px-4 py-3 text-right font-bold text-slate-900">100.0%</td>
+                      <td className="tnum px-4 py-3 text-right font-bold text-slate-900 dark:text-slate-100">{fmtBirr(agingTotal)}</td>
+                      <td className="tnum px-4 py-3 text-right font-bold text-slate-900 dark:text-slate-100">100.0%</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
-              <p className="mt-3 text-xs text-slate-400">
+              <p className="mt-3 text-xs text-slate-400 dark:text-slate-500">
                 Invoices without a due date are aged from their issue date. Fully paid invoices are excluded.
               </p>
             </>

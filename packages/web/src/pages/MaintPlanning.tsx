@@ -118,8 +118,8 @@ export function MaintPlanning() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-slate-900">Equipment Maintenance Planning</h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Equipment Maintenance Planning</h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Mill equipment registry with preventive-maintenance intervals and due dates.
           </p>
         </div>
@@ -139,7 +139,7 @@ export function MaintPlanning() {
           { label: 'In breakdown', value: stats.breakdown, tone: stats.breakdown > 0 ? 'text-rose-600' : 'text-slate-900' }
         ].map((k) => (
           <div key={k.label} className={cardShell}>
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-500">{k.label}</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">{k.label}</p>
             <p className={`tabular-nums mt-1 text-2xl font-bold ${k.tone}`}>{k.value}</p>
           </div>
         ))}
@@ -164,7 +164,7 @@ export function MaintPlanning() {
                   <option key={v} value={v}>{l}</option>
                 ))}
               </Select>
-              <label className="flex cursor-pointer items-center gap-1.5 text-xs font-medium text-slate-600">
+              <label className="flex cursor-pointer items-center gap-1.5 text-xs font-medium text-slate-600 dark:text-slate-300">
                 <input
                   type="checkbox"
                   checked={overdueOnly}
@@ -234,12 +234,12 @@ export function MaintPlanning() {
       {modalOpen ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setModalOpen(false)}>
           <div
-            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6"
+            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white dark:bg-slate-800 p-6"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-label={editing ? 'Edit equipment' : 'Register equipment'}
           >
-            <h3 className="mb-4 text-base font-bold text-slate-900">
+            <h3 className="mb-4 text-base font-bold text-slate-900 dark:text-slate-100">
               {editing ? 'Edit equipment' : 'Register equipment'}
             </h3>
             {formError ? (

@@ -185,7 +185,7 @@ export function FleetFuel() {
           }
         />
         <div className="mb-4 flex flex-wrap items-end gap-3">
-          <div className="flex rounded-lg border border-slate-200 p-1">
+          <div className="flex rounded-lg border border-slate-200 dark:border-slate-700 p-1">
             {(['fuel', 'expenses'] as const).map((t) => (
               <button
                 key={t}
@@ -214,18 +214,18 @@ export function FleetFuel() {
         {tab === 'fuel' ? (
           <>
             <div className="mb-4 flex flex-wrap gap-3">
-              <div className="rounded-xl border border-slate-200 px-4 py-3">
-                <p className="text-xs font-semibold text-slate-500">Total liters</p>
-                <p className="text-xl font-bold text-slate-800 tabular-nums">{totalLiters.toLocaleString('en-US')} L</p>
+              <div className="rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3">
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">Total liters</p>
+                <p className="text-xl font-bold text-slate-800 dark:text-slate-100 tabular-nums">{totalLiters.toLocaleString('en-US')} L</p>
               </div>
-              <div className="rounded-xl border border-slate-200 px-4 py-3">
-                <p className="text-xs font-semibold text-slate-500">Total fuel cost</p>
-                <p className="text-xl font-bold text-slate-800 tabular-nums">{fmtBirr(totalFuelCost)}</p>
+              <div className="rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3">
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">Total fuel cost</p>
+                <p className="text-xl font-bold text-slate-800 dark:text-slate-100 tabular-nums">{fmtBirr(totalFuelCost)}</p>
               </div>
               {efficiency.map((ef) => (
-                <div key={ef.plate} className="rounded-xl border border-slate-200 px-4 py-3">
-                  <p className="text-xs font-semibold text-slate-500 tabular-nums">{ef.plate}</p>
-                  <p className="text-xl font-bold text-slate-800 tabular-nums">
+                <div key={ef.plate} className="rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3">
+                  <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 tabular-nums">{ef.plate}</p>
+                  <p className="text-xl font-bold text-slate-800 dark:text-slate-100 tabular-nums">
                     {ef.kmPerL != null ? `${ef.kmPerL} km/L` : '—'}
                   </p>
                 </div>
@@ -256,11 +256,11 @@ export function FleetFuel() {
         ) : (
           <>
             <div className="mb-4 flex flex-wrap gap-3">
-              <div className="flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-3">
-                <Receipt size={16} className="text-slate-500" />
+              <div className="flex items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3">
+                <Receipt size={16} className="text-slate-500 dark:text-slate-400" />
                 <div>
-                  <p className="text-xs font-semibold text-slate-500">Total operating expenses</p>
-                  <p className="text-xl font-bold text-slate-800 tabular-nums">{fmtBirr(totalExpenses)}</p>
+                  <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">Total operating expenses</p>
+                  <p className="text-xl font-bold text-slate-800 dark:text-slate-100 tabular-nums">{fmtBirr(totalExpenses)}</p>
                 </div>
               </div>
             </div>
@@ -316,12 +316,12 @@ export function FleetFuel() {
       {modalOpen ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setModalOpen(false)}>
           <div
-            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6"
+            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white dark:bg-slate-800 p-6"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-label={tab === 'fuel' ? 'Log fuel' : editingExpense ? 'Edit expense' : 'Add expense'}
           >
-            <h3 className="mb-4 text-base font-bold text-slate-900">
+            <h3 className="mb-4 text-base font-bold text-slate-900 dark:text-slate-100">
               {tab === 'fuel' ? 'Log fuel' : editingExpense ? 'Edit expense' : 'Add expense'}
             </h3>
             {formError ? (

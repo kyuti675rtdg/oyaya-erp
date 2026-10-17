@@ -189,7 +189,7 @@ export function PackagingOps() {
                 mono: true,
                 render: (r) =>
                   r.bagsPerHour === null ? (
-                    <span className="text-slate-400">—</span>
+                    <span className="text-slate-400 dark:text-slate-500">—</span>
                   ) : (
                     <span className={`font-bold ${r.bagsPerHour >= 400 ? 'text-emerald-700' : r.bagsPerHour >= 200 ? 'text-amber-700' : 'text-rose-700'}`}>
                       {Math.round(r.bagsPerHour).toLocaleString('en-US')}
@@ -216,15 +216,15 @@ export function PackagingOps() {
             columns={[
               { key: 'batchNo', label: 'Batch', mono: true, render: (r) => <span className="font-semibold">{r.batch?.batchNo ?? r.batchId.slice(0, 8)}</span> },
               { key: 'productName', label: 'Product', render: (r) => r.product?.name ?? '—' },
-              { key: 'line', label: 'Line', render: (r) => r.line ?? <span className="text-slate-400">—</span> },
-              { key: 'operator', label: 'Operator', render: (r) => r.operator ?? <span className="text-slate-400">—</span> },
+              { key: 'line', label: 'Line', render: (r) => r.line ?? <span className="text-slate-400 dark:text-slate-500">—</span> },
+              { key: 'operator', label: 'Operator', render: (r) => r.operator ?? <span className="text-slate-400 dark:text-slate-500">—</span> },
               { key: 'bags', label: 'Bags', mono: true, render: (r) => r.bags.toLocaleString('en-US') },
               { key: 'quintals', label: 'Qt', mono: true, render: (r) => <span className="font-bold">{fmtQ(r.quintals)}</span> },
               {
                 key: 'timing',
                 label: 'Timing',
                 render: (r) => (
-                  <span className="tnum inline-flex items-center gap-1 text-xs text-slate-600">
+                  <span className="tnum inline-flex items-center gap-1 text-xs text-slate-600 dark:text-slate-300">
                     <Clock3 size={13} /> {runDuration(r)}
                     {bagsPerHour(r) !== null ? ` · ${Math.round(bagsPerHour(r)!).toLocaleString('en-US')}/h` : ''}
                   </span>

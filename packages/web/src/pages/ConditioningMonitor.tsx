@@ -236,7 +236,7 @@ export function ConditioningMonitor() {
                         </span>
                       )
                     ) : (
-                      <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-500">
+                      <span className="rounded-full bg-slate-100 dark:bg-slate-700 px-2.5 py-1 text-xs font-bold text-slate-500 dark:text-slate-400">
                         No active cycle
                       </span>
                     )
@@ -246,7 +246,7 @@ export function ConditioningMonitor() {
                 {c ? (
                   <div className="space-y-3">
                     <div className="flex items-baseline justify-between">
-                      <span className="text-sm font-semibold tabular-nums text-slate-500">{c.batchNo}</span>
+                      <span className="text-sm font-semibold tabular-nums text-slate-500 dark:text-slate-400">{c.batchNo}</span>
                       <span
                         className={`text-3xl font-bold tabular-nums ${
                           ready ? 'text-emerald-600' : 'text-slate-900'
@@ -256,43 +256,43 @@ export function ConditioningMonitor() {
                       </span>
                     </div>
                     <div>
-                      <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
+                      <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
                         <div
                           className={`h-full rounded-full transition-all ${ready ? 'bg-emerald-500' : 'bg-blue-500'}`}
                           style={{ width: `${pct}%` }}
                         />
                       </div>
-                      <div className="mt-1 flex justify-between text-xs text-slate-500 tabular-nums">
+                      <div className="mt-1 flex justify-between text-xs text-slate-500 dark:text-slate-400 tabular-nums">
                         <span>Elapsed {Number(c.elapsedHrs).toFixed(1)}h</span>
                         <span>Required {Number(c.requiredHrs).toFixed(1)}h</span>
                       </div>
                     </div>
                     <dl className="grid grid-cols-2 gap-2 text-sm">
-                      <div className="rounded-lg bg-slate-50 px-3 py-2">
-                        <dt className="text-xs text-slate-500">Started at</dt>
-                        <dd className="font-semibold text-slate-800">{fmtDateTime(c.startedAt)}</dd>
+                      <div className="rounded-lg bg-slate-50 dark:bg-slate-800 px-3 py-2">
+                        <dt className="text-xs text-slate-500 dark:text-slate-400">Started at</dt>
+                        <dd className="font-semibold text-slate-800 dark:text-slate-100">{fmtDateTime(c.startedAt)}</dd>
                       </div>
-                      <div className="rounded-lg bg-slate-50 px-3 py-2">
-                        <dt className="text-xs text-slate-500">Water added (q)</dt>
-                        <dd className="font-semibold tabular-nums text-slate-800">
+                      <div className="rounded-lg bg-slate-50 dark:bg-slate-800 px-3 py-2">
+                        <dt className="text-xs text-slate-500 dark:text-slate-400">Water added (q)</dt>
+                        <dd className="font-semibold tabular-nums text-slate-800 dark:text-slate-100">
                           {detail?.waterAddedQ != null ? Number(detail.waterAddedQ).toFixed(1) : '—'}
                         </dd>
                       </div>
-                      <div className="rounded-lg bg-slate-50 px-3 py-2">
-                        <dt className="text-xs text-slate-500">Moisture before</dt>
-                        <dd className="font-semibold tabular-nums text-slate-800">
+                      <div className="rounded-lg bg-slate-50 dark:bg-slate-800 px-3 py-2">
+                        <dt className="text-xs text-slate-500 dark:text-slate-400">Moisture before</dt>
+                        <dd className="font-semibold tabular-nums text-slate-800 dark:text-slate-100">
                           {detail?.moistureBefore != null ? `${Number(detail.moistureBefore).toFixed(1)}%` : '—'}
                         </dd>
                       </div>
-                      <div className="rounded-lg bg-slate-50 px-3 py-2">
-                        <dt className="text-xs text-slate-500">Moisture target</dt>
-                        <dd className="font-semibold tabular-nums text-slate-800">15.0–16.5%</dd>
+                      <div className="rounded-lg bg-slate-50 dark:bg-slate-800 px-3 py-2">
+                        <dt className="text-xs text-slate-500 dark:text-slate-400">Moisture target</dt>
+                        <dd className="font-semibold tabular-nums text-slate-800 dark:text-slate-100">15.0–16.5%</dd>
                       </div>
                     </dl>
 
                     {/* Log water */}
-                    <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3">
-                      <p className="mb-2 text-xs font-bold uppercase tracking-wide text-slate-500">
+                    <div className="rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/60 p-3">
+                      <p className="mb-2 text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                         Log water addition
                       </p>
                       <div className="flex gap-2">
@@ -436,7 +436,7 @@ export function ConditioningMonitor() {
           </div>
         </form>
         {startableTanks.length === 0 && !tanksQ.isLoading ? (
-          <p className="mt-3 text-sm text-slate-500">
+          <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
             No tanks are currently eligible — tanks need more than 2 q and no active cycle.
           </p>
         ) : null}
@@ -457,7 +457,7 @@ export function ConditioningMonitor() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-xs uppercase tracking-wide text-slate-400">
+                <tr className="text-left text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500">
                   <th className="px-2 py-2 font-semibold">Batch</th>
                   <th className="px-2 py-2 font-semibold">Tank</th>
                   <th className="px-2 py-2 font-semibold">Started</th>
@@ -473,21 +473,21 @@ export function ConditioningMonitor() {
                   .map((c) => {
                     const st = cycleStatus(c);
                     return (
-                      <tr key={c.id} className="border-t border-slate-100">
-                        <td className="whitespace-nowrap px-2 py-2 font-semibold tabular-nums text-slate-800">
+                      <tr key={c.id} className="border-t border-slate-100 dark:border-slate-700">
+                        <td className="whitespace-nowrap px-2 py-2 font-semibold tabular-nums text-slate-800 dark:text-slate-100">
                           {c.batchNo}
                         </td>
-                        <td className="px-2 py-2 text-slate-600">{c.tankCode.replace('TANK_', '')}</td>
-                        <td className="whitespace-nowrap px-2 py-2 text-slate-600">
+                        <td className="px-2 py-2 text-slate-600 dark:text-slate-300">{c.tankCode.replace('TANK_', '')}</td>
+                        <td className="whitespace-nowrap px-2 py-2 text-slate-600 dark:text-slate-300">
                           {fmtDateTime(c.startedAt)}
                         </td>
-                        <td className="px-2 py-2 text-right tabular-nums text-slate-700">
+                        <td className="px-2 py-2 text-right tabular-nums text-slate-700 dark:text-slate-200">
                           {Number(c.requiredHrs).toFixed(1)}h
                         </td>
-                        <td className="px-2 py-2 text-right tabular-nums text-slate-700">
+                        <td className="px-2 py-2 text-right tabular-nums text-slate-700 dark:text-slate-200">
                           {c.waterAddedQ != null ? Number(c.waterAddedQ).toFixed(1) : '—'}
                         </td>
-                        <td className="whitespace-nowrap px-2 py-2 tabular-nums text-slate-700">
+                        <td className="whitespace-nowrap px-2 py-2 tabular-nums text-slate-700 dark:text-slate-200">
                           {c.moistureBefore != null ? `${Number(c.moistureBefore).toFixed(1)}%` : '—'} →{' '}
                           {c.moistureAfter != null ? `${Number(c.moistureAfter).toFixed(1)}%` : '—'}
                         </td>

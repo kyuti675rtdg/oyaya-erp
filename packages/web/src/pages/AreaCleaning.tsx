@@ -171,7 +171,7 @@ export function AreaCleaning() {
         </span>
       )
     },
-    { key: 'area', label: 'Area', render: (r: AreaCleaningLog) => <span className="font-semibold text-slate-800">{r.area}</span> },
+    { key: 'area', label: 'Area', render: (r: AreaCleaningLog) => <span className="font-semibold text-slate-800 dark:text-slate-100">{r.area}</span> },
     { key: 'shift', label: 'Shift' },
     { key: 'cleaner', label: 'Cleaner' },
     {
@@ -181,7 +181,7 @@ export function AreaCleaning() {
       render: (r: AreaCleaningLog) => {
         const tasks = r.tasks ?? [];
         const done = tasks.filter((t) => t.done).length;
-        return tasks.length === 0 ? <span className="text-slate-400">—</span> : <span className="tabular-nums">{done}/{tasks.length}</span>;
+        return tasks.length === 0 ? <span className="text-slate-400 dark:text-slate-500">—</span> : <span className="tabular-nums">{done}/{tasks.length}</span>;
       }
     },
     {
@@ -270,8 +270,8 @@ export function AreaCleaning() {
                 <div key={r.id} className={`rounded-xl border bg-white p-4 ${isOverdue(r) ? 'border-rose-300' : 'border-line'}`}>
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <p className="font-bold text-slate-800">{r.area}</p>
-                      <p className="text-xs tabular-nums text-slate-500">{fmtDate(r.logDate)} · {r.shift} · {r.cleaner}</p>
+                      <p className="font-bold text-slate-800 dark:text-slate-100">{r.area}</p>
+                      <p className="text-xs tabular-nums text-slate-500 dark:text-slate-400">{fmtDate(r.logDate)} · {r.shift} · {r.cleaner}</p>
                     </div>
                     <Badge tone={CLEANING_STATUS_TONE[r.status]}>{r.status.replace('_', ' ')}</Badge>
                   </div>
@@ -334,7 +334,7 @@ export function AreaCleaning() {
             <div className="mb-2 flex items-start justify-between">
               <div>
                 <h3 className="text-lg font-bold text-ink">{detail.area} — {fmtDate(detail.logDate)}</h3>
-                <p className="text-sm tabular-nums text-slate-500">{detail.shift} shift · {detail.cleaner}</p>
+                <p className="text-sm tabular-nums text-slate-500 dark:text-slate-400">{detail.shift} shift · {detail.cleaner}</p>
               </div>
               <Button variant="ghost" className="px-2 py-1" onClick={() => setDetail(null)} aria-label="Close">
                 <X size={18} />
@@ -342,12 +342,12 @@ export function AreaCleaning() {
             </div>
             <div className="mb-3 flex flex-wrap items-center gap-2">
               <Badge tone={CLEANING_STATUS_TONE[detail.status]}>{detail.status.replace('_', ' ')}</Badge>
-              {detail.startedAt ? <span className="text-xs tabular-nums text-slate-500">Started {fmtDateTime(detail.startedAt)}</span> : null}
-              {detail.endedAt ? <span className="text-xs tabular-nums text-slate-500">Ended {fmtDateTime(detail.endedAt)}</span> : null}
+              {detail.startedAt ? <span className="text-xs tabular-nums text-slate-500 dark:text-slate-400">Started {fmtDateTime(detail.startedAt)}</span> : null}
+              {detail.endedAt ? <span className="text-xs tabular-nums text-slate-500 dark:text-slate-400">Ended {fmtDateTime(detail.endedAt)}</span> : null}
             </div>
-            {detail.notes ? <p className="mb-3 text-sm text-slate-700">{detail.notes}</p> : null}
+            {detail.notes ? <p className="mb-3 text-sm text-slate-700 dark:text-slate-200">{detail.notes}</p> : null}
 
-            <p className="mb-2 text-sm font-semibold text-slate-700">Checklist</p>
+            <p className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-200">Checklist</p>
             {(detail.tasks ?? []).length === 0 ? (
               <EmptyState title="No checklist attached" sub="Tasks were not copied from a template." />
             ) : (
@@ -367,7 +367,7 @@ export function AreaCleaning() {
                       </span>
                       <span>
                         <span className={`text-sm font-semibold ${t.done ? 'text-slate-500 line-through' : 'text-slate-800'}`}>{t.title}</span>
-                        {t.detail ? <span className="block text-xs text-slate-500">{t.detail}</span> : null}
+                        {t.detail ? <span className="block text-xs text-slate-500 dark:text-slate-400">{t.detail}</span> : null}
                       </span>
                     </button>
                   </li>

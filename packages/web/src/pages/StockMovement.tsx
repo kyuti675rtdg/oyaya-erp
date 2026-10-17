@@ -34,7 +34,7 @@ function isInflow(r: StorageMovementRow): boolean {
 function directionBadge(direction: string, isIn: boolean) {
   const d = direction.toUpperCase();
   if (d.startsWith('ADJUST'))
-    return <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-bold text-slate-600">ADJUST</span>;
+    return <span className="inline-flex items-center rounded-full bg-slate-100 dark:bg-slate-700 px-2.5 py-0.5 text-[11px] font-bold text-slate-600 dark:text-slate-300">ADJUST</span>;
   return isIn ? (
     <span className="inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700">IN</span>
   ) : (
@@ -219,24 +219,24 @@ export function StockMovement() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className={cardShell}>
           <p className="text-xs font-semibold uppercase tracking-wide text-emerald-600">Total In</p>
-          <p className="mt-1 text-2xl font-extrabold tabular-nums text-slate-800">
-            {fmt(summary.inQ)} <span className="text-sm font-semibold text-slate-400">Qt</span>
+          <p className="mt-1 text-2xl font-extrabold tabular-nums text-slate-800 dark:text-slate-100">
+            {fmt(summary.inQ)} <span className="text-sm font-semibold text-slate-400 dark:text-slate-500">Qt</span>
           </p>
         </div>
         <div className={cardShell}>
           <p className="text-xs font-semibold uppercase tracking-wide text-rose-600">Total Out</p>
-          <p className="mt-1 text-2xl font-extrabold tabular-nums text-slate-800">
-            {fmt(summary.outQ)} <span className="text-sm font-semibold text-slate-400">Qt</span>
+          <p className="mt-1 text-2xl font-extrabold tabular-nums text-slate-800 dark:text-slate-100">
+            {fmt(summary.outQ)} <span className="text-sm font-semibold text-slate-400 dark:text-slate-500">Qt</span>
           </p>
         </div>
         <div className={cardShell}>
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Net Change</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Net Change</p>
           <p
             className={`mt-1 text-2xl font-extrabold tabular-nums ${
               summary.net >= 0 ? 'text-emerald-600' : 'text-rose-600'
             }`}
           >
-            {signedFmt(summary.net)} <span className="text-sm font-semibold text-slate-400">Qt</span>
+            {signedFmt(summary.net)} <span className="text-sm font-semibold text-slate-400 dark:text-slate-500">Qt</span>
           </p>
         </div>
       </div>
@@ -248,7 +248,7 @@ export function StockMovement() {
           title="Movement Ledger"
           subtitle={`${rows.length} movement${rows.length === 1 ? '' : 's'} · newest first`}
         />
-        {movementsQ.isPending && <p className="py-10 text-center text-sm text-slate-400">Loading movements…</p>}
+        {movementsQ.isPending && <p className="py-10 text-center text-sm text-slate-400 dark:text-slate-500">Loading movements…</p>}
         {movementsQ.isError && (
           <ErrorBox message="Could not load stock movements." onRetry={() => movementsQ.refetch()} />
         )}
@@ -261,7 +261,7 @@ export function StockMovement() {
           <div className="overflow-x-auto">
             <table className="w-full min-w-[900px] text-sm">
               <thead>
-                <tr className="border-b border-slate-100 text-left text-[11px] font-bold uppercase tracking-wide text-slate-400">
+                <tr className="border-b border-slate-100 dark:border-slate-700 text-left text-[11px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-500">
                   <th className="py-2 pr-3">Date/Time</th>
                   <th className="py-2 pr-3">Location</th>
                   <th className="py-2 pr-3">Direction</th>
@@ -279,8 +279,8 @@ export function StockMovement() {
                     const inflow = isInflow(r);
                     return (
                       <tr key={r.id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50">
-                        <td className="whitespace-nowrap py-2.5 pr-3 text-slate-600">{fmtDateTime(r.movedAt)}</td>
-                        <td className="py-2.5 pr-3 font-semibold text-slate-700">
+                        <td className="whitespace-nowrap py-2.5 pr-3 text-slate-600 dark:text-slate-300">{fmtDateTime(r.movedAt)}</td>
+                        <td className="py-2.5 pr-3 font-semibold text-slate-700 dark:text-slate-200">
                           {LOC_LABEL[r.locationCode] ?? r.locationCode}
                         </td>
                         <td className="py-2.5 pr-3">{directionBadge(r.direction, inflow)}</td>
@@ -291,12 +291,12 @@ export function StockMovement() {
                         >
                           {signedFmt(inflow ? r.quintals : -r.quintals)}
                         </td>
-                        <td className="py-2.5 pr-3 text-slate-600">{r.wheatType ?? '—'}</td>
-                        <td className="py-2.5 pr-3 font-mono text-xs text-slate-500">{r.reference ?? '—'}</td>
-                        <td className="max-w-[220px] truncate py-2.5 pr-3 text-xs text-slate-500" title={r.notes ?? ''}>
+                        <td className="py-2.5 pr-3 text-slate-600 dark:text-slate-300">{r.wheatType ?? '—'}</td>
+                        <td className="py-2.5 pr-3 font-mono text-xs text-slate-500 dark:text-slate-400">{r.reference ?? '—'}</td>
+                        <td className="max-w-[220px] truncate py-2.5 pr-3 text-xs text-slate-500 dark:text-slate-400" title={r.notes ?? ''}>
                           {r.notes ?? '—'}
                         </td>
-                        <td className="py-2.5 text-right font-semibold tabular-nums text-slate-700">
+                        <td className="py-2.5 text-right font-semibold tabular-nums text-slate-700 dark:text-slate-200">
                           {fmt(withBalance.get(r.id) ?? 0)}
                         </td>
                       </tr>

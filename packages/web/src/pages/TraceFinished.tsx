@@ -225,7 +225,7 @@ export function TraceFinished() {
           )}
         </div>
       )}
-      <p className="text-xs text-slate-400">Duket below {fmtPct(78)} extraction is auto-flagged on the source batch's yield alerts.</p>
+      <p className="text-xs text-slate-400 dark:text-slate-500">Duket below {fmtPct(78)} extraction is auto-flagged on the source batch's yield alerts.</p>
     </div>
   );
 }

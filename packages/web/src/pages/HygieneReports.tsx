@@ -146,12 +146,12 @@ export function HygieneReports() {
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             {kpis.map((k) => (
               <div key={k.label} className={cardShell}>
-                <div className="flex items-center gap-2 text-slate-500">
+                <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
                   {k.icon}
                   <p className="text-xs font-semibold uppercase tracking-wide">{k.label}</p>
                 </div>
                 <p className={`mt-2 text-3xl font-bold tabular-nums ${k.tone}`}>{k.value}</p>
-                <p className="mt-1 text-xs text-slate-500">{k.sub}</p>
+                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{k.sub}</p>
               </div>
             ))}
           </div>

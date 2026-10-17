@@ -211,7 +211,7 @@ export function RoleManagement() {
             />
           )}
           {selectedRole?.description ? (
-            <p className="mt-3 text-sm text-slate-500">{selectedRole.description}</p>
+            <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">{selectedRole.description}</p>
           ) : null}
         </Card>
 
@@ -235,9 +235,9 @@ export function RoleManagement() {
           />
           {!selectedRole ? (
             <div className="rounded-xl border border-dashed border-line bg-alabaster px-6 py-10 text-center">
-              <Lock className="mx-auto mb-2 h-6 w-6 text-slate-400" />
-              <p className="font-semibold text-slate-700">No role selected</p>
-              <p className="mt-1 text-sm text-slate-500">Pick a role to view and edit its permission matrix.</p>
+              <Lock className="mx-auto mb-2 h-6 w-6 text-slate-400 dark:text-slate-500" />
+              <p className="font-semibold text-slate-700 dark:text-slate-200">No role selected</p>
+              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Pick a role to view and edit its permission matrix.</p>
             </div>
           ) : rolePermsQ.isLoading || permsQ.isLoading ? (
             <Spinner label="Loading permissions..." />
@@ -269,8 +269,8 @@ export function RoleManagement() {
                             disabled={!canManage}
                           />
                           <span>
-                            <span className="font-semibold text-slate-800">{p.action}</span>
-                            <span className="block font-mono text-[11px] text-slate-400">{p.code}</span>
+                            <span className="font-semibold text-slate-800 dark:text-slate-100">{p.action}</span>
+                            <span className="block font-mono text-[11px] text-slate-400 dark:text-slate-500">{p.code}</span>
                           </span>
                         </label>
                       ))}

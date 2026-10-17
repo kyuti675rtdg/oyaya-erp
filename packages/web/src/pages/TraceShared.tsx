@@ -148,7 +148,7 @@ export interface ChainStep {
 
 export function ChainTimeline({ steps }: { steps: ChainStep[] }) {
   return (
-    <ol className="relative ml-2 space-y-0 border-l-2 border-slate-200">
+    <ol className="relative ml-2 space-y-0 border-l-2 border-slate-200 dark:border-slate-700">
       {steps.map((s, i) => (
         <li key={i} className="relative pb-6 pl-8 last:pb-0">
           <span
@@ -158,13 +158,13 @@ export function ChainTimeline({ steps }: { steps: ChainStep[] }) {
           >
             {s.icon}
           </span>
-          <div className="rounded-xl border border-slate-100 bg-slate-50/60 px-4 py-3">
+          <div className="rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/60 px-4 py-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className="text-sm font-bold text-slate-800">{s.title}</p>
+              <p className="text-sm font-bold text-slate-800 dark:text-slate-100">{s.title}</p>
               {s.badge ?? null}
             </div>
-            {s.sub ? <div className="mt-1 text-xs text-slate-600">{s.sub}</div> : null}
-            {s.date ? <p className="mt-1 text-[11px] text-slate-400">{s.date}</p> : null}
+            {s.sub ? <div className="mt-1 text-xs text-slate-600 dark:text-slate-300">{s.sub}</div> : null}
+            {s.date ? <p className="mt-1 text-[11px] text-slate-400 dark:text-slate-500">{s.date}</p> : null}
           </div>
         </li>
       ))}

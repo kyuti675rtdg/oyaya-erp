@@ -207,7 +207,7 @@ export function TraceIntake() {
             action={
               <button
                 onClick={() => setSelectedId(null)}
-                className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+                className="rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
               >
                 Close
               </button>
@@ -221,7 +221,7 @@ export function TraceIntake() {
             <EmptyState title="Could not load chain" />
           )}
           {c && (
-            <p className="mt-4 text-xs text-slate-400">
+            <p className="mt-4 text-xs text-slate-400 dark:text-slate-500">
               Duket extraction on downstream batches is flagged automatically when below {fmtPct(78)}.
             </p>
           )}

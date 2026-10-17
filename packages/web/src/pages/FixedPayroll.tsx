@@ -132,14 +132,14 @@ export function FixedPayroll() {
             <Wallet className="h-5 w-5" />
           </span>
           <div>
-            <h1 className="text-xl font-bold text-slate-900">Fixed Salary & Overtime</h1>
-            <p className="text-sm text-slate-500">
+            <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Fixed Salary & Overtime</h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               Monthly computation preview — base + overtime (1.5× weekday / 2× weekend) ± allowances
             </p>
           </div>
         </div>
         <button
-          className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+          className="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700"
           onClick={exportCsv}
         >
           Export CSV
@@ -162,8 +162,8 @@ export function FixedPayroll() {
           { label: 'Total net', value: fmtBirr(totals.net) }
         ].map((k) => (
           <div key={k.label} className={hrShell}>
-            <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">{k.label}</p>
-            <p className="tnum mt-2 text-xl font-bold text-slate-900">{k.value}</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">{k.label}</p>
+            <p className="tnum mt-2 text-xl font-bold text-slate-900 dark:text-slate-100">{k.value}</p>
           </div>
         ))}
       </div>

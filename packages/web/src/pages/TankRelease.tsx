@@ -137,7 +137,7 @@ export function TankRelease() {
         ) : tanksQ.isError ? (
           <ErrorBox message="Could not load tanks." onRetry={() => tanksQ.refetch()} />
         ) : awaiting.length === 0 ? (
-          <p className="rounded-xl bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
+          <p className="rounded-xl bg-slate-50 dark:bg-slate-800 px-4 py-6 text-center text-sm text-slate-500 dark:text-slate-400">
             No tanks are awaiting release right now. Tanks appear here once conditioning is completed.
           </p>
         ) : (
@@ -154,10 +154,10 @@ export function TankRelease() {
                     <div>
                       <div className="flex items-center gap-2">
                         <Wheat className="h-4 w-4 text-amber-600" />
-                        <span className="font-bold text-slate-800">Tank {t.code}</span>
-                        <span className="text-xs text-slate-500">{t.name}</span>
+                        <span className="font-bold text-slate-800 dark:text-slate-100">Tank {t.code}</span>
+                        <span className="text-xs text-slate-500 dark:text-slate-400">{t.name}</span>
                       </div>
-                      <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-600">
+                      <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-600 dark:text-slate-300">
                         <span>
                           Batch <span className="font-semibold tabular-nums">{c?.batchNo ?? '—'}</span>
                         </span>
@@ -171,7 +171,7 @@ export function TankRelease() {
                           </span>
                         </span>
                         <span className="inline-flex items-center gap-1">
-                          <Timer className="h-3.5 w-3.5 text-slate-500" />
+                          <Timer className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
                           <span className="font-semibold tabular-nums">
                             {(c?.elapsedHrs ?? 0).toFixed(1)}h / {(c?.requiredHrs ?? 0).toFixed(1)}h
                           </span>
@@ -197,12 +197,12 @@ export function TankRelease() {
                       <button
                         type="button"
                         onClick={() => setExpanded(isOpen ? null : t.code)}
-                        className="mt-3 text-xs font-semibold text-slate-600 underline underline-offset-2 hover:text-slate-900"
+                        className="mt-3 text-xs font-semibold text-slate-600 dark:text-slate-300 underline underline-offset-2 hover:text-slate-900"
                       >
                         {isOpen ? 'Hide release checklist' : 'Open release checklist'}
                       </button>
                       {isOpen && (
-                        <div className="mt-3 space-y-3 rounded-xl bg-slate-50 p-4">
+                        <div className="mt-3 space-y-3 rounded-xl bg-slate-50 dark:bg-slate-800 p-4">
                           <label className="flex cursor-pointer items-start gap-3">
                             <input
                               type="checkbox"
@@ -210,9 +210,9 @@ export function TankRelease() {
                               checked={st.moisture}
                               onChange={(e) => update(t.code, { moisture: e.target.checked })}
                             />
-                            <span className="text-sm text-slate-700">
+                            <span className="text-sm text-slate-700 dark:text-slate-200">
                               <span className="font-semibold">Moisture verified {MOIST_MIN.toFixed(1)}–{MOIST_MAX.toFixed(1)}%</span>
-                              <span className="block text-xs text-slate-500">
+                              <span className="block text-xs text-slate-500 dark:text-slate-400">
                                 Actual: <span className="font-semibold tabular-nums">{c?.moistureAfter != null ? `${c.moistureAfter.toFixed(1)}%` : 'not recorded'}</span>
                                 {c?.moistureAfter != null && !inRange ? ' — outside range, re-condition before release' : ''}
                               </span>
@@ -225,9 +225,9 @@ export function TankRelease() {
                               checked={st.time}
                               onChange={(e) => update(t.code, { time: e.target.checked })}
                             />
-                            <span className="text-sm text-slate-700">
+                            <span className="text-sm text-slate-700 dark:text-slate-200">
                               <span className="font-semibold">Conditioning time met</span>
-                              <span className="block text-xs text-slate-500">
+                              <span className="block text-xs text-slate-500 dark:text-slate-400">
                                 Elapsed <span className="font-semibold tabular-nums">{(c?.elapsedHrs ?? 0).toFixed(1)}h</span> vs required{' '}
                                 <span className="font-semibold tabular-nums">{(c?.requiredHrs ?? 0).toFixed(1)}h</span>
                                 {!timeMet ? ' — time not met, wait before release' : ''}
@@ -241,9 +241,9 @@ export function TankRelease() {
                               checked={st.lab}
                               onChange={(e) => update(t.code, { lab: e.target.checked })}
                             />
-                            <span className="text-sm text-slate-700">
+                            <span className="text-sm text-slate-700 dark:text-slate-200">
                               <span className="font-semibold">Lab approval obtained</span>
-                              <span className="block text-xs text-slate-500">Confirmed by the QC lab — manual sign-off</span>
+                              <span className="block text-xs text-slate-500 dark:text-slate-400">Confirmed by the QC lab — manual sign-off</span>
                             </span>
                           </label>
                           <TextArea
@@ -251,7 +251,7 @@ export function TankRelease() {
                             placeholder="Release note (optional)"
                             value={st.note}
                             onChange={(e) => update(t.code, { note: e.target.value })}
-                            className="bg-white"
+                            className="bg-white dark:bg-slate-800"
                           />
                           {st.error && (
                             <p className="rounded-lg bg-red-50 px-3 py-2 text-xs font-medium text-red-700">{st.error}</p>
@@ -288,10 +288,10 @@ export function TankRelease() {
             {notReady.map((t) => (
               <div key={t.code} className="rounded-xl border border-slate-200/70 px-4 py-3">
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold text-slate-800">Tank {t.code}</span>
-                  <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">{t.status}</span>
+                  <span className="font-semibold text-slate-800 dark:text-slate-100">Tank {t.code}</span>
+                  <span className="rounded-full bg-slate-100 dark:bg-slate-700 px-2 py-0.5 text-[11px] font-semibold text-slate-600 dark:text-slate-300">{t.status}</span>
                 </div>
-                <p className="mt-1.5 text-xs text-slate-500">
+                <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">
                   Complete conditioning first —{' '}
                   <Link to="/conditioning-monitor" className="font-semibold text-amber-700 underline underline-offset-2">
                     open the conditioning monitor
@@ -315,12 +315,12 @@ export function TankRelease() {
         ) : cyclesQ.isError ? (
           <ErrorBox message="Could not load cycles." onRetry={() => cyclesQ.refetch()} />
         ) : released.length === 0 ? (
-          <p className="rounded-xl bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">No releases recorded yet.</p>
+          <p className="rounded-xl bg-slate-50 dark:bg-slate-800 px-4 py-6 text-center text-sm text-slate-500 dark:text-slate-400">No releases recorded yet.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[520px] text-sm">
               <thead>
-                <tr className="text-left text-xs uppercase tracking-wide text-slate-400">
+                <tr className="text-left text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500">
                   <th className="pb-2 pr-4 font-semibold">Batch</th>
                   <th className="pb-2 pr-4 font-semibold">Tank</th>
                   <th className="pb-2 pr-4 font-semibold">Released at</th>
@@ -329,11 +329,11 @@ export function TankRelease() {
               </thead>
               <tbody>
                 {released.slice(0, 20).map((c) => (
-                  <tr key={c.id} className="border-t border-slate-100">
-                    <td className="py-2.5 pr-4 font-semibold tabular-nums text-slate-800">{c.batchNo}</td>
-                    <td className="py-2.5 pr-4 text-slate-600">Tank {c.tankCode}</td>
-                    <td className="py-2.5 pr-4 text-slate-600">{fmtDate(c.releasedAt)}</td>
-                    <td className="py-2.5 font-semibold tabular-nums text-slate-800">{tankLevelAt(c)}</td>
+                  <tr key={c.id} className="border-t border-slate-100 dark:border-slate-700">
+                    <td className="py-2.5 pr-4 font-semibold tabular-nums text-slate-800 dark:text-slate-100">{c.batchNo}</td>
+                    <td className="py-2.5 pr-4 text-slate-600 dark:text-slate-300">Tank {c.tankCode}</td>
+                    <td className="py-2.5 pr-4 text-slate-600 dark:text-slate-300">{fmtDate(c.releasedAt)}</td>
+                    <td className="py-2.5 font-semibold tabular-nums text-slate-800 dark:text-slate-100">{tankLevelAt(c)}</td>
                   </tr>
                 ))}
               </tbody>

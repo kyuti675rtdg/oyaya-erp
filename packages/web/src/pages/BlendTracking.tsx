@@ -45,7 +45,7 @@ function BlendBar({ parts }: { parts: Record<BlendKey, number> }) {
   const total = keys.reduce((s, k) => s + parts[k], 0) || 1;
   return (
     <div>
-      <div className="flex h-5 w-full overflow-hidden rounded-full bg-slate-100">
+      <div className="flex h-5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
         {keys.map((k) => (
           <div
             key={k}
@@ -60,7 +60,7 @@ function BlendBar({ parts }: { parts: Record<BlendKey, number> }) {
       </div>
       <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1">
         {(['soft', 'hard', 'foreign'] as BlendKey[]).map((k) => (
-          <span key={k} className="inline-flex items-center gap-1.5 text-xs text-slate-600">
+          <span key={k} className="inline-flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-300">
             <span className={`h-2.5 w-2.5 rounded-sm ${segColors[k]}`} />
             {segLabels[k]} <span className="font-semibold tabular-nums">{parts[k]}%</span>
           </span>
@@ -94,7 +94,7 @@ function TankCard({ blend }: { blend: TankBlend }) {
                 {blend.batchNo}
               </span>
             ) : null}
-            <span className="text-sm font-bold tabular-nums text-slate-800">
+            <span className="text-sm font-bold tabular-nums text-slate-800 dark:text-slate-100">
               {Number(blend.levelQ).toFixed(1)} q
             </span>
           </div>
@@ -119,11 +119,11 @@ function TankCard({ blend }: { blend: TankBlend }) {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="mt-4 flex w-full items-center justify-between rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+        className="mt-4 flex w-full items-center justify-between rounded-lg border border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700"
       >
         <span>
           Blend history{' '}
-          <span className="font-normal tabular-nums text-slate-500">({blend.history.length})</span>
+          <span className="font-normal tabular-nums text-slate-500 dark:text-slate-400">({blend.history.length})</span>
         </span>
         <ChevronDown size={16} className={`transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
@@ -133,7 +133,7 @@ function TankCard({ blend }: { blend: TankBlend }) {
           <div className="mt-2 overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-xs uppercase tracking-wide text-slate-400">
+                <tr className="text-left text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500">
                   <th className="px-2 py-2 font-semibold">Date</th>
                   <th className="px-2 py-2 text-right font-semibold">Qt</th>
                   <th className="px-2 py-2 font-semibold">Soft/Hard/Foreign</th>
@@ -143,9 +143,9 @@ function TankCard({ blend }: { blend: TankBlend }) {
                 {blend.history.map((h) => {
                   const hp = historyParts(h.blendRatio);
                   return (
-                    <tr key={h.id} className="border-t border-slate-100 align-top">
-                      <td className="whitespace-nowrap px-2 py-2 text-slate-600">{fmtDate(h.filledAt)}</td>
-                      <td className="px-2 py-2 text-right font-semibold tabular-nums text-slate-800">
+                    <tr key={h.id} className="border-t border-slate-100 dark:border-slate-700 align-top">
+                      <td className="whitespace-nowrap px-2 py-2 text-slate-600 dark:text-slate-300">{fmtDate(h.filledAt)}</td>
+                      <td className="px-2 py-2 text-right font-semibold tabular-nums text-slate-800 dark:text-slate-100">
                         {Number(h.quintals).toFixed(1)}
                       </td>
                       <td className="px-2 py-2">
@@ -160,7 +160,7 @@ function TankCard({ blend }: { blend: TankBlend }) {
             </table>
           </div>
         ) : (
-          <p className="mt-2 text-sm text-slate-500">No fills recorded for this tank yet.</p>
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">No fills recorded for this tank yet.</p>
         )
       ) : null}
     </div>

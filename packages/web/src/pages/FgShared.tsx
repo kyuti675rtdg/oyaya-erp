@@ -27,8 +27,8 @@ export function FgPageHeader({
   return (
     <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
       <div>
-        <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">{title}</h1>
-        {subtitle ? <p className="mt-1 text-sm text-slate-500">{subtitle}</p> : null}
+        <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 sm:text-2xl">{title}</h1>
+        {subtitle ? <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{subtitle}</p> : null}
       </div>
       {actions ? <div className="flex flex-wrap items-center gap-2">{actions}</div> : null}
     </div>
@@ -60,15 +60,15 @@ export function FgKpi({
   return (
     <div className={cardShell}>
       <div className="flex items-center justify-between gap-2">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</p>
         <span
           className={`flex h-8 w-8 items-center justify-center rounded-lg border ${tones[tone]}`}
         >
           {icon}
         </span>
       </div>
-      <p className="tnum mt-2 text-2xl font-bold text-slate-900">{value}</p>
-      {sub ? <p className="mt-1 text-xs text-slate-500">{sub}</p> : null}
+      <p className="tnum mt-2 text-2xl font-bold text-slate-900 dark:text-slate-100">{value}</p>
+      {sub ? <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{sub}</p> : null}
     </div>
   );
 }
@@ -132,12 +132,12 @@ export function FgModal({
       >
         <div className="mb-4 flex items-start justify-between gap-3">
           <div>
-            <h3 className="text-base font-bold text-slate-900">{title}</h3>
-            {subtitle ? <p className="mt-0.5 text-sm text-slate-500">{subtitle}</p> : null}
+            <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">{title}</h3>
+            {subtitle ? <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">{subtitle}</p> : null}
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg px-2 py-1 text-lg font-bold text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+            className="rounded-lg px-2 py-1 text-lg font-bold text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-700"
             aria-label="Close"
           >
             ×
@@ -156,7 +156,7 @@ export function FgSkeleton({ rows = 4 }: { rows?: number }) {
     <div className={cardShell} aria-label="Loading">
       <div className="space-y-3">
         {Array.from({ length: rows }).map((_, i) => (
-          <div key={i} className="h-10 animate-pulse rounded-lg bg-slate-100" />
+          <div key={i} className="h-10 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-700" />
         ))}
       </div>
     </div>
@@ -168,8 +168,8 @@ export function FgKpiSkeleton() {
     <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
       {Array.from({ length: 4 }).map((_, i) => (
         <div key={i} className={cardShell}>
-          <div className="h-4 w-24 animate-pulse rounded bg-slate-100" />
-          <div className="mt-3 h-8 w-20 animate-pulse rounded bg-slate-100" />
+          <div className="h-4 w-24 animate-pulse rounded bg-slate-100 dark:bg-slate-700" />
+          <div className="mt-3 h-8 w-20 animate-pulse rounded bg-slate-100 dark:bg-slate-700" />
         </div>
       ))}
     </div>
@@ -186,7 +186,7 @@ export function FgError({ message, onRetry }: { message: string; onRetry?: () =>
       {onRetry ? (
         <button
           onClick={onRetry}
-          className="mt-2 rounded-lg border border-rose-300 bg-white px-4 py-1.5 text-sm font-semibold hover:bg-rose-100"
+          className="mt-2 rounded-lg border border-rose-300 bg-white dark:bg-slate-800 px-4 py-1.5 text-sm font-semibold hover:bg-rose-100"
         >
           Retry
         </button>
@@ -199,9 +199,9 @@ export function FgError({ message, onRetry }: { message: string; onRetry?: () =>
 
 export function FgEmpty({ title, sub }: { title: string; sub?: string }) {
   return (
-    <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-6 py-10 text-center">
-      <p className="font-semibold text-slate-700">{title}</p>
-      {sub ? <p className="mt-1 text-sm text-slate-500">{sub}</p> : null}
+    <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 dark:bg-slate-800 px-6 py-10 text-center">
+      <p className="font-semibold text-slate-700 dark:text-slate-200">{title}</p>
+      {sub ? <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{sub}</p> : null}
     </div>
   );
 }

@@ -41,8 +41,8 @@ function BoolRow({
   return (
     <div className="flex items-center justify-between gap-3 rounded-lg border border-line px-3 py-2.5">
       <div>
-        <p className="text-sm font-semibold text-slate-800">{label}</p>
-        {hint ? <p className="text-xs text-slate-500">{hint}</p> : null}
+        <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{label}</p>
+        {hint ? <p className="text-xs text-slate-500 dark:text-slate-400">{hint}</p> : null}
       </div>
       <input
         type="checkbox"
@@ -258,8 +258,8 @@ export function SecuritySettings() {
               />
             )}
             <div className="mt-3 flex items-start gap-2 rounded-xl border border-line bg-alabaster px-3 py-2.5">
-              <Info className="mt-0.5 h-4 w-4 shrink-0 text-slate-500" />
-              <p className="text-xs text-slate-600">
+              <Info className="mt-0.5 h-4 w-4 shrink-0 text-slate-500 dark:text-slate-400" />
+              <p className="text-xs text-slate-600 dark:text-slate-300">
                 TOTP enrollment (QR code setup) is not yet implemented in the backend — MFA status above is
                 read-only. Enrollment will be added in a future update.
               </p>

@@ -197,12 +197,12 @@ export function SalesAdvances() {
             ) : bal ? (
               <div className="mt-4">
                 <div className="grid grid-cols-3 gap-3 text-center">
-                  <div className="rounded-xl bg-slate-50 px-3 py-3">
-                    <p className="text-xs text-slate-500">Total received</p>
+                  <div className="rounded-xl bg-slate-50 dark:bg-slate-800 px-3 py-3">
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Total received</p>
                     <p className="tnum text-lg font-extrabold text-ink">{fmtBirr(bal.total)}</p>
                   </div>
-                  <div className="rounded-xl bg-slate-50 px-3 py-3">
-                    <p className="text-xs text-slate-500">Applied</p>
+                  <div className="rounded-xl bg-slate-50 dark:bg-slate-800 px-3 py-3">
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Applied</p>
                     <p className="tnum text-lg font-extrabold text-ink">{fmtBirr(bal.applied)}</p>
                   </div>
                   <div className="rounded-xl bg-pass-bg px-3 py-3">
@@ -257,10 +257,10 @@ export function SalesAdvances() {
                 </div>
               </div>
             ) : (
-              <p className="mt-4 text-sm text-slate-500">No balance data.</p>
+              <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">No balance data.</p>
             )
           ) : (
-            <p className="mt-4 text-sm text-slate-500">Select a customer to see balances and applications.</p>
+            <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">Select a customer to see balances and applications.</p>
           )}
         </Card>
       </div>

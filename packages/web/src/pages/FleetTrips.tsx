@@ -215,12 +215,12 @@ export function FleetTrips() {
       {modalOpen ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setModalOpen(false)}>
           <div
-            className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-6"
+            className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white dark:bg-slate-800 p-6"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-label={editing ? 'Edit trip' : 'Log trip'}
           >
-            <h3 className="mb-4 text-base font-bold text-slate-900">{editing ? 'Edit trip' : 'Log trip'}</h3>
+            <h3 className="mb-4 text-base font-bold text-slate-900 dark:text-slate-100">{editing ? 'Edit trip' : 'Log trip'}</h3>
             {formError ? (
               <div className="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{formError}</div>
             ) : null}

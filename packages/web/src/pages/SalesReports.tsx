@@ -133,7 +133,7 @@ export function SalesReports() {
       <SectionTitle title="Sales & Distribution Reports" sub="Sales by product, customer and period · delivery performance · agent settlements" />
 
       <div className="mb-4 flex flex-wrap items-center gap-3">
-        <div className="flex gap-1 rounded-xl border border-line bg-white p-1">
+        <div className="flex gap-1 rounded-xl border border-line bg-white dark:bg-slate-800 p-1">
           {tabs.map((t) => (
             <button
               key={t.id}
@@ -179,7 +179,7 @@ export function SalesReports() {
                 }
               ].map((k) => (
                 <Card key={k.label} className="p-4">
-                  <p className="text-xs text-slate-500">{k.label}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{k.label}</p>
                   <p className="tnum mt-1 text-xl font-extrabold text-ink">{k.value}</p>
                 </Card>
               ))}
@@ -233,7 +233,7 @@ export function SalesReports() {
                 />
                 <div className="mt-3 flex flex-wrap gap-1">
                   {s.byPackSize.map((p) => (
-                    <span key={p.label} className="tnum rounded bg-slate-100 px-2 py-1 text-xs">
+                    <span key={p.label} className="tnum rounded bg-slate-100 dark:bg-slate-700 px-2 py-1 text-xs">
                       {p.label}: {p.bags} bags
                     </span>
                   ))}
@@ -242,7 +242,7 @@ export function SalesReports() {
             </div>
           </div>
         ) : (
-          <p className="text-sm text-slate-500">No data.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">No data.</p>
         )
       ) : null}
 
@@ -259,7 +259,7 @@ export function SalesReports() {
                 { label: 'On-time %', value: `${deliveryQ.data.onTimePct}%` }
               ].map((k) => (
                 <Card key={k.label} className="p-4">
-                  <p className="text-xs text-slate-500">{k.label}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{k.label}</p>
                   <p className="tnum mt-1 text-xl font-extrabold text-ink">{k.value}</p>
                 </Card>
               ))}
@@ -290,7 +290,7 @@ export function SalesReports() {
             </Card>
           </div>
         ) : (
-          <p className="text-sm text-slate-500">No data.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">No data.</p>
         )
       ) : null}
 

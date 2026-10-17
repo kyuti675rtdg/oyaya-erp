@@ -40,19 +40,19 @@ function Section({
 }) {
   return (
     <div>
-      <h3 className="mb-2 text-sm font-bold uppercase tracking-wide text-slate-500">{label}</h3>
-      <div className="overflow-x-auto rounded-xl border border-line bg-white">
+      <h3 className="mb-2 text-sm font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</h3>
+      <div className="overflow-x-auto rounded-xl border border-line bg-white dark:bg-slate-800">
         <table className="w-full min-w-[480px] text-left text-sm">
           <tbody>
             {rows.length === 0 ? (
               <tr>
-                <td className="px-4 py-3 text-slate-400">No postings in this period.</td>
+                <td className="px-4 py-3 text-slate-400 dark:text-slate-500">No postings in this period.</td>
               </tr>
             ) : (
               rows.map((r) => (
                 <tr key={r.code} className="border-t border-line first:border-t-0">
-                  <td className="px-4 py-2.5 pl-6 text-slate-700">
-                    <span className="tnum mr-2 text-slate-400">{r.code}</span>
+                  <td className="px-4 py-2.5 pl-6 text-slate-700 dark:text-slate-200">
+                    <span className="tnum mr-2 text-slate-400 dark:text-slate-500">{r.code}</span>
                     {r.name}
                   </td>
                   <td className="tnum px-4 py-2.5 text-right text-ink">{fmtBirr(r.amount)}</td>
@@ -139,19 +139,19 @@ export function IncomeStatement() {
         ) : d ? (
           <div className="space-y-6">
             {d.previous ? (
-              <div className="grid gap-3 rounded-xl bg-slate-50 p-4 sm:grid-cols-3">
+              <div className="grid gap-3 rounded-xl bg-slate-50 dark:bg-slate-800 p-4 sm:grid-cols-3">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Previous revenue</p>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Previous revenue</p>
                   <p className="tnum mt-1 text-lg font-extrabold text-ink">{fmtBirr(d.previous.revenue)}</p>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Previous expenses</p>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Previous expenses</p>
                   <p className="tnum mt-1 text-lg font-extrabold text-ink">{fmtBirr(d.previous.expenses)}</p>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Previous net income</p>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Previous net income</p>
                   <p className="tnum mt-1 text-lg font-extrabold text-ink">{fmtBirr(d.previous.netIncome)}</p>
-                  <p className="tnum mt-0.5 text-xs text-slate-500">
+                  <p className="tnum mt-0.5 text-xs text-slate-500 dark:text-slate-400">
                     Change: {variance(d.netIncome, d.previous.netIncome)}
                   </p>
                 </div>
@@ -161,7 +161,7 @@ export function IncomeStatement() {
             <Section label="Revenue" rows={d.revenue.items} totalLabel="Total revenue" total={d.revenue.total} />
             <Section label="Cost of goods sold" rows={d.cogs.items} totalLabel="Total COGS" total={d.cogs.total} />
 
-            <div className="rounded-xl border border-line bg-white px-4 py-3">
+            <div className="rounded-xl border border-line bg-white dark:bg-slate-800 px-4 py-3">
               <div className="flex items-center justify-between">
                 <span className="font-bold text-ink">Gross profit</span>
                 <span className="tnum text-lg font-extrabold text-ink">{fmtBirr(d.grossProfit)}</span>

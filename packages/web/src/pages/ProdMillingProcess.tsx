@@ -215,18 +215,18 @@ export function ProdMillingProcess() {
                 className="rounded-xl border border-advisory-text/40 bg-advisory-bg p-4"
               >
                 <div className="flex items-center justify-between">
-                  <span className="tabular-nums font-bold text-slate-800">{r.runNo}</span>
+                  <span className="tabular-nums font-bold text-slate-800 dark:text-slate-100">{r.runNo}</span>
                   <Badge tone="advisory">Running</Badge>
                 </div>
-                <p className="mt-1 text-sm font-semibold text-slate-700">{r.lineMachine}</p>
-                <p className="text-xs text-slate-500">
+                <p className="mt-1 text-sm font-semibold text-slate-700 dark:text-slate-200">{r.lineMachine}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   Batch {batchById.get(r.batchId)?.batchNo ?? '—'} · {r.operator}
                 </p>
                 <div className="mt-3 flex items-center justify-between">
-                  <div className="text-sm text-slate-600">
+                  <div className="text-sm text-slate-600 dark:text-slate-300">
                     Elapsed <LiveElapsed startedAt={r.startedAt} />
                     {r.feedRateQHr != null ? (
-                      <span className="tabular-nums ml-2 text-xs text-slate-500">
+                      <span className="tabular-nums ml-2 text-xs text-slate-500 dark:text-slate-400">
                         {fmtQ(r.feedRateQHr)} q/h
                       </span>
                     ) : null}
@@ -337,7 +337,7 @@ export function ProdMillingProcess() {
                       {
                         key: 'runNo',
                         label: 'Run',
-                        render: (r) => <span className="tabular-nums font-bold text-slate-800">{r.runNo}</span>
+                        render: (r) => <span className="tabular-nums font-bold text-slate-800 dark:text-slate-100">{r.runNo}</span>
                       },
                       { key: 'lineMachine', label: 'Line / Machine' },
                       {
@@ -382,14 +382,14 @@ export function ProdMillingProcess() {
                     history.map((r) => (
                       <div key={r.id} className="rounded-xl border border-slate-200/70 p-4">
                         <div className="flex items-center justify-between">
-                          <span className="tabular-nums font-bold text-slate-800">{r.runNo}</span>
+                          <span className="tabular-nums font-bold text-slate-800 dark:text-slate-100">{r.runNo}</span>
                           <Badge tone={statusTone(r.status)}>{r.status}</Badge>
                         </div>
-                        <p className="mt-1 text-sm font-semibold text-slate-700">{r.lineMachine}</p>
-                        <p className="text-xs text-slate-500">
+                        <p className="mt-1 text-sm font-semibold text-slate-700 dark:text-slate-200">{r.lineMachine}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
                           Batch {batchById.get(r.batchId)?.batchNo ?? '—'} · {r.operator}
                         </p>
-                        <p className="tabular-nums mt-1 text-xs text-slate-500">{fmtDateTime(r.startedAt)}</p>
+                        <p className="tabular-nums mt-1 text-xs text-slate-500 dark:text-slate-400">{fmtDateTime(r.startedAt)}</p>
                       </div>
                     ))
                   )}
@@ -402,8 +402,8 @@ export function ProdMillingProcess() {
 
       {endingId ? (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/40 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
-            <h3 className="text-base font-bold text-slate-800">End milling run</h3>
+          <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-xl">
+            <h3 className="text-base font-bold text-slate-800 dark:text-slate-100">End milling run</h3>
             <form onSubmit={endRun} className="mt-4 space-y-4">
               <Field label="End time" required>
                 <TextInput

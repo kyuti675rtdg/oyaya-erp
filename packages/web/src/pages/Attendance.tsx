@@ -149,8 +149,8 @@ export function Attendance() {
             <Clock3 className="h-5 w-5" />
           </span>
           <div>
-            <h1 className="text-xl font-bold text-slate-900">Attendance & Biometric Records</h1>
-            <p className="text-sm text-slate-500">
+            <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Attendance & Biometric Records</h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               ZKTeco punches, manual entries and CSV import — late / absence / overtime tracking
             </p>
           </div>
@@ -173,7 +173,7 @@ export function Attendance() {
         <Field label="Month">
           <TextInput type="month" value={period} onChange={(e) => setPeriod(e.target.value)} />
         </Field>
-        <div className="tnum flex gap-6 text-sm text-slate-600">
+        <div className="tnum flex gap-6 text-sm text-slate-600 dark:text-slate-300">
           <span>
             <span className="font-bold text-emerald-700">{totals.present}</span> present
           </span>
@@ -234,7 +234,7 @@ export function Attendance() {
                 },
                 { key: 'work', label: 'Work h', mono: true, render: (r) => Number(r.workHours).toFixed(1) },
                 { key: 'ot', label: 'OT h', mono: true, render: (r) => Number(r.overtimeHours).toFixed(1) },
-                { key: 'src', label: 'Source', render: (r) => <span className="text-xs text-slate-500">{r.source}</span> }
+                { key: 'src', label: 'Source', render: (r) => <span className="text-xs text-slate-500 dark:text-slate-400">{r.source}</span> }
               ]}
               rows={listQ.data ?? []}
               emptyTitle="No records logged"
@@ -300,9 +300,9 @@ export function Attendance() {
 
       {showImport ? (
         <HrModal title="Import attendance CSV" subtitle="ZKTeco export placeholder format" onClose={() => setShowImport(false)} wide>
-          <p className="mb-3 text-xs text-slate-500">
+          <p className="mb-3 text-xs text-slate-500 dark:text-slate-400">
             One row per record:{' '}
-            <code className="rounded bg-slate-100 px-1">employeeNo,date(YYYY-MM-DD),checkIn(HH:MM),checkOut(HH:MM),status,notes</code>
+            <code className="rounded bg-slate-100 dark:bg-slate-700 px-1">employeeNo,date(YYYY-MM-DD),checkIn(HH:MM),checkOut(HH:MM),status,notes</code>
             <br />
             Work hours, overtime (&gt;8h) and late minutes (after 08:00) are computed automatically.
           </p>

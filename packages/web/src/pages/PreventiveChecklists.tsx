@@ -134,8 +134,8 @@ export function PreventiveChecklists() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-slate-900">Preventive Maintenance Checklists</h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Preventive Maintenance Checklists</h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             PM task templates per equipment type — execute them and record completion.
           </p>
         </div>
@@ -187,10 +187,10 @@ export function PreventiveChecklists() {
                 >
                   <div className="flex min-w-0 items-center gap-3">
                     <Badge tone="neutral">{EQUIPMENT_TYPE_LABELS[t.equipmentType] ?? t.equipmentType}</Badge>
-                    <span className="truncate font-semibold text-slate-800">{t.name}</span>
+                    <span className="truncate font-semibold text-slate-800 dark:text-slate-100">{t.name}</span>
                   </div>
                   <div className="flex shrink-0 items-center gap-3">
-                    <span className="tabular-nums hidden text-xs text-slate-500 sm:inline">
+                    <span className="tabular-nums hidden text-xs text-slate-500 dark:text-slate-400 sm:inline">
                       Every {t.frequencyDays}d · ~{t.estimatedMinutes} min · {t.items.length} items
                     </span>
                     {canManage ? (
@@ -218,7 +218,7 @@ export function PreventiveChecklists() {
                   </div>
                 </button>
                 {expanded === t.id ? (
-                  <ol className="space-y-1.5 border-t border-slate-100 px-4 py-3 text-sm text-slate-600">
+                  <ol className="space-y-1.5 border-t border-slate-100 dark:border-slate-700 px-4 py-3 text-sm text-slate-600 dark:text-slate-300">
                     {t.items.map((it, i) => (
                       <li key={it.id} className="flex gap-2">
                         <span className="tabular-nums font-semibold text-violet-600">{i + 1}.</span>
@@ -268,7 +268,7 @@ export function PreventiveChecklists() {
                 label: 'Duration',
                 render: (r) => <span className="tabular-nums text-sm">{r.durationMinutes != null ? `${r.durationMinutes} min` : '—'}</span>
               },
-              { key: 'notes', label: 'Notes', render: (r) => <span className="max-w-xs truncate text-sm text-slate-500">{r.notes ?? '—'}</span> }
+              { key: 'notes', label: 'Notes', render: (r) => <span className="max-w-xs truncate text-sm text-slate-500 dark:text-slate-400">{r.notes ?? '—'}</span> }
             ]}
             rows={historyQ.data ?? []}
             emptyTitle="No PM executions recorded yet."
@@ -280,12 +280,12 @@ export function PreventiveChecklists() {
       {templateModal ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setTemplateModal(false)}>
           <div
-            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6"
+            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white dark:bg-slate-800 p-6"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-label={editing ? 'Edit PM template' : 'New PM template'}
           >
-            <h3 className="mb-4 text-base font-bold text-slate-900">
+            <h3 className="mb-4 text-base font-bold text-slate-900 dark:text-slate-100">
               {editing ? 'Edit PM template' : 'New PM template'}
             </h3>
             {formError ? (
@@ -333,13 +333,13 @@ export function PreventiveChecklists() {
       {executeFor ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setExecuteFor(null)}>
           <div
-            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6"
+            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white dark:bg-slate-800 p-6"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-label={`Execute ${executeFor.name}`}
           >
-            <h3 className="mb-1 text-base font-bold text-slate-900">Execute: {executeFor.name}</h3>
-            <p className="mb-4 text-xs text-slate-500">
+            <h3 className="mb-1 text-base font-bold text-slate-900 dark:text-slate-100">Execute: {executeFor.name}</h3>
+            <p className="mb-4 text-xs text-slate-500 dark:text-slate-400">
               Recording completion rolls the equipment's next due date forward by its PM interval.
             </p>
             {formError ? (
@@ -361,7 +361,7 @@ export function PreventiveChecklists() {
               <Field label="Checklist">
                 <div className="max-h-56 space-y-1.5 overflow-y-auto rounded-xl border border-slate-200/70 p-3">
                   {executeFor.items.map((it, i) => (
-                    <label key={it.id} className="flex cursor-pointer items-start gap-2 text-sm text-slate-700">
+                    <label key={it.id} className="flex cursor-pointer items-start gap-2 text-sm text-slate-700 dark:text-slate-200">
                       <input
                         type="checkbox"
                         checked={execChecks[i] ?? false}

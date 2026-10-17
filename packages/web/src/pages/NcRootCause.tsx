@@ -136,7 +136,7 @@ export function NcRootCause() {
                 <div className="flex items-center gap-2 text-sm">
                   <Badge tone={severityTone(selected.severity)}>{NC_SEVERITY_LABEL[selected.severity]}</Badge>
                   <Badge tone={ncStatusTone(selected.status)}>{selected.status.replace('_', ' ')}</Badge>
-                  <span className="text-slate-500">{NC_SOURCE_LABEL[selected.source]}</span>
+                  <span className="text-slate-500 dark:text-slate-400">{NC_SOURCE_LABEL[selected.source]}</span>
                 </div>
               ) : null}
             </div>
@@ -146,8 +146,8 @@ export function NcRootCause() {
 
       {!ncId ? (
         <div className="rounded-xl border border-dashed border-line bg-alabaster px-6 py-10 text-center">
-          <p className="font-semibold text-slate-700">No nonconformity selected</p>
-          <p className="mt-1 text-sm text-slate-500">Choose a record above to run the 5-Why and fishbone analysis.</p>
+          <p className="font-semibold text-slate-700 dark:text-slate-200">No nonconformity selected</p>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Choose a record above to run the 5-Why and fishbone analysis.</p>
         </div>
       ) : rcQ.isLoading ? (
         <Spinner label="Loading analysis..." />
@@ -203,7 +203,7 @@ export function NcRootCause() {
                 />
               </Field>
               {rcQ.data?.analysisDate ? (
-                <p className="text-xs text-slate-500">Last analysed {fmtDateTime(rcQ.data.analysisDate)}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Last analysed {fmtDateTime(rcQ.data.analysisDate)}</p>
               ) : null}
               <Button type="submit" loading={saving} className="w-full">
                 Save analysis

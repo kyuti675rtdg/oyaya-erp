@@ -114,8 +114,8 @@ export function DriverPayroll() {
             <Truck className="h-5 w-5" />
           </span>
           <div>
-            <h1 className="text-xl font-bold text-slate-900">Driver Trip-Based Payroll</h1>
-            <p className="text-sm text-slate-500">
+            <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Driver Trip-Based Payroll</h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               Trips × fixed trip rate + allowances — the driver fixed trip rule
             </p>
           </div>
@@ -136,17 +136,17 @@ export function DriverPayroll() {
 
       <div className="mb-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <div className={hrShell}>
-          <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">Fixed trip rate</p>
-          <p className="tnum mt-2 text-xl font-bold text-slate-900">
+          <p className="text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">Fixed trip rate</p>
+          <p className="tnum mt-2 text-xl font-bold text-slate-900 dark:text-slate-100">
             {rate != null ? fmtBirr(rate) + ' /trip' : '—'}
           </p>
         </div>
         <div className={hrShell}>
-          <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">Trips ({period})</p>
-          <p className="tnum mt-2 text-xl font-bold text-slate-900">{totalTrips}</p>
+          <p className="text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">Trips ({period})</p>
+          <p className="tnum mt-2 text-xl font-bold text-slate-900 dark:text-slate-100">{totalTrips}</p>
         </div>
         <div className={hrShell}>
-          <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">Total driver pay</p>
+          <p className="text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">Total driver pay</p>
           <p className="tnum mt-2 text-xl font-bold text-violet-700">{fmtBirr(totalPay)}</p>
         </div>
         <div className={`${hrShell} flex items-end`}>

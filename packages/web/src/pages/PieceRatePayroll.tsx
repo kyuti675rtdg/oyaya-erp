@@ -141,8 +141,8 @@ export function PieceRatePayroll() {
             <HandCoins className="h-5 w-5" />
           </span>
           <div>
-            <h1 className="text-xl font-bold text-slate-900">Piece-Rate Labor Payroll</h1>
-            <p className="text-sm text-slate-500">
+            <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Piece-Rate Labor Payroll</h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               Bags & quintals handled × stage rate — day-end pay computation
             </p>
           </div>
@@ -164,8 +164,8 @@ export function PieceRatePayroll() {
       <div className="mb-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
         {STAGES.map((s) => (
           <div key={s.key} className={hrShell}>
-            <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">{s.label}</p>
-            <p className="tnum mt-2 text-xl font-bold text-slate-900">
+            <p className="text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">{s.label}</p>
+            <p className="tnum mt-2 text-xl font-bold text-slate-900 dark:text-slate-100">
               {rateByStage.has(s.key) ? fmtBirr(rateByStage.get(s.key)!) + ' /q' : '—'}
             </p>
           </div>
@@ -176,8 +176,8 @@ export function PieceRatePayroll() {
         <Field label="Month">
           <TextInput type="month" value={period} onChange={(e) => setPeriod(e.target.value)} />
         </Field>
-        <div className="tnum pb-2 text-sm text-slate-600">
-          <span className="font-bold text-slate-900">{fmtQ(totalQ)}</span> q ·{' '}
+        <div className="tnum pb-2 text-sm text-slate-600 dark:text-slate-300">
+          <span className="font-bold text-slate-900 dark:text-slate-100">{fmtQ(totalQ)}</span> q ·{' '}
           <span className="font-bold text-violet-700">{fmtBirr(totalPay)}</span> earned
         </div>
       </div>
@@ -277,10 +277,10 @@ export function PieceRatePayroll() {
         <HrModal title="Stage rates (ETB per quintal)" onClose={() => setShowRates(false)}>
           <div className="space-y-3">
             {STAGES.map((s) => (
-              <div key={s.key} className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-4 py-3">
+              <div key={s.key} className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 dark:bg-slate-800 px-4 py-3">
                 <div>
-                  <p className="text-sm font-bold text-slate-800">{s.label}</p>
-                  <p className="tnum text-xs text-slate-500">
+                  <p className="text-sm font-bold text-slate-800 dark:text-slate-100">{s.label}</p>
+                  <p className="tnum text-xs text-slate-500 dark:text-slate-400">
                     Current: {rateByStage.has(s.key) ? fmtBirr(rateByStage.get(s.key)!) : 'not set'}
                   </p>
                 </div>

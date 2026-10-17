@@ -32,13 +32,13 @@ export function AdminModal({
         <div className="mb-4 flex items-start justify-between gap-3 border-b border-line pb-3">
           <div>
             <h3 className="text-base font-bold text-ink">{title}</h3>
-            {sub ? <p className="mt-0.5 text-sm text-slate-500">{sub}</p> : null}
+            {sub ? <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">{sub}</p> : null}
           </div>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="touch rounded-lg px-3 py-1.5 text-xl font-bold text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+            className="touch rounded-lg px-3 py-1.5 text-xl font-bold text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-700"
           >
             ×
           </button>

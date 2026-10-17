@@ -155,8 +155,8 @@ export function QualityApproval() {
                     <XCircle size={20} className="mt-0.5 shrink-0 text-critical-text" />
                   )}
                   <div>
-                    <p className="text-sm font-bold text-slate-800">{item.label}</p>
-                    <p className="mt-0.5 text-sm text-slate-600">{item.detail}</p>
+                    <p className="text-sm font-bold text-slate-800 dark:text-slate-100">{item.label}</p>
+                    <p className="mt-0.5 text-sm text-slate-600 dark:text-slate-300">{item.detail}</p>
                   </div>
                 </li>
               ))}
@@ -170,10 +170,10 @@ export function QualityApproval() {
                 <ul className="space-y-2">
                   {checklist.openCapas.map((c) => (
                     <li key={c.id} className="rounded-lg border border-critical-text/30 bg-critical-bg p-3 text-sm">
-                      <p className="font-bold text-slate-800">
+                      <p className="font-bold text-slate-800 dark:text-slate-100">
                         {c.capaNo} <Badge tone="critical" className="ml-1">{c.status}</Badge>
                       </p>
-                      <p className="mt-1 text-slate-600">{c.issueDescription}</p>
+                      <p className="mt-1 text-slate-600 dark:text-slate-300">{c.issueDescription}</p>
                     </li>
                   ))}
                 </ul>
@@ -192,7 +192,7 @@ export function QualityApproval() {
               ) : (
                 <ShieldAlert size={22} className="shrink-0 text-amber-600" />
               )}
-              <p className="text-sm font-semibold text-slate-800">
+              <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">
                 {checklist.canRelease
                   ? 'All quality gates pass — this batch may be released to finished goods.'
                   : 'Release is blocked until every checklist item passes.'}
@@ -240,7 +240,7 @@ export function QualityApproval() {
                   </Button>
                 </div>
                 {!checklist.canRelease ? (
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     Release is disabled while any checklist item fails. A batch can always be placed
                     on QC hold.
                   </p>

@@ -93,14 +93,14 @@ export function Payslips() {
             <FileText className="h-5 w-5" />
           </span>
           <div>
-            <h1 className="text-xl font-bold text-slate-900">Payslips & Payroll Reports</h1>
-            <p className="text-sm text-slate-500">
+            <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Payslips & Payroll Reports</h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               Individual payslips, payroll summaries and CSV export
             </p>
           </div>
         </div>
         <button
-          className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+          className="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700"
           onClick={exportSummary}
         >
           <Download className="h-4 w-4" /> Export summary CSV
@@ -121,8 +121,8 @@ export function Payslips() {
         <Field label="Search employee">
           <TextInput value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Name or employee ID..." />
         </Field>
-        <div className="tnum flex items-end gap-5 pb-2 text-sm text-slate-600">
-          <span><span className="font-bold text-slate-900">{fmtBirr(totals.gross)}</span> gross</span>
+        <div className="tnum flex items-end gap-5 pb-2 text-sm text-slate-600 dark:text-slate-300">
+          <span><span className="font-bold text-slate-900 dark:text-slate-100">{fmtBirr(totals.gross)}</span> gross</span>
           <span><span className="font-bold text-violet-700">{fmtBirr(totals.net)}</span> net</span>
         </div>
       </div>
@@ -157,7 +157,7 @@ export function Payslips() {
                   label: '',
                   render: (r) => (
                     <button
-                      className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                      className="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700"
                       onClick={() => setSelected(r)}
                     >
                       View
@@ -190,7 +190,7 @@ export function Payslips() {
           />
           {selected ? (
             <div ref={printRef}>
-              <div className="rounded-xl border border-slate-200 p-6">
+              <div className="rounded-xl border border-slate-200 dark:border-slate-700 p-6">
                 <p className="h text-center">OYAYA FLOUR PRODUCTION COMPANY PLC</p>
                 <p className="sub mt-1 text-center">
                   Payslip — {selected.payrollRun ? runPeriodLabel(selected.payrollRun) : ''}
@@ -230,7 +230,7 @@ export function Payslips() {
               </div>
             </div>
           ) : (
-            <p className="py-12 text-center text-sm text-slate-500">No payslip selected.</p>
+            <p className="py-12 text-center text-sm text-slate-500 dark:text-slate-400">No payslip selected.</p>
           )}
         </div>
       </div>

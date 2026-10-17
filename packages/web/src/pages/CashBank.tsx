@@ -165,8 +165,8 @@ export function CashBank() {
           <Spinner label="Loading accounts..." />
         ) : (
           <div className="space-y-4">
-            <Card className="flex items-center justify-between bg-slate-50 p-4">
-              <span className="text-sm font-semibold text-slate-500">Total cash & bank position</span>
+            <Card className="flex items-center justify-between bg-slate-50 dark:bg-slate-800 p-4">
+              <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">Total cash & bank position</span>
               <span className="tnum text-xl font-extrabold text-ink">{fmtBirr(totalCash)}</span>
             </Card>
             <DataTable<CashBankAccount>
@@ -184,10 +184,10 @@ export function CashBank() {
                     r.kind === 'BANK' ? (
                       <span className="tnum">
                         {r.bankName ?? '—'}
-                        {r.accountNo ? <span className="text-slate-400"> · {r.accountNo}</span> : null}
+                        {r.accountNo ? <span className="text-slate-400 dark:text-slate-500"> · {r.accountNo}</span> : null}
                       </span>
                     ) : (
-                      <span className="text-slate-400">—</span>
+                      <span className="text-slate-400 dark:text-slate-500">—</span>
                     )
                 },
                 {
@@ -247,13 +247,13 @@ export function CashBank() {
             <div className="mb-4 flex items-start justify-between">
               <div>
                 <h3 className="text-lg font-bold text-ink">Add cash / bank account</h3>
-                <p className="mt-0.5 text-sm text-slate-500">
+                <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
                   Link the account to an Asset GL account; the balance is computed from postings.
                 </p>
               </div>
               <button
                 onClick={() => setAccountModal(false)}
-                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100"
+                className="rounded-lg p-1.5 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700"
                 aria-label="Close"
               >
                 <X className="h-5 w-5" />
@@ -323,13 +323,13 @@ export function CashBank() {
             <div className="mb-4 flex items-start justify-between">
               <div>
                 <h3 className="text-lg font-bold text-ink">New transfer</h3>
-                <p className="mt-0.5 text-sm text-slate-500">
+                <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
                   Posts a balanced journal: debit destination, credit source.
                 </p>
               </div>
               <button
                 onClick={() => setTransferModal(false)}
-                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100"
+                className="rounded-lg p-1.5 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700"
                 aria-label="Close"
               >
                 <X className="h-5 w-5" />

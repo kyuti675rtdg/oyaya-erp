@@ -143,11 +143,11 @@ export function BackupManagement() {
                 />
               </Field>
               <div className="flex items-center gap-3 rounded-xl border border-line p-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
                   <HardDrive className="h-5 w-5" />
                 </span>
                 <div>
-                  <p className="text-sm font-semibold text-slate-800">Manual backup</p>
+                  <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">Manual backup</p>
                   <Badge tone={statusQ.data?.manualSupported ? 'pass' : 'neutral'}>
                     {statusQ.data?.manualSupported ? 'Supported' : 'Not supported'}
                   </Badge>
@@ -174,8 +174,8 @@ export function BackupManagement() {
                 className="flex items-center justify-between gap-3 rounded-lg border border-line px-3 py-2.5"
               >
                 <div>
-                  <p className="text-sm font-semibold text-slate-800">{l.label}</p>
-                  <p className="text-xs text-slate-500">{l.hint}</p>
+                  <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{l.label}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{l.hint}</p>
                 </div>
                 <Button
                   variant="secondary"
@@ -190,8 +190,8 @@ export function BackupManagement() {
             ))}
           </div>
           <div className="mt-3 flex items-start gap-2 rounded-xl border border-line bg-alabaster px-3 py-2.5">
-            <Info className="mt-0.5 h-4 w-4 shrink-0 text-slate-500" />
-            <p className="text-xs text-slate-600">
+            <Info className="mt-0.5 h-4 w-4 shrink-0 text-slate-500 dark:text-slate-400" />
+            <p className="text-xs text-slate-600 dark:text-slate-300">
               Full database dumps are produced by the automated backup workflow, not from this screen.
               More entity-level CSV exports (suppliers, products, employees) can be added on request.
             </p>

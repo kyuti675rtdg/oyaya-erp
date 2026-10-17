@@ -163,7 +163,7 @@ export function RiskAreaInspections() {
         </Field>
 
         {showForm && canManage ? (
-          <form onSubmit={create} className="mt-4 space-y-4 border-t border-slate-100 pt-4">
+          <form onSubmit={create} className="mt-4 space-y-4 border-t border-slate-100 dark:border-slate-700 pt-4">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Field label="Area" required>
                 <Select value={area} onChange={(e) => setArea(e.target.value)} required>
@@ -179,7 +179,7 @@ export function RiskAreaInspections() {
               </Field>
             </div>
             <div>
-              <p className="mb-2 text-sm font-semibold text-slate-700">Checkpoints</p>
+              <p className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-200">Checkpoints</p>
               <div className="space-y-2">
                 {checkpoints.map((c, i) => (
                   <div key={i} className="grid grid-cols-1 gap-2 rounded-xl border border-slate-200/70 bg-slate-50/60 p-3 sm:grid-cols-[1fr_130px_120px_auto]">
@@ -195,7 +195,7 @@ export function RiskAreaInspections() {
                         </option>
                       ))}
                     </Select>
-                    <div className="grid grid-cols-2 gap-1 rounded-lg border border-slate-200 bg-white p-1">
+                    <div className="grid grid-cols-2 gap-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-1">
                       {(['PASS', 'FAIL'] as const).map((r) => (
                         <button
                           key={r}
@@ -216,7 +216,7 @@ export function RiskAreaInspections() {
                     <button
                       type="button"
                       onClick={() => setCheckpoints((prev) => (prev.length > 1 ? prev.filter((_, idx) => idx !== i) : prev))}
-                      className="rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-slate-500 hover:text-rose-600"
+                      className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1.5 text-slate-500 dark:text-slate-400 hover:text-rose-600"
                       aria-label="Remove checkpoint"
                     >
                       <X size={14} />
@@ -288,9 +288,9 @@ export function RiskAreaInspections() {
             <div key={r.id} className={cardShell}>
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <p className="font-bold capitalize text-slate-800">{r.area}</p>
-                  <p className="mt-0.5 text-xs text-slate-500 tabular-nums">{fmtDateTime(r.inspectedAt)}</p>
-                  <p className="mt-0.5 text-xs text-slate-500 tnum">
+                  <p className="font-bold capitalize text-slate-800 dark:text-slate-100">{r.area}</p>
+                  <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400 tabular-nums">{fmtDateTime(r.inspectedAt)}</p>
+                  <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400 tnum">
                     {r.checkpoints.length} checkpoints ({r.checkpoints.filter((c) => c.result === 'FAIL').length} failed)
                   </p>
                 </div>
@@ -312,8 +312,8 @@ export function RiskAreaInspections() {
           <div className={`${cardShell} max-h-[90vh] w-full max-w-lg overflow-y-auto !p-6`}>
             <div className="flex items-start justify-between gap-2">
               <div>
-                <h3 className="text-lg font-bold capitalize text-slate-800">{detail.area}</h3>
-                <p className="text-sm text-slate-500 tabular-nums">{fmtDateTime(detail.inspectedAt)}</p>
+                <h3 className="text-lg font-bold capitalize text-slate-800 dark:text-slate-100">{detail.area}</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400 tabular-nums">{fmtDateTime(detail.inspectedAt)}</p>
               </div>
               <Badge tone={detail.overallPass ? 'pass' : 'critical'}>{detail.overallPass ? 'PASS' : 'FAIL'}</Badge>
             </div>
@@ -321,14 +321,14 @@ export function RiskAreaInspections() {
               {detail.checkpoints.map((c) => (
                 <div key={c.id} className="flex items-center justify-between gap-2 rounded-xl border border-slate-200/70 px-3 py-2.5">
                   <div>
-                    <p className="text-sm font-semibold text-slate-800">{c.checkpoint}</p>
-                    <p className="text-xs text-slate-500">{pretty(c.category)}</p>
+                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{c.checkpoint}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{pretty(c.category)}</p>
                   </div>
                   <CheckpointBadge result={c.result} />
                 </div>
               ))}
             </div>
-            {detail.notes ? <p className="mt-4 text-sm text-slate-700">{detail.notes}</p> : null}
+            {detail.notes ? <p className="mt-4 text-sm text-slate-700 dark:text-slate-200">{detail.notes}</p> : null}
             <Button variant="secondary" className="mt-4 w-full" onClick={() => setDetail(null)}>
               Close
             </Button>

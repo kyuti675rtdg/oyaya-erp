@@ -175,9 +175,9 @@ export function PestReports() {
             />
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               <div>
-                <p className="mb-2 text-sm font-semibold text-slate-700">By area</p>
+                <p className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-200">By area</p>
                 {(inspectionsQ.data?.byArea.length ?? 0) === 0 ? (
-                  <p className="py-8 text-center text-sm text-slate-500">No data in period.</p>
+                  <p className="py-8 text-center text-sm text-slate-500 dark:text-slate-400">No data in period.</p>
                 ) : (
                   <div className="h-64">
                     <ResponsiveContainer width="100%" height="100%">
@@ -196,9 +196,9 @@ export function PestReports() {
                 )}
               </div>
               <div>
-                <p className="mb-2 text-sm font-semibold text-slate-700">By month</p>
+                <p className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-200">By month</p>
                 {(inspectionsQ.data?.byMonth.length ?? 0) === 0 ? (
-                  <p className="py-8 text-center text-sm text-slate-500">No data in period.</p>
+                  <p className="py-8 text-center text-sm text-slate-500 dark:text-slate-400">No data in period.</p>
                 ) : (
                   <div className="h-64">
                     <ResponsiveContainer width="100%" height="100%">
@@ -218,7 +218,7 @@ export function PestReports() {
             </div>
             {(inspectionsQ.data?.riskByArea.length ?? 0) > 0 ? (
               <div className="mt-6">
-                <p className="mb-2 text-sm font-semibold text-slate-700">High-risk area inspection outcomes</p>
+                <p className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-200">High-risk area inspection outcomes</p>
                 <DataTable
                   columns={[
                     { key: 'area', label: 'Area', render: (r) => <span className="font-semibold capitalize">{r.area}</span> },
@@ -267,7 +267,7 @@ export function PestReports() {
                 </ResponsiveContainer>
               </div>
               <div>
-                <p className="mb-2 text-sm font-semibold text-slate-700">Top locations</p>
+                <p className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-200">Top locations</p>
                 <DataTable
                   columns={[
                     { key: 'location', label: 'Location', render: (r) => <span className="capitalize">{r.location}</span> },
@@ -295,7 +295,7 @@ export function PestReports() {
               }
             />
             {(effectivenessQ.data?.byTreatment.length ?? 0) === 0 ? (
-              <p className="py-8 text-center text-sm text-slate-500">No treated evidence records yet.</p>
+              <p className="py-8 text-center text-sm text-slate-500 dark:text-slate-400">No treated evidence records yet.</p>
             ) : (
               <>
                 <div className="h-64">

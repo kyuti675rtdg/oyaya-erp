@@ -173,7 +173,7 @@ export function PestSchedule() {
         </div>
 
         {showForm && canManage ? (
-          <form onSubmit={create} className="mt-4 space-y-4 border-t border-slate-100 pt-4">
+          <form onSubmit={create} className="mt-4 space-y-4 border-t border-slate-100 dark:border-slate-700 pt-4">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <Field label="Area" required>
                 <Select value={area} onChange={(e) => setArea(e.target.value)} required>
@@ -253,9 +253,9 @@ export function PestSchedule() {
                 <div key={r.id} className={cardShell}>
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <p className="font-bold capitalize text-slate-800">{r.area}</p>
-                      <p className="mt-0.5 text-xs text-slate-500 tabular-nums">{fmtDate(r.scheduledDate)} · {pretty(r.frequency)}</p>
-                      {r.inspector ? <p className="mt-0.5 text-xs text-slate-500">{r.inspector}</p> : null}
+                      <p className="font-bold capitalize text-slate-800 dark:text-slate-100">{r.area}</p>
+                      <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400 tabular-nums">{fmtDate(r.scheduledDate)} · {pretty(r.frequency)}</p>
+                      {r.inspector ? <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{r.inspector}</p> : null}
                     </div>
                     <ScheduleStatusBadge status={r.effectiveStatus ?? r.status} />
                   </div>

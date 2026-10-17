@@ -164,7 +164,7 @@ export function SalesInvoices() {
                 </label>
               ))}
               {invoiceableOrders.length === 0 ? (
-                <p className="text-sm text-slate-500">No delivered orders awaiting invoicing.</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">No delivered orders awaiting invoicing.</p>
               ) : null}
             </div>
           )}
@@ -214,7 +214,7 @@ export function SalesInvoices() {
               {
                 key: 'source',
                 label: 'Source',
-                render: (r) => <span className="text-xs text-slate-500">{r.source === 'ORDER' ? `Orders (${(r.orderIds ?? []).length})` : 'Dispatch'}</span>
+                render: (r) => <span className="text-xs text-slate-500 dark:text-slate-400">{r.source === 'ORDER' ? `Orders (${(r.orderIds ?? []).length})` : 'Dispatch'}</span>
               },
               { key: 'amountBirr', label: 'Amount', mono: true, render: (r) => fmtBirr(r.amountBirr) },
               { key: 'createdAt', label: 'Created', render: (r) => fmtDate(r.createdAt) },
@@ -259,7 +259,7 @@ export function SalesInvoices() {
             />
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-xs text-slate-500">
+                <tr className="text-left text-xs text-slate-500 dark:text-slate-400">
                   <th className="py-1">Order</th>
                   <th className="py-1">Product</th>
                   <th className="py-1 text-right">Bags</th>
@@ -284,7 +284,7 @@ export function SalesInvoices() {
                 ))}
                 {(expanded.lines ?? []).length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="py-2 text-sm text-slate-500">
+                    <td colSpan={6} className="py-2 text-sm text-slate-500 dark:text-slate-400">
                       Dispatch-sourced invoice — line detail lives on the dispatch.
                     </td>
                   </tr>
@@ -292,7 +292,7 @@ export function SalesInvoices() {
               </tbody>
             </table>
             {(expanded.receipts ?? []).length > 0 || (expanded.applications ?? []).length > 0 ? (
-              <div className="mt-3 text-xs text-slate-500">
+              <div className="mt-3 text-xs text-slate-500 dark:text-slate-400">
                 <p className="font-bold text-ink">Payments</p>
                 {(expanded.receipts ?? []).map((x) => (
                   <p key={x.id} className="tnum">

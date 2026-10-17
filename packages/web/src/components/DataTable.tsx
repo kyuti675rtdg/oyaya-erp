@@ -29,19 +29,19 @@ export function DataTable<T extends { id?: string }>({
   if (rows.length === 0) {
     return (
       <div className="rounded-xl border border-dashed border-line bg-alabaster px-6 py-10 text-center">
-        <p className="font-semibold text-slate-700">{emptyTitle}</p>
-        {emptySub ? <p className="mt-1 text-sm text-slate-500">{emptySub}</p> : null}
+        <p className="font-semibold text-slate-700 dark:text-slate-200">{emptyTitle}</p>
+        {emptySub ? <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{emptySub}</p> : null}
       </div>
     );
   }
 
   return (
-    <div className="grid-table overflow-x-auto rounded-xl border border-line bg-white">
+    <div className="grid-table overflow-x-auto rounded-xl border border-line bg-white dark:bg-slate-800">
       <table className="w-full min-w-[640px] text-left text-sm">
         <thead>
           <tr>
             {columns.map((c) => (
-              <th key={c.key} className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-500">
+              <th key={c.key} className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 {c.label}
               </th>
             ))}

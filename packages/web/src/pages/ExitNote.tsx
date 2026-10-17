@@ -84,7 +84,7 @@ export function ExitNote() {
         <Link to="/sales" className="font-semibold text-navy hover:underline">
           Back to sales
         </Link>
-        <p className="mt-4 text-slate-500">Dispatch not found.</p>
+        <p className="mt-4 text-slate-500 dark:text-slate-400">Dispatch not found.</p>
       </div>
     );
 
@@ -117,18 +117,18 @@ export function ExitNote() {
       {/* Gate-pass workflow */}
       <Card className="no-print mb-4 p-5">
         <div className="flex items-center gap-2.5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200/60 bg-slate-50 text-slate-600">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200/60 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
             <ShieldCheck className="h-4 w-4" />
           </span>
           <div className="flex-1">
-            <h2 className="text-sm font-bold text-slate-800">Gate pass</h2>
-            <p className="text-xs text-slate-500">Security gate workflow for this outgoing truck</p>
+            <h2 className="text-sm font-bold text-slate-800 dark:text-slate-100">Gate pass</h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Security gate workflow for this outgoing truck</p>
           </div>
           <Badge tone={GATE_TONE[gateStatus] ?? 'neutral'}>{gateStatus.replace('_', ' ')}</Badge>
         </div>
 
         {gateStatus === 'EXITED' ? (
-          <p className="mt-3 text-sm text-slate-600">
+          <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">
             Exited {d.gateCheckedAt ? fmtDateTime(d.gateCheckedAt) : ''} — seal{' '}
             <span className="tnum font-bold">{d.sealNo ?? '—'}</span>, officer {d.gateOfficer ?? '—'}.
           </p>
@@ -160,10 +160,10 @@ export function ExitNote() {
         )}
       </Card>
 
-      <div className="print-sheet mx-auto max-w-3xl rounded-xl border border-line bg-white p-8 shadow-sm">
+      <div className="print-sheet mx-auto max-w-3xl rounded-xl border border-line bg-white dark:bg-slate-800 p-8 shadow-sm">
         <div className="border-b-2 border-ink pb-4 text-center">
           <h1 className="text-2xl font-extrabold text-ink">OYAYA FLOUR FACTORY</h1>
-          <p className="text-sm text-slate-600">Dispatch / Exit Note</p>
+          <p className="text-sm text-slate-600 dark:text-slate-300">Dispatch / Exit Note</p>
         </div>
 
         <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
@@ -222,7 +222,7 @@ export function ExitNote() {
           </tbody>
         </table>
 
-        <p className="mt-4 text-xs text-slate-600">
+        <p className="mt-4 text-xs text-slate-600 dark:text-slate-300">
           Trip rule: multiple stops within the same or nearby destination area on a single loaded
           departure count and pay as one trip. This departure counts as 1 trip.
         </p>

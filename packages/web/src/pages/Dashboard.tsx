@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useChartTheme } from '../lib/theme';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -109,11 +110,11 @@ function categoryLabel(c: string): string {
 }
 
 const cardShell =
-  'bg-white rounded-2xl p-5 border border-slate-100 shadow-[0_2px_12px_-4px_rgba(15,23,42,0.05)]';
+  'bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-700 shadow-[0_2px_12px_-4px_rgba(15,23,42,0.05)]';
 
 function DemoBadge() {
   return (
-    <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+    <span className="rounded bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
       Demo
     </span>
   );
@@ -149,17 +150,17 @@ function CardHeader({
   demo?: boolean;
 }) {
   return (
-    <div className="mb-4 flex items-center justify-between border-b border-slate-100 pb-4">
+    <div className="mb-4 flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-4">
       <div className="flex items-center gap-2.5">
-        <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200/60 bg-slate-50 text-slate-600">
+        <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200/60 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
           {icon}
         </span>
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-sm font-bold text-slate-800">{title}</h2>
+            <h2 className="text-sm font-bold text-slate-800 dark:text-slate-100">{title}</h2>
             {demo ? <DemoBadge /> : null}
           </div>
-          {subtitle ? <p className="text-xs text-slate-500">{subtitle}</p> : null}
+          {subtitle ? <p className="text-xs text-slate-500 dark:text-slate-400">{subtitle}</p> : null}
         </div>
       </div>
       {action ? <div className="flex items-center gap-2">{action}</div> : null}
@@ -192,15 +193,15 @@ const PILL_TONES: Record<string, string> = {
 
 function KpiCard({ spec }: { spec: KpiSpec }) {
   const inner = (
-    <div className="flex h-full flex-col justify-between rounded-2xl border border-slate-200/70 bg-white p-5 shadow-[0_1px_3px_rgba(15,23,42,0.03),0_4px_12px_rgba(15,23,42,0.03)] transition-all hover:border-slate-300/80 hover:shadow-md">
+    <div className="flex h-full flex-col justify-between rounded-2xl border border-slate-200/70 bg-white dark:bg-slate-800 p-5 shadow-[0_1px_3px_rgba(15,23,42,0.03),0_4px_12px_rgba(15,23,42,0.03)] transition-all hover:border-slate-300/80 hover:shadow-md">
       <div className="flex items-start justify-between gap-3">
-        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">{spec.label}</p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">{spec.label}</p>
         <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${spec.iconTone}`}>
           {spec.icon}
         </span>
       </div>
-      <p className="mt-2 truncate text-2xl font-extrabold tabular-nums tracking-tight text-slate-900">
-        {spec.value} <span className="text-sm font-semibold text-slate-500">{spec.unit}</span>
+      <p className="mt-2 truncate text-2xl font-extrabold tabular-nums tracking-tight text-slate-900 dark:text-slate-100">
+        {spec.value} <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">{spec.unit}</span>
         {spec.demo ? (
           <span className="ml-2 align-middle">
             <DemoBadge />
@@ -217,7 +218,7 @@ function KpiCard({ spec }: { spec: KpiSpec }) {
         ) : (
           <TrendText pct={spec.trendPct ?? null} />
         )}
-        {spec.sub ? <span className="truncate text-[11px] text-slate-500">{spec.sub}</span> : null}
+        {spec.sub ? <span className="truncate text-[11px] text-slate-500 dark:text-slate-400">{spec.sub}</span> : null}
       </div>
     </div>
   );
@@ -281,10 +282,10 @@ function WelcomeBanner({ firstName }: { firstName: string | null }) {
         <path d="M12 9C12 5.5 9.5 3 6 3c0 3.5 2.5 6 6 6zM12 9c0-3.5 2.5-6 6-6 0 3.5-2.5 6-6 6zM12 14c0-3.5-2.5-6-6-6 0 3.5 2.5 6 6 6zM12 14c0-3.5 2.5-6 6-6 0 3.5-2.5 6-6 6z" />
       </svg>
       <div className="relative">
-        <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">
+        <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">
           Welcome back{firstName ? `, ${firstName}` : ''}!
         </h1>
-        <p className="mt-1 text-sm text-slate-600">
+        <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
           Here&rsquo;s what&rsquo;s happening at Oyaya Flour Mill today.
         </p>
       </div>
@@ -303,13 +304,13 @@ function ProductionStatusCard({ activeBatches, demo }: { activeBatches: number |
         <Package size={22} strokeWidth={2} />
       </div>
       <div className="min-w-0">
-        <p className="text-sm font-bold text-slate-800">
+        <p className="text-sm font-bold text-slate-800 dark:text-slate-100">
           Production{' '}
           <span className={`font-extrabold ${demo || active ? 'text-emerald-600' : 'text-slate-400'}`}>
             {demo || active ? 'Active' : 'Idle'}
           </span>
         </p>
-        <p className="mt-0.5 truncate text-xs text-slate-500">
+        <p className="mt-0.5 truncate text-xs text-slate-500 dark:text-slate-400">
           Main Mill • Shift 1 (06:00 - 14:00)
         </p>
       </div>
@@ -327,11 +328,11 @@ function WeatherCard() {
           <Sun size={20} strokeWidth={2} />
         </div>
         <div>
-          <p className="text-lg font-extrabold tabular-nums text-slate-800">22°C</p>
-          <p className="text-xs text-slate-500">Addis Ababa</p>
+          <p className="text-lg font-extrabold tabular-nums text-slate-800 dark:text-slate-100">22°C</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">Addis Ababa</p>
         </div>
       </div>
-      <ChevronDown size={16} className="text-slate-400" />
+      <ChevronDown size={16} className="text-slate-400 dark:text-slate-500" />
     </div>
   );
 }
@@ -351,6 +352,7 @@ function ProductionOverview({
   data: ProdPoint[];
   demo: boolean;
 }) {
+  const ct = useChartTheme();
   return (
     <div className={`${cardShell} col-span-12 lg:col-span-5`}>
       <CardHeader
@@ -360,7 +362,7 @@ function ProductionOverview({
         demo={demo}
         action={
           <>
-            <div className="hidden items-center gap-3 text-xs font-medium text-slate-600 sm:flex">
+            <div className="hidden items-center gap-3 text-xs font-medium text-slate-600 dark:text-slate-300 sm:flex">
               <span className="inline-flex items-center gap-1.5">
                 <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#7C3AED]" />
                 Flour Produced (Qt)
@@ -372,7 +374,7 @@ function ProductionOverview({
             </div>
             <button
               type="button"
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-600"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-2.5 py-1 text-xs font-semibold text-slate-600 dark:text-slate-300"
             >
               Last 7 Days <ChevronDown size={14} />
             </button>
@@ -388,10 +390,10 @@ function ProductionOverview({
                 <stop offset="100%" stopColor="#7C3AED" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={ct.grid} />
             <XAxis
               dataKey="name"
-              tick={{ fontSize: 11, fill: '#94A3B8' }}
+              tick={{ fontSize: 11, fill: ct.tick }}
               axisLine={false}
               tickLine={false}
               dy={6}
@@ -399,14 +401,16 @@ function ProductionOverview({
             <YAxis
               ticks={[0, 300, 600, 900, 1200, 1500]}
               domain={[0, 1500]}
-              tick={{ fontSize: 11, fill: '#94A3B8' }}
+              tick={{ fontSize: 11, fill: ct.tick }}
               axisLine={false}
               tickLine={false}
             />
             <Tooltip
               contentStyle={{
                 borderRadius: 12,
-                border: '1px solid #E2E8F0',
+                border: `1px solid ${ct.tooltipBorder}`,
+                backgroundColor: ct.tooltipBg,
+                color: ct.tooltipText,
                 fontSize: 12,
                 boxShadow: '0 4px 16px rgba(15,23,42,0.08)'
               }}
@@ -497,10 +501,10 @@ function ProductOutputDonut({
             </PieChart>
           </ResponsiveContainer>
           <div className="pointer-events-none absolute flex max-w-[110px] flex-col items-center justify-center text-center">
-            <p className="text-lg font-extrabold tabular-nums text-slate-900">
+            <p className="text-lg font-extrabold tabular-nums text-slate-900 dark:text-slate-100">
               {total.toLocaleString('en-US')} Qt
             </p>
-            <p className="text-[10px] font-semibold uppercase leading-tight tracking-wider text-slate-500">
+            <p className="text-[10px] font-semibold uppercase leading-tight tracking-wider text-slate-500 dark:text-slate-400">
               Total Output
             </p>
           </div>
@@ -513,13 +517,13 @@ function ProductOutputDonut({
             >
               <span className="inline-flex min-w-0 items-center gap-2">
                 <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: s.color }} />
-                <span className="truncate font-medium text-slate-600">{s.name}</span>
+                <span className="truncate font-medium text-slate-600 dark:text-slate-300">{s.name}</span>
               </span>
               <span className="ml-2 shrink-0">
-                <span className="font-bold tabular-nums text-slate-800">
+                <span className="font-bold tabular-nums text-slate-800 dark:text-slate-100">
                   {s.value.toLocaleString('en-US')} Qt
                 </span>{' '}
-                <span className="tabular-nums text-slate-500">{s.pct.toFixed(1)}%</span>
+                <span className="tabular-nums text-slate-500 dark:text-slate-400">{s.pct.toFixed(1)}%</span>
               </span>
             </div>
           ))}
@@ -561,10 +565,10 @@ function RecentActivities({ items, demo }: { items: ActivityItem[]; demo: boolea
                 {a.icon}
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-[13px] font-semibold text-slate-800">{a.title}</span>
-                <span className="block truncate text-xs text-slate-500">{a.sub}</span>
+                <span className="block truncate text-[13px] font-semibold text-slate-800 dark:text-slate-100">{a.title}</span>
+                <span className="block truncate text-xs text-slate-500 dark:text-slate-400">{a.sub}</span>
               </span>
-              <span className="shrink-0 pt-0.5 text-[11px] tabular-nums text-slate-500">{a.time}</span>
+              <span className="shrink-0 pt-0.5 text-[11px] tabular-nums text-slate-500 dark:text-slate-400">{a.time}</span>
             </Link>
           </li>
         ))}
@@ -606,11 +610,11 @@ function QuickAccessCatalog() {
           </Link>
         ))}
       </div>
-      <div className="my-4 border-t border-slate-100" />
+      <div className="my-4 border-t border-slate-100 dark:border-slate-700" />
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Package size={15} className="text-violet-600" />
-          <h3 className="text-[13px] font-bold text-slate-800">Product Lines</h3>
+          <h3 className="text-[13px] font-bold text-slate-800 dark:text-slate-100">Product Lines</h3>
         </div>
         <span className="rounded-md bg-violet-50 px-2 py-0.5 text-[10px] font-semibold text-violet-700">
           5 Active Lines
@@ -625,9 +629,9 @@ function QuickAccessCatalog() {
           >
             <span className="min-w-0">
               <span className="block truncate">{p.name}</span>
-              <span className="block text-[10px] font-medium text-slate-500">{p.packaging}</span>
+              <span className="block text-[10px] font-medium text-slate-500 dark:text-slate-400">{p.packaging}</span>
             </span>
-            <span className="ml-2 shrink-0 rounded-md bg-white/70 px-2 py-0.5 font-bold tabular-nums text-slate-700">
+            <span className="ml-2 shrink-0 rounded-md bg-white/70 px-2 py-0.5 font-bold tabular-nums text-slate-700 dark:text-slate-200">
               {p.stock.toLocaleString('en-US')} Qt
             </span>
           </Link>
@@ -678,15 +682,15 @@ function StockLevels({ rows, demo }: { rows: StockRow[]; demo: boolean }) {
               </span>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-slate-700">{r.label}</span>
-                  <span className="tabular-nums text-slate-500">
-                    <span className="font-bold text-slate-800">{r.balance.toLocaleString('en-US')}</span>
+                  <span className="font-semibold text-slate-700 dark:text-slate-200">{r.label}</span>
+                  <span className="tabular-nums text-slate-500 dark:text-slate-400">
+                    <span className="font-bold text-slate-800 dark:text-slate-100">{r.balance.toLocaleString('en-US')}</span>
                     {' / '}
                     {r.capacity.toLocaleString('en-US')} Qt
-                    <span className="ml-2 font-bold text-slate-800">{pct.toFixed(0)}%</span>
+                    <span className="ml-2 font-bold text-slate-800 dark:text-slate-100">{pct.toFixed(0)}%</span>
                   </span>
                 </div>
-                <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-slate-100">
+                <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
                   <div
                     className="h-full rounded-full transition-all duration-700"
                     style={{ width: `${pct}%`, backgroundColor: r.color }}
@@ -723,11 +727,11 @@ function RecentProcurement({ rows, demo }: { rows: ProcRow[]; demo: boolean }) {
       <div className="overflow-x-auto">
         <table className="w-full border-collapse text-left">
           <thead>
-            <tr className="border-y border-slate-100 bg-slate-50/70">
+            <tr className="border-y border-slate-100 dark:border-slate-700 bg-slate-50/70">
               {['Date', 'Supplier', 'Wheat Type', 'Qty (Qt)', 'Status'].map((h) => (
                 <th
                   key={h}
-                  className="px-2.5 py-2 text-[11px] font-semibold uppercase tracking-wide text-slate-500"
+                  className="px-2.5 py-2 text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400"
                 >
                   {h}
                 </th>
@@ -737,14 +741,14 @@ function RecentProcurement({ rows, demo }: { rows: ProcRow[]; demo: boolean }) {
           <tbody className="divide-y divide-slate-50">
             {rows.map((r, i) => (
               <tr key={`${r.supplier}-${i}`} className="transition-colors hover:bg-slate-50/60">
-                <td className="whitespace-nowrap px-2.5 py-2.5 text-xs tabular-nums text-slate-500">
+                <td className="whitespace-nowrap px-2.5 py-2.5 text-xs tabular-nums text-slate-500 dark:text-slate-400">
                   {r.date}
                 </td>
-                <td className="max-w-[150px] truncate px-2.5 py-2.5 text-xs font-semibold text-slate-700">
+                <td className="max-w-[150px] truncate px-2.5 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-200">
                   {r.supplier}
                 </td>
-                <td className="px-2.5 py-2.5 text-xs text-slate-500">{r.wheatType}</td>
-                <td className="px-2.5 py-2.5 text-xs font-semibold tabular-nums text-slate-700">
+                <td className="px-2.5 py-2.5 text-xs text-slate-500 dark:text-slate-400">{r.wheatType}</td>
+                <td className="px-2.5 py-2.5 text-xs font-semibold tabular-nums text-slate-700 dark:text-slate-200">
                   {r.qty.toLocaleString('en-US')}
                 </td>
                 <td className="px-2.5 py-2.5">
@@ -838,12 +842,12 @@ function ShiftMonitor({ data }: { data: ShiftMonitorData }) {
       />
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {rows.map((r) => (
-          <div key={r.label} className="rounded-xl border border-slate-100 bg-slate-50/70 p-3.5">
+          <div key={r.label} className="rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/70 p-3.5">
             <div className="flex items-center gap-2.5">
               <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${r.tile}`}>
                 {r.icon}
               </span>
-              <p className="min-w-0 flex-1 truncate text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <p className="min-w-0 flex-1 truncate text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 {r.label}
               </p>
               {r.badge ? (
@@ -852,10 +856,10 @@ function ShiftMonitor({ data }: { data: ShiftMonitorData }) {
                 </span>
               ) : null}
             </div>
-            <p className="mt-2.5 truncate text-[15px] font-extrabold tabular-nums text-slate-900">
+            <p className="mt-2.5 truncate text-[15px] font-extrabold tabular-nums text-slate-900 dark:text-slate-100">
               {r.value}
             </p>
-            <p className="mt-0.5 truncate text-xs text-slate-500">{r.sub}</p>
+            <p className="mt-0.5 truncate text-xs text-slate-500 dark:text-slate-400">{r.sub}</p>
           </div>
         ))}
       </div>
@@ -913,8 +917,8 @@ function QualityTooltip({
 }) {
   if (!active || !payload || payload.length === 0) return null;
   return (
-    <div className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs shadow-lg">
-      <p className="mb-1.5 font-bold text-slate-800">{label}</p>
+    <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-xs shadow-lg">
+      <p className="mb-1.5 font-bold text-slate-800 dark:text-slate-100">{label}</p>
       <div className="space-y-1">
         {payload.map((p) => {
           const key = String(p.dataKey ?? '');
@@ -926,15 +930,15 @@ function QualityTooltip({
           return (
             <div key={key} className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full" style={{ backgroundColor: p.color }} />
-              <span className="font-medium text-slate-600">{th.label}:</span>
-              <span className="font-bold tabular-nums text-slate-800">
+              <span className="font-medium text-slate-600 dark:text-slate-300">{th.label}:</span>
+              <span className="font-bold tabular-nums text-slate-800 dark:text-slate-100">
                 {v.toFixed(1)}
                 {unit}
               </span>
-              <span className="text-slate-500">({th.check})</span>
+              <span className="text-slate-500 dark:text-slate-400">({th.check})</span>
               <span
                 className={`rounded-full px-1.5 py-px text-[10px] font-bold ${
-                  ok ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-600'
+                  ok ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400' : 'bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400'
                 }`}
               >
                 {ok ? 'PASS' : 'FAIL'}
@@ -948,6 +952,7 @@ function QualityTooltip({
 }
 
 function QualityTrendChart({ data, demo }: { data: QualityPoint[]; demo: boolean }) {
+  const ct = useChartTheme();
   const visible = Q_LINES.filter((l) => data.some((p) => qVal(p, l.key) != null));
   return (
     <div className={`${cardShell} col-span-12 lg:col-span-5`}>
@@ -959,13 +964,13 @@ function QualityTrendChart({ data, demo }: { data: QualityPoint[]; demo: boolean
         action={
           <button
             type="button"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-600"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-2.5 py-1 text-xs font-semibold text-slate-600 dark:text-slate-300"
           >
             Last 7 Days <ChevronDown size={14} />
           </button>
         }
       />
-      <div className="mb-2 flex flex-wrap gap-3 text-[11px] font-medium text-slate-600">
+      <div className="mb-2 flex flex-wrap gap-3 text-[11px] font-medium text-slate-600 dark:text-slate-300">
         {visible.map((l) => (
           <span key={l.key} className="inline-flex items-center gap-1.5">
             <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: l.color }} />
@@ -976,10 +981,10 @@ function QualityTrendChart({ data, demo }: { data: QualityPoint[]; demo: boolean
       <div className="h-56 w-full">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data} margin={{ top: 5, right: 5, left: -14, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={ct.grid} />
             <XAxis
               dataKey="label"
-              tick={{ fontSize: 11, fill: '#94A3B8' }}
+              tick={{ fontSize: 11, fill: ct.tick }}
               axisLine={false}
               tickLine={false}
               dy={6}
@@ -989,7 +994,7 @@ function QualityTrendChart({ data, demo }: { data: QualityPoint[]; demo: boolean
               ticks={[0, 10, 20, 30, 40]}
               domain={[0, 40]}
               tickFormatter={(v: number) => `${v}%`}
-              tick={{ fontSize: 11, fill: '#94A3B8' }}
+              tick={{ fontSize: 11, fill: ct.tick }}
               axisLine={false}
               tickLine={false}
             />
@@ -998,7 +1003,7 @@ function QualityTrendChart({ data, demo }: { data: QualityPoint[]; demo: boolean
               orientation="right"
               ticks={[60, 65, 70, 75, 80, 85]}
               domain={[60, 85]}
-              tick={{ fontSize: 11, fill: '#94A3B8' }}
+              tick={{ fontSize: 11, fill: ct.tick }}
               axisLine={false}
               tickLine={false}
             />

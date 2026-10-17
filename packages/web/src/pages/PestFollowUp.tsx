@@ -194,7 +194,7 @@ export function PestFollowUp() {
         </Field>
 
         {showForm && canManage ? (
-          <form onSubmit={create} className="mt-4 space-y-4 border-t border-slate-100 pt-4">
+          <form onSubmit={create} className="mt-4 space-y-4 border-t border-slate-100 dark:border-slate-700 pt-4">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               <Field label="Evidence record" required>
                 <Select value={evidenceId} onChange={(e) => setEvidenceId(e.target.value)} required>
@@ -238,7 +238,7 @@ export function PestFollowUp() {
                   render: (r) => (
                     <span className="text-sm">
                       <span className="font-semibold">{r.evidence ? pretty(r.evidence.pestType) : '—'}</span>
-                      {r.evidence ? <span className="block text-xs text-slate-500 capitalize">{r.evidence.location}</span> : null}
+                      {r.evidence ? <span className="block text-xs text-slate-500 dark:text-slate-400 capitalize">{r.evidence.location}</span> : null}
                     </span>
                   )
                 },
@@ -248,7 +248,7 @@ export function PestFollowUp() {
                 {
                   key: 'result',
                   label: 'Result',
-                  render: (r) => (r.result ? <FollowUpResultBadge result={r.result} /> : <span className="text-slate-400">—</span>)
+                  render: (r) => (r.result ? <FollowUpResultBadge result={r.result} /> : <span className="text-slate-400 dark:text-slate-500">—</span>)
                 },
                 {
                   key: 'actions',
@@ -281,11 +281,11 @@ export function PestFollowUp() {
                 <div key={r.id} className={cardShell}>
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <p className="font-bold text-slate-800">
+                      <p className="font-bold text-slate-800 dark:text-slate-100">
                         {r.evidence ? pretty(r.evidence.pestType) : 'Evidence'}{' '}
-                        <span className="font-normal text-slate-500 capitalize">{r.evidence?.location}</span>
+                        <span className="font-normal text-slate-500 dark:text-slate-400 capitalize">{r.evidence?.location}</span>
                       </p>
-                      <p className="mt-0.5 text-xs text-slate-500 tabular-nums">Due {fmtDate(r.dueDate)}{r.inspector ? ` · ${r.inspector}` : ''}</p>
+                      <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400 tabular-nums">Due {fmtDate(r.dueDate)}{r.inspector ? ` · ${r.inspector}` : ''}</p>
                     </div>
                     {rowDue(r)}
                   </div>
@@ -316,8 +316,8 @@ export function PestFollowUp() {
       {resultFor ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <form onSubmit={recordResult} className={`${cardShell} w-full max-w-md !p-6`}>
-            <h3 className="text-lg font-bold text-slate-800">Record follow-up result</h3>
-            <p className="text-sm text-slate-500">
+            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">Record follow-up result</h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               {resultFor.evidence ? `${pretty(resultFor.evidence.pestType)} — ` : ''}
               <span className="capitalize">{resultFor.evidence?.location}</span> · due {fmtDate(resultFor.dueDate)}
             </p>
