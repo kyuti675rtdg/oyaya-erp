@@ -627,8 +627,8 @@ export function Settings() {
             onClick={() => setTab(t.id)}
             className={`touch inline-flex shrink-0 items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold transition-colors ${
               tab === t.id
-                ? 'border-navy bg-navy text-white'
-                : 'border-line bg-white text-slate-600 hover:bg-slate-50'
+                ? 'border-violet-600 bg-violet-600 text-white dark:border-violet-500 dark:bg-violet-500'
+                : 'border-line dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700'
             }`}
           >
             <t.icon className="h-4 w-4" />
