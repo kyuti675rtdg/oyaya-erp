@@ -13,7 +13,7 @@ import { Button, EmptyState, ErrorBox, Field, Select, Spinner, TextArea, TextInp
 import { EQUIPMENT_TYPE_LABELS } from './MaintPlanning';
 
 const cardShell =
-  'bg-white rounded-2xl border border-slate-200/70 shadow-sm p-5';
+  'bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700/70 shadow-sm p-5';
 
 export function PreventiveChecklists() {
   const qc = useQueryClient();

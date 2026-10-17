@@ -17,7 +17,7 @@ import { Badge } from '../components/Badge';
 import { CardHeader } from '../components/CardHeader';
 import { Button, EmptyState, ErrorBox, Field, SectionTitle, Select, Spinner, TextArea } from '../components/ui';
 
-const cardShell = 'bg-white rounded-2xl border border-slate-200/70 shadow-sm p-5';
+const cardShell = 'bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700/70 shadow-sm p-5';
 
 const BATCH_STATUS_TONE: Record<string, 'pass' | 'critical' | 'advisory' | 'neutral'> = {
   APPROVED: 'pass',

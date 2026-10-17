@@ -11,7 +11,7 @@ import { CardHeader } from '../components/CardHeader';
 import { Button, EmptyState, ErrorBox, Field, Spinner, TextArea } from '../components/ui';
 
 const cardShell =
-  'bg-white rounded-2xl border border-slate-200/70 shadow-sm p-5';
+  'bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700/70 shadow-sm p-5';
 
 function stageOf(a: RepairApproval): 'TECH' | 'SUPERVISOR' | 'BACK_IN_SERVICE' | 'DONE' {
   if (a.backInServiceAt) return 'DONE';

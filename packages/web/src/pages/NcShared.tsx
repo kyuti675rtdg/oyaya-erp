@@ -8,7 +8,7 @@ import type {
   NcStatus
 } from '../types';
 
-export const cardShell = 'bg-white rounded-2xl border border-slate-200/70 shadow-sm p-5';
+export const cardShell = 'bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700/70 shadow-sm p-5';
 
 export const NC_SOURCE_LABEL: Record<NcSource, string> = {
   INTAKE: 'Intake',

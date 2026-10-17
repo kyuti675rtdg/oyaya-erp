@@ -23,7 +23,7 @@ import { fmtBirr, fmtDate } from '../lib/format';
 import { errMsg } from './finCommon';
 
 const cardShell =
-  'bg-white rounded-2xl p-5 border border-slate-100 shadow-[0_2px_12px_-4px_rgba(15,23,42,0.05)]';
+  'bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-700 shadow-[0_2px_12px_-4px_rgba(15,23,42,0.05)]';
 
 export function CashBank() {
   const [accountModal, setAccountModal] = useState(false);

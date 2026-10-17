@@ -31,8 +31,8 @@ import {
   Select,
   Spinner,
   TextArea,
-  TextInput
-} from '../components/ui';
+  TextInput,
+  ErrorBox} from '../components/ui';
 import {
   INTAKE_THRESHOLDS,
   breachesOf,
@@ -42,7 +42,7 @@ import {
 import { fmtBirr, fmtDateTime, fmtQ } from '../lib/format';
 
 const cardShell =
-  'bg-white rounded-2xl p-5 border border-slate-100 shadow-[0_2px_12px_-4px_rgba(15,23,42,0.05)]';
+  'bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-700 shadow-[0_2px_12px_-4px_rgba(15,23,42,0.05)]';
 
 const STATUS_TONE: Record<string, 'pass' | 'advisory' | 'critical' | 'neutral'> = {
   ACCEPTED: 'pass',
@@ -550,6 +550,8 @@ export function Intake() {
         />
         {flaggedQ.isLoading ? (
           <Spinner label="Loading flagged deliveries..." />
+        ) : flaggedQ.isError ? (
+          <ErrorBox message="Could not load flagged deliveries." onRetry={() => flaggedQ.refetch()} />
         ) : (
           <DataTable<WheatIntake>
             columns={[
@@ -591,6 +593,8 @@ export function Intake() {
         />
         {allQ.isLoading ? (
           <Spinner label="Loading intakes..." />
+        ) : allQ.isError ? (
+          <ErrorBox message="Could not load intakes." onRetry={() => allQ.refetch()} />
         ) : (
           <DataTable<WheatIntake>
             columns={[

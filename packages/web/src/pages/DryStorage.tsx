@@ -19,7 +19,7 @@ import { CardHeader } from '../components/CardHeader';
 import { SkeletonKpiCard } from '../components/Skeleton';
 import { Button, ErrorBox, EmptyState, Field, NumberInput, SectionTitle, Select, TextArea } from '../components/ui';
 
-const cardShell = 'bg-white rounded-2xl p-5 border border-slate-100 shadow-[0_2px_12px_-4px_rgba(15,23,42,0.05)]';
+const cardShell = 'bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-700 shadow-[0_2px_12px_-4px_rgba(15,23,42,0.05)]';
 
 const fmt = (n: number) => n.toLocaleString('en-US', { maximumFractionDigits: 1 });
 const pct1 = (n: number) => `${n.toFixed(1)}%`;

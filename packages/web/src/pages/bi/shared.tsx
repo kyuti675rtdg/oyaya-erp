@@ -7,7 +7,7 @@ import { ErrorBox, Spinner } from '../../components/ui';
 import { CardHeader } from '../../components/CardHeader';
 
 export const cardShell =
-  'bg-white rounded-2xl p-5 border border-slate-100 shadow-[0_2px_12px_-4px_rgba(15,23,42,0.05)]';
+  'bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-700 shadow-[0_2px_12px_-4px_rgba(15,23,42,0.05)]';
 
 /** Palette matching the Executive Dashboard charts. */
 export const CHART_COLORS = {

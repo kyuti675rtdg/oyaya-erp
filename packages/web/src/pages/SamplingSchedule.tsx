@@ -17,7 +17,7 @@ import { CardHeader } from '../components/CardHeader';
 import { Button, EmptyState, ErrorBox, SectionTitle, Select, Spinner } from '../components/ui';
 import { fmtDate, fmtDateTime } from '../lib/format';
 
-const cardShell = 'bg-white rounded-2xl border border-slate-200/70 shadow-sm p-5';
+const cardShell = 'bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700/70 shadow-sm p-5';
 
 const KIND_META: Record<SamplingKind, { label: string; icon: React.ReactNode }> = {
   SHIFT_2H: { label: '2-hour shift check', icon: <Wheat size={14} /> },

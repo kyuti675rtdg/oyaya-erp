@@ -12,7 +12,7 @@ import { DataTable } from '../components/DataTable';
 import { Button, Card, EmptyState, ErrorBox, Field, NumberInput, SectionTitle, Select, Spinner, TextArea } from '../components/ui';
 import { fmtDateTime } from '../lib/format';
 
-const cardShell = 'bg-white rounded-2xl border border-slate-200/70 shadow-sm p-5';
+const cardShell = 'bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700/70 shadow-sm p-5';
 
 const PRODUCTS = ['Duket', 'Duket (special grade)', 'Furishka', 'Fino', 'Fernacho'] as const;
 

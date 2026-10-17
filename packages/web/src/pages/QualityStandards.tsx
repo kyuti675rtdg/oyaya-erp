@@ -23,7 +23,7 @@ import { Button, EmptyState, ErrorBox, NumberInput, Select, Spinner, TextInput }
 import { fmtDateTime } from '../lib/format';
 
 const cardShell =
-  'bg-white rounded-2xl border border-slate-200/70 shadow-sm p-5';
+  'bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700/70 shadow-sm p-5';
 
 const CATEGORY_META: Record<string, { label: string; icon: React.ReactNode; blurb: string }> = {
   intake: {

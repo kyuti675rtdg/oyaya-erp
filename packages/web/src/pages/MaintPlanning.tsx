@@ -26,7 +26,7 @@ export const EQUIPMENT_TYPE_LABELS: Record<string, string> = {
 export const EQUIPMENT_STATUSES = ['OPERATIONAL', 'UNDER_MAINTENANCE', 'BREAKDOWN'];
 
 const cardShell =
-  'bg-white rounded-2xl border border-slate-200/70 shadow-sm p-5';
+  'bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700/70 shadow-sm p-5';
 
 const STATUS_TONE: Record<string, 'pass' | 'advisory' | 'critical' | 'neutral'> = {
   OPERATIONAL: 'pass',

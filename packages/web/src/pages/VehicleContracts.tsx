@@ -11,7 +11,7 @@ import { CardHeader } from '../components/CardHeader';
 import { DataTable } from '../components/DataTable';
 import { Button, EmptyState, ErrorBox, Field, Select, Spinner, TextArea, TextInput } from '../components/ui';
 
-const cardShell = 'bg-white rounded-2xl border border-slate-200/70 shadow-sm p-5';
+const cardShell = 'bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700/70 shadow-sm p-5';
 
 const contractTypeLabel: Record<string, string> = {
   RENTAL_DAILY: 'Rental · daily',

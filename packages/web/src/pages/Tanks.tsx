@@ -13,7 +13,7 @@ import { Button, Field, NumberInput, Select, Spinner, TextInput } from '../compo
 import { fmtDateTime, fmtQ } from '../lib/format';
 import { useNetwork } from '../store/network';
 
-const cardShell = 'bg-white rounded-2xl p-5 border border-slate-100 shadow-[0_2px_12px_-4px_rgba(15,23,42,0.05)]';
+const cardShell = 'bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-700 shadow-[0_2px_12px_-4px_rgba(15,23,42,0.05)]';
 
 const statusStyles: Record<string, string> = {
   Empty: 'bg-slate-100 text-slate-600',
