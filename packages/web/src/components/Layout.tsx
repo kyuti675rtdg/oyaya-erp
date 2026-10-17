@@ -170,7 +170,7 @@ const NAV: NavGroup[] = [
   },
   {
     title: 'Procurement',
-    icon: 'truck',
+    icon: 'intake',
     items: [
       { to: '/intake', label: 'Intake', claim: ['intake:create', 'intake:read'], icon: 'intake' },
       { to: '/suppliers', label: 'Suppliers', claim: ['procurement:view'], icon: 'truck' },
@@ -274,7 +274,7 @@ const NAV: NavGroup[] = [
   },
   {
     title: 'Maintenance',
-    icon: 'factory',
+    icon: 'monitor',
     items: [
       { to: '/maintenance/planning', label: 'Maintenance Plans', claim: ['maintenance:view'], icon: 'factory' },
       { to: '/maintenance/pm-checklists', label: 'PM Checklists', claim: ['maintenance:view'], icon: 'shifts' },
@@ -352,7 +352,7 @@ const NAV: NavGroup[] = [
   },
   {
     title: 'Traceability',
-    icon: 'intake',
+    icon: 'batches',
     items: [
       { to: '/trace/intake', label: 'Intake Trace', claim: ['traceability:read'], icon: 'intake' },
       { to: '/trace/tanks', label: 'Tank Trace', claim: ['traceability:read'], icon: 'tanks' },
@@ -394,7 +394,7 @@ const NAV: NavGroup[] = [
   },
   {
     title: 'Documents',
-    icon: 'intake',
+    icon: 'modules',
     items: [
       { to: '/documents', label: 'Library', claim: ['documents:view'], icon: 'intake' },
       { to: '/documents/folders', label: 'Folders', claim: ['documents:view'], icon: 'package' },
@@ -420,29 +420,24 @@ function itemMatches(item: NavItem, pathname: string): boolean {
 
 function Logo() {
   return (
-    <div className="px-3 pb-2 pt-3">
-      <button
-        type="button"
-        className="touch flex w-full items-center gap-2.5 rounded-lg border border-gray-200 bg-white px-2.5 py-2 text-left transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700/50"
-        aria-label="Workspace: Oyaya ERP"
-      >
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-violet-600 text-white">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M12 21V7" />
-            <path d="M12 10C9 10 6.5 7.5 6.5 4.5 9.5 4.5 12 7 12 10z" />
-            <path d="M12 10c3 0 5.5-2.5 5.5-5.5C14.5 4.5 12 7 12 10z" />
-            <path d="M12 15c-2.5 0-4.5-2-4.5-4.5 2.5 0 4.5 2 4.5 4.5z" />
-            <path d="M12 15c2.5 0 4.5-2 4.5-4.5-2.5 0-4.5 2-4.5 4.5z" />
-          </svg>
-        </span>
-        <span className="min-w-0 flex-1">
-          <span className="block truncate text-sm font-semibold leading-tight text-gray-900 dark:text-white">Oyaya ERP</span>
-          <span className="block truncate text-xs leading-tight text-gray-500 dark:text-slate-400">Flour Mill</span>
-        </span>
-        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-4 w-4 shrink-0 text-gray-400 dark:text-slate-500" aria-hidden="true">
-          <path d="M7 6.5l3-3 3 3M7 13.5l3 3 3-3" strokeLinecap="round" strokeLinejoin="round" />
+    <div className="flex h-16 shrink-0 items-center gap-3 border-b border-gray-100 px-5 dark:border-slate-800">
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-violet-600 text-white shadow-sm">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M12 21V7" />
+          <path d="M12 10C9 10 6.5 7.5 6.5 4.5 9.5 4.5 12 7 12 10z" />
+          <path d="M12 10c3 0 5.5-2.5 5.5-5.5C14.5 4.5 12 7 12 10z" />
+          <path d="M12 15c-2.5 0-4.5-2-4.5-4.5 2.5 0 4.5 2 4.5 4.5z" />
+          <path d="M12 15c2.5 0 4.5-2 4.5-4.5-2.5 0-4.5 2-4.5 4.5z" />
         </svg>
-      </button>
+      </span>
+      <span className="min-w-0">
+        <span className="block truncate text-[15px] font-bold leading-tight tracking-tight text-gray-900 dark:text-white">
+          Oyaya Flour Mill
+        </span>
+        <span className="block text-[11px] font-medium uppercase tracking-[0.08em] text-gray-400 dark:text-slate-500">
+          ERP System
+        </span>
+      </span>
     </div>
   );
 }
@@ -580,26 +575,47 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
     if (q && filteredGroups.length > 0) setOpenGroup(filteredGroups[0].title);
   }, [q]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const sectionLabel = 'mb-1 mt-4 px-3 text-xs font-medium text-gray-500 dark:text-slate-500';
-  const itemBase =
-    'touch relative flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-violet-500';
-  const itemIdle = 'text-gray-700 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-slate-700/60';
-  const itemActive =
-    'bg-violet-50 font-semibold text-violet-900 dark:bg-violet-500/15 dark:text-violet-200';
+  // ── Design tokens: premium industrial ERP ──
+  const sectionLabel =
+    'mb-2 mt-5 px-4 text-[11px] font-semibold uppercase tracking-[0.1em] text-gray-400 dark:text-slate-500';
+  // Module row: 44px touch target, icon + label + chevron
+  const modBase =
+    'touch relative flex w-full items-center gap-3 rounded-lg px-3 text-left transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-violet-500';
+  const modIdle =
+    'text-gray-700 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-slate-800';
+  const modActive =
+    'bg-violet-50 font-semibold text-violet-900 dark:bg-violet-500/10 dark:text-violet-100';
+  // Submenu leaf: compact, indented
+  const leafBase =
+    'touch relative flex w-full items-center rounded-md px-3 text-left transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-violet-500';
+  const leafIdle =
+    'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100';
+  const leafActive =
+    'bg-violet-50 font-semibold text-violet-900 dark:bg-violet-500/10 dark:text-violet-100';
 
-  const renderLeafItem = (item: NavItem, depth: number) => {
+  const chevron = (open: boolean, cls = 'h-4 w-4') => (
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={2}
+      className={`${cls} shrink-0 text-gray-400 transition-transform duration-200 dark:text-slate-500 ${open ? 'rotate-90' : ''}`}
+      aria-hidden="true">
+      <path d="M7.5 5l5 5-5 5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+
+  const activeBar = (h = 'h-5') => (
+    <span className={`absolute left-0 top-1/2 ${h} w-[3px] -translate-y-1/2 rounded-r-full bg-violet-600`} aria-hidden="true" />
+  );
+
+  const renderLeafItem = (item: NavItem) => {
     const active = itemMatches(item, pathname);
     return (
       <li key={item.to}>
         <NavLink
           to={item.to} end={item.to === '/'} onClick={onNavigate}
           aria-current={active ? 'page' : undefined}
-          className={`${itemBase} ${depth === 2 ? 'pl-9' : 'pl-7'} text-[13px] ${active ? itemActive : 'text-gray-600 hover:bg-gray-100 dark:text-slate-400 dark:hover:bg-slate-700/60'}`}
+          className={`${leafBase} h-9 text-[13px] ${active ? leafActive : leafIdle}`}
         >
-          {active ? (
-            <span className="absolute left-0 top-1/2 h-4 w-1 -translate-y-1/2 rounded-r-full bg-violet-600" aria-hidden="true" />
-          ) : null}
-          <span className="truncate pl-1">{item.label}</span>
+          {active ? activeBar('h-4') : null}
+          <span className="truncate">{item.label}</span>
         </NavLink>
       </li>
     );
@@ -609,25 +625,23 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
     const isOpen = openGroup === group.title || !!q;
     const hasActive = leafItems(group).some((i) => itemMatches(i, pathname));
     const isFav = favorites.includes(group.title);
+    const active = isOpen || hasActive;
     return (
-      <div key={group.title} className="mb-px">
-        <div className={`group flex items-center rounded-md ${isOpen || hasActive ? 'bg-gray-100 dark:bg-slate-700/60' : ''}`}>
+      <div key={group.title} className="mb-1">
+        <div className={`group flex items-center rounded-lg transition-colors duration-150 ${active ? 'bg-gray-100 dark:bg-slate-800' : ''}`}>
           <button
             type="button"
             onClick={() => setOpenGroup(isOpen && !q ? null : group.title)}
             aria-expanded={isOpen}
             aria-controls={`nav-group-${group.title}`}
-            className={`${itemBase} flex-1 ${isOpen || hasActive ? 'font-medium text-gray-900 dark:text-white' : itemIdle}`}
+            className={`${modBase} h-11 flex-1 ${active ? modActive : modIdle}`}
           >
-            {hasActive ? (
-              <span className="absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-violet-600" aria-hidden="true" />
-            ) : null}
-            <span className="min-w-0 flex-1 truncate pl-1">{group.title}</span>
-            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={2}
-              className={`h-3.5 w-3.5 shrink-0 text-gray-400 transition-transform duration-200 dark:text-slate-500 ${isOpen ? 'rotate-90' : ''}`}
-              aria-hidden="true">
-              <path d="M7.5 5l5 5-5 5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+            {hasActive ? activeBar() : null}
+            <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md transition-colors ${hasActive ? 'bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300' : 'bg-gray-100 text-gray-500 group-hover:bg-gray-200 dark:bg-slate-700/60 dark:text-slate-400'}`}>
+              {svgIcon(group.icon, 'h-[18px] w-[18px]')}
+            </span>
+            <span className="min-w-0 flex-1 truncate text-sm">{group.title}</span>
+            {chevron(isOpen)}
           </button>
           {showFav ? (
             <button
@@ -635,50 +649,44 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
               onClick={() => toggleFavorite(group.title)}
               aria-pressed={isFav}
               aria-label={isFav ? `Remove ${group.title} from favorites` : `Add ${group.title} to favorites`}
-              className="mr-1 hidden shrink-0 rounded p-1.5 text-gray-300 transition-colors hover:text-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 group-hover:block dark:text-slate-600 dark:hover:text-amber-400"
+              className="mr-1 hidden shrink-0 rounded-md p-2 text-gray-300 transition-colors hover:bg-gray-200 hover:text-amber-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 group-hover:block dark:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-amber-400"
             >
               <svg viewBox="0 0 20 20" fill={isFav ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth={1.6}
-                className={`h-4 w-4 ${isFav ? 'text-amber-500' : ''}`} aria-hidden="true">
+                className={`h-4 w-4 ${isFav ? '!block text-amber-500' : ''}`} aria-hidden="true">
                 <path d="M10 2.5l2.3 4.9 5.2.7-3.8 3.6.9 5.2-4.6-2.5-4.6 2.5.9-5.2L2.5 8.1l5.2-.7z" strokeLinejoin="round" />
               </svg>
             </button>
           ) : null}
         </div>
         {isOpen ? (
-          <ul id={`nav-group-${group.title}`} className="mb-0.5 mt-px space-y-px" aria-label={`${group.title} submodules`}>
+          <ul id={`nav-group-${group.title}`} className="mb-1 ml-[26px] mt-1 space-y-px border-l border-gray-200 pl-3 dark:border-slate-700" aria-label={`${group.title} pages`}>
             {group.items.map((it) => {
               if (isSubGroup(it)) {
                 const subKey = `${group.title}/${it.title}`;
                 const subOpen = openSub === subKey || !!q;
                 const subActive = it.items.some((i) => itemMatches(i, pathname));
                 return (
-                  <li key={subKey}>
+                  <li key={subKey} className="pt-0.5">
                     <button
                       type="button"
                       onClick={() => setOpenSub(subOpen && !q ? null : subKey)}
                       aria-expanded={subOpen}
                       aria-controls={`nav-sub-${subKey}`}
-                      className={`${itemBase} pl-6 text-[13px] font-medium ${subOpen || subActive ? 'text-gray-900 dark:text-white' : 'text-gray-600 hover:bg-gray-100 dark:text-slate-400 dark:hover:bg-slate-700/60'}`}
+                      className={`${leafBase} h-10 text-[13px] font-semibold ${subOpen || subActive ? 'text-gray-900 dark:text-white' : leafIdle}`}
                     >
-                      {subActive ? (
-                        <span className="absolute left-0 top-1/2 h-4 w-1 -translate-y-1/2 rounded-r-full bg-violet-600" aria-hidden="true" />
-                      ) : null}
-                      <span className="min-w-0 flex-1 truncate pl-1">{it.title}</span>
-                      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={2}
-                        className={`h-3 w-3 shrink-0 text-gray-400 transition-transform duration-200 dark:text-slate-500 ${subOpen ? 'rotate-90' : ''}`}
-                        aria-hidden="true">
-                        <path d="M7.5 5l5 5-5 5" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
+                      {subActive ? activeBar('h-4') : null}
+                      <span className="min-w-0 flex-1 truncate">{it.title}</span>
+                      {chevron(subOpen, 'h-3.5 w-3.5')}
                     </button>
                     {subOpen ? (
-                      <ul id={`nav-sub-${subKey}`} className="mt-px space-y-px" aria-label={`${it.title} pages`}>
-                        {it.items.map((leaf) => renderLeafItem(leaf, 2))}
+                      <ul id={`nav-sub-${subKey}`} className="mb-0.5 ml-2 mt-px space-y-px border-l border-gray-100 pl-2 dark:border-slate-700/60" aria-label={`${it.title} pages`}>
+                        {it.items.map((leaf) => renderLeafItem(leaf))}
                       </ul>
                     ) : null}
                   </li>
                 );
               }
-              return renderLeafItem(it as NavItem, 1);
+              return renderLeafItem(it as NavItem);
             })}
           </ul>
         ) : null}
@@ -691,7 +699,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      <div className="px-2 pb-1 pt-2" role="search">
+      <div className="shrink-0 px-4 pb-2 pt-3" role="search">
         <label htmlFor="sidebar-module-search" className="sr-only">Search modules and submodules</label>
         <div className="relative">
           <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8}
@@ -704,7 +712,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Escape') { setQuery(''); searchRef.current?.blur(); } }}
             placeholder="Search modules\u2026" autoComplete="off"
-            className="w-full rounded-md border border-gray-200 bg-gray-50 py-2 pl-9 pr-8 text-sm text-gray-900 placeholder:text-gray-400 focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/30 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-500"
+            className="h-10 w-full rounded-lg border border-gray-200 bg-gray-50 pl-10 pr-9 text-sm text-gray-900 placeholder:text-gray-400 transition-shadow focus:border-violet-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-violet-500/25 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-500 dark:focus:bg-slate-800"
           />
           {query ? (
             <button type="button" onClick={() => setQuery('')} aria-label="Clear search"
@@ -719,7 +727,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
         </div>
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-2 py-1" aria-label="Primary">
+      <nav className="flex-1 overflow-y-auto px-3 pb-4" aria-label="Primary">
         {q ? (
           <>
             <p className={sectionLabel} role="status" aria-live="polite">
@@ -736,7 +744,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
             {recents.length > 0 ? (
               <>
                 <p className={sectionLabel}>Recent</p>
-                <ul className="mb-1 space-y-px" aria-label="Recently visited modules">
+                <ul className="mb-1 space-y-1" aria-label="Recently visited modules">
                   {recents.map((t) => {
                     const group = visibleGroups.find((g) => g.title === t);
                     if (!group) return null;
@@ -746,11 +754,12 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                     return (
                       <li key={group.title}>
                         <NavLink to={leaves[0].to} onClick={onNavigate}
-                          className={`${itemBase} ${hasActive ? itemActive : itemIdle}`}>
-                          {hasActive ? (
-                            <span className="absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-violet-600" aria-hidden="true" />
-                          ) : null}
-                          <span className="truncate pl-1">{group.title}</span>
+                          className={`${modBase} h-10 ${hasActive ? modActive : modIdle}`}>
+                          {hasActive ? activeBar() : null}
+                          <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${hasActive ? 'bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300' : 'bg-gray-100 text-gray-500 dark:bg-slate-700/60 dark:text-slate-400'}`}>
+                            {svgIcon(group.icon, 'h-4 w-4')}
+                          </span>
+                          <span className="truncate text-sm">{group.title}</span>
                         </NavLink>
                       </li>
                     );
@@ -764,16 +773,17 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
             <p className={sectionLabel}>Quick access</p>
             {[
-              { to: '/admin/notifications', label: 'Notifications' },
-              { to: '/support/tickets', label: 'Chat' },
+              { to: '/admin/notifications', label: 'Notifications', icon: 'monitor' },
+              { to: '/support/tickets', label: 'Chat', icon: 'support' },
             ].map((a) => (
               <NavLink key={a.to} to={a.to} onClick={onNavigate}
                 aria-current={acctActive(a.to) ? 'page' : undefined}
-                className={`${itemBase} mb-px ${acctActive(a.to) ? itemActive : itemIdle}`}>
-                {acctActive(a.to) ? (
-                  <span className="absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-violet-600" aria-hidden="true" />
-                ) : null}
-                <span className="truncate pl-1">{a.label}</span>
+                className={`${modBase} mb-1 h-11 ${acctActive(a.to) ? modActive : modIdle}`}>
+                {acctActive(a.to) ? activeBar() : null}
+                <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md ${acctActive(a.to) ? 'bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300' : 'bg-gray-100 text-gray-500 dark:bg-slate-700/60 dark:text-slate-400'}`}>
+                  {svgIcon(a.icon, 'h-[18px] w-[18px]')}
+                </span>
+                <span className="truncate text-sm">{a.label}</span>
               </NavLink>
             ))}
 
@@ -784,8 +794,9 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                   return (
                     <NavLink key={item.to} to={item.to} onClick={onNavigate}
                       aria-current={active ? 'page' : undefined}
-                      className={`${itemBase} mb-px text-[13px] ${active ? itemActive : 'text-gray-600 hover:bg-gray-100 dark:text-slate-400 dark:hover:bg-slate-700/60'}`}>
-                      <span className="truncate pl-1">{item.label}</span>
+                      className={`${leafBase} mb-px h-9 text-[13px] ${active ? leafActive : leafIdle}`}>
+                      {active ? activeBar('h-4') : null}
+                      <span className="truncate">{item.label}</span>
                     </NavLink>
                   );
                 })}
@@ -795,13 +806,18 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
         )}
       </nav>
 
-      <div className="border-t border-gray-200 p-2 dark:border-slate-700">
+      <div className="shrink-0 border-t border-gray-100 px-3 py-3 dark:border-slate-800">
         <button type="button" onClick={() => { handleSidebarLogout(); onNavigate?.(); }}
-          className={`${itemBase} ${itemIdle} mb-1`} aria-label="Log out">
-          <span className="truncate pl-1">Logout</span>
+          className={`${modBase} h-10 ${modIdle}`} aria-label="Log out">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-gray-100 text-gray-500 dark:bg-slate-700/60 dark:text-slate-400">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-4 w-4" aria-hidden="true">
+              <path d="M8 4.5H5.5a1 1 0 00-1 1v9a1 1 0 001 1H8M13 6.5l3.5 3.5L13 13.5M16 10H7.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
+          <span className="truncate text-sm">Logout</span>
         </button>
-        <div className="flex items-center gap-2.5 rounded-lg px-2 py-1.5" aria-label={`Signed in as ${profileName}`}>
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-violet-600 text-xs font-bold text-white" aria-hidden="true">
+        <div className="mt-2 flex items-center gap-3 rounded-lg bg-gray-50 px-3 py-2.5 dark:bg-slate-800" aria-label={`Signed in as ${profileName}`}>
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-violet-600 text-sm font-bold text-white" aria-hidden="true">
             {profileInitial}
           </div>
           <div className="min-w-0 flex-1">
@@ -846,7 +862,7 @@ export function Layout() {
   return (
     <div className="flex min-h-screen bg-[#F5F6FA] text-gray-900 dark:bg-slate-900 dark:text-slate-100">
       {/* Desktop sidebar */}
-      <aside className="no-print sticky top-0 hidden h-screen w-[248px] shrink-0 flex-col border-r border-gray-200 bg-white dark:border-slate-700 dark:bg-slate-800 md:flex">
+      <aside className="no-print sticky top-0 hidden h-screen w-[280px] shrink-0 flex-col border-r border-gray-200 bg-white dark:border-slate-800 dark:bg-slate-900 md:flex">
         <Logo />
         <SidebarContent />
       </aside>
@@ -855,7 +871,7 @@ export function Layout() {
       {menuOpen ? (
         <div className="no-print fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setMenuOpen(false)} />
-          <aside className="absolute inset-y-0 left-0 flex w-72 flex-col bg-white dark:bg-slate-800">
+          <aside className="absolute inset-y-0 left-0 flex w-[300px] flex-col border-r border-gray-200 bg-white shadow-xl dark:border-slate-800 dark:bg-slate-900">
             <div className="flex items-center justify-between pr-4">
               <Logo />
               <button
