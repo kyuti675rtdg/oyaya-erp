@@ -388,6 +388,14 @@ const NAV: NavGroup[] = [
     ]
   },
   {
+    title: 'Team Chat',
+    icon: 'support',
+    items: [
+      { to: '/chat', label: 'Messages', claim: ['chat:view'], icon: 'support' },
+      { to: '/chat/admin', label: 'Chat Settings', claim: ['chat:manage'], icon: 'settings' },
+    ]
+  },
+  {
     title: 'Support',
     icon: 'support',
     items: [
@@ -618,7 +626,6 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
             <p className={sectionLabel}>Quick access</p>
             {[
               { to: '/admin/notifications', label: 'Notifications', icon: 'monitor' },
-              { to: '/chat', label: 'Team Chat', icon: 'support' },
             ].map((a) => (
               <NavLink key={a.to} to={a.to} onClick={onNavigate}
                 aria-current={acctActive(a.to) ? 'page' : undefined}
