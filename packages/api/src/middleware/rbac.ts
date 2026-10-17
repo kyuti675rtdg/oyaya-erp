@@ -17,7 +17,10 @@ export function requirePermission(code: PermissionCode) {
         include: { permission: true },
       });
       const ok = grants.some(
-        (g) => g.permission.code === code || g.permission.code.startsWith(`${code}:`),
+        (g) =>
+          g.permission.code === '*' ||
+          g.permission.code === code ||
+          g.permission.code.startsWith(`${code}:`),
       );
       if (!ok) throw new AppError(403, `Forbidden: requires permission ${code}`);
       next();
@@ -40,11 +43,12 @@ export function requireAnyPermission(codes: PermissionCode[]) {
         where: { roleId: user.roleId },
         include: { permission: true },
       });
-      const ok = codes.some((code) =>
-        grants.some(
-          (g) => g.permission.code === code || g.permission.code.startsWith(`${code}:`),
-        )
-      );
+      const ok = grants.some((g) => g.permission.code === '*') ||
+        codes.some((code) =>
+          grants.some(
+            (g) => g.permission.code === code || g.permission.code.startsWith(`${code}:`),
+          )
+        );
       if (!ok) throw new AppError(403, `Forbidden: requires one of ${codes.join(', ')}`);
       next();
     } catch (err) {
