@@ -99,11 +99,11 @@ export function PestKpi({
   sub?: string;
 }) {
   const toneText: Record<string, string> = {
-    slate: 'text-slate-800',
-    violet: 'text-violet-700',
-    emerald: 'text-emerald-700',
-    amber: 'text-amber-700',
-    rose: 'text-rose-700'
+    slate: 'text-slate-800 dark:text-slate-100',
+    violet: 'text-violet-700 dark:text-violet-300',
+    emerald: 'text-emerald-700 dark:text-emerald-300',
+    amber: 'text-amber-700 dark:text-amber-300',
+    rose: 'text-rose-700 dark:text-rose-300'
   };
   return (
     <div className={cardShell}>

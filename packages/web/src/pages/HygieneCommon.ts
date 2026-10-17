@@ -34,7 +34,7 @@ export const SHIFTS = ['Morning', 'Afternoon', 'Night'] as const;
 
 /** Reusable card shell from the Dashboard spec: white, rounded, hairline border. */
 export const cardShell =
-  'rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm';
+  'rounded-2xl border border-slate-200/70 dark:border-slate-700/70 bg-white dark:bg-slate-800 p-5 shadow-sm';
 
 export const FREQUENCY_LABEL: Record<ChecklistFrequency, string> = {
   PER_SHIFT: 'Per shift',

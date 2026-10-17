@@ -112,7 +112,7 @@ export function Spinner({ label = 'Loading...' }: { label?: string }) {
 
 export function EmptyState({ title, sub }: { title: string; sub?: string }) {
   return (
-    <div className="rounded-xl border border-dashed border-line bg-alabaster px-6 py-10 text-center">
+    <div className="rounded-xl border border-dashed border-line dark:border-slate-600 bg-alabaster dark:bg-slate-800/60 px-6 py-10 text-center">
       <p className="font-semibold text-slate-700 dark:text-slate-200">{title}</p>
       {sub ? <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{sub}</p> : null}
     </div>

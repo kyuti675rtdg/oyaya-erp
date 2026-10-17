@@ -28,7 +28,7 @@ export function DataTable<T extends { id?: string }>({
 }) {
   if (rows.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-line bg-alabaster px-6 py-10 text-center">
+      <div className="rounded-xl border border-dashed border-line dark:border-slate-600 bg-alabaster dark:bg-slate-800/60 px-6 py-10 text-center">
         <p className="font-semibold text-slate-700 dark:text-slate-200">{emptyTitle}</p>
         {emptySub ? <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{emptySub}</p> : null}
       </div>
