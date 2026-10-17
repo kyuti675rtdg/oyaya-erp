@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Clock3, FileUp, Plus, Upload } from 'lucide-react';
+import { Clock3, FileUp, Pencil, Plus, Trash2, Upload } from 'lucide-react';
 import { api } from '../lib/api';
 import { E } from '../lib/endpoints';
 import type { AttendanceRecord, AttendanceSummary, HrEmployee } from '../types';
@@ -36,6 +36,8 @@ export function Attendance() {
   const [period, setPeriod] = useState(new Date().toISOString().slice(0, 7));
   const [showForm, setShowForm] = useState(false);
   const [showImport, setShowImport] = useState(false);
+  const [editing, setEditing] = useState<AttendanceRecord | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<AttendanceRecord | null>(null);
   const [form, setForm] = useState({
     employeeId: '',
     date: new Date().toISOString().slice(0, 10),
@@ -84,15 +86,64 @@ export function Attendance() {
   };
 
   const saveM = useMutation({
-    mutationFn: async (payload: Record<string, unknown>) =>
-      (await api.post(E.hrAttendance, payload)).data,
+    mutationFn: async (payload: Record<string, unknown>) => {
+      if (editing) {
+        return (await api.put(`${E.hrAttendance}/${editing.id}`, payload)).data;
+      }
+      return (await api.post(E.hrAttendance, payload)).data;
+    },
     onSuccess: () => {
-      setNotice({ ok: true, text: 'Attendance record saved.' });
+      setNotice({ ok: true, text: editing ? 'Attendance record updated.' : 'Attendance record saved.' });
       setShowForm(false);
+      setEditing(null);
       invalidate();
     },
     onError: (err) => setNotice({ ok: false, text: err instanceof Error ? err.message : 'Save failed.' })
   });
+
+  const deleteM = useMutation({
+    mutationFn: async (id: string) => (await api.delete(`${E.hrAttendance}/${id}`)).data,
+    onSuccess: () => {
+      setNotice({ ok: true, text: 'Attendance record deleted.' });
+      setDeleteTarget(null);
+      invalidate();
+    },
+    onError: (err) => setNotice({ ok: false, text: err instanceof Error ? err.message : 'Delete failed.' })
+  });
+
+  const openEdit = (r: AttendanceRecord) => {
+    setEditing(r);
+    setForm({
+      employeeId: r.employeeId,
+      date: r.date.slice(0, 10),
+      status: r.status,
+      checkIn: r.checkIn ?? '',
+      checkOut: r.checkOut ?? '',
+      workHours: String(r.workHours ?? ''),
+      overtimeHours: String(r.overtimeHours ?? ''),
+      lateMinutes: String(r.lateMinutes ?? ''),
+      notes: (r as any).notes ?? '',
+    });
+    setShowForm(true);
+    setNotice(null);
+  };
+
+  const openCreate = () => {
+    setEditing(null);
+    setForm({
+      employeeId: '',
+      date: new Date().toISOString().slice(0, 10),
+      status: 'PRESENT',
+      checkIn: '',
+      checkOut: '',
+      workHours: '',
+      overtimeHours: '',
+      lateMinutes: '',
+      notes: '',
+    });
+    setShowForm(true);
+    setNotice(null);
+  };
 
   const importM = useMutation({
     mutationFn: async (text: string) =>
@@ -161,7 +212,7 @@ export function Attendance() {
             <button className={hrSecondaryBtn} onClick={() => setShowImport(true)}>
               <FileUp className="h-4 w-4" /> CSV import
             </button>
-            <button className={hrPrimaryBtn} onClick={() => setShowForm(true)}>
+            <button className={hrPrimaryBtn} onClick={openCreate}>
               <Plus className="h-4 w-4" /> Manual entry
             </button>
           </div>
@@ -237,7 +288,30 @@ export function Attendance() {
                 },
                 { key: 'work', label: 'Work h', mono: true, render: (r) => Number(r.workHours).toFixed(1) },
                 { key: 'ot', label: 'OT h', mono: true, render: (r) => Number(r.overtimeHours).toFixed(1) },
-                { key: 'src', label: 'Source', render: (r) => <span className="text-xs text-slate-500 dark:text-slate-400">{r.source}</span> }
+                { key: 'src', label: 'Source', render: (r) => <span className="text-xs text-slate-500 dark:text-slate-400">{r.source}</span> },
+                {
+                  key: 'actions', label: 'Actions',
+                  render: (r) => (
+                    <span className="inline-flex items-center gap-1">
+                      <button
+                        onClick={() => openEdit(r)}
+                        className="touch rounded-lg p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-violet-700"
+                        title="Edit record"
+                        aria-label={`Edit attendance for ${r.employee?.name}`}
+                      >
+                        <Pencil size={15} />
+                      </button>
+                      <button
+                        onClick={() => setDeleteTarget(r)}
+                        className="touch rounded-lg p-2 text-slate-500 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-700"
+                        title="Delete record"
+                        aria-label={`Delete attendance for ${r.employee?.name}`}
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    </span>
+                  )
+                }
               ]}
               rows={listQ.data ?? []}
               emptyTitle="No records logged"
@@ -247,7 +321,7 @@ export function Attendance() {
       </div>
 
       {showForm ? (
-        <HrModal title="Manual attendance entry" onClose={() => setShowForm(false)}>
+        <HrModal title={editing ? `Edit attendance — ${editing.employee?.name}` : "Manual attendance entry"} onClose={() => { setShowForm(false); setEditing(null); }}>
           <form onSubmit={onSubmit} className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Field label="Employee" required>
               <Select value={form.employeeId} onChange={(e) => setForm({ ...form, employeeId: e.target.value })} required>
