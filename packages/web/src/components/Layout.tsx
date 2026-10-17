@@ -430,22 +430,29 @@ function itemMatches(item: NavItem, pathname: string): boolean {
 
 function Logo() {
   return (
-    <div className="flex items-center gap-3 px-5 pb-5 pt-5">
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-600 text-white">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-6 w-6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          <path d="M12 21V7" />
-          <path d="M12 10C9 10 6.5 7.5 6.5 4.5 9.5 4.5 12 7 12 10z" />
-          <path d="M12 10c3 0 5.5-2.5 5.5-5.5C14.5 4.5 12 7 12 10z" />
-          <path d="M12 15c-2.5 0-4.5-2-4.5-4.5 2.5 0 4.5 2 4.5 4.5z" />
-          <path d="M12 15c2.5 0 4.5-2 4.5-4.5-2.5 0-4.5 2-4.5 4.5z" />
-          <path d="M12 20c-2 0-3.5-1.5-3.5-3.5 2 0 3.5 1.5 3.5 3.5z" />
-          <path d="M12 20c2 0 3.5-1.5 3.5-3.5-2 0-3.5 1.5-3.5 3.5z" />
+    <div className="px-3 pb-2 pt-3">
+      <button
+        type="button"
+        className="touch flex w-full items-center gap-2.5 rounded-lg border border-gray-200 bg-white px-2.5 py-2 text-left transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700/50"
+        aria-label="Workspace: Oyaya ERP"
+      >
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-violet-600 text-white">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M12 21V7" />
+            <path d="M12 10C9 10 6.5 7.5 6.5 4.5 9.5 4.5 12 7 12 10z" />
+            <path d="M12 10c3 0 5.5-2.5 5.5-5.5C14.5 4.5 12 7 12 10z" />
+            <path d="M12 15c-2.5 0-4.5-2-4.5-4.5 2.5 0 4.5 2 4.5 4.5z" />
+            <path d="M12 15c2.5 0 4.5-2 4.5-4.5-2.5 0-4.5 2-4.5 4.5z" />
+          </svg>
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-sm font-semibold leading-tight text-gray-900 dark:text-white">Oyaya ERP</span>
+          <span className="block truncate text-xs leading-tight text-gray-500 dark:text-slate-400">Flour Mill</span>
+        </span>
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-4 w-4 shrink-0 text-gray-400 dark:text-slate-500" aria-hidden="true">
+          <path d="M7 6.5l3-3 3 3M7 13.5l3 3 3-3" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
-      </div>
-      <div className="min-w-0">
-        <p className="truncate text-sm font-bold leading-tight text-gray-900 dark:text-white">Oyaya ERP</p>
-        <p className="truncate text-[11px] text-gray-400 dark:text-slate-500">Flour Mill</p>
-      </div>
+      </button>
     </div>
   );
 }
@@ -481,43 +488,40 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
     return active ? active.title : null;
   });
 
-  const dashActive = pathname === '/';
+  const sectionLabel =
+    'mb-1 px-3 text-xs font-medium text-gray-500 dark:text-slate-500';
+  const itemBase =
+    'touch flex w-full items-center gap-2 rounded-md px-3 py-1.5 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500';
+  const itemIdle =
+    'text-gray-700 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-slate-700/60';
+  const itemActive =
+    'bg-gray-100 font-medium text-gray-900 dark:bg-slate-700 dark:text-white';
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      <nav className="flex-1 overflow-y-auto px-4 py-3" aria-label="Primary">
-        {/* Dashboard — first item */}
+      <nav className="flex-1 overflow-y-auto px-2 py-2" aria-label="Primary">
+        {/* Dashboard */}
         <NavLink
           to="/"
           end
           onClick={onNavigate}
-          className={`touch mb-1 flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-            dashActive
-              ? 'bg-gray-100 text-gray-900 dark:bg-slate-700 dark:text-white'
-              : 'text-gray-700 hover:bg-gray-50 dark:text-slate-200 dark:hover:bg-slate-700/50'
-          }`}
+          className={({ isActive }) => `${itemBase} mb-0.5 ${isActive ? itemActive : itemIdle}`}
         >
           <span className="truncate">Dashboard</span>
         </NavLink>
 
-        {/* MODULES — all modules listed first, text-only rows */}
-        <p className="mb-1 mt-4 px-3 text-[11px] font-semibold uppercase tracking-widest text-gray-400 dark:text-slate-500">
-          Modules
-        </p>
+        {/* Modules */}
+        <p className={`${sectionLabel} mt-4`}>Modules</p>
         {visibleGroups.map((group) => {
           const isOpen = openGroup === group.title;
           const hasActive = group.items.some((i) => itemMatches(i, pathname));
           return (
-            <div key={group.title} className="mb-0.5">
+            <div key={group.title} className="mb-px">
               <button
                 type="button"
                 onClick={() => setOpenGroup(isOpen ? null : group.title)}
                 aria-expanded={isOpen}
-                className={`touch flex w-full items-center rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 ${
-                  isOpen || hasActive
-                    ? 'bg-gray-100 text-gray-900 dark:bg-slate-700 dark:text-white'
-                    : 'text-gray-700 hover:bg-gray-50 dark:text-slate-200 dark:hover:bg-slate-700/50'
-                }`}
+                className={`${itemBase} ${isOpen || hasActive ? itemActive : itemIdle}`}
               >
                 <span className="min-w-0 flex-1 truncate">{group.title}</span>
                 <svg
@@ -525,14 +529,14 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                   fill="none"
                   stroke="currentColor"
                   strokeWidth={2}
-                  className={`h-4 w-4 shrink-0 text-gray-400 transition-transform duration-200 dark:text-slate-500 ${isOpen ? 'rotate-180' : ''}`}
+                  className={`h-3.5 w-3.5 shrink-0 text-gray-400 transition-transform duration-200 dark:text-slate-500 ${isOpen ? 'rotate-90' : ''}`}
                   aria-hidden="true"
                 >
-                  <path d="M5 7.5l5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M7.5 5l5 5-5 5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </button>
               {isOpen ? (
-                <ul className="mb-1 mt-1 space-y-0.5 border-l-2 border-gray-100 dark:border-slate-700 ml-3 pl-2">
+                <ul className="mb-0.5 mt-px space-y-px">
                   {group.items.map((item) => (
                     <li key={item.to}>
                       <NavLink
@@ -540,11 +544,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                         end={item.to === '/'}
                         onClick={onNavigate}
                         className={({ isActive }) =>
-                          `touch flex items-center rounded-lg px-3 py-2 text-[13px] transition-colors duration-150 ${
-                            isActive
-                              ? 'bg-gray-100 font-semibold text-gray-900 dark:bg-slate-700 dark:text-white'
-                              : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900 dark:text-slate-400 dark:hover:bg-slate-700/50 dark:hover:text-white'
-                          }`
+                          `${itemBase} pl-6 text-[13px] ${isActive ? itemActive : 'text-gray-600 hover:bg-gray-100 dark:text-slate-400 dark:hover:bg-slate-700/60'}`
                         }
                       >
                         <span className="truncate">{item.label}</span>
@@ -557,33 +557,19 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           );
         })}
 
-        {/* ACCOUNT — notification, chat, settings, support */}
-        <p className="mb-1 mt-5 px-3 text-[11px] font-semibold uppercase tracking-widest text-gray-400 dark:text-slate-500">
-          Account
-        </p>
+        {/* Account */}
+        <p className={`${sectionLabel} mt-4`}>Account</p>
         <NavLink
           to="/admin/notifications"
           onClick={onNavigate}
-          className={({ isActive }) =>
-            `touch mb-0.5 flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-              isActive
-                ? 'bg-gray-100 text-gray-900 dark:bg-slate-700 dark:text-white'
-                : 'text-gray-700 hover:bg-gray-50 dark:text-slate-200 dark:hover:bg-slate-700/50'
-            }`
-          }
+          className={({ isActive }) => `${itemBase} mb-px ${isActive ? itemActive : itemIdle}`}
         >
           <span className="truncate">Notification</span>
         </NavLink>
         <NavLink
           to="/support/tickets"
           onClick={onNavigate}
-          className={({ isActive }) =>
-            `touch mb-0.5 flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-              isActive
-                ? 'bg-gray-100 text-gray-900 dark:bg-slate-700 dark:text-white'
-                : 'text-gray-700 hover:bg-gray-50 dark:text-slate-200 dark:hover:bg-slate-700/50'
-            }`
-          }
+          className={({ isActive }) => `${itemBase} mb-px ${isActive ? itemActive : itemIdle}`}
         >
           <span className="truncate">Chat</span>
         </NavLink>
@@ -591,13 +577,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           <NavLink
             to="/settings"
             onClick={onNavigate}
-            className={({ isActive }) =>
-              `touch mb-0.5 flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                isActive
-                  ? 'bg-gray-100 text-gray-900 dark:bg-slate-700 dark:text-white'
-                  : 'text-gray-700 hover:bg-gray-50 dark:text-slate-200 dark:hover:bg-slate-700/50'
-              }`
-            }
+            className={({ isActive }) => `${itemBase} mb-px ${isActive ? itemActive : itemIdle}`}
           >
             <span className="truncate">Settings</span>
           </NavLink>
@@ -606,13 +586,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           <NavLink
             to="/support"
             onClick={onNavigate}
-            className={({ isActive }) =>
-              `touch mb-0.5 flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                isActive
-                  ? 'bg-gray-100 text-gray-900 dark:bg-slate-700 dark:text-white'
-                  : 'text-gray-700 hover:bg-gray-50 dark:text-slate-200 dark:hover:bg-slate-700/50'
-              }`
-            }
+            className={({ isActive }) => `${itemBase} mb-px ${isActive ? itemActive : itemIdle}`}
           >
             <span className="truncate">Support</span>
           </NavLink>
@@ -620,18 +594,14 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
         {/* Admin tools */}
         {visibleBottom.length > 0 ? (
-          <div className="mt-4 border-t border-gray-200 pt-3 dark:border-slate-700">
+          <div className="mt-3 border-t border-gray-200 pt-2 dark:border-slate-700">
             {visibleBottom.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 onClick={onNavigate}
                 className={({ isActive }) =>
-                  `touch mb-0.5 flex items-center rounded-lg px-3 py-2 text-[13px] font-medium transition-colors ${
-                    isActive
-                      ? 'bg-gray-100 text-gray-900 dark:bg-slate-700 dark:text-white'
-                      : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900 dark:text-slate-400 dark:hover:bg-slate-700/50 dark:hover:text-white'
-                  }`
+                  `${itemBase} mb-px text-[13px] ${isActive ? itemActive : 'text-gray-600 hover:bg-gray-100 dark:text-slate-400 dark:hover:bg-slate-700/60'}`
                 }
               >
                 <span className="truncate">{item.label}</span>
@@ -641,26 +611,30 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
         ) : null}
       </nav>
 
-      {/* Bottom: logout + user card (reference style) */}
-      <div className="border-t border-gray-200 px-4 py-3 dark:border-slate-700">
+      {/* Bottom: user card like shadcn reference */}
+      <div className="border-t border-gray-200 p-2 dark:border-slate-700">
         <button
           type="button"
           onClick={() => {
             handleSidebarLogout();
             onNavigate?.();
           }}
-          className="touch mb-2 flex w-full items-center rounded-lg px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:text-slate-200 dark:hover:bg-slate-700/50"
+          className={`${itemBase} ${itemIdle} mb-1`}
+          aria-label="Log out"
         >
           <span className="truncate">Logout</span>
         </button>
-        <div className="flex items-center gap-3 rounded-xl bg-gray-50 p-3 dark:bg-slate-700/50">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-violet-600 text-sm font-bold text-white">
+        <div className="flex items-center gap-2.5 rounded-lg px-2 py-1.5">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-violet-600 text-xs font-bold text-white">
             {profileInitial}
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold leading-tight text-gray-900 dark:text-white">{profileName}</p>
-            <p className="truncate text-xs leading-tight text-gray-500 dark:text-slate-400">{profileRole}</p>
+            <p className="truncate text-xs leading-tight text-gray-500 dark:text-slate-400">{profileRole || user?.email}</p>
           </div>
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-4 w-4 shrink-0 text-gray-400 dark:text-slate-500" aria-hidden="true">
+            <path d="M7 6.5l3-3 3 3M7 13.5l3 3 3-3" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
         </div>
       </div>
     </div>
