@@ -223,7 +223,9 @@ export function Attendance() {
           />
           {listQ.isLoading ? (
             <Spinner label="Loading records..." />
-          ) : (
+          ) : listQ.isError ? (
+          <ErrorBox message="Failed to load attendance records." onRetry={() => listQ.refetch()} />
+        ) : (
             <DataTable<AttendanceRecord>
               columns={[
                 { key: 'date', label: 'Date', render: (r) => fmtDate(r.date) },

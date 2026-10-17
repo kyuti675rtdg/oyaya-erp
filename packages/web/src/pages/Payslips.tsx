@@ -137,7 +137,9 @@ export function Payslips() {
           />
           {slipsQ.isLoading ? (
             <Spinner label="Loading payslips..." />
-          ) : (
+          ) : slipsQ.isError ? (
+          <ErrorBox message="Failed to load payslips." onRetry={() => slipsQ.refetch()} />
+        ) : (
             <DataTable<Payslip>
               columns={[
                 { key: 'emp', label: 'Employee', render: (r) => `${r.employee?.name ?? '—'} (${r.employee?.employeeNo ?? ''})` },
