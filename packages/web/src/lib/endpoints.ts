@@ -243,6 +243,19 @@ export const E = {
   ticketComments: (id: string) => `/support/tickets/${id}/comments`,
   docs: '/support/docs',
   doc: (slug: string) => `/support/docs/${slug}`,
+  // Module 19: Support & Documentation Center
+  sops: '/support/sops',
+  sop: (id: string) => `/support/sops/${id}`,
+  kb: '/support/kb',
+  kbArticle: (id: string) => `/support/kb/${id}`,
+  announcements: '/support/announcements',
+  announcementRead: (id: string) => `/support/announcements/${id}/read`,
+  techRecords: '/support/tech-records',
+  techRecord: (id: string) => `/support/tech-records/${id}`,
+  notifications: '/support/notifications',
+  notificationRead: (id: string) => `/support/notifications/${id}/read`,
+  notificationsReadAll: '/support/notifications/read-all',
+  smsLog: '/support/sms-log',
 
   // Module 9: Maintenance & Spare Parts
   maintEquipment: '/maintenance/equipment',

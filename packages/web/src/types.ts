@@ -2338,3 +2338,85 @@ export interface AgentSettlementReportRow {
   status: string;
   placedAt: string;
 }
+
+// ─── Module 19: Support & Documentation Center ──────────────────────
+
+export interface SopDocument {
+  id: string;
+  docNo: string;
+  docType: 'MANUAL' | 'SOP';
+  title: string;
+  module: string | null;
+  version: string;
+  status: 'DRAFT' | 'UNDER_REVIEW' | 'APPROVED' | 'ARCHIVED';
+  effectiveDate: string | null;
+  reviewDate: string | null;
+  summary: string | null;
+  content: string;
+  approverId: string | null;
+  approvedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface KbArticle {
+  id: string;
+  title: string;
+  category: 'faq' | 'troubleshooting' | 'howto' | 'guide';
+  tags: string[];
+  content: string;
+  faq: boolean;
+  pinned: boolean;
+  views: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Announcement {
+  id: string;
+  title: string;
+  body: string;
+  targetRoles: string[];
+  urgent: boolean;
+  publishedAt: string | null;
+  expiresAt: string | null;
+  authorId: string;
+  reads?: { id: string }[];
+  createdAt: string;
+}
+
+export interface TechSupportRecord {
+  id: string;
+  recordNo: string;
+  title: string;
+  category: 'network' | 'hardware' | 'software' | 'training' | 'other';
+  description: string;
+  resolution: string | null;
+  durationMins: number | null;
+  technicianId: string;
+  resolvedAt: string | null;
+  createdAt: string;
+}
+
+export interface AppNotification {
+  id: string;
+  userId: string;
+  title: string;
+  body: string | null;
+  type: 'info' | 'warning' | 'alert' | 'success';
+  link: string | null;
+  read: boolean;
+  createdAt: string;
+}
+
+export interface SmsLogEntry {
+  id: string;
+  to: string;
+  message: string;
+  trigger: string | null;
+  status: 'QUEUED' | 'SENT' | 'FAILED' | 'DELIVERED';
+  attempts: number;
+  providerId: string | null;
+  sentAt: string | null;
+  createdAt: string;
+}

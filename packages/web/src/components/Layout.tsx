@@ -145,6 +145,20 @@ function svgIcon(name: string, className: string): ReactNode {
 
 const NAV: NavGroup[] = [
   {
+    title: 'Support & Documentation',
+    icon: 'support',
+    items: [
+      { to: '/support', label: 'Support Center', claim: ['support:read'], icon: 'support' },
+      { to: '/support/manuals', label: 'User Manuals', claim: ['support:read'], icon: 'support' },
+      { to: '/support/sops', label: 'SOPs', claim: ['support:read'], icon: 'support' },
+      { to: '/support/knowledge-base', label: 'Knowledge Base', claim: ['support:read'], icon: 'support' },
+      { to: '/support/tickets', label: 'Support Tickets', claim: ['support:read'], icon: 'support' },
+      { to: '/support/tech-support', label: 'Tech Support Records', claim: ['support:read'], icon: 'support' },
+      { to: '/support/announcements', label: 'Announcements', claim: ['support:read'], icon: 'support' },
+      { to: '/support/notifications', label: 'Notifications & SMS', claim: ['support:read'], icon: 'support' }
+    ]
+  },
+  {
     title: 'Business Intelligence',
     icon: 'dashboard',
     items: [

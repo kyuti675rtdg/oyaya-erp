@@ -38,6 +38,20 @@ export default defineConfig({
               expiration: { maxEntries: 300, maxAgeSeconds: 5 * 60 },
               cacheableResponse: { statuses: [0, 200] }
             }
+          },
+          {
+            // Module 19: cache support docs for offline reading
+            urlPattern: ({ url }) =>
+              url.pathname.includes('/support/sops') ||
+              url.pathname.includes('/support/kb') ||
+              url.pathname.includes('/support/docs'),
+            handler: 'StaleWhileRevalidate',
+            method: 'GET',
+            options: {
+              cacheName: 'oyaya-docs-cache',
+              expiration: { maxEntries: 200, maxAgeSeconds: 24 * 60 * 60 },
+              cacheableResponse: { statuses: [0, 200] }
+            }
           }
         ]
       },

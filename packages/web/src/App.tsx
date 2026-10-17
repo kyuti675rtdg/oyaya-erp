@@ -51,6 +51,14 @@ import { Settings } from './pages/Settings';
 import { ModuleManager } from './pages/ModuleManager';
 import { ApiMonitor } from './pages/ApiMonitor';
 import { Support } from './pages/Support';
+// Module 19: Support & Documentation Center
+import { Manuals } from './pages/Manuals';
+import { SOPs } from './pages/SOPs';
+import { KnowledgeBase } from './pages/KnowledgeBase';
+import { Tickets } from './pages/Tickets';
+import { TechSupport } from './pages/TechSupport';
+import { Announcements } from './pages/Announcements';
+import { Notifications } from './pages/Notifications';
 // Module 18: System Administration & Settings
 import { UserManagement } from './pages/UserManagement';
 import { RoleManagement } from './pages/RoleManagement';
@@ -705,6 +713,62 @@ export function App() {
           element={
             <ProtectedRoute claim="support:read">
               <Support />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/support/manuals"
+          element={
+            <ProtectedRoute claim="support:read">
+              <Manuals />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/support/sops"
+          element={
+            <ProtectedRoute claim="support:read">
+              <SOPs />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/support/knowledge-base"
+          element={
+            <ProtectedRoute claim="support:read">
+              <KnowledgeBase />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/support/tickets"
+          element={
+            <ProtectedRoute claim="support:read">
+              <Tickets />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/support/tech-support"
+          element={
+            <ProtectedRoute claim="support:read">
+              <TechSupport />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/support/announcements"
+          element={
+            <ProtectedRoute claim="support:read">
+              <Announcements />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/support/notifications"
+          element={
+            <ProtectedRoute claim="support:read">
+              <Notifications />
             </ProtectedRoute>
           }
         />
