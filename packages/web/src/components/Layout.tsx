@@ -503,31 +503,34 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
         {visibleGroups.map((group) => {
           const isOpen = openGroup === group.title;
+          const hasActive = group.items.some((i) => itemMatches(i, pathname));
           return (
-            <div key={group.title} className="mb-1">
+            <div key={group.title} className="mb-0.5">
               <button
                 type="button"
                 onClick={() => setOpenGroup(isOpen ? null : group.title)}
                 aria-expanded={isOpen}
-                className="touch flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:hover:bg-slate-700/50"
+                className={`touch flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 ${
+                  isOpen || hasActive
+                    ? 'bg-gray-100 text-gray-900 dark:bg-slate-700 dark:text-white'
+                    : 'text-gray-700 hover:bg-gray-50 dark:text-slate-200 dark:hover:bg-slate-700/50'
+                }`}
               >
-                <span className="shrink-0 text-gray-500 dark:text-slate-400">{svgIcon(group.icon, 'h-[18px] w-[18px]')}</span>
-                <span className="min-w-0 flex-1 truncate text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">
-                  {group.title}
-                </span>
+                <span className="shrink-0 text-gray-500 dark:text-slate-400">{svgIcon(group.icon, 'h-5 w-5')}</span>
+                <span className="min-w-0 flex-1 truncate">{group.title}</span>
                 <svg
                   viewBox="0 0 20 20"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth={2}
-                  className={`h-3.5 w-3.5 shrink-0 text-slate-400 transition-transform duration-200 dark:text-slate-500 ${isOpen ? 'rotate-180' : ''}`}
+                  className={`h-4 w-4 shrink-0 text-gray-400 transition-transform duration-200 dark:text-slate-500 ${isOpen ? 'rotate-180' : ''}`}
                   aria-hidden="true"
                 >
                   <path d="M5 7.5l5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </button>
               {isOpen ? (
-                <ul className="mb-1 mt-0.5 space-y-0.5">
+                <ul className="mb-1 mt-1 space-y-0.5">
                   {group.items.map((item) => (
                     <li key={item.to}>
                       <NavLink
@@ -535,14 +538,13 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                         end={item.to === '/'}
                         onClick={onNavigate}
                         className={({ isActive }) =>
-                          `touch flex items-center gap-2.5 rounded-lg py-1.5 pl-10 pr-3 text-[13px] transition-colors duration-150 ${
+                          `touch flex items-center gap-3 rounded-lg py-2 pl-[42px] pr-3 text-[13px] transition-colors duration-150 ${
                             isActive
                               ? 'bg-gray-100 font-semibold text-gray-900 dark:bg-slate-700 dark:text-white'
                               : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900 dark:text-slate-400 dark:hover:bg-slate-700/50 dark:hover:text-white'
                           }`
                         }
                       >
-                        <span className="text-[10px] text-gray-300 dark:text-slate-600" aria-hidden="true">›</span>
                         <span className="truncate">{item.label}</span>
                       </NavLink>
                     </li>
@@ -562,14 +564,14 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                 to={item.to}
                 onClick={onNavigate}
                 className={({ isActive }) =>
-                  `touch mb-0.5 flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium transition-colors ${
+                  `touch mb-0.5 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                     isActive
                       ? 'bg-gray-100 text-gray-900 dark:bg-slate-700 dark:text-white'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-slate-300 dark:hover:bg-slate-700/50 dark:hover:text-white'
+                      : 'text-gray-700 hover:bg-gray-50 dark:text-slate-200 dark:hover:bg-slate-700/50'
                   }`
                 }
               >
-                <span className="shrink-0 text-gray-400 dark:text-slate-500">{svgIcon(item.icon, 'h-[18px] w-[18px]')}</span>
+                <span className="shrink-0 text-gray-500 dark:text-slate-400">{svgIcon(item.icon, 'h-5 w-5')}</span>
                 <span className="truncate">{item.label}</span>
               </NavLink>
             ))}
@@ -583,9 +585,9 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           <NavLink
             to="/support"
             onClick={onNavigate}
-            className="touch mb-0.5 flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900 dark:text-slate-300 dark:hover:bg-slate-700/50 dark:hover:text-white"
+            className="touch mb-0.5 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:text-slate-200 dark:hover:bg-slate-700/50"
           >
-            <span className="shrink-0 text-gray-400 dark:text-slate-500">{svgIcon('support', 'h-[18px] w-[18px]')}</span>
+            <span className="shrink-0 text-gray-500 dark:text-slate-400">{svgIcon('support', 'h-5 w-5')}</span>
             <span className="truncate">Help Center</span>
           </NavLink>
         ) : null}
@@ -593,9 +595,9 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           <NavLink
             to="/settings"
             onClick={onNavigate}
-            className="touch mb-0.5 flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900 dark:text-slate-300 dark:hover:bg-slate-700/50 dark:hover:text-white"
+            className="touch mb-0.5 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:text-slate-200 dark:hover:bg-slate-700/50"
           >
-            <span className="shrink-0 text-gray-400 dark:text-slate-500">{svgIcon('settings', 'h-[18px] w-[18px]')}</span>
+            <span className="shrink-0 text-gray-500 dark:text-slate-400">{svgIcon('settings', 'h-5 w-5')}</span>
             <span className="truncate">Settings</span>
           </NavLink>
         ) : null}
@@ -605,10 +607,10 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
             handleSidebarLogout();
             onNavigate?.();
           }}
-          className="touch flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-[13px] font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:text-slate-300 dark:hover:bg-slate-700/50 dark:hover:text-white"
+          className="touch flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:text-slate-200 dark:hover:bg-slate-700/50"
         >
-          <span className="shrink-0 text-gray-400 dark:text-slate-500">
-            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-[18px] w-[18px]" aria-hidden="true">
+          <span className="shrink-0 text-gray-500 dark:text-slate-400">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-5 w-5" aria-hidden="true">
               <path d="M8 3.5H5.5A1.5 1.5 0 004 5v10a1.5 1.5 0 001.5 1.5H8" strokeLinecap="round" />
               <path d="M13 6.5l3 3.5-3 3.5M16 10H8" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
