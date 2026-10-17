@@ -157,6 +157,20 @@ const NAV: NavGroup[] = [
     ]
   },
   {
+    title: 'Storage',
+    icon: 'tanks',
+    items: [
+      { to: '/dry-storage', label: 'Dry Storage', claim: ['tanks:read'], icon: 'package' },
+      { to: '/tanks', label: 'Tanks', claim: ['tanks:read'], icon: 'tanks' },
+      { to: '/tank-filling', label: 'Filling', claim: ['tanks:read'], icon: 'intake' },
+      { to: '/blend-tracking', label: 'Blends', claim: ['tanks:read'], icon: 'batches' },
+      { to: '/conditioning-monitor', label: 'Monitor', claim: ['tanks:read'], icon: 'shifts' },
+      { to: '/tank-release', label: 'Release', claim: ['tanks:read'], icon: 'qc' },
+      { to: '/stock-movement', label: 'Movements', claim: ['tanks:read'], icon: 'dashboard' },
+      { to: '/storage-reports', label: 'Reports', claim: ['tanks:read'], icon: 'finance' }
+    ]
+  },
+  {
     title: 'Production',
     icon: 'factory',
     items: [
@@ -169,15 +183,7 @@ const NAV: NavGroup[] = [
       { to: '/downtime', label: 'Downtime', claim: ['production:view'], icon: 'monitor' },
       { to: '/flour-output', label: 'Output', claim: ['production:view'], icon: 'package' },
       { to: '/yield-alerts', label: 'Yield Alerts', claim: ['production:view'], icon: 'capa' },
-      { to: '/production-reports', label: 'Reports', claim: ['production:view'], icon: 'finance' },
-      { to: '/dry-storage', label: 'Dry Storage', claim: ['tanks:read'], icon: 'package' },
-      { to: '/tanks', label: 'Tanks', claim: ['tanks:read'], icon: 'tanks' },
-      { to: '/tank-filling', label: 'Filling', claim: ['tanks:read'], icon: 'intake' },
-      { to: '/blend-tracking', label: 'Blends', claim: ['tanks:read'], icon: 'batches' },
-      { to: '/conditioning-monitor', label: 'Monitor', claim: ['tanks:read'], icon: 'shifts' },
-      { to: '/tank-release', label: 'Release', claim: ['tanks:read'], icon: 'qc' },
-      { to: '/stock-movement', label: 'Movements', claim: ['tanks:read'], icon: 'dashboard' },
-      { to: '/storage-reports', label: 'Storage Reports', claim: ['tanks:read'], icon: 'finance' }
+      { to: '/production-reports', label: 'Reports', claim: ['production:view'], icon: 'finance' }
     ]
   },
   {
@@ -189,7 +195,13 @@ const NAV: NavGroup[] = [
       { to: '/quality/flour-tests', label: 'Flour Tests', claim: ['qc:view'], icon: 'qc' },
       { to: '/quality/sampling', label: 'Sampling', claim: ['qc:view'], icon: 'shifts' },
       { to: '/quality/approval', label: 'Approval', claim: ['qc:view'], icon: 'intake' },
-      { to: '/quality/reports', label: 'Reports', claim: ['qc:view'], icon: 'finance' },
+      { to: '/quality/reports', label: 'Reports', claim: ['qc:view'], icon: 'finance' }
+    ]
+  },
+  {
+    title: 'CAPA',
+    icon: 'capa',
+    items: [
       { to: '/capa', label: 'CAPA', claim: ['capa:read'], icon: 'capa' },
       { to: '/nc-register', label: 'NC Register', claim: ['capa:view'], icon: 'capa' },
       { to: '/nc-root-cause', label: 'Root Cause', claim: ['capa:view'], icon: 'dashboard' },
@@ -200,7 +212,7 @@ const NAV: NavGroup[] = [
     ]
   },
   {
-    title: 'Inventory',
+    title: 'Finished Goods',
     icon: 'package',
     items: [
       { to: '/fg', label: 'FG Stock', claim: ['fg:view'], icon: 'package' },
@@ -209,7 +221,13 @@ const NAV: NavGroup[] = [
       { to: '/fg/labels', label: 'Labels', claim: ['fg:view'], icon: 'intake' },
       { to: '/fg/byproducts', label: 'Byproducts', claim: ['fg:view'], icon: 'dashboard' },
       { to: '/fg/aging', label: 'Aging', claim: ['fg:view'], icon: 'shifts' },
-      { to: '/fg/reports', label: 'FG Reports', claim: ['fg:view'], icon: 'finance' },
+      { to: '/fg/reports', label: 'FG Reports', claim: ['fg:view'], icon: 'finance' }
+    ]
+  },
+  {
+    title: 'Warehouse',
+    icon: 'dashboard',
+    items: [
       { to: '/warehouse/locations', label: 'Locations', claim: ['warehouse:view'], icon: 'package' },
       { to: '/warehouse/putaway', label: 'Put-Away', claim: ['warehouse:view'], icon: 'intake' },
       { to: '/warehouse/transfers', label: 'Transfers', claim: ['warehouse:view'], icon: 'truck' },
@@ -257,8 +275,8 @@ const NAV: NavGroup[] = [
     ]
   },
   {
-    title: 'Operations',
-    icon: 'monitor',
+    title: 'Fleet',
+    icon: 'truck',
     items: [
       { to: '/fleet/vehicles', label: 'Vehicles', claim: ['fleet:view'], icon: 'truck' },
       { to: '/fleet/contracts', label: 'Contracts', claim: ['fleet:view'], icon: 'finance' },
@@ -267,26 +285,44 @@ const NAV: NavGroup[] = [
       { to: '/fleet/utilization', label: 'Utilization', claim: ['fleet:view'], icon: 'dashboard' },
       { to: '/fleet/fuel', label: 'Fuel', claim: ['fleet:view'], icon: 'intake' },
       { to: '/fleet/maintenance', label: 'Maintenance', claim: ['fleet:view'], icon: 'factory' },
-      { to: '/fleet/reports', label: 'Fleet Reports', claim: ['fleet:view'], icon: 'sales' },
+      { to: '/fleet/reports', label: 'Fleet Reports', claim: ['fleet:view'], icon: 'sales' }
+    ]
+  },
+  {
+    title: 'Maintenance',
+    icon: 'factory',
+    items: [
       { to: '/maintenance/planning', label: 'Planning', claim: ['maintenance:view'], icon: 'factory' },
       { to: '/maintenance/pm-checklists', label: 'Checklists', claim: ['maintenance:view'], icon: 'shifts' },
       { to: '/maintenance/breakdowns', label: 'Breakdowns', claim: ['maintenance:view'], icon: 'capa' },
       { to: '/maintenance/spare-parts', label: 'Spare Parts', claim: ['maintenance:view'], icon: 'package' },
       { to: '/maintenance/work-orders', label: 'Work Orders', claim: ['maintenance:view'], icon: 'intake' },
       { to: '/maintenance/repair-approval', label: 'Repairs', claim: ['maintenance:view'], icon: 'finance' },
-      { to: '/maintenance/reports', label: 'Maint Reports', claim: ['maintenance:view'], icon: 'dashboard' },
-      { to: '/hygiene/checklists', label: 'Hygiene Lists', claim: ['hygiene:view'], icon: 'shifts' },
+      { to: '/maintenance/reports', label: 'Maint Reports', claim: ['maintenance:view'], icon: 'dashboard' }
+    ]
+  },
+  {
+    title: 'Sanitation',
+    icon: 'shifts',
+    items: [
+      { to: '/hygiene/checklists', label: 'Checklists', claim: ['hygiene:view'], icon: 'shifts' },
       { to: '/hygiene/area-cleaning', label: 'Cleaning', claim: ['hygiene:view'], icon: 'intake' },
       { to: '/hygiene/inspections', label: 'Inspections', claim: ['hygiene:view'], icon: 'qc' },
       { to: '/hygiene/actions', label: 'Actions', claim: ['hygiene:view'], icon: 'capa' },
       { to: '/hygiene/approvals', label: 'Approvals', claim: ['hygiene:view'], icon: 'finance' },
-      { to: '/hygiene/reports', label: 'Hygiene Reports', claim: ['hygiene:view'], icon: 'dashboard' },
+      { to: '/hygiene/reports', label: 'Reports', claim: ['hygiene:view'], icon: 'dashboard' }
+    ]
+  },
+  {
+    title: 'Pest Control',
+    icon: 'monitor',
+    items: [
       { to: '/pest/schedule', label: 'Schedule', claim: ['pest:view'], icon: 'shifts' },
       { to: '/pest/risk-inspections', label: 'Risk Areas', claim: ['pest:view'], icon: 'qc' },
       { to: '/pest/treatments', label: 'Treatments', claim: ['pest:view'], icon: 'intake' },
       { to: '/pest/follow-ups', label: 'Follow-Ups', claim: ['pest:view'], icon: 'capa' },
       { to: '/pest/alerts', label: 'Alerts', claim: ['pest:view'], icon: 'monitor' },
-      { to: '/pest/reports', label: 'Pest Reports', claim: ['pest:view'], icon: 'finance' }
+      { to: '/pest/reports', label: 'Reports', claim: ['pest:view'], icon: 'finance' }
     ]
   },
   {
@@ -305,7 +341,39 @@ const NAV: NavGroup[] = [
     ]
   },
   {
-    title: 'System',
+    title: 'Traceability',
+    icon: 'intake',
+    items: [
+      { to: '/trace/intake', label: 'Intake Trace', claim: ['traceability:read'], icon: 'intake' },
+      { to: '/trace/tanks', label: 'Tank Trace', claim: ['traceability:read'], icon: 'tanks' },
+      { to: '/trace/batches', label: 'Batch Trace', claim: ['traceability:read'], icon: 'batches' },
+      { to: '/trace/finished', label: 'Product Trace', claim: ['traceability:read'], icon: 'package' },
+      { to: '/trace/quality', label: 'Quality Trace', claim: ['traceability:read'], icon: 'qc' },
+      { to: '/trace/recall', label: 'Recalls', claim: ['traceability:read'], icon: 'capa' },
+      { to: '/trace/search', label: 'Trace Search', claim: ['traceability:read'], icon: 'dashboard' }
+    ]
+  },
+  {
+    title: 'BI',
+    icon: 'monitor',
+    items: [
+      { to: '/bi/production', label: 'Production', claim: ['production:view'], icon: 'factory' },
+      { to: '/bi/quality', label: 'Quality', claim: ['qc:view'], icon: 'qc' },
+      { to: '/bi/procurement', label: 'Procurement', claim: ['procurement:view'], icon: 'truck' },
+      { to: '/bi/inventory', label: 'Inventory', claim: ['storage:view'], icon: 'package' },
+      { to: '/bi/sales', label: 'Sales', claim: ['sales:view'], icon: 'sales' },
+      { to: '/bi/finance', label: 'Finance', claim: ['finance:view'], icon: 'finance' },
+      { to: '/bi/hr', label: 'HR', claim: ['payroll:view'], icon: 'payroll' },
+      {
+        to: '/bi/report-builder',
+        label: 'Builder',
+        claim: ['production:view', 'qc:view', 'procurement:view', 'storage:view', 'sales:view', 'finance:view', 'payroll:view'],
+        icon: 'dashboard'
+      }
+    ]
+  },
+  {
+    title: 'Admin',
     icon: 'settings',
     items: [
       { to: '/settings', label: 'Settings', claim: ['settings:read'], icon: 'settings' },
@@ -316,20 +384,13 @@ const NAV: NavGroup[] = [
       { to: '/admin/webhooks', label: 'Webhooks', claim: ['settings:read'], icon: 'modules' },
       { to: '/admin/notifications', label: 'Notifications', claim: ['settings:read'], icon: 'support' },
       { to: '/admin/audit-logs', label: 'Audit Logs', claim: ['settings:read'], icon: 'intake' },
-      { to: '/admin/backup', label: 'Backup', claim: ['settings:read'], icon: 'package' },
-      { to: '/bi/production', label: 'Production BI', claim: ['production:view'], icon: 'factory' },
-      { to: '/bi/quality', label: 'Quality BI', claim: ['qc:view'], icon: 'qc' },
-      { to: '/bi/procurement', label: 'Procurement BI', claim: ['procurement:view'], icon: 'truck' },
-      { to: '/bi/inventory', label: 'Inventory BI', claim: ['storage:view'], icon: 'package' },
-      { to: '/bi/sales', label: 'Sales BI', claim: ['sales:view'], icon: 'sales' },
-      { to: '/bi/finance', label: 'Finance BI', claim: ['finance:view'], icon: 'finance' },
-      { to: '/bi/hr', label: 'HR BI', claim: ['payroll:view'], icon: 'payroll' },
-      {
-        to: '/bi/report-builder',
-        label: 'Builder',
-        claim: ['production:view', 'qc:view', 'procurement:view', 'storage:view', 'sales:view', 'finance:view', 'payroll:view'],
-        icon: 'dashboard'
-      },
+      { to: '/admin/backup', label: 'Backup', claim: ['settings:read'], icon: 'package' }
+    ]
+  },
+  {
+    title: 'Support',
+    icon: 'support',
+    items: [
       { to: '/support', label: 'Support', claim: ['support:read'], icon: 'support' },
       { to: '/support/manuals', label: 'Manuals', claim: ['support:read'], icon: 'support' },
       { to: '/support/sops', label: 'SOPs', claim: ['support:read'], icon: 'support' },
@@ -337,14 +398,7 @@ const NAV: NavGroup[] = [
       { to: '/support/tickets', label: 'Tickets', claim: ['support:read'], icon: 'support' },
       { to: '/support/tech-support', label: 'Tech Support', claim: ['support:read'], icon: 'support' },
       { to: '/support/announcements', label: 'Announcements', claim: ['support:read'], icon: 'support' },
-      { to: '/support/notifications', label: 'SMS & Alerts', claim: ['support:read'], icon: 'support' },
-      { to: '/trace/intake', label: 'Intake Trace', claim: ['traceability:read'], icon: 'intake' },
-      { to: '/trace/tanks', label: 'Tank Trace', claim: ['traceability:read'], icon: 'tanks' },
-      { to: '/trace/batches', label: 'Batch Trace', claim: ['traceability:read'], icon: 'batches' },
-      { to: '/trace/finished', label: 'Product Trace', claim: ['traceability:read'], icon: 'package' },
-      { to: '/trace/quality', label: 'Quality Trace', claim: ['traceability:read'], icon: 'qc' },
-      { to: '/trace/recall', label: 'Recalls', claim: ['traceability:read'], icon: 'capa' },
-      { to: '/trace/search', label: 'Trace Search', claim: ['traceability:read'], icon: 'dashboard' }
+      { to: '/support/notifications', label: 'SMS & Alerts', claim: ['support:read'], icon: 'support' }
     ]
   }
 ];
