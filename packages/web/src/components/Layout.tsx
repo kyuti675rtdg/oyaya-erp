@@ -352,15 +352,15 @@ const NAV: NavGroup[] = [
     icon: 'payroll',
     items: [
 
-      { to: '/hr/departments', label: 'Departments', claim: ['hr:read'], icon: 'settings' },
-      { to: '/hr/employees', label: 'Employees', claim: ['hr:read'], icon: 'payroll' },
-      { to: '/hr/attendance', label: 'Attendance', claim: ['hr:read'], icon: 'shifts' },
-      { to: '/hr/fixed-payroll', label: 'Salaries', claim: ['hr:read'], icon: 'finance' },
-      { to: '/hr/allowances', label: 'Allowances', claim: ['hr:read'], icon: 'sales' },
-      { to: '/hr/piece-rate', label: 'Piece-Rate', claim: ['hr:read'], icon: 'dashboard' },
-      { to: '/hr/driver-payroll', label: 'Driver Pay', claim: ['hr:read'], icon: 'truck' },
-      { to: '/hr/payroll-run', label: 'Payroll Run', claim: ['hr:read'], icon: 'monitor' },
-      { to: '/hr/payslips', label: 'Payslips', claim: ['hr:read'], icon: 'qc' },
+      { to: '/hr/departments', label: 'Departments', claim: ['hr:read', 'payroll:read'], icon: 'settings' },
+      { to: '/hr/employees', label: 'Employees', claim: ['hr:read', 'payroll:read'], icon: 'payroll' },
+      { to: '/hr/attendance', label: 'Attendance', claim: ['hr:read', 'payroll:read'], icon: 'shifts' },
+      { to: '/hr/fixed-payroll', label: 'Salaries', claim: ['hr:read', 'payroll:read'], icon: 'finance' },
+      { to: '/hr/allowances', label: 'Allowances', claim: ['hr:read', 'payroll:read'], icon: 'sales' },
+      { to: '/hr/piece-rate', label: 'Piece-Rate', claim: ['hr:read', 'payroll:read'], icon: 'dashboard' },
+      { to: '/hr/driver-payroll', label: 'Driver Pay', claim: ['hr:read', 'payroll:read'], icon: 'truck' },
+      { to: '/hr/payroll-run', label: 'Payroll Run', claim: ['hr:read', 'payroll:read'], icon: 'monitor' },
+      { to: '/hr/payslips', label: 'Payslips', claim: ['hr:read', 'payroll:read'], icon: 'qc' },
       { to: '/payroll', label: 'Payroll', claim: ['payroll:read'], icon: 'payroll' }
     ]
   },
