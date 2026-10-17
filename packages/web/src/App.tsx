@@ -149,6 +149,7 @@ const Stocktaking = lazy(() => import('./pages/Stocktaking').then((m) => ({ defa
 const InventoryReports = lazy(() => import('./pages/InventoryReports').then((m) => ({ default: m.InventoryReports })));
 // Module 15: HR & Payroll
 const Employees = lazy(() => import('./pages/Employees').then((m) => ({ default: m.Employees })));
+const EmployeeDetail = lazy(() => import('./pages/EmployeeDetail').then((m) => ({ default: m.EmployeeDetail })));
 const Departments = lazy(() => import('./pages/Departments').then((m) => ({ default: m.Departments })));
 const Attendance = lazy(() => import('./pages/Attendance').then((m) => ({ default: m.Attendance })));
 const FixedPayroll = lazy(() => import('./pages/FixedPayroll').then((m) => ({ default: m.FixedPayroll })));
@@ -558,6 +559,14 @@ export function App() {
           element={
             <ProtectedRoute claim="hr:read">
               <Employees />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/hr/employees/:id"
+          element={
+            <ProtectedRoute claim="hr:read">
+              <EmployeeDetail />
             </ProtectedRoute>
           }
         />

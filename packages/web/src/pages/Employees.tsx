@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import type { FormEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Building2, Pencil, Plus, Search, UserCheck, UserRound, Users, UserX } from 'lucide-react';
@@ -257,7 +258,11 @@ export function Employees() {
           <DataTable<HrEmployee>
             columns={[
               { key: 'no', label: 'ID', render: (r) => <span className="tnum font-bold">{r.employeeNo}</span> },
-              { key: 'name', label: 'Name', render: (r) => r.name },
+              { key: 'name', label: 'Name', render: (r) => (
+                <Link to={`/hr/employees/${r.id}`} className="font-semibold text-violet-600 hover:text-violet-700 hover:underline dark:text-violet-400 dark:hover:text-violet-300">
+                  {r.name}
+                </Link>
+              ) },
               { key: 'title', label: 'Position', render: (r) => r.position?.title ?? r.jobTitle },
               {
                 key: 'dept',
