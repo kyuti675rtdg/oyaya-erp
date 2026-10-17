@@ -5,7 +5,8 @@ import { api } from '../lib/api';
 import { E } from '../lib/endpoints';
 import { fmtDateTime, fmtQ } from '../lib/format';
 import { CardHeader } from '../components/CardHeader';
-import { EmptyState, SectionTitle, Spinner } from '../components/ui';
+import { EmptyState, SectionTitle, Spinner,
+  ErrorBox} from '../components/ui';
 import {
   asNum, cardShell, fmtPct, ChainTimeline, StatusBadge,
   type ChainStep, type CycleRec

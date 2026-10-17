@@ -228,7 +228,9 @@ export function FleetMaintenance() {
       </div>
 
       {modalOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setModalOpen(false)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setModalOpen(false)}
+          role="dialog" aria-modal="true" aria-label="Maintenance record dialog"
+          onKeyDown={(e) => { if (e.key === 'Escape') setModalOpen(false); }}>
           <div
             className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white dark:bg-slate-800 p-6"
             onClick={(e) => e.stopPropagation()}

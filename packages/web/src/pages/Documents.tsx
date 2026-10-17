@@ -129,7 +129,7 @@ export function Documents() {
         <Badge tone={DOC_STATUS_TONE[doc.status] ?? 'neutral'}>{doc.status.replace('_', ' ')}</Badge>
       </div>
       <div className="min-w-0">
-        <p className="truncate text-sm font-bold text-slate-800" title={doc.title}>
+        <p className="truncate text-sm font-bold text-slate-800 dark:text-slate-100" title={doc.title}>
           {doc.title}
         </p>
         <p className="mt-0.5 text-xs text-slate-500">
@@ -145,7 +145,7 @@ export function Documents() {
           <Lock size={12} /> Checked out
         </p>
       ) : null}
-      <div className="mt-auto flex items-center gap-1 border-t border-slate-100 pt-3">
+      <div className="mt-auto flex items-center gap-1 border-t border-slate-100 dark:border-slate-700 pt-3">
         <button
           type="button"
           onClick={() => download(doc)}
@@ -186,7 +186,7 @@ export function Documents() {
           subtitle="Central repository for all factory documents"
           action={
             <>
-              <div className="flex items-center rounded-lg border border-slate-200 p-0.5">
+              <div className="flex items-center rounded-lg border border-slate-200 dark:border-slate-700 p-0.5">
                 <button
                   type="button"
                   onClick={() => setView('grid')}
@@ -267,7 +267,7 @@ export function Documents() {
         <div className={`${cardShell} overflow-x-auto !p-0`}>
           <table className="w-full min-w-[720px] text-sm">
             <thead>
-              <tr className="border-b border-slate-100 text-left text-[11px] uppercase tracking-wider text-slate-400">
+              <tr className="border-b border-slate-100 dark:border-slate-700 text-left text-[11px] uppercase tracking-wider text-slate-400">
                 <th className="px-5 py-3 font-semibold">Document</th>
                 <th className="px-5 py-3 font-semibold">Folder</th>
                 <th className="px-5 py-3 font-semibold">Status</th>
@@ -278,9 +278,9 @@ export function Documents() {
             </thead>
             <tbody>
               {(docsQ.data ?? []).map((doc) => (
-                <tr key={doc.id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/60">
+                <tr key={doc.id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50 dark:bg-slate-800/60/60">
                   <td className="px-5 py-3">
-                    <p className="font-semibold text-slate-800">{doc.title}</p>
+                    <p className="font-semibold text-slate-800 dark:text-slate-100">{doc.title}</p>
                     <p className="text-xs text-slate-500">
                       {doc.docNo} · v{doc.version} · {fileKindLabel(doc.mimeType, doc.fileName)}
                     </p>
@@ -324,7 +324,7 @@ export function Documents() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
           <form onSubmit={submit} className={`${cardShell} w-full max-w-lg space-y-4 !p-6`}>
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-slate-800">Upload Document</h3>
+              <h3 className="text-base font-bold text-slate-800 dark:text-slate-100">Upload Document</h3>
               <button
                 type="button"
                 onClick={() => setShowUpload(false)}
@@ -339,7 +339,7 @@ export function Documents() {
               tabIndex={0}
               onClick={() => fileRef.current?.click()}
               onKeyDown={(e) => e.key === 'Enter' && fileRef.current?.click()}
-              className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50/60 px-4 py-8 text-center hover:border-violet-300 hover:bg-violet-50/40"
+              className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60/60 px-4 py-8 text-center hover:border-violet-300 hover:bg-violet-50/40"
             >
               <Upload size={24} className="text-violet-500" />
               {pendingFile ? (
@@ -414,7 +414,7 @@ export function Documents() {
       {confirmDelete ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
           <div className={`${cardShell} w-full max-w-sm space-y-4 !p-6`}>
-            <h3 className="text-base font-bold text-slate-800">Delete document?</h3>
+            <h3 className="text-base font-bold text-slate-800 dark:text-slate-100">Delete document?</h3>
             <p className="text-sm text-slate-600">
               <FolderOpen size={14} className="mr-1 inline" />
               “{confirmDelete.title}” and all its versions will be permanently removed.
