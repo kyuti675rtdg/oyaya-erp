@@ -557,7 +557,7 @@ export function App() {
         <Route
           path="/hr/employees"
           element={
-            <ProtectedRoute claim="hr:read">
+            <ProtectedRoute claim={["hr:read", "payroll:read"]}>
               <Employees />
             </ProtectedRoute>
           }
@@ -565,7 +565,7 @@ export function App() {
         <Route
           path="/hr/employees/:id"
           element={
-            <ProtectedRoute claim="hr:read">
+            <ProtectedRoute claim={["hr:read", "payroll:read"]}>
               <EmployeeDetail />
             </ProtectedRoute>
           }
@@ -573,7 +573,7 @@ export function App() {
         <Route
           path="/hr/departments"
           element={
-            <ProtectedRoute claim="hr:read">
+            <ProtectedRoute claim={["hr:read", "payroll:read"]}>
               <Departments />
             </ProtectedRoute>
           }
@@ -581,7 +581,7 @@ export function App() {
         <Route
           path="/hr/attendance"
           element={
-            <ProtectedRoute claim="hr:read">
+            <ProtectedRoute claim={["hr:read", "payroll:read"]}>
               <Attendance />
             </ProtectedRoute>
           }
@@ -589,7 +589,7 @@ export function App() {
         <Route
           path="/hr/fixed-payroll"
           element={
-            <ProtectedRoute claim="hr:read">
+            <ProtectedRoute claim={["hr:read", "payroll:read"]}>
               <FixedPayroll />
             </ProtectedRoute>
           }
@@ -597,7 +597,7 @@ export function App() {
         <Route
           path="/hr/piece-rate"
           element={
-            <ProtectedRoute claim="hr:read">
+            <ProtectedRoute claim={["hr:read", "payroll:read"]}>
               <PieceRatePayroll />
             </ProtectedRoute>
           }
@@ -605,7 +605,7 @@ export function App() {
         <Route
           path="/hr/driver-payroll"
           element={
-            <ProtectedRoute claim="hr:read">
+            <ProtectedRoute claim={["hr:read", "payroll:read"]}>
               <DriverPayroll />
             </ProtectedRoute>
           }
@@ -613,7 +613,7 @@ export function App() {
         <Route
           path="/hr/allowances"
           element={
-            <ProtectedRoute claim="hr:read">
+            <ProtectedRoute claim={["hr:read", "payroll:read"]}>
               <AllowancesDeductions />
             </ProtectedRoute>
           }
@@ -621,7 +621,7 @@ export function App() {
         <Route
           path="/hr/payroll-run"
           element={
-            <ProtectedRoute claim={['hr:read', 'hr:approve']}>
+            <ProtectedRoute claim={['hr:read', 'hr:approve', 'payroll:read']}>
               <PayrollProcessing />
             </ProtectedRoute>
           }
@@ -629,7 +629,7 @@ export function App() {
         <Route
           path="/hr/payslips"
           element={
-            <ProtectedRoute claim="hr:read">
+            <ProtectedRoute claim={["hr:read", "payroll:read"]}>
               <Payslips />
             </ProtectedRoute>
           }
