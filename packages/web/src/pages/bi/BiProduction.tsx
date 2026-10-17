@@ -48,13 +48,13 @@ function YieldGauge({ value, target }: { value: number | null; target: number })
             strokeWidth={0}
           >
             <Cell fill={ok ? CHART_COLORS.emerald : CHART_COLORS.amber} />
-            <Cell fill="#F1F5F9" />
+            <Cell fill="currentColor" className="text-slate-100 dark:text-slate-700" />
           </Pie>
           <Tooltip formatter={(val: unknown) => [`${(Number(val ?? 0)).toFixed(1)}%`, 'Duket yield']} />
         </PieChart>
       </ResponsiveContainer>
       <div className="pointer-events-none absolute inset-x-0 bottom-2 text-center">
-        <p className="text-3xl font-extrabold tabular-nums tracking-tight text-slate-900">
+        <p className="text-3xl font-extrabold tabular-nums tracking-tight text-slate-900 dark:text-white">
           {value === null ? '—' : fmtPct(value)}
         </p>
         <p className="text-xs text-slate-500">

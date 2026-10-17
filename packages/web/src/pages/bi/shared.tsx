@@ -41,11 +41,11 @@ export function BiShell({
     <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-100 text-violet-700">
+          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300">
             {icon}
           </span>
           <div>
-            <h1 className="text-xl font-extrabold tracking-tight text-slate-900">{title}</h1>
+            <h1 className="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">{title}</h1>
             <p className="text-sm text-slate-500">{subtitle}</p>
           </div>
         </div>

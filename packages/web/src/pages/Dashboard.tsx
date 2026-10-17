@@ -499,6 +499,7 @@ function OutputDonut({
   demo: boolean;
   periodLabel: string;
 }) {
+  const ct = useChartTheme();
   return (
     <section className={`${cardShell} col-span-12 lg:col-span-4`} aria-label={`Mill output mix, ${periodLabel}`}>
       <div className="mb-2 flex items-center justify-between gap-2">
@@ -530,7 +531,9 @@ function OutputDonut({
             <Tooltip
               contentStyle={{
                 borderRadius: 12,
-                border: '1px solid #E5E7EB',
+                border: `1px solid ${ct.grid}`,
+                backgroundColor: ct.tooltipBg,
+                color: ct.tooltipText,
                 fontSize: 12,
                 boxShadow: '0 4px 16px rgba(15,23,42,0.08)'
               }}

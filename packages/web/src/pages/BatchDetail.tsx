@@ -68,15 +68,6 @@ export function BatchDetail() {
   };
 
   if (batchQ.isLoading) return <Spinner label="Loading batch..." />;
-  if (batchQ.isLoading)
-    return (
-      <div>
-        <Link to="/batches" className="font-semibold text-navy hover:underline">
-          Back to batches
-        </Link>
-        <p className="mt-4 text-slate-500 dark:text-slate-400">Loading batch…</p>
-      </div>
-    );
 
   if (batchError)
     return (
@@ -115,17 +106,27 @@ export function BatchDetail() {
     ['Packaging', `${(batch.packRuns ?? []).length} packaging run(s)`]
   ];
 
+  const statusTone = batch.status === 'OPEN' ? 'advisory' : batch.status === 'COMPLETED' ? 'pass' : 'neutral';
+
   return (
     <div>
-      <Link to="/batches" className="font-semibold text-navy hover:underline">
-        Back to batches
+      <Link to="/batches" className="inline-flex items-center gap-1.5 text-sm font-semibold text-navy hover:underline dark:text-violet-400">
+        ← Back to batches
       </Link>
-      <div className="mt-2">
-        <SectionTitle
-          title={`Batch ${batch.batchNo}`}
-          sub={`${batch.productType.replace('_', ' ')} — weighed ${fmtQ(batch.wheatWeighedQ)} q on ${fmtDateTime(batch.createdAt)}`}
-        />
+      <div className="mt-3 rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <div className="flex items-center gap-3">
+              <h1 className="tnum text-2xl font-extrabold tracking-tight text-ink">Batch {batch.batchNo}</h1>
+              <Badge tone={statusTone}>{batch.status}</Badge>
+            </div>
+            <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
+              {batch.productType.replace('_', ' ')} · <span className="tnum font-semibold text-slate-700 dark:text-slate-200">{fmtQ(batch.wheatWeighedQ)} q</span> weighed · {fmtDateTime(batch.createdAt)}
+            </p>
+          </div>
+        </div>
       </div>
+      <div className="mt-4">
 
       {notice ? (
         <div
@@ -148,19 +149,25 @@ export function BatchDetail() {
           </div>
 
           <div className="space-y-3">
-            {blendRows.map(([label, pct, q]) => (
-              <div key={label}>
-                <div className="mb-1 flex justify-between text-sm">
-                  <span className="font-medium text-slate-600 dark:text-slate-300">{label}</span>
-                  <span className="tnum font-bold text-ink">
-                    {fmtPct(Number(pct))} ({fmtQ(q)} q)
-                  </span>
+            {blendRows.map(([label, pct, q], idx) => {
+              const colors = ['bg-amber-500', 'bg-orange-600', 'bg-yellow-600'];
+              return (
+                <div key={label}>
+                  <div className="mb-1 flex justify-between text-sm">
+                    <span className="font-medium text-slate-600 dark:text-slate-300">{label}</span>
+                    <span className="tnum font-bold text-ink">
+                      {fmtPct(Number(pct))} <span className="font-medium text-slate-500 dark:text-slate-400">({fmtQ(q)} q)</span>
+                    </span>
+                  </div>
+                  <div className="h-3 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
+                    <div
+                      className={`h-full rounded-full ${colors[idx % colors.length]} transition-all duration-500`}
+                      style={{ width: `${Math.min(100, Number(pct))}%` }}
+                    />
+                  </div>
                 </div>
-                <div className="h-3 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
-                  <div className="h-full rounded-full bg-harvest" style={{ width: `${Math.min(100, Number(pct))}%` }} />
-                </div>
-              </div>
-            ))}
+              );
+            })}
             <p className="pt-1 text-xs text-slate-500 dark:text-slate-400">
               The blend ratio is set fresh for every batch by the laboratory and locked permanently.
             </p>
@@ -206,6 +213,7 @@ export function BatchDetail() {
             ))}
           </ol>
         </Card>
+      </div>
       </div>
     </div>
   );

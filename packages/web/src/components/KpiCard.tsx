@@ -3,10 +3,10 @@ import type { CSSProperties, ReactNode } from 'react';
 type Tone = 'violet' | 'green' | 'amber' | 'blue';
 
 const TONES: Record<Tone, { circle: string }> = {
-  violet: { circle: 'bg-violet-100 text-violet-600' },
-  green: { circle: 'bg-emerald-100 text-emerald-600' },
-  amber: { circle: 'bg-amber-100 text-amber-600' },
-  blue: { circle: 'bg-blue-100 text-blue-600' }
+  violet: { circle: 'bg-violet-100 text-violet-600 dark:bg-violet-500/20 dark:text-violet-300' },
+  green: { circle: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-300' },
+  amber: { circle: 'bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-300' },
+  blue: { circle: 'bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-300' }
 };
 
 interface KpiCardProps {
@@ -50,7 +50,7 @@ export function KpiCard({
         </div>
         <div className="min-w-0 flex-1">
           <p className="truncate text-[13px] font-medium text-slate-500 dark:text-slate-400">{label}</p>
-          <p className="tnum mt-1 truncate text-[28px] font-extrabold leading-none tracking-tight text-ink">
+          <p className="tnum mt-1 truncate text-[28px] font-extrabold leading-none tracking-tight text-ink dark:text-white">
             {value}
           </p>
         </div>
