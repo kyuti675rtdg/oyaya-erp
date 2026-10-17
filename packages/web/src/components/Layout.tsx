@@ -221,7 +221,7 @@ const NAV: NavGroup[] = [
     ]
   },
   {
-    title: 'Sales & Finance',
+    title: 'Sales',
     icon: 'sales',
     items: [
       { to: '/sales', label: 'Orders', claim: ['sales:read'], icon: 'sales' },
@@ -233,7 +233,13 @@ const NAV: NavGroup[] = [
       { to: '/sales/agents', label: 'Agents', claim: ['sales:read'], icon: 'shifts' },
       { to: '/sales/invoices', label: 'Invoices', claim: ['sales:read'], icon: 'finance' },
       { to: '/sales/cash', label: 'Cash', claim: ['sales:read'], icon: 'finance' },
-      { to: '/sales/reports', label: 'Reports', claim: ['sales:read'], icon: 'monitor' },
+      { to: '/sales/reports', label: 'Reports', claim: ['sales:read'], icon: 'monitor' }
+    ]
+  },
+  {
+    title: 'Finance',
+    icon: 'finance',
+    items: [
       { to: '/finance', label: 'Overview', claim: ['finance:read'], icon: 'finance' },
       { to: '/finance/chart-of-accounts', label: 'Accounts', claim: ['finance:read'], icon: 'finance' },
       { to: '/finance/ledger', label: 'Ledger', claim: ['finance:read'], icon: 'finance' },
