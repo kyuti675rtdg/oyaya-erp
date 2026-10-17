@@ -11,7 +11,7 @@ import type { Product } from '../types';
 import { Button, EmptyState, ErrorBox, NumberInput, Select, TextInput } from '../components/ui';
 
 export const cardShell =
-  'bg-white rounded-2xl border border-slate-200/70 shadow-sm p-5';
+  'bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/70 dark:border-slate-700 shadow-sm p-5';
 
 export const fmtQ = (n: number) =>
   n.toLocaleString('en-US', { maximumFractionDigits: 2, minimumFractionDigits: 0 });

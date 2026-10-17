@@ -47,9 +47,23 @@ export function ChatAdmin() {
           {syncMutation.isPending ? 'Syncing…' : 'Sync Departments & Members'}
         </Button>
         {syncMutation.data && (
-          <p className="mt-2 text-sm text-green-700 dark:text-green-400">
-            Done — {syncMutation.data.created} channels created, {syncMutation.data.synced} memberships synced.
-          </p>
+          <div className="mt-2">
+            <p className="text-sm text-green-700 dark:text-green-400">
+              Done — {syncMutation.data.created} channels created, {syncMutation.data.synced} memberships synced.
+            </p>
+            {syncMutation.data.errors?.length > 0 && (
+              <div className="mt-2 rounded-lg border border-amber-200 bg-amber-50 p-3 dark:border-amber-500/30 dark:bg-amber-500/10" role="alert">
+                <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">
+                  {syncMutation.data.errors.length} item(s) had issues:
+                </p>
+                <ul className="mt-1 list-disc pl-5 text-xs text-amber-700 dark:text-amber-400">
+                  {syncMutation.data.errors.slice(0, 10).map((e: string, i: number) => (
+                    <li key={i}>{e}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
         )}
         {syncMutation.isError && (
           <p className="mt-2 text-sm text-red-600">

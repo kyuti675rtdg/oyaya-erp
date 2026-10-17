@@ -4,7 +4,7 @@ import { fmtDate, fmtQ } from '../lib/format';
 
 /** Standard card wrapper (Dashboard spec). */
 export const cardShell =
-  'bg-white rounded-2xl border border-slate-200/70 shadow-sm p-5';
+  'bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/70 dark:border-slate-700 shadow-sm p-5';
 
 /** Violet primary button class used across the FG module. */
 export const violetBtn =

@@ -7,7 +7,7 @@ import { fmtBirr, fmtDate, fmtQ } from '../lib/format';
  * Design language: cardShell + CardHeader + slate/violet + lucide + tabular-nums.
  */
 
-export const hrShell = 'bg-white rounded-2xl border border-slate-200/70 shadow-sm p-5';
+export const hrShell = 'bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/70 dark:border-slate-700 shadow-sm p-5';
 
 export const hrPrimaryBtn =
   'inline-flex items-center justify-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-700 disabled:opacity-50 active:scale-[0.98]';
