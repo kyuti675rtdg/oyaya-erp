@@ -16,6 +16,8 @@ import {
   Star,
   Truck,
   User,
+  Users,
+  Briefcase,
   Wheat,
   X
 } from 'lucide-react';
@@ -652,26 +654,58 @@ export function Suppliers() {
           ))}
         </div>
       ) : suppliersQ.isError ? null : (
-        <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <div className={cardShell}>
-            <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-              <Truck size={14} /> Total suppliers
-            </p>
-            <p className="tnum mt-1 text-2xl font-bold text-ink dark:text-white">{stats.total}</p>
+        <div className="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <div className={`${cardShell} relative overflow-hidden`}>
+            <div className="absolute right-0 top-0 h-16 w-16 rounded-bl-full bg-violet-100/60 dark:bg-violet-500/10" aria-hidden="true" />
+            <div className="relative">
+              <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-violet-100 text-violet-600 dark:bg-violet-500/20 dark:text-violet-300">
+                  <Truck size={14} />
+                </span>
+                Total suppliers
+              </p>
+              <p className="tnum mt-2 text-3xl font-extrabold text-ink dark:text-white">{stats.total}</p>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{stats.active} active · {stats.inactive} inactive</p>
+            </div>
           </div>
-          <div className={cardShell}>
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Active</p>
-            <p className="tnum mt-1 text-2xl font-bold text-pass-text">{stats.active}</p>
+          <div className={`${cardShell} relative overflow-hidden`}>
+            <div className="absolute right-0 top-0 h-16 w-16 rounded-bl-full bg-emerald-100/60 dark:bg-emerald-500/10" aria-hidden="true" />
+            <div className="relative">
+              <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-300">
+                  <Wheat size={14} />
+                </span>
+                Farmers
+              </p>
+              <p className="tnum mt-2 text-3xl font-extrabold text-emerald-700 dark:text-emerald-300">{stats.farmers}</p>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Individual growers</p>
+            </div>
           </div>
-          <div className={cardShell}>
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Farmers / Coops / Traders</p>
-            <p className="tnum mt-1 text-2xl font-bold text-ink dark:text-white">
-              {stats.farmers}<span className="text-slate-300"> / </span>{stats.coops}<span className="text-slate-300"> / </span>{stats.traders}
-            </p>
+          <div className={`${cardShell} relative overflow-hidden`}>
+            <div className="absolute right-0 top-0 h-16 w-16 rounded-bl-full bg-amber-100/60 dark:bg-amber-500/10" aria-hidden="true" />
+            <div className="relative">
+              <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-300">
+                  <Users size={14} />
+                </span>
+                Cooperatives
+              </p>
+              <p className="tnum mt-2 text-3xl font-extrabold text-amber-700 dark:text-amber-300">{stats.coops}</p>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Associations & unions</p>
+            </div>
           </div>
-          <div className={cardShell}>
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Inactive</p>
-            <p className="tnum mt-1 text-2xl font-bold text-critical-text">{stats.inactive}</p>
+          <div className={`${cardShell} relative overflow-hidden`}>
+            <div className="absolute right-0 top-0 h-16 w-16 rounded-bl-full bg-sky-100/60 dark:bg-sky-500/10" aria-hidden="true" />
+            <div className="relative">
+              <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-sky-100 text-sky-600 dark:bg-sky-500/20 dark:text-sky-300">
+                  <Briefcase size={14} />
+                </span>
+                Traders
+              </p>
+              <p className="tnum mt-2 text-3xl font-extrabold text-sky-700 dark:text-sky-300">{stats.traders}</p>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Commercial suppliers</p>
+            </div>
           </div>
         </div>
       )}
