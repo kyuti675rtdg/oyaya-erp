@@ -477,8 +477,8 @@ function ProductOutputDonut({
                 nameKey="name"
                 cx="50%"
                 cy="50%"
-                innerRadius="62%"
-                outerRadius="85%"
+                innerRadius="68%"
+                outerRadius="88%"
                 paddingAngle={3}
                 strokeWidth={0}
               >
@@ -496,12 +496,12 @@ function ProductOutputDonut({
               />
             </PieChart>
           </ResponsiveContainer>
-          <div className="pointer-events-none absolute flex flex-col items-center justify-center">
-            <p className="text-xl font-extrabold tabular-nums text-slate-900">
+          <div className="pointer-events-none absolute flex max-w-[110px] flex-col items-center justify-center text-center">
+            <p className="text-lg font-extrabold tabular-nums text-slate-900">
               {total.toLocaleString('en-US')} Qt
             </p>
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
-              Total Output (Quintals)
+            <p className="text-[10px] font-semibold uppercase leading-tight tracking-wider text-slate-500">
+              Total Output
             </p>
           </div>
         </div>
