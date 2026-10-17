@@ -123,6 +123,12 @@ const PATHS: Record<string, ReactNode> = {
       <circle cx="10" cy="14" r="0.6" fill="currentColor" />
     </>
   ),
+  chat: (
+    <>
+      <path d="M4 5.5A1.5 1.5 0 015.5 4h9A1.5 1.5 0 0116 5.5v6a1.5 1.5 0 01-1.5 1.5H9l-3.5 3v-3H5.5A1.5 1.5 0 014 11v-5.5z" strokeLinejoin="round" />
+      <path d="M7.5 7.5h5M7.5 10h3" strokeLinecap="round" />
+    </>
+  ),
   truck: (
     <>
       <path d="M2 4.5h10V13H2z" strokeLinejoin="round" />
@@ -389,9 +395,9 @@ const NAV: NavGroup[] = [
   },
   {
     title: 'Team Chat',
-    icon: 'support',
+    icon: 'chat',
     items: [
-      { to: '/chat', label: 'Messages', claim: ['chat:view'], icon: 'support' },
+      { to: '/chat', label: 'Messages', claim: ['chat:view'], icon: 'chat' },
       { to: '/chat/admin', label: 'Chat Settings', claim: ['chat:manage'], icon: 'settings' },
     ]
   },
