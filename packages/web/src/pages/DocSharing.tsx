@@ -185,7 +185,8 @@ export function DocSharing() {
       )}
 
       {showShare ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4"
+          role="dialog" aria-modal="true">
           <form onSubmit={submit} className={`${cardShell} w-full max-w-md space-y-4 !p-6`}>
             <div className="flex items-center justify-between">
               <h3 className="text-base font-bold text-slate-800 dark:text-slate-100">New Share</h3>

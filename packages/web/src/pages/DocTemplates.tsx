@@ -147,7 +147,8 @@ export function DocTemplates() {
       </div>
 
       {showForm ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4"
+          role="dialog" aria-modal="true">
           <form onSubmit={submit} className={`${cardShell} max-h-[90vh] w-full max-w-2xl space-y-4 overflow-y-auto !p-6`}>
             <div className="flex items-center justify-between">
               <h3 className="text-base font-bold text-slate-800 dark:text-slate-100">New Template</h3>
@@ -189,7 +190,8 @@ export function DocTemplates() {
       ) : null}
 
       {useTpl ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4"
+          role="dialog" aria-modal="true">
           <form onSubmit={submitUse} className={`${cardShell} w-full max-w-md space-y-4 !p-6`}>
             <div className="flex items-center justify-between">
               <h3 className="text-base font-bold text-slate-800 dark:text-slate-100">Create from Template</h3>

@@ -178,7 +178,8 @@ export function DocArchive() {
       </div>
 
       {retentionDoc ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4"
+          role="dialog" aria-modal="true">
           <div className={`${cardShell} w-full max-w-sm space-y-4 !p-6`}>
             <h3 className="text-base font-bold text-slate-800 dark:text-slate-100">Set Retention Period</h3>
             <p className="text-sm text-slate-600 dark:text-slate-300">{retentionDoc.title}</p>

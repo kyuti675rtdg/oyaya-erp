@@ -225,7 +225,8 @@ export function SOPs() {
       )}
 
       {showForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4"
+          role="dialog" aria-modal="true">
           <div className={`${cardShell} max-h-[90vh] w-full max-w-2xl overflow-y-auto`}>
             <div className="mb-4 flex items-center justify-between">
               <h3 className="font-bold text-slate-800 dark:text-slate-100">New SOP</h3>
