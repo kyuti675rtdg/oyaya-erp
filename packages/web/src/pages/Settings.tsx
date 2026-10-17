@@ -134,58 +134,83 @@ function CompanySettingsEditor() {
       {!initialized ? (
         <Spinner label="Loading company profile..." />
       ) : (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <div className="sm:col-span-2 flex items-center gap-4">
-            <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border border-line bg-alabaster">
-              {logoPreview ? (
-                <img src={logoPreview} alt="Company logo" className="h-full w-full object-contain" />
-              ) : (
-                <Building2 className="h-7 w-7 text-slate-300" />
-              )}
+        <div className="space-y-6">
+          {/* Brand identity section */}
+          <div>
+            <h4 className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Brand identity</h4>
+            <div className="flex items-center gap-4 rounded-xl border border-slate-200/70 bg-slate-50/50 p-4 dark:border-slate-700 dark:bg-slate-800/50">
+              <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-line bg-white shadow-sm dark:border-slate-600 dark:bg-slate-700">
+                {logoPreview ? (
+                  <img src={logoPreview} alt="Company logo" className="h-full w-full object-contain" />
+                ) : (
+                  <Building2 className="h-8 w-8 text-slate-300 dark:text-slate-500" />
+                )}
+              </div>
+              <div className="flex-1">
+                <Field label="Logo" hint="PNG/JPG under 300 KB, or paste an image URL below.">
+                  <div className="flex flex-wrap gap-2">
+                    <input ref={fileRef} type="file" accept="image/png,image/jpeg" className="hidden" onChange={(e) => onLogoFile(e.target.files?.[0])} />
+                    <Button variant="secondary" type="button" onClick={() => fileRef.current?.click()} disabled={!canManage}>
+                      <Upload className="h-4 w-4" /> Upload logo
+                    </Button>
+                    {logoPreview ? (
+                      <Button variant="secondary" type="button" onClick={() => setDraft((d) => ({ ...d, logoUrl: '' }))} disabled={!canManage}>
+                        Remove
+                      </Button>
+                    ) : null}
+                  </div>
+                </Field>
+              </div>
             </div>
-            <div className="flex-1">
-              <Field label="Logo" hint="PNG/JPG under 300 KB, or paste an image URL below.">
-                <input ref={fileRef} type="file" accept="image/png,image/jpeg" className="hidden" onChange={(e) => onLogoFile(e.target.files?.[0])} />
-                <Button variant="secondary" type="button" onClick={() => fileRef.current?.click()} disabled={!canManage}>
-                  <Upload className="h-4 w-4" /> Upload logo
-                </Button>
+            <div className="mt-3">
+              <Field label="Logo URL" hint="Alternative to uploading — an https URL.">
+                <TextInput value={draft.logoUrl} onChange={(e) => setDraft({ ...draft, logoUrl: e.target.value })} placeholder="https://…" disabled={!canManage} />
               </Field>
             </div>
           </div>
-          <Field label="Company name" required>
-            <TextInput value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} disabled={!canManage} />
-          </Field>
-          <Field label="TIN (tax identification number)">
-            <TextInput value={draft.taxId} onChange={(e) => setDraft({ ...draft, taxId: e.target.value })} disabled={!canManage} />
-          </Field>
-          <div className="sm:col-span-2">
-            <Field label="Address">
-              <TextArea value={draft.address} onChange={(e) => setDraft({ ...draft, address: e.target.value })} disabled={!canManage} />
-            </Field>
+
+          {/* Legal identity section */}
+          <div>
+            <h4 className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Legal identity</h4>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <Field label="Company name" required>
+                <TextInput value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} disabled={!canManage} placeholder="Oyaya Flour Production Company PLC" />
+              </Field>
+              <Field label="TIN (tax identification number)" hint="Ethiopian tax ID for invoices.">
+                <TextInput value={draft.taxId} onChange={(e) => setDraft({ ...draft, taxId: e.target.value })} disabled={!canManage} placeholder="0000000000" />
+              </Field>
+              <div className="sm:col-span-2">
+                <Field label="Registered address">
+                  <TextArea value={draft.address} onChange={(e) => setDraft({ ...draft, address: e.target.value })} disabled={!canManage} placeholder="Street, city, region" rows={2} />
+                </Field>
+              </div>
+            </div>
           </div>
-          <Field label="Logo URL" hint="Alternative to uploading — an https URL.">
-            <TextInput value={draft.logoUrl} onChange={(e) => setDraft({ ...draft, logoUrl: e.target.value })} placeholder="https://…" disabled={!canManage} />
-          </Field>
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Phone">
-              <TextInput value={draft.phone} onChange={(e) => setDraft({ ...draft, phone: e.target.value })} disabled={!canManage} />
-            </Field>
-            <Field label="Email">
-              <TextInput type="email" value={draft.email} onChange={(e) => setDraft({ ...draft, email: e.target.value })} disabled={!canManage} />
-            </Field>
+
+          {/* Contact & financial section */}
+          <div>
+            <h4 className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Contact & financial year</h4>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <Field label="Phone">
+                <TextInput value={draft.phone} onChange={(e) => setDraft({ ...draft, phone: e.target.value })} disabled={!canManage} placeholder="+251 ..." />
+              </Field>
+              <Field label="Email">
+                <TextInput type="email" value={draft.email} onChange={(e) => setDraft({ ...draft, email: e.target.value })} disabled={!canManage} placeholder="info@company.et" />
+              </Field>
+              <Field label="Fiscal year start" hint="Month the financial year begins.">
+                <Select
+                  value={draft.fiscalYearStartMonth}
+                  onChange={(e) => setDraft({ ...draft, fiscalYearStartMonth: e.target.value })}
+                  disabled={!canManage}
+                >
+                  <option value="">— Not set —</option>
+                  {MONTHS.map((m, i) => (
+                    <option key={m} value={i + 1}>{m}</option>
+                  ))}
+                </Select>
+              </Field>
+            </div>
           </div>
-          <Field label="Fiscal year start" hint="Month the financial year begins.">
-            <Select
-              value={draft.fiscalYearStartMonth}
-              onChange={(e) => setDraft({ ...draft, fiscalYearStartMonth: e.target.value })}
-              disabled={!canManage}
-            >
-              <option value="">— Not set —</option>
-              {MONTHS.map((m, i) => (
-                <option key={m} value={i + 1}>{m}</option>
-              ))}
-            </Select>
-          </Field>
         </div>
       )}
     </Card>
@@ -258,43 +283,53 @@ function PreferencesEditor() {
       {!initialized ? (
         <Spinner label="Loading preferences..." />
       ) : (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <Field label="Timezone" hint="Used when rendering dates and scheduling.">
-            <Select value={draft['prefs.timezone']} onChange={(e) => setDraft({ ...draft, 'prefs.timezone': e.target.value })} disabled={!canManage}>
-              <option value="Africa/Addis_Ababa">Africa/Addis_Ababa (EAT)</option>
-              <option value="UTC">UTC</option>
-              <option value="Africa/Nairobi">Africa/Nairobi</option>
-              <option value="Europe/London">Europe/London</option>
-            </Select>
-          </Field>
-          <Field label="Date format">
-            <Select value={draft['prefs.dateFormat']} onChange={(e) => setDraft({ ...draft, 'prefs.dateFormat': e.target.value })} disabled={!canManage}>
-              <option value="DD/MM/YYYY">DD/MM/YYYY</option>
-              <option value="MM/DD/YYYY">MM/DD/YYYY</option>
-              <option value="YYYY-MM-DD">YYYY-MM-DD</option>
-            </Select>
-          </Field>
-          <Field label="Number format">
-            <Select value={draft['prefs.numberFormat']} onChange={(e) => setDraft({ ...draft, 'prefs.numberFormat': e.target.value })} disabled={!canManage}>
-              <option value="1,234.56">1,234.56</option>
-              <option value="1.234,56">1.234,56</option>
-              <option value="1 234.56">1 234.56</option>
-            </Select>
-          </Field>
-          <Field label="Language">
-            <Select value={draft['prefs.language']} onChange={(e) => setDraft({ ...draft, 'prefs.language': e.target.value })} disabled={!canManage}>
-              <option value="en">English</option>
-              <option value="am">አማርኛ (Amharic)</option>
-            </Select>
-          </Field>
-          <Field label="Default page size" hint="Rows per table page (5–500).">
-            <NumberInput
-              value={draft['prefs.defaultPageSize']}
-              onChange={(e) => setDraft({ ...draft, 'prefs.defaultPageSize': e.target.value })}
-              min={5} max={500}
-              disabled={!canManage}
-            />
-          </Field>
+        <div className="space-y-6">
+          <div>
+            <h4 className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Regional</h4>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <Field label="Timezone" hint="Used when rendering dates and scheduling.">
+                <Select value={draft['prefs.timezone']} onChange={(e) => setDraft({ ...draft, 'prefs.timezone': e.target.value })} disabled={!canManage}>
+                  <option value="Africa/Addis_Ababa">Africa/Addis_Ababa (EAT)</option>
+                  <option value="UTC">UTC</option>
+                  <option value="Africa/Nairobi">Africa/Nairobi</option>
+                  <option value="Europe/London">Europe/London</option>
+                </Select>
+              </Field>
+              <Field label="Language">
+                <Select value={draft['prefs.language']} onChange={(e) => setDraft({ ...draft, 'prefs.language': e.target.value })} disabled={!canManage}>
+                  <option value="en">English</option>
+                  <option value="am">አማርኛ (Amharic)</option>
+                </Select>
+              </Field>
+              <Field label="Date format">
+                <Select value={draft['prefs.dateFormat']} onChange={(e) => setDraft({ ...draft, 'prefs.dateFormat': e.target.value })} disabled={!canManage}>
+                  <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                  <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                  <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                </Select>
+              </Field>
+              <Field label="Number format">
+                <Select value={draft['prefs.numberFormat']} onChange={(e) => setDraft({ ...draft, 'prefs.numberFormat': e.target.value })} disabled={!canManage}>
+                  <option value="1,234.56">1,234.56</option>
+                  <option value="1.234,56">1.234,56</option>
+                  <option value="1 234.56">1 234.56</option>
+                </Select>
+              </Field>
+            </div>
+          </div>
+          <div>
+            <h4 className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Display</h4>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <Field label="Default page size" hint="Rows per table page (5–500).">
+                <NumberInput
+                  value={draft['prefs.defaultPageSize']}
+                  onChange={(e) => setDraft({ ...draft, 'prefs.defaultPageSize': e.target.value })}
+                  min={5} max={500}
+                  disabled={!canManage}
+                />
+              </Field>
+            </div>
+          </div>
         </div>
       )}
     </Card>
@@ -371,36 +406,86 @@ function ThresholdsEditor() {
       {q.isLoading ? (
         <Spinner label="Loading thresholds..." />
       ) : (
-        <div className="space-y-4">
-          {(q.data ?? []).map((t) => {
-            const d = drafts[t.id] ?? { min: String(t.minValue ?? ''), max: String(t.maxValue ?? '') };
-            return (
-              <div key={t.id} className="rounded-lg border border-line p-3">
-                <p className="mb-2 text-sm font-semibold text-ink dark:text-white">
-                  {t.param} <span className="ml-1 text-xs font-normal text-slate-500 dark:text-slate-400">({t.category}{t.unit ? `, ${t.unit}` : ''})</span>
-                </p>
-                <div className="grid grid-cols-2 gap-2">
-                  <Field label="Min">
-                    <NumberInput
-                      value={d.min}
-                      onChange={(e) => setDrafts((p) => ({ ...p, [t.id]: { ...d, min: e.target.value } }))}
-                      step="0.01"
-                    />
-                  </Field>
-                  <Field label="Max">
-                    <NumberInput
-                      value={d.max}
-                      onChange={(e) => setDrafts((p) => ({ ...p, [t.id]: { ...d, max: e.target.value } }))}
-                      step="0.01"
-                    />
-                  </Field>
+        <div className="space-y-6">
+          {(() => {
+            const groups: Record<string, typeof q.data> = {};
+            for (const t of q.data ?? []) {
+              const cat = t.category || 'General';
+              if (!groups[cat]) groups[cat] = [];
+              groups[cat]!.push(t);
+            }
+            return Object.entries(groups).map(([cat, items]) => (
+              <div key={cat}>
+                <h4 className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  <FlaskConical className="h-3.5 w-3.5" />
+                  {cat}
+                  <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600 dark:bg-slate-700 dark:text-slate-300">
+                    {items!.length}
+                  </span>
+                </h4>
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                  {items!.map((t) => {
+                    const d = drafts[t.id] ?? { min: String(t.minValue ?? ''), max: String(t.maxValue ?? '') };
+                    const isDirty = !!drafts[t.id];
+                    return (
+                      <div
+                        key={t.id}
+                        className={`rounded-xl border p-4 transition-colors ${
+                          isDirty
+                            ? 'border-amber-300 bg-amber-50/50 dark:border-amber-500/40 dark:bg-amber-500/5'
+                            : 'border-slate-200/70 bg-white dark:border-slate-700 dark:bg-slate-800/50'
+                        }`}
+                      >
+                        <div className="mb-3 flex items-start justify-between gap-2">
+                          <div>
+                            <p className="text-sm font-bold text-ink dark:text-white">{t.param}</p>
+                            {t.unit ? (
+                              <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">Unit: {t.unit}</p>
+                            ) : null}
+                          </div>
+                          {isDirty ? (
+                            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:bg-amber-500/20 dark:text-amber-300">
+                              Unsaved
+                            </span>
+                          ) : null}
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <Field label="Min">
+                            <NumberInput
+                              value={d.min}
+                              onChange={(e) => setDrafts((p) => ({ ...p, [t.id]: { ...d, min: e.target.value } }))}
+                              step="0.01"
+                              placeholder="—"
+                            />
+                          </Field>
+                          <Field label="Max">
+                            <NumberInput
+                              value={d.max}
+                              onChange={(e) => setDrafts((p) => ({ ...p, [t.id]: { ...d, max: e.target.value } }))}
+                              step="0.01"
+                              placeholder="—"
+                            />
+                          </Field>
+                        </div>
+                        <Button
+                          onClick={() => save(t)}
+                          loading={savingId === t.id}
+                          variant={isDirty ? 'primary' : 'secondary'}
+                          className="mt-3 w-full"
+                          disabled={!isDirty && savingId !== t.id}
+                        >
+                          {isDirty ? 'Save changes' : 'Saved'}
+                        </Button>
+                      </div>
+                    );
+                  })}
                 </div>
-                <Button onClick={() => save(t)} loading={savingId === t.id} variant="secondary" className="mt-2 w-full">
-                  Save
-                </Button>
               </div>
-            );
-          })}
+            ));
+          })()}
+          {(q.data ?? []).length === 0 ? (
+            <p className="text-sm text-slate-500 dark:text-slate-400">No quality thresholds configured.</p>
+          ) : null}
         </div>
       )}
     </Card>
