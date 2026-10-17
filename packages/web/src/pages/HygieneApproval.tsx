@@ -269,7 +269,7 @@ export function HygieneApproval() {
           <Card className="w-full max-w-lg p-6">
             <div className="mb-2 flex items-start justify-between">
               <div>
-                <h3 className="text-lg font-bold text-ink">
+                <h3 className="text-lg font-bold text-ink dark:text-white">
                   {signoffFor.role === 'supervisor' ? 'Supervisor' : 'Quality'} sign-off
                 </h3>
                 <p className="text-sm text-slate-600 dark:text-slate-300">{signoffFor.item.subjectLabel ?? signoffFor.item.subjectId}</p>

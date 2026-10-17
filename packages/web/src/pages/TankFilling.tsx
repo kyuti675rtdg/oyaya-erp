@@ -153,7 +153,7 @@ export function TankFilling() {
     <div>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-xl font-bold text-ink">Tank Filling &amp; Batch Allocation</h2>
+          <h2 className="text-xl font-bold text-ink dark:text-white">Tank Filling &amp; Batch Allocation</h2>
           <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
             Allocate wheat from the dry pool into a conditioning tank — batch numbers are assigned when conditioning starts
           </p>
@@ -332,7 +332,7 @@ export function TankFilling() {
               {dryPool ? (
                 <div>
                   <div className="flex items-baseline justify-between">
-                    <span className="text-3xl font-bold tabular-nums text-ink">{fmtQ(dryPool.balanceQ)}</span>
+                    <span className="text-3xl font-bold tabular-nums text-ink dark:text-white">{fmtQ(dryPool.balanceQ)}</span>
                     <span className="text-sm text-slate-500 dark:text-slate-400">
                       of <span className="font-semibold tabular-nums">{fmtQ(dryPool.capacityQ)} q</span>
                     </span>

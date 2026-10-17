@@ -94,7 +94,7 @@ export function Batches() {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card className="p-5">
-          <h3 className="mb-4 text-base font-bold text-ink">New batch</h3>
+          <h3 className="mb-4 text-base font-bold text-ink dark:text-white">New batch</h3>
           <form onSubmit={createBatch} className="space-y-4">
             <Field label="Target product type" required>
               <Select value={productType} onChange={(e) => setProductType(e.target.value)}>
@@ -131,7 +131,7 @@ export function Batches() {
           ) : (
             <DataTable<ProductionBatch>
               columns={[
-                { key: 'batchNo', label: 'Batch', render: (r) => <span className="tnum font-bold text-ink">{r.batchNo}</span> },
+                { key: 'batchNo', label: 'Batch', render: (r) => <span className="tnum font-bold text-ink dark:text-white">{r.batchNo}</span> },
                 { key: 'productType', label: 'Product', render: (r) => r.productType.replace('_', ' ') },
                 { key: 'wheatWeighedQ', label: 'Weighed (q)', mono: true, render: (r) => fmtQ(r.wheatWeighedQ) },
                 {

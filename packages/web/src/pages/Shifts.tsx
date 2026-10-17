@@ -346,7 +346,7 @@ export function Shifts() {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card className="p-5">
-          <h3 className="mb-4 text-base font-bold text-ink">Start shift</h3>
+          <h3 className="mb-4 text-base font-bold text-ink dark:text-white">Start shift</h3>
           <form onSubmit={createShift} className="space-y-4">
             <Field label="Production batch" required>
               <Select value={batchId} onChange={(e) => setBatchId(e.target.value)} required>
@@ -382,7 +382,7 @@ export function Shifts() {
         </Card>
 
         <Card className="p-5">
-          <h3 className="mb-4 text-base font-bold text-ink">Record output</h3>
+          <h3 className="mb-4 text-base font-bold text-ink dark:text-white">Record output</h3>
           <form onSubmit={recordOutput} className="space-y-4">
             <Field label="Shift" required>
               <Select value={selectedShiftId} onChange={(e) => setSelectedShiftId(e.target.value)} required>
@@ -414,7 +414,7 @@ export function Shifts() {
         </Card>
 
         <Card className="p-5">
-          <h3 className="mb-4 text-base font-bold text-ink">Log downtime</h3>
+          <h3 className="mb-4 text-base font-bold text-ink dark:text-white">Log downtime</h3>
           <form onSubmit={recordDowntime} className="space-y-4">
             <Field label="Minutes" required>
               <NumberInput value={downtimeMin} onChange={(e) => setDowntimeMin(e.target.value)} min={0} placeholder="0" />
@@ -430,7 +430,7 @@ export function Shifts() {
           {selectedShift ? (
             <div className="mt-5 rounded-xl border border-line bg-alabaster p-4">
               <div className="flex items-center justify-between">
-                <p className="text-sm font-bold text-ink">Extraction rate</p>
+                <p className="text-sm font-bold text-ink dark:text-white">Extraction rate</p>
                 {extraction === null ? (
                   <Badge tone="neutral">No output yet</Badge>
                 ) : (
@@ -447,7 +447,7 @@ export function Shifts() {
                   {(selectedShift.outputs ?? []).map((o) => (
                     <li key={o.id} className="flex justify-between">
                       <span className="text-slate-600 dark:text-slate-300">{o.product?.name ?? o.productId}</span>
-                      <span className="tnum font-semibold text-ink">{fmtQ(o.quintals)} q</span>
+                      <span className="tnum font-semibold text-ink dark:text-white">{fmtQ(o.quintals)} q</span>
                     </li>
                   ))}
                 </ul>
@@ -461,7 +461,7 @@ export function Shifts() {
       {selectedShift ? (
         <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
           <Card className="p-5">
-            <h3 className="mb-1 text-base font-bold text-ink">Operator assignment</h3>
+            <h3 className="mb-1 text-base font-bold text-ink dark:text-white">Operator assignment</h3>
             <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
               Current: <span className="font-semibold text-slate-700 dark:text-slate-200">{(selectedShift.operators ?? []).join(', ') || '—'}</span>
             </p>
@@ -487,7 +487,7 @@ export function Shifts() {
           </Card>
 
           <Card className="p-5">
-            <h3 className="mb-4 text-base font-bold text-ink">Shift handover & operator notes</h3>
+            <h3 className="mb-4 text-base font-bold text-ink dark:text-white">Shift handover & operator notes</h3>
             {handoversQ.isLoading ? (
               <Spinner label="Loading notes..." />
             ) : (handoversQ.data ?? []).length === 0 ? (

@@ -279,7 +279,7 @@ export function NcReports() {
                 {(agingQ.data ?? []).map((r) => (
                   <div key={r.id} className="rounded-xl border border-line bg-white dark:bg-slate-800 p-4 shadow-sm">
                     <div className="flex items-center justify-between">
-                      <span className="font-bold tabular-nums text-ink">{r.ncNo}</span>
+                      <span className="font-bold tabular-nums text-ink dark:text-white">{r.ncNo}</span>
                       <Badge tone={severityTone(r.severity)}>{r.severity}</Badge>
                     </div>
                     <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
@@ -328,7 +328,7 @@ export function NcReports() {
                 {(overdueQ.data ?? []).map((a) => (
                   <div key={a.id} className="rounded-xl border border-critical-text/40 bg-white dark:bg-slate-800 p-4 shadow-sm">
                     <div className="flex items-center justify-between">
-                      <span className="font-bold tabular-nums text-ink">{a.nc?.ncNo ?? a.capa?.capaNo ?? '—'}</span>
+                      <span className="font-bold tabular-nums text-ink dark:text-white">{a.nc?.ncNo ?? a.capa?.capaNo ?? '—'}</span>
                       <span className="text-xs font-bold text-critical-text tabular-nums">{a.daysOverdue}d overdue</span>
                     </div>
                     <p className="mt-1 line-clamp-2 text-sm text-slate-600 dark:text-slate-300">{a.description}</p>

@@ -146,7 +146,7 @@ export function ApiHealth() {
               <Server className="h-5 w-5" />
             </span>
             <div>
-              <p className="text-2xl font-bold tabular-nums text-ink">
+              <p className="text-2xl font-bold tabular-nums text-ink dark:text-white">
                 {onlineCount}<span className="text-base text-slate-400 dark:text-slate-500">/{totalCount}</span>
               </p>
               <p className="text-xs text-slate-500 dark:text-slate-400">Integrations online</p>
@@ -159,7 +159,7 @@ export function ApiHealth() {
               <Gauge className="h-5 w-5" />
             </span>
             <div>
-              <p className="text-2xl font-bold tabular-nums text-ink">
+              <p className="text-2xl font-bold tabular-nums text-ink dark:text-white">
                 {avgLatency != null ? `${avgLatency} ms` : '—'}
               </p>
               <p className="text-xs text-slate-500 dark:text-slate-400">Average latency</p>
@@ -172,7 +172,7 @@ export function ApiHealth() {
               <Clock3 className="h-5 w-5" />
             </span>
             <div>
-              <p className="text-2xl font-bold tabular-nums text-ink">
+              <p className="text-2xl font-bold tabular-nums text-ink dark:text-white">
                 {totalCount
                   ? `${(((integrations ?? []).reduce((a, i) => a + (i.uptimePct ?? 0), 0) / totalCount)).toFixed(1)}%`
                   : '—'}
@@ -194,7 +194,7 @@ export function ApiHealth() {
         ) : (
           <DataTable<ApiIntegration>
             columns={[
-              { key: 'name', label: 'Integration', render: (r) => <span className="font-semibold text-ink">{r.name}</span> },
+              { key: 'name', label: 'Integration', render: (r) => <span className="font-semibold text-ink dark:text-white">{r.name}</span> },
               { key: 'baseUrl', label: 'Endpoint', render: (r) => <span className="font-mono text-xs text-slate-500 dark:text-slate-400">{r.baseUrl ?? '—'}</span> },
               {
                 key: 'status', label: 'Status',

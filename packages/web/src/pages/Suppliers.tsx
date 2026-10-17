@@ -657,7 +657,7 @@ export function Suppliers() {
             <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
               <Truck size={14} /> Total suppliers
             </p>
-            <p className="tnum mt-1 text-2xl font-bold text-ink">{stats.total}</p>
+            <p className="tnum mt-1 text-2xl font-bold text-ink dark:text-white">{stats.total}</p>
           </div>
           <div className={cardShell}>
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Active</p>
@@ -665,7 +665,7 @@ export function Suppliers() {
           </div>
           <div className={cardShell}>
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Farmers / Coops / Traders</p>
-            <p className="tnum mt-1 text-2xl font-bold text-ink">
+            <p className="tnum mt-1 text-2xl font-bold text-ink dark:text-white">
               {stats.farmers}<span className="text-slate-300"> / </span>{stats.coops}<span className="text-slate-300"> / </span>{stats.traders}
             </p>
           </div>
@@ -755,7 +755,7 @@ export function Suppliers() {
               <div key={s.id} className={cardShell}>
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="truncate font-bold text-ink">{s.name}</p>
+                    <p className="truncate font-bold text-ink dark:text-white">{s.name}</p>
                     <p className="mt-0.5 flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
                       {s.type === 'INDIVIDUAL_FARMER' ? (
                         <User size={12} />
@@ -830,7 +830,7 @@ export function Suppliers() {
           <Card className="max-h-[92vh] w-full max-w-2xl overflow-y-auto p-6">
             <div className="mb-4 flex items-start justify-between">
               <div>
-                <h3 className="text-lg font-bold text-ink">
+                <h3 className="text-lg font-bold text-ink dark:text-white">
                   {editing ? 'Edit supplier' : 'Register supplier'}
                 </h3>
                 <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
@@ -1027,7 +1027,7 @@ export function Suppliers() {
       {deactivateTarget ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <Card className="w-full max-w-md p-6">
-            <h3 className="text-lg font-bold text-ink">Deactivate supplier?</h3>
+            <h3 className="text-lg font-bold text-ink dark:text-white">Deactivate supplier?</h3>
             <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
               <span className="font-semibold text-slate-800 dark:text-slate-100">{deactivateTarget.name}</span> will be
               deactivated. It will remain in the records but can no longer be used for new purchase
@@ -1096,7 +1096,7 @@ function SupplierDrawer({
         <div className="flex items-start justify-between gap-3 border-b border-line p-5">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <h3 className="truncate text-lg font-bold text-ink">{supplier.name}</h3>
+              <h3 className="truncate text-lg font-bold text-ink dark:text-white">{supplier.name}</h3>
               {supplier.isActive !== false ? (
                 <Badge tone="pass">Active</Badge>
               ) : (
@@ -1121,11 +1121,11 @@ function SupplierDrawer({
           {/* Activity summary */}
           <div className="grid grid-cols-3 gap-2">
             <div className="rounded-xl bg-slate-50 dark:bg-slate-800 p-3 text-center">
-              <p className="tnum text-xl font-bold text-ink">{fmtInt(supplier._count?.intakes ?? 0)}</p>
+              <p className="tnum text-xl font-bold text-ink dark:text-white">{fmtInt(supplier._count?.intakes ?? 0)}</p>
               <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Intakes</p>
             </div>
             <div className="rounded-xl bg-slate-50 dark:bg-slate-800 p-3 text-center">
-              <p className="tnum text-xl font-bold text-ink">{fmtInt(supplier._count?.purchaseOrders ?? 0)}</p>
+              <p className="tnum text-xl font-bold text-ink dark:text-white">{fmtInt(supplier._count?.purchaseOrders ?? 0)}</p>
               <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Purchase orders</p>
             </div>
             <div className="rounded-xl bg-violet-50 p-3 text-center">
@@ -1232,7 +1232,7 @@ function SupplierDrawer({
               {openPos.map((po) => (
                 <li key={po.id} className="rounded-xl border border-line p-3">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="tnum text-sm font-bold text-ink">{po.poNo}</p>
+                    <p className="tnum text-sm font-bold text-ink dark:text-white">{po.poNo}</p>
                     <Badge tone={PO_STATUS_TONE[po.status] ?? 'neutral'}>{po.status.replace(/_/g, ' ')}</Badge>
                   </div>
                   <p className="tnum mt-1 text-xs text-slate-500 dark:text-slate-400">
@@ -1263,7 +1263,7 @@ function SupplierDrawer({
               {intakes.map((it) => (
                 <li key={it.id} className="rounded-xl border border-line p-3">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="tnum text-sm font-bold text-ink">{it.intakeNo}</p>
+                    <p className="tnum text-sm font-bold text-ink dark:text-white">{it.intakeNo}</p>
                     <Badge tone={INTAKE_STATUS_TONE[it.status] ?? 'neutral'}>
                       {it.status.replace(/_/g, ' ')}
                     </Badge>

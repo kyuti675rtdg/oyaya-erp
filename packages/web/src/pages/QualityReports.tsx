@@ -225,7 +225,7 @@ export function QualityReports() {
                   <span className="text-violet-600">{k.icon}</span> {k.label}
                 </p>
                 <div className="mt-2 flex items-end justify-between">
-                  <p className="tabular-nums text-2xl font-bold text-ink">{k.total}</p>
+                  <p className="tabular-nums text-2xl font-bold text-ink dark:text-white">{k.total}</p>
                   <Badge tone={k.rate >= 95 ? 'pass' : k.rate >= 80 ? 'advisory' : 'critical'}>
                     {k.rate.toFixed(1)}% pass
                   </Badge>

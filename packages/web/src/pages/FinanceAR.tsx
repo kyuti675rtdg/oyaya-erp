@@ -64,7 +64,7 @@ export function FinanceAR() {
             </div>
 
             <div>
-              <h3 className="mb-2 text-sm font-bold text-ink">Aging buckets</h3>
+              <h3 className="mb-2 text-sm font-bold text-ink dark:text-white">Aging buckets</h3>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 {Object.entries(BUCKET_LABELS).map(([key, label]) => {
                   const b = s!.buckets[key] ?? { count: 0, total: 0 };
@@ -74,7 +74,7 @@ export function FinanceAR() {
                         <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">{label}</p>
                         <BucketBadge bucket={key} />
                       </div>
-                      <p className="tnum mt-1 text-lg font-extrabold text-ink">{fmtBirr(b.total)}</p>
+                      <p className="tnum mt-1 text-lg font-extrabold text-ink dark:text-white">{fmtBirr(b.total)}</p>
                       <p className="text-xs text-slate-400 dark:text-slate-500">{b.count} open invoice{b.count === 1 ? '' : 's'}</p>
                     </Card>
                   );
@@ -88,7 +88,7 @@ export function FinanceAR() {
                   key: 'invoiceNo',
                   label: 'Invoice',
                   mono: true,
-                  render: (r) => <span className="font-bold text-ink">{r.invoiceNo}</span>
+                  render: (r) => <span className="font-bold text-ink dark:text-white">{r.invoiceNo}</span>
                 },
                 { key: 'customerName', label: 'Customer', render: (r) => r.customerName },
                 { key: 'issuedAt', label: 'Issued', render: (r) => fmtDate(r.issuedAt) },

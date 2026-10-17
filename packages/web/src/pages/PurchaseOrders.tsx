@@ -367,7 +367,7 @@ export function PurchaseOrders() {
         <div className={cardShell}>
           <DataTable<PurchaseOrder>
             columns={[
-              { key: 'poNo', label: 'PO No.', render: (r) => <span className="tnum font-bold text-ink">{r.poNo}</span> },
+              { key: 'poNo', label: 'PO No.', render: (r) => <span className="tnum font-bold text-ink dark:text-white">{r.poNo}</span> },
               { key: 'supplier', label: 'Supplier', render: (r) => r.supplier?.name ?? '-' },
               { key: 'wheatCategory', label: 'Wheat type', render: (r) => WHEAT_LABELS[r.wheatCategory] ?? r.wheatCategory },
               { key: 'quantityQ', label: 'Qty (q)', mono: true, render: (r) => fmtQ(r.quantityQ) },
@@ -444,7 +444,7 @@ export function PurchaseOrders() {
         <div className={modalShell} role="dialog" aria-modal="true" aria-label="Create purchase order"
           onKeyDown={(e) => { if (e.key === 'Escape') setCreateOpen(false); }}>
           <div className={`${cardShell} w-full max-w-lg`}>
-            <h3 className="text-lg font-bold text-ink">New purchase order</h3>
+            <h3 className="text-lg font-bold text-ink dark:text-white">New purchase order</h3>
             <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Draft — the order takes effect once approved.</p>
             <form onSubmit={submitCreate} className="mt-4 space-y-4">
               <Field label="Supplier" required>
@@ -506,7 +506,7 @@ export function PurchaseOrders() {
         <div className={modalShell} role="dialog" aria-modal="true" aria-label="Edit purchase order"
           onKeyDown={(e) => { if (e.key === 'Escape') setEditTarget(null); }}>
           <div className={`${cardShell} w-full max-w-lg`}>
-            <h3 className="text-lg font-bold text-ink">Edit draft {editTarget.poNo}</h3>
+            <h3 className="text-lg font-bold text-ink dark:text-white">Edit draft {editTarget.poNo}</h3>
             <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               Supplier: {editTarget.supplier?.name ?? '—'}
             </p>
@@ -562,7 +562,7 @@ export function PurchaseOrders() {
           <div className={`${cardShell} w-full max-w-md`}>
             <div className="flex items-center gap-2">
               <Ban className="h-5 w-5 text-rose-600" />
-              <h3 className="text-lg font-bold text-ink">Cancel {cancelTarget.poNo}?</h3>
+              <h3 className="text-lg font-bold text-ink dark:text-white">Cancel {cancelTarget.poNo}?</h3>
             </div>
             <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               The order will be closed as cancelled. Gate deliveries already received are not affected.
@@ -597,7 +597,7 @@ export function PurchaseOrders() {
             <div className="flex items-start justify-between">
               <div>
                 <div className="flex items-center gap-3">
-                  <h3 className="tnum text-lg font-bold text-ink">{detail?.poNo ?? 'Purchase order'}</h3>
+                  <h3 className="tnum text-lg font-bold text-ink dark:text-white">{detail?.poNo ?? 'Purchase order'}</h3>
                   {detail ? <POStatusBadge status={detail.status} /> : null}
                 </div>
                 <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
@@ -632,7 +632,7 @@ export function PurchaseOrders() {
                   ].map((kv) => (
                     <div key={kv.label} className="rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/60 p-3">
                       <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{kv.label}</p>
-                      <p className={`mt-1 text-sm font-bold text-ink ${kv.mono ? 'tnum' : ''}`}>{kv.value}</p>
+                      <p className={`mt-1 text-sm font-bold text-ink dark:text-white ${kv.mono ? 'tnum' : ''}`}>{kv.value}</p>
                     </div>
                   ))}
                 </div>
@@ -645,17 +645,17 @@ export function PurchaseOrders() {
 
                 {/* Variance */}
                 <div>
-                  <h4 className="mb-2 text-sm font-bold text-ink">Ordered vs received</h4>
+                  <h4 className="mb-2 text-sm font-bold text-ink dark:text-white">Ordered vs received</h4>
                   <ReceiveProgress po={detail} />
                   <div className="mt-2 flex flex-wrap gap-4 text-sm">
-                    <span className="tnum text-slate-600 dark:text-slate-300">Received: <strong className="text-ink">{fmtQ(detailReceived)} q</strong></span>
-                    <span className="tnum text-slate-600 dark:text-slate-300">Outstanding: <strong className="text-ink">{fmtQ(detailOutstanding)} q</strong></span>
+                    <span className="tnum text-slate-600 dark:text-slate-300">Received: <strong className="text-ink dark:text-white">{fmtQ(detailReceived)} q</strong></span>
+                    <span className="tnum text-slate-600 dark:text-slate-300">Outstanding: <strong className="text-ink dark:text-white">{fmtQ(detailOutstanding)} q</strong></span>
                   </div>
                 </div>
 
                 {/* Linked intakes */}
                 <div>
-                  <h4 className="mb-2 flex items-center gap-2 text-sm font-bold text-ink">
+                  <h4 className="mb-2 flex items-center gap-2 text-sm font-bold text-ink dark:text-white">
                     <Truck className="h-4 w-4 text-slate-400 dark:text-slate-500" /> Linked deliveries ({detailIntakes.length})
                   </h4>
                   {detailIntakes.length === 0 ? (
@@ -674,7 +674,7 @@ export function PurchaseOrders() {
                         <tbody>
                           {detailIntakes.map((i) => (
                             <tr key={i.id} className="border-t border-slate-100 dark:border-slate-700">
-                              <td className="tnum px-3 py-2 font-semibold text-ink">{i.intakeNo}</td>
+                              <td className="tnum px-3 py-2 font-semibold text-ink dark:text-white">{i.intakeNo}</td>
                               <td className="px-3 py-2 text-slate-600 dark:text-slate-300">{fmtDate(i.deliveryDate)}</td>
                               <td className="tnum px-3 py-2 text-right">{fmtQ(i.quintals)}</td>
                               <td className="px-3 py-2 text-slate-600 dark:text-slate-300">{i.status.replace('_', ' ')}</td>
@@ -688,7 +688,7 @@ export function PurchaseOrders() {
 
                 {/* Timeline */}
                 <div>
-                  <h4 className="mb-2 flex items-center gap-2 text-sm font-bold text-ink">
+                  <h4 className="mb-2 flex items-center gap-2 text-sm font-bold text-ink dark:text-white">
                     <CalendarDays className="h-4 w-4 text-slate-400 dark:text-slate-500" /> Timeline
                   </h4>
                   <ul className="space-y-2 text-sm">

@@ -167,11 +167,11 @@ export function CashBank() {
           <div className="space-y-4">
             <Card className="flex items-center justify-between bg-slate-50 dark:bg-slate-800 p-4">
               <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">Total cash & bank position</span>
-              <span className="tnum text-xl font-extrabold text-ink">{fmtBirr(totalCash)}</span>
+              <span className="tnum text-xl font-extrabold text-ink dark:text-white">{fmtBirr(totalCash)}</span>
             </Card>
             <DataTable<CashBankAccount>
               columns={[
-                { key: 'name', label: 'Account', render: (r) => <span className="font-bold text-ink">{r.name}</span> },
+                { key: 'name', label: 'Account', render: (r) => <span className="font-bold text-ink dark:text-white">{r.name}</span> },
                 {
                   key: 'kind',
                   label: 'Kind',
@@ -200,7 +200,7 @@ export function CashBank() {
                   key: 'balance',
                   label: 'Balance',
                   mono: true,
-                  render: (r) => <strong className="text-ink">{fmtBirr(r.balance ?? 0)}</strong>
+                  render: (r) => <strong className="text-ink dark:text-white">{fmtBirr(r.balance ?? 0)}</strong>
                 }
               ]}
               rows={accountsQ.data ?? []}
@@ -246,7 +246,7 @@ export function CashBank() {
           <Card className="max-h-[92vh] w-full max-w-lg overflow-y-auto p-6">
             <div className="mb-4 flex items-start justify-between">
               <div>
-                <h3 className="text-lg font-bold text-ink">Add cash / bank account</h3>
+                <h3 className="text-lg font-bold text-ink dark:text-white">Add cash / bank account</h3>
                 <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
                   Link the account to an Asset GL account; the balance is computed from postings.
                 </p>
@@ -322,7 +322,7 @@ export function CashBank() {
           <Card className="max-h-[92vh] w-full max-w-lg overflow-y-auto p-6">
             <div className="mb-4 flex items-start justify-between">
               <div>
-                <h3 className="text-lg font-bold text-ink">New transfer</h3>
+                <h3 className="text-lg font-bold text-ink dark:text-white">New transfer</h3>
                 <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
                   Posts a balanced journal: debit destination, credit source.
                 </p>

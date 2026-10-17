@@ -328,7 +328,7 @@ export function NcRegister() {
                         className="w-full rounded-xl border border-line bg-white dark:bg-slate-800 p-4 text-left shadow-sm"
                       >
                         <div className="flex items-center justify-between gap-2">
-                          <span className="font-bold tabular-nums text-ink">{r.ncNo}</span>
+                          <span className="font-bold tabular-nums text-ink dark:text-white">{r.ncNo}</span>
                           <Badge tone={severityTone(r.severity)}>{NC_SEVERITY_LABEL[r.severity]}</Badge>
                         </div>
                         <p className="mt-1 line-clamp-2 text-sm text-slate-600 dark:text-slate-300">{r.description}</p>
@@ -353,7 +353,7 @@ export function NcRegister() {
           <div className="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-xl">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <h3 className="text-lg font-bold tabular-nums text-ink">{detail.ncNo}</h3>
+                <h3 className="text-lg font-bold tabular-nums text-ink dark:text-white">{detail.ncNo}</h3>
                 <p className="text-sm text-slate-500 dark:text-slate-400">
                   {NC_SOURCE_LABEL[detail.source]} · detected {fmtDate(detail.dateDetected)}
                   {detail.detectedBy ? ` by ${detail.detectedBy}` : ''}
@@ -368,27 +368,27 @@ export function NcRegister() {
             <dl className="mt-4 space-y-2 text-sm">
               <div className="flex justify-between">
                 <dt className="text-slate-500 dark:text-slate-400">Batch</dt>
-                <dd className="font-medium tabular-nums text-ink">{detail.batch?.batchNo ?? '—'}</dd>
+                <dd className="font-medium tabular-nums text-ink dark:text-white">{detail.batch?.batchNo ?? '—'}</dd>
               </div>
               <div className="flex justify-between">
                 <dt className="text-slate-500 dark:text-slate-400">Reference</dt>
-                <dd className="font-medium text-ink">{detail.reference ?? '—'}</dd>
+                <dd className="font-medium text-ink dark:text-white">{detail.reference ?? '—'}</dd>
               </div>
               <div className="flex justify-between">
                 <dt className="text-slate-500 dark:text-slate-400">Linked CAPA</dt>
-                <dd className="font-medium tabular-nums text-ink">{detail.linkedCapa?.capaNo ?? 'None'}</dd>
+                <dd className="font-medium tabular-nums text-ink dark:text-white">{detail.linkedCapa?.capaNo ?? 'None'}</dd>
               </div>
               <div className="flex justify-between">
                 <dt className="text-slate-500 dark:text-slate-400">Root cause</dt>
-                <dd className="font-medium text-ink">{detail.rootCause ? 'Recorded' : 'Not recorded'}</dd>
+                <dd className="font-medium text-ink dark:text-white">{detail.rootCause ? 'Recorded' : 'Not recorded'}</dd>
               </div>
               <div className="flex justify-between">
                 <dt className="text-slate-500 dark:text-slate-400">Disposition</dt>
-                <dd className="font-medium text-ink">{detail.disposition ? 'Decided' : 'Not decided'}</dd>
+                <dd className="font-medium text-ink dark:text-white">{detail.disposition ? 'Decided' : 'Not decided'}</dd>
               </div>
               <div className="flex justify-between">
                 <dt className="text-slate-500 dark:text-slate-400">Actions</dt>
-                <dd className="font-medium tabular-nums text-ink">{detail.actions?.length ?? 0}</dd>
+                <dd className="font-medium tabular-nums text-ink dark:text-white">{detail.actions?.length ?? 0}</dd>
               </div>
             </dl>
 

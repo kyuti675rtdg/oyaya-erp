@@ -180,7 +180,7 @@ export function SalesReports() {
               ].map((k) => (
                 <Card key={k.label} className="p-4">
                   <p className="text-xs text-slate-500 dark:text-slate-400">{k.label}</p>
-                  <p className="tnum mt-1 text-xl font-extrabold text-ink">{k.value}</p>
+                  <p className="tnum mt-1 text-xl font-extrabold text-ink dark:text-white">{k.value}</p>
                 </Card>
               ))}
             </div>
@@ -260,7 +260,7 @@ export function SalesReports() {
               ].map((k) => (
                 <Card key={k.label} className="p-4">
                   <p className="text-xs text-slate-500 dark:text-slate-400">{k.label}</p>
-                  <p className="tnum mt-1 text-xl font-extrabold text-ink">{k.value}</p>
+                  <p className="tnum mt-1 text-xl font-extrabold text-ink dark:text-white">{k.value}</p>
                 </Card>
               ))}
             </div>

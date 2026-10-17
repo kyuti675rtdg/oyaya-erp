@@ -159,11 +159,11 @@ export function NcDisposition() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500 dark:text-slate-400">Quantity affected</span>
-                  <span className="font-bold tabular-nums text-ink">{fmtQ(disp.quantityQ)} Qt</span>
+                  <span className="font-bold tabular-nums text-ink dark:text-white">{fmtQ(disp.quantityQ)} Qt</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500 dark:text-slate-400">Approved</span>
-                  <span className="font-medium text-ink">
+                  <span className="font-medium text-ink dark:text-white">
                     {fmtDate(disp.approvedAt)}
                     {disp.approverName ? ` by ${disp.approverName}` : ''}
                   </span>
@@ -172,7 +172,7 @@ export function NcDisposition() {
                   <>
                     <div className="flex justify-between">
                       <span className="text-slate-500 dark:text-slate-400">Executed</span>
-                      <span className="font-medium text-ink">
+                      <span className="font-medium text-ink dark:text-white">
                         {fmtDate(disp.executedAt)}
                         {disp.executedBy ? ` by ${disp.executedBy}` : ''}
                       </span>

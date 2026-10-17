@@ -349,7 +349,7 @@ export function SalesLoading() {
             </table>
           </div>
 
-          <h4 className="mb-2 mt-5 text-sm font-bold text-ink">Loading checklist</h4>
+          <h4 className="mb-2 mt-5 text-sm font-bold text-ink dark:text-white">Loading checklist</h4>
           <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
             {CHECKLIST.map((c, i) => (
               <label

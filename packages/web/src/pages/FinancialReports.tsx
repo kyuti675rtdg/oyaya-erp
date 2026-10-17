@@ -34,7 +34,7 @@ function ReportCard({
   return (
     <Card className="flex flex-col gap-3 p-5">
       <div>
-        <h3 className="font-bold text-ink">{title}</h3>
+        <h3 className="font-bold text-ink dark:text-white">{title}</h3>
         <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">{sub}</p>
       </div>
       <div className="mt-auto flex gap-2">
@@ -406,7 +406,7 @@ function PrintSheet({
   return (
     <div className="space-y-4">
       <div className={`${cardShell} no-print flex items-center justify-between`}>
-        <h3 className="font-bold text-ink">Print preview — {title}</h3>
+        <h3 className="font-bold text-ink dark:text-white">Print preview — {title}</h3>
         <div className="flex gap-2">
           <Button variant="secondary" className="!px-4" onClick={onClose}>
             Close
@@ -418,7 +418,7 @@ function PrintSheet({
       </div>
       <div className="print-sheet mx-auto max-w-4xl rounded-xl border border-line bg-white dark:bg-slate-800 p-8 shadow-sm">
         <div className="border-b-2 border-ink pb-4 text-center">
-          <h1 className="text-2xl font-extrabold text-ink">OYAYA FLOUR FACTORY</h1>
+          <h1 className="text-2xl font-extrabold text-ink dark:text-white">OYAYA FLOUR FACTORY</h1>
           <p className="text-sm text-slate-600 dark:text-slate-300">{title}</p>
           <p className="tnum mt-1 text-xs text-slate-500 dark:text-slate-400">{period}</p>
         </div>
@@ -438,12 +438,12 @@ function StatementRows({ rows, total }: { rows: [string, number][]; total: [stri
         {rows.map(([label, amount]) => (
           <tr key={label} className="border-t border-line first:border-t-0">
             <td className="px-4 py-2.5 text-slate-700 dark:text-slate-200">{label}</td>
-            <td className="tnum px-4 py-2.5 text-right font-medium text-ink">{fmtBirr(amount)}</td>
+            <td className="tnum px-4 py-2.5 text-right font-medium text-ink dark:text-white">{fmtBirr(amount)}</td>
           </tr>
         ))}
         <tr className="border-t-2 border-ink bg-alabaster">
-          <td className="px-4 py-3 font-bold text-ink">{total[0]}</td>
-          <td className="tnum px-4 py-3 text-right font-extrabold text-ink">{fmtBirr(total[1])}</td>
+          <td className="px-4 py-3 font-bold text-ink dark:text-white">{total[0]}</td>
+          <td className="tnum px-4 py-3 text-right font-extrabold text-ink dark:text-white">{fmtBirr(total[1])}</td>
         </tr>
       </tbody>
     </table>

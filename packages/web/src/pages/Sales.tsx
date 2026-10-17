@@ -337,7 +337,7 @@ export function Sales() {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card className="p-5 lg:col-span-2">
-          <h3 className="mb-4 text-base font-bold text-ink">New customer order (multi-line)</h3>
+          <h3 className="mb-4 text-base font-bold text-ink dark:text-white">New customer order (multi-line)</h3>
           <form onSubmit={createOrder} className="space-y-4">
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               <Field label="Customer" required>
@@ -356,7 +356,7 @@ export function Sales() {
             </div>
 
             <div className="rounded-xl border border-line p-4">
-              <h4 className="mb-3 text-sm font-bold text-ink">Order lines</h4>
+              <h4 className="mb-3 text-sm font-bold text-ink dark:text-white">Order lines</h4>
               <div className="grid grid-cols-2 gap-3 md:grid-cols-6">
                 <Field label="Product">
                   <Select value={lineProductId} onChange={(e) => setLineProductId(e.target.value)}>
@@ -436,8 +436,8 @@ export function Sales() {
 
             <div className="flex items-center justify-between">
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                Total: <span className="tnum font-bold text-ink">{fmtQ(draftTotalQ)} q</span> —{' '}
-                <span className="tnum font-bold text-ink">{fmtBirr(draftTotalV)}</span>
+                Total: <span className="tnum font-bold text-ink dark:text-white">{fmtQ(draftTotalQ)} q</span> —{' '}
+                <span className="tnum font-bold text-ink dark:text-white">{fmtBirr(draftTotalV)}</span>
               </p>
               <Button type="submit" loading={saving} disabled={draftLines.length === 0}>
                 Create order (DRAFT)
@@ -448,7 +448,7 @@ export function Sales() {
 
         <div className="space-y-4">
           <Card className="p-5">
-            <h3 className="mb-4 text-base font-bold text-ink">Advance payment</h3>
+            <h3 className="mb-4 text-base font-bold text-ink dark:text-white">Advance payment</h3>
             <form onSubmit={recordAdvance} className="space-y-4">
               <Field label="Customer" required>
                 <Select value={advCustomerId} onChange={(e) => setAdvCustomerId(e.target.value)} required>
@@ -468,7 +468,7 @@ export function Sales() {
               </Button>
             </form>
 
-            <h3 className="mb-2 mt-6 text-base font-bold text-ink">Dispatch</h3>
+            <h3 className="mb-2 mt-6 text-base font-bold text-ink dark:text-white">Dispatch</h3>
             <p className="mb-3 text-sm text-slate-500 dark:text-slate-400">
               Loading is confirmed separately from order placement. Multiple orders for the same or nearby
               destination area can be consolidated up to vehicle capacity.
@@ -485,18 +485,18 @@ export function Sales() {
           </Card>
 
           <Card className="p-5">
-            <h3 className="mb-4 text-base font-bold text-ink">Sales-to-cash reconciliation</h3>
+            <h3 className="mb-4 text-base font-bold text-ink dark:text-white">Sales-to-cash reconciliation</h3>
             {reconQ.isLoading ? (
               <Spinner label="Loading reconciliation..." />
             ) : recon ? (
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-500 dark:text-slate-400">Invoiced sales</span>
-                  <span className="tnum font-bold text-ink">{fmtBirr(recon.totals.invoiced)}</span>
+                  <span className="tnum font-bold text-ink dark:text-white">{fmtBirr(recon.totals.invoiced)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-500 dark:text-slate-400">Cash received</span>
-                  <span className="tnum font-bold text-ink">{fmtBirr(recon.totals.received)}</span>
+                  <span className="tnum font-bold text-ink dark:text-white">{fmtBirr(recon.totals.received)}</span>
                 </div>
                 <div className="flex justify-between border-t border-line pt-2 text-sm">
                   <span className="font-semibold text-slate-700 dark:text-slate-200">Unreconciled gap</span>
@@ -579,7 +579,7 @@ export function Sales() {
         )}
         {expandedOrder && expandedOrder.lines && expandedOrder.lines.length > 0 ? (
           <Card className="mt-3 p-5">
-            <h3 className="mb-3 text-sm font-bold text-ink">
+            <h3 className="mb-3 text-sm font-bold text-ink dark:text-white">
               Order {expandedOrder.orderNo} — lines
               <Button variant="ghost" onClick={() => setExpandedId(null)} className="float-right px-2 py-1 text-xs">
                 Close
@@ -618,7 +618,7 @@ export function Sales() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true">
           <Card className="max-h-[90vh] w-full max-w-2xl overflow-y-auto p-6">
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-bold text-ink">Dispatch wizard — step {wizardStep} of 3</h3>
+              <h3 className="text-lg font-bold text-ink dark:text-white">Dispatch wizard — step {wizardStep} of 3</h3>
               <Button variant="ghost" onClick={() => setWizardOpen(false)} className="px-3">
                 Cancel
               </Button>

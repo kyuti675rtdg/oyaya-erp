@@ -81,7 +81,7 @@ export function PayrollJournal() {
               </Card>
               <Card className="p-4">
                 <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Total runs</p>
-                <p className="tnum mt-1 text-xl font-extrabold text-ink">{fmtInt(runsQ.data?.length ?? 0)}</p>
+                <p className="tnum mt-1 text-xl font-extrabold text-ink dark:text-white">{fmtInt(runsQ.data?.length ?? 0)}</p>
               </Card>
             </div>
 
@@ -91,7 +91,7 @@ export function PayrollJournal() {
                   key: 'period',
                   label: 'Period',
                   render: (r) => (
-                    <span className="font-bold text-ink">
+                    <span className="font-bold text-ink dark:text-white">
                       {MONTHS[r.periodMonth - 1] ?? r.periodMonth} {r.periodYear}
                     </span>
                   )
@@ -139,14 +139,14 @@ export function PayrollJournal() {
 
       {postedEntry ? (
         <div className={cardShell}>
-          <h3 className="mb-3 text-base font-bold text-ink">Posted entry preview</h3>
+          <h3 className="mb-3 text-base font-bold text-ink dark:text-white">Posted entry preview</h3>
           <DataTable
             columns={[
               {
                 key: 'account',
                 label: 'Account',
                 render: (r) => (
-                  <span className="font-semibold text-ink">
+                  <span className="font-semibold text-ink dark:text-white">
                     <span className="tnum mr-2 text-slate-400 dark:text-slate-500">{r.account.code}</span>
                     {r.account.name}
                   </span>

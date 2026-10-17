@@ -179,14 +179,14 @@ export function ChartOfAccounts() {
                 key: 'code',
                 label: 'Code',
                 mono: true,
-                render: (r) => <span className="font-bold text-ink">{r.code}</span>
+                render: (r) => <span className="font-bold text-ink dark:text-white">{r.code}</span>
               },
               {
                 key: 'name',
                 label: 'Account name',
                 render: (r) => (
                   <div>
-                    <span className="font-semibold text-ink">{r.name}</span>
+                    <span className="font-semibold text-ink dark:text-white">{r.name}</span>
                     {childrenOf(r.id).length > 0 ? (
                       <p className="text-xs text-slate-400 dark:text-slate-500">
                         Parent of {childrenOf(r.id).length} sub-account
@@ -241,7 +241,7 @@ export function ChartOfAccounts() {
           <Card className="max-h-[92vh] w-full max-w-lg overflow-y-auto p-6">
             <div className="mb-4 flex items-start justify-between">
               <div>
-                <h3 className="text-lg font-bold text-ink">
+                <h3 className="text-lg font-bold text-ink dark:text-white">
                   {editing ? 'Edit account' : 'New account'}
                 </h3>
                 <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">

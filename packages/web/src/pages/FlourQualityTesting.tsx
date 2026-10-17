@@ -246,7 +246,7 @@ export function FlourQualityTesting() {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card className="p-5 lg:col-span-2">
-          <h3 className="mb-4 flex items-center gap-2 text-base font-bold text-ink">
+          <h3 className="mb-4 flex items-center gap-2 text-base font-bold text-ink dark:text-white">
             <FlaskConical size={16} className="text-violet-600" /> Record flour test
           </h3>
           <form onSubmit={submit} className="space-y-4">

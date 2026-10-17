@@ -104,7 +104,7 @@ export function NcSignOff() {
                     {rows.map((s) => (
                       <tr key={s.id} className="border-t border-line hover:bg-alabaster">
                         <td className="px-4 py-3">
-                          <span className="font-bold tabular-nums text-ink">{s.nc?.ncNo ?? '—'}</span>
+                          <span className="font-bold tabular-nums text-ink dark:text-white">{s.nc?.ncNo ?? '—'}</span>
                           <span className="block max-w-xs truncate text-xs text-slate-500 dark:text-slate-400" title={s.nc?.description}>
                             {s.nc?.description}
                           </span>
@@ -166,7 +166,7 @@ export function NcSignOff() {
               {rows.map((s) => (
                 <div key={s.id} className="rounded-xl border border-line bg-white dark:bg-slate-800 p-4 shadow-sm">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="font-bold tabular-nums text-ink">{s.nc?.ncNo ?? '—'}</span>
+                    <span className="font-bold tabular-nums text-ink dark:text-white">{s.nc?.ncNo ?? '—'}</span>
                     <Badge tone={signoffTone(s.status)}>{s.status === 'PENDING' ? 'Pending' : 'Completed'}</Badge>
                   </div>
                   <p className="mt-1 line-clamp-2 text-sm text-slate-600 dark:text-slate-300">{s.nc?.description}</p>

@@ -168,7 +168,7 @@ export function QcChecks() {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card className="p-5 lg:col-span-2">
-          <h3 className="mb-4 text-base font-bold text-ink">Record 2-hour check</h3>
+          <h3 className="mb-4 text-base font-bold text-ink dark:text-white">Record 2-hour check</h3>
           <form onSubmit={submit} className="space-y-4">
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <Field label="Sample time" required>
@@ -227,7 +227,7 @@ export function QcChecks() {
         </Card>
 
         <Card className="p-5">
-          <h3 className="mb-4 text-base font-bold text-ink">Shift & daily averages</h3>
+          <h3 className="mb-4 text-base font-bold text-ink dark:text-white">Shift & daily averages</h3>
           {checksQ.isLoading ? (
             <p className="text-sm text-slate-500 dark:text-slate-400">Loading averages...</p>
           ) : (
@@ -240,7 +240,7 @@ export function QcChecks() {
                       {Object.entries(avgs).map(([k, v]) => (
                         <li key={k} className="flex justify-between">
                           <span className="text-slate-600 dark:text-slate-300">{k}</span>
-                          <span className="tnum font-semibold text-ink">{v.toFixed(2)}</span>
+                          <span className="tnum font-semibold text-ink dark:text-white">{v.toFixed(2)}</span>
                         </li>
                       ))}
                     </ul>

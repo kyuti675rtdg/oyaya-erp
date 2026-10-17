@@ -248,7 +248,7 @@ export function RoleManagement() {
                 return (
                   <div key={module} className="rounded-xl border border-line p-3">
                     <div className="mb-2 flex items-center justify-between">
-                      <p className="text-sm font-bold capitalize text-ink">{module}</p>
+                      <p className="text-sm font-bold capitalize text-ink dark:text-white">{module}</p>
                       <Badge tone={granted > 0 ? 'pass' : 'neutral'}>
                         {granted}/{perms.length}
                       </Badge>

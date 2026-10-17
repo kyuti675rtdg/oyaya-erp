@@ -277,7 +277,7 @@ export function Vouchers() {
           <Card className="max-h-[92vh] w-full max-w-lg overflow-y-auto p-6">
             <div className="mb-4 flex items-start justify-between">
               <div>
-                <h3 className="text-lg font-bold text-ink">
+                <h3 className="text-lg font-bold text-ink dark:text-white">
                   New {kind === 'PAYMENT' ? 'payment' : 'receipt'} voucher
                 </h3>
                 <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
@@ -551,7 +551,7 @@ function FinanceVoucherDetail({ voucher: v, onPrint }: { voucher: FinanceVoucher
 
       <div className="print-sheet mx-auto max-w-3xl rounded-xl border border-line bg-white dark:bg-slate-800 p-8 shadow-sm">
         <div className="border-b-2 border-ink pb-4 text-center">
-          <h1 className="text-2xl font-extrabold text-ink">OYAYA FLOUR FACTORY</h1>
+          <h1 className="text-2xl font-extrabold text-ink dark:text-white">OYAYA FLOUR FACTORY</h1>
           <p className="text-sm text-slate-600 dark:text-slate-300">{isPayment ? 'Payment Voucher' : 'Receipt Voucher'}</p>
         </div>
         <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
@@ -713,7 +713,7 @@ function ApPaymentVoucherDetail({
 
       <div className="print-sheet mx-auto max-w-3xl rounded-xl border border-line bg-white dark:bg-slate-800 p-8 shadow-sm">
         <div className="border-b-2 border-ink pb-4 text-center">
-          <h1 className="text-2xl font-extrabold text-ink">OYAYA FLOUR FACTORY</h1>
+          <h1 className="text-2xl font-extrabold text-ink dark:text-white">OYAYA FLOUR FACTORY</h1>
           <p className="text-sm text-slate-600 dark:text-slate-300">Payment Voucher</p>
         </div>
         <div className="mt-4 grid grid-cols-2 gap-2 text-sm">

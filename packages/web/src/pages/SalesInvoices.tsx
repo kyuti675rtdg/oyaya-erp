@@ -293,7 +293,7 @@ export function SalesInvoices() {
             </table>
             {(expanded.receipts ?? []).length > 0 || (expanded.applications ?? []).length > 0 ? (
               <div className="mt-3 text-xs text-slate-500 dark:text-slate-400">
-                <p className="font-bold text-ink">Payments</p>
+                <p className="font-bold text-ink dark:text-white">Payments</p>
                 {(expanded.receipts ?? []).map((x) => (
                   <p key={x.id} className="tnum">
                     Receipt {x.receiptNo} — {fmtBirr(x.amountBirr)} ({fmtDate(x.receivedAt)})

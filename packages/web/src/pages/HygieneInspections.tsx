@@ -324,7 +324,7 @@ export function HygieneInspections() {
           <Card className="max-h-[90vh] w-full max-w-xl overflow-y-auto p-6">
             <div className="mb-2 flex items-start justify-between">
               <div>
-                <h3 className="text-lg font-bold text-ink">{detail.target}</h3>
+                <h3 className="text-lg font-bold text-ink dark:text-white">{detail.target}</h3>
                 <p className="text-sm tabular-nums text-slate-500 dark:text-slate-400">{fmtDateTime(detail.inspectedAt)} · {detail.inspector}</p>
               </div>
               <Button variant="ghost" className="px-2 py-1" onClick={() => setDetail(null)} aria-label="Close">

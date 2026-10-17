@@ -337,7 +337,7 @@ export function HygieneChecklists() {
           <Card className="max-h-[90vh] w-full max-w-xl overflow-y-auto p-6">
             <div className="mb-2 flex items-start justify-between">
               <div>
-                <h3 className="text-lg font-bold text-ink">{detail.name}</h3>
+                <h3 className="text-lg font-bold text-ink dark:text-white">{detail.name}</h3>
                 <p className="text-sm text-slate-500 dark:text-slate-400">
                   {detail.equipment}{detail.area ? ` · ${detail.area}` : ''} · {FREQUENCY_LABEL[detail.frequency]}
                 </p>

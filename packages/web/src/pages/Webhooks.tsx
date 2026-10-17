@@ -213,7 +213,7 @@ export function Webhooks() {
         ) : (
           <DataTable<Webhook>
             columns={[
-              { key: 'name', label: 'Name', render: (r) => <span className="font-semibold text-ink">{r.name}</span> },
+              { key: 'name', label: 'Name', render: (r) => <span className="font-semibold text-ink dark:text-white">{r.name}</span> },
               { key: 'url', label: 'URL', render: (r) => <span className="font-mono text-xs text-slate-500 dark:text-slate-400">{r.url}</span> },
               {
                 key: 'events', label: 'Events',

@@ -107,16 +107,16 @@ export function TrialBalance() {
                 {tbQ.data.accounts.map((r) => (
                   <tr key={r.code} className="border-t border-line">
                     <td className="tnum px-4 py-2.5 text-slate-500 dark:text-slate-400">{r.code}</td>
-                    <td className="px-4 py-2.5 font-medium text-ink">{r.name}</td>
+                    <td className="px-4 py-2.5 font-medium text-ink dark:text-white">{r.name}</td>
                     <td className="px-4 py-2.5 text-xs font-semibold uppercase text-slate-400 dark:text-slate-500">{r.type}</td>
                     <td className="tnum px-4 py-2.5 text-right">{fmtBirr(r.debit)}</td>
                     <td className="tnum px-4 py-2.5 text-right">{fmtBirr(r.credit)}</td>
                   </tr>
                 ))}
                 <tr className="border-t-2 border-ink bg-alabaster font-bold">
-                  <td colSpan={3} className="px-4 py-3 text-ink">Totals</td>
-                  <td className="tnum px-4 py-3 text-right text-ink">{fmtBirr(tbQ.data.totals.debit)}</td>
-                  <td className="tnum px-4 py-3 text-right text-ink">{fmtBirr(tbQ.data.totals.credit)}</td>
+                  <td colSpan={3} className="px-4 py-3 text-ink dark:text-white">Totals</td>
+                  <td className="tnum px-4 py-3 text-right text-ink dark:text-white">{fmtBirr(tbQ.data.totals.debit)}</td>
+                  <td className="tnum px-4 py-3 text-right text-ink dark:text-white">{fmtBirr(tbQ.data.totals.credit)}</td>
                 </tr>
               </tbody>
             </table>

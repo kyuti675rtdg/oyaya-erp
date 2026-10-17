@@ -229,7 +229,7 @@ export function Expenses() {
                   key: 'claimNo',
                   label: 'Claim',
                   mono: true,
-                  render: (r) => <span className="font-bold text-ink">{r.claimNo}</span>
+                  render: (r) => <span className="font-bold text-ink dark:text-white">{r.claimNo}</span>
                 },
                 { key: 'title', label: 'Title', render: (r) => <span className="block max-w-xs">{r.title}</span> },
                 { key: 'category', label: 'Category', render: (r) => r.category?.name ?? '—' },
@@ -293,7 +293,7 @@ export function Expenses() {
         ) : (
           <DataTable<ExpenseCategory>
             columns={[
-              { key: 'name', label: 'Category', render: (r) => <span className="font-bold text-ink">{r.name}</span> },
+              { key: 'name', label: 'Category', render: (r) => <span className="font-bold text-ink dark:text-white">{r.name}</span> },
               {
                 key: 'glAccountCode',
                 label: 'Default GL account',
@@ -319,7 +319,7 @@ export function Expenses() {
           <Card className="max-h-[92vh] w-full max-w-lg overflow-y-auto p-6">
             <div className="mb-4 flex items-start justify-between">
               <div>
-                <h3 className="text-lg font-bold text-ink">New expense claim</h3>
+                <h3 className="text-lg font-bold text-ink dark:text-white">New expense claim</h3>
                 <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
                   Created as DRAFT, then submitted for approval.
                 </p>
@@ -400,7 +400,7 @@ export function Expenses() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true">
           <Card className="max-h-[92vh] w-full max-w-md overflow-y-auto p-6">
             <div className="mb-4 flex items-start justify-between">
-              <h3 className="text-lg font-bold text-ink">New expense category</h3>
+              <h3 className="text-lg font-bold text-ink dark:text-white">New expense category</h3>
               <button
                 onClick={() => setCatModal(false)}
                 className="rounded-lg p-1.5 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700"

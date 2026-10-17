@@ -117,7 +117,7 @@ export function BatchDetail() {
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="tnum text-2xl font-extrabold tracking-tight text-ink">Batch {batch.batchNo}</h1>
+              <h1 className="tnum text-2xl font-extrabold tracking-tight text-ink dark:text-white">Batch {batch.batchNo}</h1>
               <Badge tone={statusTone}>{batch.status}</Badge>
             </div>
             <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
@@ -144,7 +144,7 @@ export function BatchDetail() {
         {/* Blend ratio */}
         <Card className="p-5">
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-base font-bold text-ink">Wheat blend ratio</h3>
+            <h3 className="text-base font-bold text-ink dark:text-white">Wheat blend ratio</h3>
             {editable ? <Badge tone="advisory">Set per batch</Badge> : <Badge tone="pass">Locked</Badge>}
           </div>
 
@@ -155,7 +155,7 @@ export function BatchDetail() {
                 <div key={label}>
                   <div className="mb-1 flex justify-between text-sm">
                     <span className="font-medium text-slate-600 dark:text-slate-300">{label}</span>
-                    <span className="tnum font-bold text-ink">
+                    <span className="tnum font-bold text-ink dark:text-white">
                       {fmtPct(Number(pct))} <span className="font-medium text-slate-500 dark:text-slate-400">({fmtQ(q)} q)</span>
                     </span>
                   </div>
@@ -196,7 +196,7 @@ export function BatchDetail() {
 
         {/* Farm-to-bag chain */}
         <Card className="p-5">
-          <h3 className="mb-4 text-base font-bold text-ink">Farm-to-bag traceability chain</h3>
+          <h3 className="mb-4 text-base font-bold text-ink dark:text-white">Farm-to-bag traceability chain</h3>
           <ol className="space-y-3">
             {chain.map(([label, text], i) => (
               <li key={label} className="flex gap-3">
@@ -204,7 +204,7 @@ export function BatchDetail() {
                   {i + 1}
                 </span>
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-ink">{label}</p>
+                  <p className="text-sm font-semibold text-ink dark:text-white">{label}</p>
                   <p className="truncate text-sm text-slate-500 dark:text-slate-400" title={text}>
                     {text}
                   </p>

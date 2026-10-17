@@ -199,11 +199,11 @@ export function SalesAdvances() {
                 <div className="grid grid-cols-3 gap-3 text-center">
                   <div className="rounded-xl bg-slate-50 dark:bg-slate-800 px-3 py-3">
                     <p className="text-xs text-slate-500 dark:text-slate-400">Total received</p>
-                    <p className="tnum text-lg font-extrabold text-ink">{fmtBirr(bal.total)}</p>
+                    <p className="tnum text-lg font-extrabold text-ink dark:text-white">{fmtBirr(bal.total)}</p>
                   </div>
                   <div className="rounded-xl bg-slate-50 dark:bg-slate-800 px-3 py-3">
                     <p className="text-xs text-slate-500 dark:text-slate-400">Applied</p>
-                    <p className="tnum text-lg font-extrabold text-ink">{fmtBirr(bal.applied)}</p>
+                    <p className="tnum text-lg font-extrabold text-ink dark:text-white">{fmtBirr(bal.applied)}</p>
                   </div>
                   <div className="rounded-xl bg-pass-bg px-3 py-3">
                     <p className="text-xs text-pass-text">Available</p>
@@ -212,7 +212,7 @@ export function SalesAdvances() {
                 </div>
 
                 <div className="mt-4">
-                  <h4 className="mb-2 text-sm font-bold text-ink">Advances</h4>
+                  <h4 className="mb-2 text-sm font-bold text-ink dark:text-white">Advances</h4>
                   <DataTable
                     columns={[
                       { key: 'paidAt', label: 'Date', render: (r) => fmtDate(r.paidAt) },

@@ -162,7 +162,7 @@ export function ExitNote() {
 
       <div className="print-sheet mx-auto max-w-3xl rounded-xl border border-line bg-white dark:bg-slate-800 p-8 shadow-sm">
         <div className="border-b-2 border-ink pb-4 text-center">
-          <h1 className="text-2xl font-extrabold text-ink">OYAYA FLOUR FACTORY</h1>
+          <h1 className="text-2xl font-extrabold text-ink dark:text-white">OYAYA FLOUR FACTORY</h1>
           <p className="text-sm text-slate-600 dark:text-slate-300">Dispatch / Exit Note</p>
         </div>
 

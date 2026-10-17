@@ -123,7 +123,7 @@ export function Payroll() {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card className="p-5">
-          <h3 className="mb-4 text-base font-bold text-ink">Run payroll</h3>
+          <h3 className="mb-4 text-base font-bold text-ink dark:text-white">Run payroll</h3>
           <form onSubmit={createRun} className="space-y-4">
             <Field label="Pay period" required hint="Salaried overtime is computed from ZKTeco punches.">
               <TextInput type="month" value={period} onChange={(e) => setPeriod(e.target.value)} required />
@@ -133,7 +133,7 @@ export function Payroll() {
             </Button>
           </form>
 
-          <h3 className="mb-4 mt-8 text-base font-bold text-ink">Piece-rate log</h3>
+          <h3 className="mb-4 mt-8 text-base font-bold text-ink dark:text-white">Piece-rate log</h3>
           <form onSubmit={logPieceRate} className="space-y-4">
             <Field label="Laborer / crew" required>
               <TextInput value={prLaborer} onChange={(e) => setPrLaborer(e.target.value)} placeholder="Name or crew" required />

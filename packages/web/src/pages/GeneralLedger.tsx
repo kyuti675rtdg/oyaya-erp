@@ -77,11 +77,11 @@ export function GeneralLedger() {
           <div className="space-y-4">
             <div className="flex flex-wrap items-center gap-3">
               <AccountTypeBadge type={ledgerQ.data.account.type} />
-              <span className="text-sm font-bold text-ink">
+              <span className="text-sm font-bold text-ink dark:text-white">
                 {ledgerQ.data.account.code} — {ledgerQ.data.account.name}
               </span>
               <span className="tnum ml-auto text-sm text-slate-500 dark:text-slate-400">
-                Opening balance: <strong className="text-ink">{fmtBirr(ledgerQ.data.openingBalance)}</strong>
+                Opening balance: <strong className="text-ink dark:text-white">{fmtBirr(ledgerQ.data.openingBalance)}</strong>
               </span>
             </div>
             <DataTable
@@ -101,7 +101,7 @@ export function GeneralLedger() {
                   key: 'balance',
                   label: 'Balance',
                   mono: true,
-                  render: (r) => <strong className="text-ink">{fmtBirr(r.balance)}</strong>
+                  render: (r) => <strong className="text-ink dark:text-white">{fmtBirr(r.balance)}</strong>
                 },
                 {
                   key: 'go',
@@ -134,7 +134,7 @@ export function GeneralLedger() {
       {entryId ? (
         <div className={cardShell}>
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-base font-bold text-ink">
+            <h3 className="text-base font-bold text-ink dark:text-white">
               Journal entry {entryQ.data?.entryNo ?? ''}
             </h3>
             <Button variant="secondary" className="!px-4" onClick={() => setEntryId(null)}>
@@ -155,7 +155,7 @@ export function GeneralLedger() {
                     key: 'account',
                     label: 'Account',
                     render: (r) => (
-                      <span className="font-semibold text-ink">
+                      <span className="font-semibold text-ink dark:text-white">
                         <span className="tnum mr-2 text-slate-400 dark:text-slate-500">{r.account.code}</span>
                         {r.account.name}
                       </span>

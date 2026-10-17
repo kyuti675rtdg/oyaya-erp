@@ -250,7 +250,7 @@ export function SalesAgreements() {
             </div>
 
             <div className="rounded-xl border border-line p-4">
-              <h4 className="mb-3 text-sm font-bold text-ink">Price lines</h4>
+              <h4 className="mb-3 text-sm font-bold text-ink dark:text-white">Price lines</h4>
               <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
                 <Field label="Product">
                   <Select value={lineProductId} onChange={(e) => setLineProductId(e.target.value)}>
@@ -385,7 +385,7 @@ export function SalesAgreements() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-500 dark:text-slate-400">Price</span>
-                      <span className="tnum text-lg font-extrabold text-ink">{fmtBirr(quote.priceBirr)}/q</span>
+                      <span className="tnum text-lg font-extrabold text-ink dark:text-white">{fmtBirr(quote.priceBirr)}/q</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-500 dark:text-slate-400">Discount</span>

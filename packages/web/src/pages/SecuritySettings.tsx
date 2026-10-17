@@ -243,7 +243,7 @@ export function SecuritySettings() {
             ) : (
               <DataTable<AdminUserLite>
                 columns={[
-                  { key: 'name', label: 'User', render: (r) => <span className="font-semibold text-ink">{r.name}</span> },
+                  { key: 'name', label: 'User', render: (r) => <span className="font-semibold text-ink dark:text-white">{r.name}</span> },
                   {
                     key: 'mfaEnabled', label: 'MFA',
                     render: (r) => <Badge tone={r.mfaEnabled ? 'pass' : 'neutral'}>{r.mfaEnabled ? 'Enabled' : 'Not enrolled'}</Badge>,

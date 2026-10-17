@@ -402,7 +402,7 @@ export function Tanks() {
     <div>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-xl font-bold text-ink">Conditioning Tanks</h2>
+          <h2 className="text-xl font-bold text-ink dark:text-white">Conditioning Tanks</h2>
           <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
             Wet conditioning tanks A, B and C — partial fills supported, advisory rest guidance only
           </p>
@@ -569,7 +569,7 @@ export function Tanks() {
           aria-label={`Empty tank ${emptyTank.code.replace('TANK_', '')}`}
         >
           <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-base font-bold text-ink">Empty Tank {emptyTank.code.replace('TANK_', '')}</h3>
+            <h3 className="text-base font-bold text-ink dark:text-white">Empty Tank {emptyTank.code.replace('TANK_', '')}</h3>
             <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               Current level: <span className="font-semibold tabular-nums text-slate-800 dark:text-slate-100">{fmtQ(emptyTank.levelQ)} q</span>
             </p>

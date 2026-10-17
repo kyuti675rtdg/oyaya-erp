@@ -52,13 +52,13 @@ function AccountSection({
                     <span className="tnum mr-2 text-slate-400 dark:text-slate-500">{r.code}</span>
                     {r.name}
                   </td>
-                  <td className="tnum px-4 py-2.5 text-right text-ink">{fmtBirr(r.amount)}</td>
+                  <td className="tnum px-4 py-2.5 text-right text-ink dark:text-white">{fmtBirr(r.amount)}</td>
                 </tr>
               ))
             )}
             <tr className="border-t-2 border-ink bg-alabaster font-bold">
-              <td className="px-4 py-3 text-ink">{totalLabel}</td>
-              <td className="tnum px-4 py-3 text-right text-ink">{fmtBirr(section.total)}</td>
+              <td className="px-4 py-3 text-ink dark:text-white">{totalLabel}</td>
+              <td className="tnum px-4 py-3 text-right text-ink dark:text-white">{fmtBirr(section.total)}</td>
             </tr>
           </tbody>
         </table>
@@ -121,11 +121,11 @@ export function BalanceSheet() {
             <div className="rounded-xl border border-line bg-white dark:bg-slate-800 px-4 py-3">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-slate-600 dark:text-slate-300">Net income (current period)</span>
-                <span className="tnum font-bold text-ink">{fmtBirr(d.netIncome)}</span>
+                <span className="tnum font-bold text-ink dark:text-white">{fmtBirr(d.netIncome)}</span>
               </div>
               <div className="mt-2 flex items-center justify-between border-t border-line pt-2">
-                <span className="font-bold text-ink">Total equity (incl. net income)</span>
-                <span className="tnum text-lg font-extrabold text-ink">{fmtBirr(d.equity.total)}</span>
+                <span className="font-bold text-ink dark:text-white">Total equity (incl. net income)</span>
+                <span className="tnum text-lg font-extrabold text-ink dark:text-white">{fmtBirr(d.equity.total)}</span>
               </div>
             </div>
 

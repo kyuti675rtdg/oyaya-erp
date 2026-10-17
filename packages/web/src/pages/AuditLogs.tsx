@@ -200,7 +200,7 @@ export function AuditLogs() {
                     <span className="text-sm">
                       {r.user ? (
                         <>
-                          <span className="font-semibold text-ink">{r.user.name}</span>
+                          <span className="font-semibold text-ink dark:text-white">{r.user.name}</span>
                           <span className="block text-xs text-slate-400 dark:text-slate-500">{r.user.email}</span>
                         </>
                       ) : (

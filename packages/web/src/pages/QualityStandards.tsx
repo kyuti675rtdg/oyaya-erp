@@ -155,7 +155,7 @@ export function QualityStandards() {
     <div>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-xl font-bold text-ink">Quality Standards &amp; Thresholds</h2>
+          <h2 className="text-xl font-bold text-ink dark:text-white">Quality Standards &amp; Thresholds</h2>
           <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
             Configurable lab thresholds with a full audit trail. Intake, in-process and flour
             standards are kept separate.
@@ -267,7 +267,7 @@ export function QualityStandards() {
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 p-4 sm:items-center" role="dialog" aria-modal="true">
           <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-slate-800 p-5 shadow-xl">
             <div className="mb-3 flex items-center justify-between">
-              <h3 className="flex items-center gap-2 text-base font-bold text-ink">
+              <h3 className="flex items-center gap-2 text-base font-bold text-ink dark:text-white">
                 <History size={16} /> Audit trail
               </h3>
               <button
@@ -449,7 +449,7 @@ function ThresholdRowDesktop(props: {
             onSave={props.onSave}
           />
         ) : (
-          <span className="tabular-nums font-semibold text-ink">{rangeText(t)}</span>
+          <span className="tabular-nums font-semibold text-ink dark:text-white">{rangeText(t)}</span>
         )}
       </td>
       <td className="px-3 py-3">
@@ -513,7 +513,7 @@ function ThresholdRowMobile(props: {
         </div>
       ) : (
         <>
-          <p className="mt-2 tabular-nums text-lg font-bold text-ink">{rangeText(t)}</p>
+          <p className="mt-2 tabular-nums text-lg font-bold text-ink dark:text-white">{rangeText(t)}</p>
           <div className="mt-3 flex gap-2">
             <Button variant="secondary" onClick={props.onEdit} className="flex-1 px-3 py-2 text-sm">
               <Pencil size={14} /> Edit

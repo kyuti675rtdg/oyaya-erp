@@ -68,7 +68,7 @@ export function FinanceAP() {
                   key: 'invoiceNo',
                   label: 'Invoice',
                   mono: true,
-                  render: (r) => <span className="font-bold text-ink">{r.invoiceNo}</span>
+                  render: (r) => <span className="font-bold text-ink dark:text-white">{r.invoiceNo}</span>
                 },
                 { key: 'issuedAt', label: 'Issued', render: (r) => fmtDate(r.issuedAt) },
                 {

@@ -177,7 +177,7 @@ export function UserManagement() {
         ) : (
           <DataTable<AdminUser>
             columns={[
-              { key: 'name', label: 'Name', render: (r) => <span className="font-semibold text-ink">{r.name}</span> },
+              { key: 'name', label: 'Name', render: (r) => <span className="font-semibold text-ink dark:text-white">{r.name}</span> },
               { key: 'email', label: 'Email', render: (r) => <span className="text-sm">{r.email}</span> },
               {
                 key: 'role', label: 'Role',

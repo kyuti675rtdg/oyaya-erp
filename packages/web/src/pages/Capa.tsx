@@ -243,7 +243,7 @@ export function Capa() {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card className="p-5">
-          <h3 className="mb-4 text-base font-bold text-ink">Log nonconformity</h3>
+          <h3 className="mb-4 text-base font-bold text-ink dark:text-white">Log nonconformity</h3>
           <form onSubmit={create} className="space-y-4">
             <Field label="Affected batch" required>
               <Select value={batchId} onChange={(e) => setBatchId(e.target.value)} required>
@@ -337,7 +337,7 @@ export function Capa() {
       {detail ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true">
           <Card className="max-h-[90vh] w-full max-w-lg overflow-y-auto p-6">
-            <h3 className="text-lg font-bold text-ink">CAPA {detail.capaNo}</h3>
+            <h3 className="text-lg font-bold text-ink dark:text-white">CAPA {detail.capaNo}</h3>
             <p className="text-sm text-slate-500 dark:text-slate-400">
               Identified {fmtDateTime(detail.dateIdentified)}
             </p>
@@ -368,11 +368,11 @@ export function Capa() {
             <dl className="mt-4 space-y-2 text-sm">
               <div className="flex justify-between">
                 <dt className="text-slate-500 dark:text-slate-400">Correction</dt>
-                <dd className="font-medium text-ink">{detail.correctionType ?? '—'}</dd>
+                <dd className="font-medium text-ink dark:text-white">{detail.correctionType ?? '—'}</dd>
               </div>
               <div className="flex justify-between">
                 <dt className="text-slate-500 dark:text-slate-400">Disposition</dt>
-                <dd className="font-medium text-ink">{detail.disposition?.replace('_', ' ') ?? 'Not set'}</dd>
+                <dd className="font-medium text-ink dark:text-white">{detail.disposition?.replace('_', ' ') ?? 'Not set'}</dd>
               </div>
               <div className="flex justify-between">
                 <dt className="text-slate-500 dark:text-slate-400">Quality sign-off</dt>
@@ -484,7 +484,7 @@ export function Capa() {
 
               {verifyFor ? (
                 <form onSubmit={verifyCapaAction} className="mt-3 space-y-3 rounded-xl bg-slate-50 dark:bg-slate-800 p-4">
-                  <p className="text-sm font-semibold text-ink">Verify: {verifyFor.description}</p>
+                  <p className="text-sm font-semibold text-ink dark:text-white">Verify: {verifyFor.description}</p>
                   <Field label="Verification result" required>
                     <TextArea value={verifyNote} onChange={(e) => setVerifyNote(e.target.value)} required />
                   </Field>
@@ -499,7 +499,7 @@ export function Capa() {
                 </form>
               ) : detail.status !== 'CLOSED' ? (
                 <form onSubmit={addCapaAction} className="mt-3 space-y-3 rounded-xl bg-slate-50 dark:bg-slate-800 p-4">
-                  <p className="text-sm font-semibold text-ink">Add action</p>
+                  <p className="text-sm font-semibold text-ink dark:text-white">Add action</p>
                   <Field label="Type" required>
                     <Select value={aType} onChange={(e) => setAType(e.target.value as 'CORRECTIVE' | 'PREVENTIVE')}>
                       <option value="CORRECTIVE">Corrective</option>

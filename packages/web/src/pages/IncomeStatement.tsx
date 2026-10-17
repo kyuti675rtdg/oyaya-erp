@@ -55,13 +55,13 @@ function Section({
                     <span className="tnum mr-2 text-slate-400 dark:text-slate-500">{r.code}</span>
                     {r.name}
                   </td>
-                  <td className="tnum px-4 py-2.5 text-right text-ink">{fmtBirr(r.amount)}</td>
+                  <td className="tnum px-4 py-2.5 text-right text-ink dark:text-white">{fmtBirr(r.amount)}</td>
                 </tr>
               ))
             )}
             <tr className={`border-t-2 border-ink bg-alabaster ${bold ? 'font-extrabold' : 'font-bold'}`}>
-              <td className="px-4 py-3 text-ink">{totalLabel}</td>
-              <td className="tnum px-4 py-3 text-right text-ink">{fmtBirr(total)}</td>
+              <td className="px-4 py-3 text-ink dark:text-white">{totalLabel}</td>
+              <td className="tnum px-4 py-3 text-right text-ink dark:text-white">{fmtBirr(total)}</td>
             </tr>
           </tbody>
         </table>
@@ -142,15 +142,15 @@ export function IncomeStatement() {
               <div className="grid gap-3 rounded-xl bg-slate-50 dark:bg-slate-800 p-4 sm:grid-cols-3">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Previous revenue</p>
-                  <p className="tnum mt-1 text-lg font-extrabold text-ink">{fmtBirr(d.previous.revenue)}</p>
+                  <p className="tnum mt-1 text-lg font-extrabold text-ink dark:text-white">{fmtBirr(d.previous.revenue)}</p>
                 </div>
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Previous expenses</p>
-                  <p className="tnum mt-1 text-lg font-extrabold text-ink">{fmtBirr(d.previous.expenses)}</p>
+                  <p className="tnum mt-1 text-lg font-extrabold text-ink dark:text-white">{fmtBirr(d.previous.expenses)}</p>
                 </div>
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Previous net income</p>
-                  <p className="tnum mt-1 text-lg font-extrabold text-ink">{fmtBirr(d.previous.netIncome)}</p>
+                  <p className="tnum mt-1 text-lg font-extrabold text-ink dark:text-white">{fmtBirr(d.previous.netIncome)}</p>
                   <p className="tnum mt-0.5 text-xs text-slate-500 dark:text-slate-400">
                     Change: {variance(d.netIncome, d.previous.netIncome)}
                   </p>
@@ -163,8 +163,8 @@ export function IncomeStatement() {
 
             <div className="rounded-xl border border-line bg-white dark:bg-slate-800 px-4 py-3">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-ink">Gross profit</span>
-                <span className="tnum text-lg font-extrabold text-ink">{fmtBirr(d.grossProfit)}</span>
+                <span className="font-bold text-ink dark:text-white">Gross profit</span>
+                <span className="tnum text-lg font-extrabold text-ink dark:text-white">{fmtBirr(d.grossProfit)}</span>
               </div>
             </div>
 
