@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { Prisma, PieceStage, PayrollMode } from '@prisma/client';
 import { prisma } from '../../lib/prisma';
-import { requirePermission } from '../../middleware/rbac';
+import { requireAnyPermission, requirePermission } from '../../middleware/rbac';
 import { validateBody, validateQuery, validateParams } from '../../middleware/validate';
 import { AppError } from '../../middleware/errorHandler';
 import { audit } from '../../lib/audit';
@@ -20,7 +20,7 @@ const idParams = z.object({ id: z.string().min(1) });
 
 // ─── Departments ────────────────────────────────────────────────
 
-router.get('/departments', requirePermission('hr:view'), async (_req, res, next) => {
+router.get('/departments', requireAnyPermission(['hr:view', 'payroll:view']), async (_req, res, next) => {
   try {
     const rows = await prisma.department.findMany({
       orderBy: { name: 'asc' },
@@ -32,7 +32,7 @@ router.get('/departments', requirePermission('hr:view'), async (_req, res, next)
   }
 });
 
-router.get('/departments/tree', requirePermission('hr:view'), async (_req, res, next) => {
+router.get('/departments/tree', requireAnyPermission(['hr:view', 'payroll:view']), async (_req, res, next) => {
   try {
     const rows = await prisma.department.findMany({
       where: { isActive: true },
@@ -55,7 +55,7 @@ const departmentSchema = z.object({
 
 router.post(
   '/departments',
-  requirePermission('hr:manage'),
+  requireAnyPermission(['hr:manage', 'payroll:manage']),
   validateBody(departmentSchema),
   async (req, res, next) => {
     try {
@@ -82,7 +82,7 @@ router.post(
 
 router.put(
   '/departments/:id',
-  requirePermission('hr:manage'),
+  requireAnyPermission(['hr:manage', 'payroll:manage']),
   validateParams(idParams),
   validateBody(departmentSchema.partial()),
   async (req, res, next) => {
@@ -108,7 +108,7 @@ router.put(
 
 router.get(
   '/positions',
-  requirePermission('hr:view'),
+  requireAnyPermission(['hr:view', 'payroll:view']),
   validateQuery(z.object({ departmentId: z.string().optional() })),
   async (req, res, next) => {
     try {
@@ -137,7 +137,7 @@ const positionSchema = z.object({
 
 router.post(
   '/positions',
-  requirePermission('hr:manage'),
+  requireAnyPermission(['hr:manage', 'payroll:manage']),
   validateBody(positionSchema),
   async (req, res, next) => {
     try {
@@ -170,7 +170,7 @@ router.post(
 
 router.put(
   '/positions/:id',
-  requirePermission('hr:manage'),
+  requireAnyPermission(['hr:manage', 'payroll:manage']),
   validateParams(idParams),
   validateBody(positionSchema.partial()),
   async (req, res, next) => {
@@ -210,7 +210,7 @@ const employeeQuerySchema = z.object({
 
 router.get(
   '/employees',
-  requirePermission('hr:view'),
+  requireAnyPermission(['hr:view', 'payroll:view']),
   validateQuery(employeeQuerySchema),
   async (req, res, next) => {
     try {
@@ -257,7 +257,7 @@ const employeeSchema = z.object({
 
 router.post(
   '/employees',
-  requirePermission('hr:manage'),
+  requireAnyPermission(['hr:manage', 'payroll:manage']),
   validateBody(employeeSchema),
   async (req, res, next) => {
     try {
@@ -291,7 +291,7 @@ router.post(
 
 router.get(
   '/employees/:id',
-  requirePermission('hr:view'),
+  requireAnyPermission(['hr:view', 'payroll:view']),
   validateParams(idParams),
   async (req, res, next) => {
     try {
@@ -309,7 +309,7 @@ router.get(
 
 router.put(
   '/employees/:id',
-  requirePermission('hr:manage'),
+  requireAnyPermission(['hr:manage', 'payroll:manage']),
   validateParams(idParams),
   validateBody(employeeSchema.partial()),
   async (req, res, next) => {
@@ -343,7 +343,7 @@ router.put(
 /** Soft-delete: deactivates the employee instead of removing history. */
 router.delete(
   '/employees/:id',
-  requirePermission('hr:manage'),
+  requireAnyPermission(['hr:manage', 'payroll:manage']),
   validateParams(idParams),
   async (req, res, next) => {
     try {
@@ -376,7 +376,7 @@ const attendanceQuerySchema = z.object({
 
 router.get(
   '/attendance',
-  requirePermission('hr:view'),
+  requireAnyPermission(['hr:view', 'payroll:view']),
   validateQuery(attendanceQuerySchema),
   async (req, res, next) => {
     try {
@@ -419,7 +419,7 @@ function startOfUtcDay(d: Date): Date {
 
 router.post(
   '/attendance',
-  requirePermission('hr:manage'),
+  requireAnyPermission(['hr:manage', 'payroll:manage']),
   validateBody(attendanceSchema),
   async (req, res, next) => {
     try {
@@ -475,7 +475,7 @@ const csvImportSchema = z.object({ csv: z.string().min(1) });
 
 router.post(
   '/attendance/import',
-  requirePermission('hr:manage'),
+  requireAnyPermission(['hr:manage', 'payroll:manage']),
   validateBody(csvImportSchema),
   async (req, res, next) => {
     try {
@@ -564,7 +564,7 @@ router.post(
 /** Per-employee attendance summary for a pay month. */
 router.get(
   '/attendance/summary',
-  requirePermission('hr:view'),
+  requireAnyPermission(['hr:view', 'payroll:view']),
   validateQuery(z.object({ year: z.coerce.number().int(), month: z.coerce.number().int().min(1).max(12) })),
   async (req, res, next) => {
     try {
@@ -607,7 +607,7 @@ const pieceWorkQuerySchema = z.object({
 
 router.get(
   '/piece-work',
-  requirePermission('hr:view'),
+  requireAnyPermission(['hr:view', 'payroll:view']),
   validateQuery(pieceWorkQuerySchema),
   async (req, res, next) => {
     try {
@@ -645,7 +645,7 @@ const pieceWorkSchema = z.object({
 
 router.post(
   '/piece-work',
-  requirePermission('hr:manage'),
+  requireAnyPermission(['hr:manage', 'payroll:manage']),
   validateBody(pieceWorkSchema),
   async (req, res, next) => {
     try {
@@ -695,7 +695,7 @@ router.post(
 
 router.get(
   '/driver-trip-pay',
-  requirePermission('hr:view'),
+  requireAnyPermission(['hr:view', 'payroll:view']),
   validateQuery(z.object({ year: z.coerce.number().int().optional(), month: z.coerce.number().int().min(1).max(12).optional() })),
   async (req, res, next) => {
     try {
@@ -724,7 +724,7 @@ const driverTripPaySchema = z.object({
 
 router.post(
   '/driver-trip-pay',
-  requirePermission('hr:manage'),
+  requireAnyPermission(['hr:manage', 'payroll:manage']),
   validateBody(driverTripPaySchema),
   async (req, res, next) => {
     try {
@@ -781,7 +781,7 @@ router.post(
 
 // ─── Allowance & deduction types ────────────────────────────────
 
-router.get('/allowance-types', requirePermission('hr:view'), async (_req, res, next) => {
+router.get('/allowance-types', requireAnyPermission(['hr:view', 'payroll:view']), async (_req, res, next) => {
   try {
     const rows = await prisma.allowanceDeductionType.findMany({ orderBy: { name: 'asc' } });
     res.json(rows);
@@ -803,7 +803,7 @@ const allowanceTypeSchema = z.object({
 
 router.post(
   '/allowance-types',
-  requirePermission('hr:manage'),
+  requireAnyPermission(['hr:manage', 'payroll:manage']),
   validateBody(allowanceTypeSchema),
   async (req, res, next) => {
     try {
@@ -832,7 +832,7 @@ router.post(
 
 router.put(
   '/allowance-types/:id',
-  requirePermission('hr:manage'),
+  requireAnyPermission(['hr:manage', 'payroll:manage']),
   validateParams(idParams),
   validateBody(allowanceTypeSchema.partial()),
   async (req, res, next) => {
@@ -861,7 +861,7 @@ router.put(
 
 router.get(
   '/allowances',
-  requirePermission('hr:view'),
+  requireAnyPermission(['hr:view', 'payroll:view']),
   validateQuery(z.object({ employeeId: z.string().optional() })),
   async (req, res, next) => {
     try {
@@ -892,7 +892,7 @@ const allowanceAssignSchema = z.object({
 
 router.post(
   '/allowances',
-  requirePermission('hr:manage'),
+  requireAnyPermission(['hr:manage', 'payroll:manage']),
   validateBody(allowanceAssignSchema),
   async (req, res, next) => {
     try {
@@ -929,7 +929,7 @@ router.post(
 
 router.delete(
   '/allowances/:id',
-  requirePermission('hr:manage'),
+  requireAnyPermission(['hr:manage', 'payroll:manage']),
   validateParams(idParams),
   async (req, res, next) => {
     try {
@@ -951,7 +951,7 @@ router.delete(
 
 // ─── Payroll runs ───────────────────────────────────────────────
 
-router.get('/payroll-runs', requirePermission('hr:view'), async (_req, res, next) => {
+router.get('/payroll-runs', requireAnyPermission(['hr:view', 'payroll:view']), async (_req, res, next) => {
   try {
     const rows = await prisma.payrollRun.findMany({
       orderBy: [{ periodYear: 'desc' }, { periodMonth: 'desc' }],
@@ -971,7 +971,7 @@ const computeHrRunSchema = z.object({
 
 router.post(
   '/payroll-runs',
-  requirePermission('hr:manage'),
+  requireAnyPermission(['hr:manage', 'payroll:manage']),
   validateBody(computeHrRunSchema),
   async (req, res, next) => {
     try {
@@ -989,7 +989,7 @@ router.post(
 
 router.get(
   '/payroll-runs/:id',
-  requirePermission('hr:view'),
+  requireAnyPermission(['hr:view', 'payroll:view']),
   validateParams(idParams),
   async (req, res, next) => {
     try {
@@ -1045,7 +1045,7 @@ router.post(
 
 router.get(
   '/payslips',
-  requirePermission('hr:view'),
+  requireAnyPermission(['hr:view', 'payroll:view']),
   validateQuery(z.object({ runId: z.string().optional(), employeeId: z.string().optional() })),
   async (req, res, next) => {
     try {
@@ -1071,7 +1071,7 @@ router.get(
 
 router.get(
   '/payslips/:id',
-  requirePermission('hr:view'),
+  requireAnyPermission(['hr:view', 'payroll:view']),
   validateParams(idParams),
   async (req, res, next) => {
     try {

@@ -27,6 +27,32 @@ export function requirePermission(code: PermissionCode) {
   };
 }
 
+/**
+ * Require ANY of the given "module:action" claims (OR logic).
+ * Useful when multiple roles should access the same endpoint.
+ */
+export function requireAnyPermission(codes: PermissionCode[]) {
+  return async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const user = req.user;
+      if (!user) throw new AppError(401, 'Unauthenticated');
+      const grants = await prisma.rolePermission.findMany({
+        where: { roleId: user.roleId },
+        include: { permission: true },
+      });
+      const ok = codes.some((code) =>
+        grants.some(
+          (g) => g.permission.code === code || g.permission.code.startsWith(`${code}:`),
+        )
+      );
+      if (!ok) throw new AppError(403, `Forbidden: requires one of ${codes.join(', ')}`);
+      next();
+    } catch (err) {
+      next(err);
+    }
+  };
+}
+
 /** Require the caller's role name to be one of the given names. */
 export function requireRoles(...roleNames: string[]) {
   return (req: Request, _res: Response, next: NextFunction): void => {
