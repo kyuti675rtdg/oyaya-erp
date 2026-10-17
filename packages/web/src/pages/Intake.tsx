@@ -12,6 +12,7 @@ import {
   FlaskConical,
   Scale,
   Truck,
+  Wheat,
   XCircle
 } from 'lucide-react';
 import { api } from '../lib/api';
@@ -352,6 +353,74 @@ export function Intake() {
           {notice.text}
         </div>
       ) : null}
+
+      {/* KPI strip */}
+      <div className="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {(() => {
+          const today = new Date().toISOString().slice(0, 10);
+          const allIntakes = allQ.data ?? [];
+          const todayIntakes = allIntakes.filter((i) => (i.deliveryDate ?? '').slice(0, 10) === today);
+          const todayQ = todayIntakes.reduce((s, i) => s + (Number(i.quintals) || 0), 0);
+          const pending = pendingQ.data ?? [];
+          const flagged = flaggedQ.data ?? [];
+          const kpis = [
+            {
+              label: "Today's deliveries",
+              value: String(todayIntakes.length),
+              sub: `${todayQ.toFixed(1)} q received`,
+              icon: 'truck',
+              bg: 'bg-violet-100 dark:bg-violet-500/20',
+              text: 'text-violet-600 dark:text-violet-300',
+              accent: 'bg-violet-100/60 dark:bg-violet-500/10'
+            },
+            {
+              label: 'Pending QC decision',
+              value: String(pending.length),
+              sub: 'Awaiting Quality Head',
+              icon: 'flask',
+              bg: 'bg-amber-100 dark:bg-amber-500/20',
+              text: 'text-amber-600 dark:text-amber-300',
+              accent: 'bg-amber-100/60 dark:bg-amber-500/10'
+            },
+            {
+              label: 'Flagged deliveries',
+              value: String(flagged.length),
+              sub: flagged.length > 0 ? 'Needs attention' : 'All clear',
+              icon: 'alert',
+              bg: flagged.length > 0 ? 'bg-rose-100 dark:bg-rose-500/20' : 'bg-emerald-100 dark:bg-emerald-500/20',
+              text: flagged.length > 0 ? 'text-rose-600 dark:text-rose-300' : 'text-emerald-600 dark:text-emerald-300',
+              accent: flagged.length > 0 ? 'bg-rose-100/60 dark:bg-rose-500/10' : 'bg-emerald-100/60 dark:bg-emerald-500/10'
+            },
+            {
+              label: 'Total intakes',
+              value: String(allIntakes.length),
+              sub: 'Last 100 records',
+              icon: 'wheat',
+              bg: 'bg-sky-100 dark:bg-sky-500/20',
+              text: 'text-sky-600 dark:text-sky-300',
+              accent: 'bg-sky-100/60 dark:bg-sky-500/10'
+            }
+          ];
+          return kpis.map((k) => (
+            <div key={k.label} className={`${cardShell} relative overflow-hidden`}>
+              <div className={`absolute right-0 top-0 h-16 w-16 rounded-bl-full ${k.accent}`} aria-hidden="true" />
+              <div className="relative">
+                <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                  <span className={`flex h-7 w-7 items-center justify-center rounded-lg ${k.bg} ${k.text}`}>
+                    {k.icon === 'truck' ? <Truck size={14} /> :
+                     k.icon === 'flask' ? <FlaskConical size={14} /> :
+                     k.icon === 'alert' ? <AlertTriangle size={14} /> :
+                     <Wheat size={14} />}
+                  </span>
+                  {k.label}
+                </p>
+                <p className="tnum mt-2 text-3xl font-extrabold text-ink dark:text-white">{k.value}</p>
+                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{k.sub}</p>
+              </div>
+            </div>
+          ));
+        })()}
+      </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {/* Gate receiving */}
