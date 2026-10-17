@@ -8,7 +8,8 @@ import { submitOrQueue } from '../lib/sync';
 import type { ProductionBatch } from '../types';
 import { Badge } from '../components/Badge';
 import { DataTable } from '../components/DataTable';
-import { Button, Card, Field, NumberInput, SectionTitle, Select, Spinner } from '../components/ui';
+import { Button, Card, Field, NumberInput, SectionTitle, Select, Spinner,
+  ErrorBox} from '../components/ui';
 import { fmtDateTime, fmtQ } from '../lib/format';
 
 export function Batches() {
@@ -128,6 +129,8 @@ export function Batches() {
         <div className="lg:col-span-2">
           {batchesQ.isLoading ? (
             <Spinner label="Loading batches..." />
+          ) : batchesQ.isError ? (
+            <ErrorBox message="Failed to load batches." onRetry={() => batchesQ.refetch()} />
           ) : (
             <DataTable<ProductionBatch>
               columns={[

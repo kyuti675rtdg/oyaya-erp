@@ -8,7 +8,8 @@ import type { LabCheck, Product, ProductionBatch, ShiftHandover, ShiftOutput, Sh
 import { Badge } from '../components/Badge';
 import { DataTable } from '../components/DataTable';
 import { NumPad } from '../components/NumPad';
-import { Button, Card, Field, NumberInput, SectionTitle, Select, Spinner, TextArea, TextInput } from '../components/ui';
+import { Button, Card, Field, NumberInput, SectionTitle, Select, Spinner, TextArea, TextInput,
+  ErrorBox} from '../components/ui';
 import { fmtCountdown, fmtDateTime, fmtQ } from '../lib/format';
 
 const QC_INTERVAL_MS = 2 * 60 * 60 * 1000;
@@ -543,7 +544,9 @@ export function Shifts() {
         <SectionTitle title="Shift log" />
         {shiftsQ.isLoading ? (
           <Spinner label="Loading shifts..." />
-        ) : (
+        ) : shiftsQ.isError ? (
+            <ErrorBox message="Failed to load shifts." onRetry={() => shiftsQ.refetch()} />
+          ) : (
           <DataTable<ShiftRun>
             columns={[
               { key: 'shiftDate', label: 'Date', render: (r) => fmtDateTime(r.shiftDate) },

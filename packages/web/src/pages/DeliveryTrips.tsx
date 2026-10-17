@@ -9,7 +9,8 @@ import { Badge } from '../components/Badge';
 import type { BadgeTone } from '../components/Badge';
 import { CardHeader } from '../components/CardHeader';
 import { DataTable } from '../components/DataTable';
-import { Button, Card, Field, SectionTitle, Select, Spinner, TextInput } from '../components/ui';
+import { Button, Card, Field, SectionTitle, Select, Spinner, TextInput,
+  ErrorBox} from '../components/ui';
 import { fmtDateTime } from '../lib/format';
 
 const TRIP_TONE: Record<string, BadgeTone> = {
@@ -163,7 +164,9 @@ export function DeliveryTrips() {
         <SectionTitle title="Trips" />
         {tripsQ.isLoading ? (
           <Spinner label="Loading trips..." />
-        ) : (
+        ) : tripsQ.isError ? (
+            <ErrorBox message="Failed to load delivery trips." onRetry={() => tripsQ.refetch()} />
+          ) : (
           <DataTable<DeliveryTrip>
             columns={[
               { key: 'tripNo', label: 'Trip', render: (r) => <span className="tnum font-bold">{r.tripNo}</span> },
