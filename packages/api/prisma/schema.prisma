@@ -53,9 +53,6 @@ model User {
   // Native team chat
   chatChannelMemberships ChatChannelMember[]
   chatMessages ChatMessage[]
-  // Rocket.Chat integration (unused, kept for future)
-  chatUserMap  ChatUserMap?
-  chatAnnouncements ChatAnnouncement[]
 }
 
 model Role {
@@ -1195,7 +1192,6 @@ model Department {
   isActive    Boolean      @default(true)
   positions   Position[]
   employees   Employee[]
-  chatChannel ChatChannelMap?
   teamChatChannels ChatChannel[]
 }
 
@@ -3271,57 +3267,9 @@ model DocShare {
   @@index([token])
 }
 
-// ─── Rocket.Chat Integration (Team Communication) ─────────────────────
 
-model ChatConfig {
-  id              String   @id @default(cuid())
-  serverUrl       String   // e.g. https://oyaya-chat.onrender.com
-  adminUsername   String   // Rocket.Chat admin username for API
-  adminUserId     String?  // Rocket.Chat admin user ID (cached after login)
-  adminToken      String?  // Rocket.Chat admin auth token (cached, refresh as needed)
-  adminTokenExp   DateTime?
-  isEnabled       Boolean  @default(false)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-}
 
-model ChatUserMap {
-  id              String    @id @default(cuid())
-  erpUserId       String    @unique
-  erpUser         User      @relation(fields: [erpUserId], references: [id], onDelete: Cascade)
-  rcUserId        String    @unique // Rocket.Chat user _id
-  rcUsername      String    @unique // Rocket.Chat username
-  lastSyncAt      DateTime  @default(now())
-  createdAt       DateTime  @default(now())
 
-  @@index([rcUsername])
-}
-
-model ChatChannelMap {
-  id              String     @id @default(cuid())
-  departmentId    String?    @unique // null = company-wide (general/announcements)
-  department      Department? @relation(fields: [departmentId], references: [id], onDelete: SetNull)
-  rcRoomId        String     @unique // Rocket.Chat room _id
-  rcRoomName      String               // Rocket.Chat room name
-  roomType        String     @default("private") // private | public
-  purpose         String     @default("department") // department | announcements | general | management
-  lastSyncAt      DateTime   @default(now())
-  createdAt       DateTime   @default(now())
-
-  @@index([purpose])
-}
-
-model ChatAnnouncement {
-  id              String   @id @default(cuid())
-  title           String
-  body            String
-  rcMessageId     String?  // Rocket.Chat message _id after posting
-  publishedById   String
-  publishedBy     User     @relation(fields: [publishedById], references: [id])
-  createdAt       DateTime @default(now())
-
-  @@index([createdAt])
-}
 
 // ─── Native Team Chat (fully free, no external service) ───────────────
 
