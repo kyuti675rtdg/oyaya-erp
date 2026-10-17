@@ -2420,3 +2420,89 @@ export interface SmsLogEntry {
   sentAt: string | null;
   createdAt: string;
 }
+
+// ── Document Management (Module 20) ──
+export interface DocFolder {
+  id: string;
+  name: string;
+  parentId: string | null;
+  module: string | null;
+  createdById: string;
+  createdAt: string;
+  updatedAt: string;
+  _count?: { documents: number; children: number };
+}
+
+export type DocStatus = 'DRAFT' | 'UNDER_REVIEW' | 'APPROVED' | 'PUBLISHED' | 'ARCHIVED';
+
+export interface Document {
+  id: string;
+  docNo: string;
+  title: string;
+  description: string | null;
+  category: string;
+  tags: string[];
+  fileName: string;
+  mimeType: string;
+  fileSize: number;
+  storagePath: string | null;
+  folderId: string | null;
+  status: DocStatus;
+  version: string;
+  checkedOutById: string | null;
+  retentionUntil: string | null;
+  uploadedById: string;
+  createdAt: string;
+  updatedAt: string;
+  folder?: { id: string; name: string } | null;
+  versions?: DocVersion[];
+  approvals?: DocApproval[];
+  shares?: DocShare[];
+  _count?: { versions: number; approvals: number; shares: number };
+}
+
+export interface DocVersion {
+  id: string;
+  documentId: string;
+  version: string;
+  fileName: string;
+  fileSize: number;
+  storagePath: string | null;
+  changeNote: string | null;
+  createdById: string;
+  createdAt: string;
+}
+
+export interface DocApproval {
+  id: string;
+  documentId: string;
+  approverId: string;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  comment: string | null;
+  decidedAt: string | null;
+  createdAt: string;
+}
+
+export interface DocTemplate {
+  id: string;
+  name: string;
+  category: string;
+  description: string | null;
+  content: string;
+  createdById: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DocShare {
+  id: string;
+  documentId: string;
+  sharedWithId: string | null;
+  role: string | null;
+  permission: 'VIEW' | 'EDIT';
+  token: string | null;
+  expiresAt: string | null;
+  accessCount: number;
+  createdById: string;
+  createdAt: string;
+}

@@ -26,6 +26,7 @@ const TABLES = {
   agentStockPlacement: 'AgentStockPlacement',
   sopDocument: 'SopDocument',
   techSupportRecord: 'TechSupportRecord',
+  document: 'Document',
 } as const;
 
 export type DocTable = keyof typeof TABLES;

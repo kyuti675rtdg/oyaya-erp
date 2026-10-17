@@ -34,6 +34,7 @@ import { router as auditLogRouter } from './modules/audit-log/router';
 import { router as adminSettingsRouter } from './modules/admin-settings/router';
 import { router as pestRouter } from './modules/pest/router';
 import { router as warehouseRouter } from './modules/warehouse/router';
+import { router as documentsRouter } from './modules/documents/router';
 import { admsRouter } from './modules/zkteco/adms';
 
 const app = express();
@@ -88,6 +89,7 @@ v1.use('/audit-log', auditLogRouter);
 v1.use('/settings', adminSettingsRouter);
 v1.use('/pest', pestRouter);
 v1.use('/warehouse', warehouseRouter);
+v1.use('/documents', documentsRouter);
 
 app.use('/api/v1', v1);
 

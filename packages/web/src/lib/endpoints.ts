@@ -257,6 +257,28 @@ export const E = {
   notificationsReadAll: '/support/notifications/read-all',
   smsLog: '/support/sms-log',
 
+  // Module 20: Document Management
+  docLib: '/documents',
+  docItem: (id: string) => `/documents/${id}`,
+  docDownload: (id: string) => `/documents/${id}/download`,
+  docCheckout: (id: string) => `/documents/${id}/checkout`,
+  docCheckin: (id: string) => `/documents/${id}/checkin`,
+  docVersionRestore: (id: string, vid: string) => `/documents/${id}/versions/${vid}/restore`,
+  docFolders: '/documents/folders',
+  docFolder: (id: string) => `/documents/folders/${id}`,
+  docApprovalReq: (id: string) => `/documents/${id}/approvals`,
+  docApprovalDecide: (aid: string) => `/documents/approvals/${aid}`,
+  docTemplates: '/documents/templates',
+  docTemplateList: '/documents/templates/list',
+  docTemplate: (id: string) => `/documents/templates/${id}`,
+  docTemplateUse: (id: string) => `/documents/templates/${id}/instantiate`,
+  docArchive: (id: string) => `/documents/${id}/archive`,
+  docRestore: (id: string) => `/documents/${id}/restore`,
+  docShares: (id: string) => `/documents/${id}/shares`,
+  docShareCreate: (id: string) => `/documents/${id}/shares`,
+  docShareDelete: (sid: string) => `/documents/shares/${sid}`,
+  docSharedLink: (token: string) => `/documents/shared/${token}`,
+
   // Module 9: Maintenance & Spare Parts
   maintEquipment: '/maintenance/equipment',
   maintEquipmentById: (id: string) => `/maintenance/equipment/${id}`,

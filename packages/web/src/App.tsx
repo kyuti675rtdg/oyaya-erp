@@ -58,6 +58,13 @@ import { KnowledgeBase } from './pages/KnowledgeBase';
 import { Tickets } from './pages/Tickets';
 import { TechSupport } from './pages/TechSupport';
 import { Announcements } from './pages/Announcements';
+import { Documents } from './pages/Documents';
+import { DocFolders } from './pages/DocFolders';
+import { DocVersions } from './pages/DocVersions';
+import { DocApprovals } from './pages/DocApprovals';
+import { DocTemplates } from './pages/DocTemplates';
+import { DocArchive } from './pages/DocArchive';
+import { DocSharing } from './pages/DocSharing';
 import { Notifications } from './pages/Notifications';
 // Module 18: System Administration & Settings
 import { UserManagement } from './pages/UserManagement';
@@ -772,6 +779,15 @@ export function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* ─── Module 20: Document Management ─── */}
+        <Route path="/documents" element={<ProtectedRoute claim="documents:view"><Documents /></ProtectedRoute>} />
+        <Route path="/documents/folders" element={<ProtectedRoute claim="documents:view"><DocFolders /></ProtectedRoute>} />
+        <Route path="/documents/versions" element={<ProtectedRoute claim="documents:view"><DocVersions /></ProtectedRoute>} />
+        <Route path="/documents/approvals" element={<ProtectedRoute claim="documents:view"><DocApprovals /></ProtectedRoute>} />
+        <Route path="/documents/templates" element={<ProtectedRoute claim="documents:view"><DocTemplates /></ProtectedRoute>} />
+        <Route path="/documents/archive" element={<ProtectedRoute claim="documents:view"><DocArchive /></ProtectedRoute>} />
+        <Route path="/documents/sharing" element={<ProtectedRoute claim="documents:view"><DocSharing /></ProtectedRoute>} />
 
         <Route
           path="*"

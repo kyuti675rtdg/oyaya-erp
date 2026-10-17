@@ -400,6 +400,19 @@ const NAV: NavGroup[] = [
       { to: '/support/announcements', label: 'Announcements', claim: ['support:read'], icon: 'support' },
       { to: '/support/notifications', label: 'SMS & Alerts', claim: ['support:read'], icon: 'support' }
     ]
+  },
+  {
+    title: 'Documents',
+    icon: 'intake',
+    items: [
+      { to: '/documents', label: 'Library', claim: ['documents:view'], icon: 'intake' },
+      { to: '/documents/folders', label: 'Folders', claim: ['documents:view'], icon: 'package' },
+      { to: '/documents/versions', label: 'Versions', claim: ['documents:view'], icon: 'shifts' },
+      { to: '/documents/approvals', label: 'Approvals', claim: ['documents:view'], icon: 'finance' },
+      { to: '/documents/templates', label: 'Templates', claim: ['documents:view'], icon: 'dashboard' },
+      { to: '/documents/archive', label: 'Archive', claim: ['documents:view'], icon: 'capa' },
+      { to: '/documents/sharing', label: 'Sharing', claim: ['documents:view'], icon: 'sales' }
+    ]
   }
 ];
 

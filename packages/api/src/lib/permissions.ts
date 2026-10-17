@@ -26,6 +26,7 @@ export const MODULES = [
   'settings',
   'support',
   'apimonitor',
+  'documents',
 ] as const;
 
 export type ModuleName = (typeof MODULES)[number];

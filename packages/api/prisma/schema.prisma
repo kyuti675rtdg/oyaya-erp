@@ -3147,3 +3147,117 @@ model AppNotification {
   @@index([userId, read])
   @@index([createdAt])
 }
+
+// ═══════════════════════════════════════════════════════════════════
+// Document Management (Module 20)
+// ═══════════════════════════════════════════════════════════════════
+
+model DocFolder {
+  id          String   @id @default(cuid())
+  name        String
+  parentId    String?
+  module      String?  // ERP module key (Procurement, Production, HR, ...)
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  parent   DocFolder?  @relation("FolderHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  children DocFolder[] @relation("FolderHierarchy")
+  documents Document[]
+
+  @@index([parentId])
+  @@index([module])
+}
+
+model Document {
+  id            String    @id @default(cuid())
+  docNo         String    @unique
+  title         String
+  description   String?
+  category      String    @default("General")
+  tags          String[]  @default([])
+  fileName      String
+  mimeType      String    @default("application/octet-stream")
+  fileSize      Int       @default(0)
+  storagePath   String?
+  folderId      String?
+  status        String    @default("DRAFT") // DRAFT | UNDER_REVIEW | APPROVED | PUBLISHED | ARCHIVED
+  version       String    @default("1.0")
+  checkedOutById String?
+  retentionUntil DateTime? @db.Date
+  uploadedById  String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  folder    DocFolder?   @relation(fields: [folderId], references: [id], onDelete: SetNull)
+  versions  DocVersion[]
+  approvals DocApproval[]
+  shares    DocShare[]
+
+  @@index([status])
+  @@index([category])
+  @@index([folderId])
+  @@index([uploadedById])
+}
+
+model DocVersion {
+  id         String   @id @default(cuid())
+  documentId String
+  version    String
+  fileName   String
+  fileSize   Int      @default(0)
+  storagePath String?
+  changeNote String?
+  createdById String
+  createdAt  DateTime @default(now())
+
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId, createdAt])
+}
+
+model DocApproval {
+  id         String    @id @default(cuid())
+  documentId String
+  approverId String
+  status     String    @default("PENDING") // PENDING | APPROVED | REJECTED
+  comment    String?
+  decidedAt  DateTime?
+  createdAt  DateTime  @default(now())
+
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId, status])
+  @@index([approverId])
+}
+
+model DocTemplate {
+  id          String   @id @default(cuid())
+  name        String
+  category    String   @default("General")
+  description String?
+  content     String   @default("")
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+}
+
+model DocShare {
+  id           String    @id @default(cuid())
+  documentId   String
+  sharedWithId String?   // user id; null = link share
+  role         String?   // role name for role-based share
+  permission   String    @default("VIEW") // VIEW | EDIT
+  token        String?   @unique
+  expiresAt    DateTime?
+  accessCount  Int       @default(0)
+  createdById  String
+  createdAt    DateTime  @default(now())
+
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@index([token])
+}
