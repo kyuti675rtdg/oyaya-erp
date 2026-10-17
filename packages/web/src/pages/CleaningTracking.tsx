@@ -285,7 +285,7 @@ export function CleaningTracking() {
       ) : null}
 
       {detail ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true">
           <Card className="max-h-[90vh] w-full max-w-lg overflow-y-auto p-6">
             <div className="mb-2 flex items-start justify-between">
               <h3 className="text-lg font-bold text-ink">{detail.action}</h3>
@@ -321,7 +321,7 @@ export function CleaningTracking() {
       ) : null}
 
       {verifyFor ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true">
           <Card className="w-full max-w-lg p-6">
             <h3 className="text-lg font-bold text-ink">Verify action</h3>
             <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{verifyFor.action}</p>

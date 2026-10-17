@@ -323,7 +323,7 @@ export function NcActions() {
       )}
 
       {verifyTarget ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true">
           <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-xl">
             <h3 className="text-lg font-bold text-ink">Verify action</h3>
             <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{verifyTarget.description}</p>
@@ -345,7 +345,7 @@ export function NcActions() {
       ) : null}
 
       {effectTarget ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true">
           <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-800 p-6 shadow-xl">
             <h3 className="text-lg font-bold text-ink">Effectiveness check</h3>
             <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{effectTarget.description}</p>

@@ -237,7 +237,7 @@ export function ChartOfAccounts() {
       </div>
 
       {modalOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true">
           <Card className="max-h-[92vh] w-full max-w-lg overflow-y-auto p-6">
             <div className="mb-4 flex items-start justify-between">
               <div>

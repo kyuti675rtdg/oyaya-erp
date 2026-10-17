@@ -294,7 +294,7 @@ export function WarehouseLocations() {
 
       {/* Create / edit modal */}
       {(creating || editing) && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 p-4 sm:items-center">
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 p-4 sm:items-center" role="dialog" aria-modal="true">
           <div className={`${cardShell} w-full max-w-lg !p-6`}>
             <CardHeader
               icon={<WarehouseIcon size={16} />}

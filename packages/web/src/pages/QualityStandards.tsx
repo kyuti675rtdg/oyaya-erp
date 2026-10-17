@@ -264,7 +264,7 @@ export function QualityStandards() {
 
       {/* Audit trail panel */}
       {auditId ? (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 p-4 sm:items-center">
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 p-4 sm:items-center" role="dialog" aria-modal="true">
           <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-slate-800 p-5 shadow-xl">
             <div className="mb-3 flex items-center justify-between">
               <h3 className="flex items-center gap-2 text-base font-bold text-ink">

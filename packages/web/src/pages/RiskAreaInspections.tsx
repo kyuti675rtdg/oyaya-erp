@@ -308,7 +308,7 @@ export function RiskAreaInspections() {
       ) : null}
 
       {detail ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true">
           <div className={`${cardShell} max-h-[90vh] w-full max-w-lg overflow-y-auto !p-6`}>
             <div className="flex items-start justify-between gap-2">
               <div>
