@@ -8,7 +8,8 @@ import type { AttendanceRecord, AttendanceSummary, HrEmployee } from '../types';
 import { CardHeader } from '../components/CardHeader';
 import { Badge } from '../components/Badge';
 import { DataTable } from '../components/DataTable';
-import { Field, Select, Spinner, TextArea, TextInput } from '../components/ui';
+import { Field, Select, Spinner, TextArea, TextInput,
+  ErrorBox} from '../components/ui';
 import { fmtDate } from '../lib/format';
 import {
   HrModal,

@@ -7,7 +7,8 @@ import type { HrPayrollRun, Payslip } from '../types';
 import { CardHeader } from '../components/CardHeader';
 import { Badge } from '../components/Badge';
 import { DataTable } from '../components/DataTable';
-import { Field, Select, Spinner, TextInput } from '../components/ui';
+import { Field, Select, Spinner, TextInput,
+  ErrorBox} from '../components/ui';
 import { downloadCsv, fmtBirr, fmtDate, hrShell, runPeriodLabel } from './HrShared';
 
 function BreakdownRow({ label, value, bold }: { label: string; value: string; bold?: boolean }) {

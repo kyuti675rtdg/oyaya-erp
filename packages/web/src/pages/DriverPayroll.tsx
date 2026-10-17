@@ -7,7 +7,8 @@ import { E } from '../lib/endpoints';
 import type { DriverTripPay, HrEmployee } from '../types';
 import { CardHeader } from '../components/CardHeader';
 import { DataTable } from '../components/DataTable';
-import { Field, Select, Spinner, TextInput } from '../components/ui';
+import { Field, Select, Spinner, TextInput,
+  ErrorBox} from '../components/ui';
 import { fmtBirr } from '../lib/format';
 import {
   HrModal,

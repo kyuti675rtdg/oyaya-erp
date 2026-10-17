@@ -8,7 +8,8 @@ import type { AllowanceDeductionType, EmployeeAllowance, HrEmployee, PayrollMode
 import { CardHeader } from '../components/CardHeader';
 import { Badge } from '../components/Badge';
 import { DataTable } from '../components/DataTable';
-import { Field, Select, Spinner, TextInput } from '../components/ui';
+import { Field, Select, Spinner, TextInput,
+  ErrorBox} from '../components/ui';
 import { fmtBirr, fmtDate } from '../lib/format';
 import {
   HrModal,

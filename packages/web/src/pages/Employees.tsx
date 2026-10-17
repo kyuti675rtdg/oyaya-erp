@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Pencil, Plus, Search, UserRound, Users } from 'lucide-react';
+import { Building2, Pencil, Plus, Search, UserCheck, UserRound, Users, UserX } from 'lucide-react';
 import { api } from '../lib/api';
 import { E } from '../lib/endpoints';
 import type { HrDepartment, HrEmployee, HrPosition, PayrollModeCode } from '../types';
 import { CardHeader } from '../components/CardHeader';
 import { Badge } from '../components/Badge';
 import { DataTable } from '../components/DataTable';
-import { Field, Select, Spinner, TextInput } from '../components/ui';
+import { Field, Select, Spinner, TextInput,
+  ErrorBox} from '../components/ui';
 import { fmtDate } from '../lib/format';
 import {
   HrModal,
@@ -184,6 +185,36 @@ export function Employees() {
 
       {notice ? <HrNotice ok={notice.ok} text={notice.text} /> : null}
 
+      {/* KPI strip */}
+      <div className="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {(() => {
+          const emps = listQ.data ?? [];
+          const active = emps.filter((e) => e.isActive !== false).length;
+          const depts = new Set(emps.map((e) => e.departmentRef?.name ?? e.department).filter(Boolean)).size;
+          const kpis = [
+            { label: 'Total employees', value: String(emps.length), sub: `${active} active`, bg: 'bg-violet-100 dark:bg-violet-500/20', text: 'text-violet-600 dark:text-violet-300', accent: 'bg-violet-100/60 dark:bg-violet-500/10', Icon: UserRound },
+            { label: 'Active', value: String(active), sub: 'Currently employed', bg: 'bg-emerald-100 dark:bg-emerald-500/20', text: 'text-emerald-600 dark:text-emerald-300', accent: 'bg-emerald-100/60 dark:bg-emerald-500/10', Icon: UserCheck },
+            { label: 'Departments', value: String(depts), sub: 'Across organization', bg: 'bg-amber-100 dark:bg-amber-500/20', text: 'text-amber-600 dark:text-amber-300', accent: 'bg-amber-100/60 dark:bg-amber-500/10', Icon: Building2 },
+            { label: 'Inactive', value: String(emps.length - active), sub: 'Deactivated accounts', bg: 'bg-slate-100 dark:bg-slate-700', text: 'text-slate-600 dark:text-slate-300', accent: 'bg-slate-100/60 dark:bg-slate-700/30', Icon: UserX },
+          ];
+          return kpis.map((k) => (
+            <div key={k.label} className={`${hrShell} relative overflow-hidden`}>
+              <div className={`absolute right-0 top-0 h-16 w-16 rounded-bl-full ${k.accent}`} aria-hidden="true" />
+              <div className="relative">
+                <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                  <span className={`flex h-7 w-7 items-center justify-center rounded-lg ${k.bg} ${k.text}`}>
+                    <k.Icon size={14} />
+                  </span>
+                  {k.label}
+                </p>
+                <p className="tnum mt-2 text-3xl font-extrabold text-ink dark:text-white">{k.value}</p>
+                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{k.sub}</p>
+              </div>
+            </div>
+          ));
+        })()}
+      </div>
+
       <div className={`${hrShell} mb-4`}>
         <CardHeader
           icon={<Search className="h-4 w-4" />}
@@ -220,6 +251,8 @@ export function Employees() {
         />
         {listQ.isLoading ? (
           <Spinner label="Loading employees..." />
+        ) : listQ.isError ? (
+          <ErrorBox message="Failed to load employees." onRetry={() => listQ.refetch()} />
         ) : (
           <DataTable<HrEmployee>
             columns={[

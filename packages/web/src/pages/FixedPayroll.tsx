@@ -7,7 +7,8 @@ import type { AttendanceRecord, EmployeeAllowance, HrEmployee } from '../types';
 import { CardHeader } from '../components/CardHeader';
 import { Badge } from '../components/Badge';
 import { DataTable } from '../components/DataTable';
-import { Field, Spinner, TextInput } from '../components/ui';
+import { Field, Spinner, TextInput,
+  ErrorBox} from '../components/ui';
 import { downloadCsv, fmtBirr, hrShell, useHrPerms } from './HrShared';
 
 const STANDARD_SHIFT_HOURS = 8;
