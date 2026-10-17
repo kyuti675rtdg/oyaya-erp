@@ -52,10 +52,10 @@ export function FgKpi({
 }) {
   const tones: Record<string, string> = {
     violet: 'bg-violet-50 text-violet-700 border-violet-200/60',
-    emerald: 'bg-emerald-50 text-emerald-700 border-emerald-200/60',
-    amber: 'bg-amber-50 text-amber-700 border-amber-200/60',
-    rose: 'bg-rose-50 text-rose-700 border-rose-200/60',
-    slate: 'bg-slate-50 text-slate-600 border-slate-200/60'
+    emerald: 'bg-emerald-50 text-emerald-700 border-emerald-200/60 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/20',
+    amber: 'bg-amber-50 text-amber-700 border-amber-200/60 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-500/20',
+    rose: 'bg-rose-50 text-rose-700 border-rose-200/60 dark:bg-rose-500/15 dark:text-rose-300 dark:border-rose-500/20',
+    slate: 'bg-slate-50 text-slate-600 border-slate-200/60 dark:bg-slate-700/50 dark:text-slate-300 dark:border-slate-600'
   };
   return (
     <div className={cardShell}>
@@ -83,11 +83,11 @@ export function FgBadge({
   children: ReactNode;
 }) {
   const styles: Record<string, string> = {
-    violet: 'bg-violet-100 text-violet-700',
-    emerald: 'bg-emerald-100 text-emerald-700',
-    amber: 'bg-amber-100 text-amber-700',
-    rose: 'bg-rose-100 text-rose-700',
-    slate: 'bg-slate-100 text-slate-600'
+    violet: 'bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300',
+    emerald: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300',
+    amber: 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300',
+    rose: 'bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300',
+    slate: 'bg-slate-100 text-slate-600 dark:bg-slate-700/60 dark:text-slate-300'
   };
   return (
     <span
@@ -126,9 +126,11 @@ export function FgModal({
   wide?: boolean;
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      role="dialog" aria-modal="true" aria-label={title}
+      onKeyDown={(e) => { if (e.key === 'Escape') onClose(); }}>
       <div
-        className={`w-full ${wide ? 'max-w-3xl' : 'max-w-lg'} max-h-[92vh] overflow-y-auto rounded-2xl border border-slate-100 bg-white p-6 shadow-xl`}
+        className={`w-full ${wide ? 'max-w-3xl' : 'max-w-lg'} max-h-[92vh] overflow-y-auto rounded-2xl border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-xl`}
       >
         <div className="mb-4 flex items-start justify-between gap-3">
           <div>
@@ -138,7 +140,7 @@ export function FgModal({
           <button
             onClick={onClose}
             className="rounded-lg px-2 py-1 text-lg font-bold text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-700"
-            aria-label="Close"
+            aria-label={`Close ${title} dialog`}
           >
             ×
           </button>

@@ -441,7 +441,8 @@ export function PurchaseOrders() {
 
       {/* Create modal */}
       {createOpen ? (
-        <div className={modalShell}>
+        <div className={modalShell} role="dialog" aria-modal="true" aria-label="Create purchase order"
+          onKeyDown={(e) => { if (e.key === 'Escape') setCreateOpen(false); }}>
           <div className={`${cardShell} w-full max-w-lg`}>
             <h3 className="text-lg font-bold text-ink">New purchase order</h3>
             <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Draft — the order takes effect once approved.</p>
@@ -502,7 +503,8 @@ export function PurchaseOrders() {
 
       {/* Edit modal (draft only) */}
       {editTarget ? (
-        <div className={modalShell}>
+        <div className={modalShell} role="dialog" aria-modal="true" aria-label="Edit purchase order"
+          onKeyDown={(e) => { if (e.key === 'Escape') setEditTarget(null); }}>
           <div className={`${cardShell} w-full max-w-lg`}>
             <h3 className="text-lg font-bold text-ink">Edit draft {editTarget.poNo}</h3>
             <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
@@ -555,7 +557,8 @@ export function PurchaseOrders() {
 
       {/* Cancel modal */}
       {cancelTarget ? (
-        <div className={modalShell}>
+        <div className={modalShell} role="dialog" aria-modal="true" aria-label="Cancel purchase order"
+          onKeyDown={(e) => { if (e.key === 'Escape') setCancelTarget(null); }}>
           <div className={`${cardShell} w-full max-w-md`}>
             <div className="flex items-center gap-2">
               <Ban className="h-5 w-5 text-rose-600" />
@@ -588,7 +591,8 @@ export function PurchaseOrders() {
 
       {/* Detail modal */}
       {detailId !== null ? (
-        <div className={modalShell}>
+        <div className={modalShell} role="dialog" aria-modal="true" aria-label="Purchase order details"
+          onKeyDown={(e) => { if (e.key === 'Escape') setDetailId(null); }}>
           <div className={`${cardShell} w-full max-w-2xl`}>
             <div className="flex items-start justify-between">
               <div>

@@ -1089,7 +1089,8 @@ function SupplierDrawer({
   );
 
   return (
-    <div className="fixed inset-0 z-50" role="dialog" aria-label={`Supplier details for ${supplier.name}`}>
+    <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label={`Supplier details for ${supplier.name}`}
+      onKeyDown={(e) => { if (e.key === 'Escape') onClose(); }}>
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
       <aside className="absolute inset-y-0 right-0 flex w-full max-w-md flex-col bg-white dark:bg-slate-800 shadow-2xl">
         <div className="flex items-start justify-between gap-3 border-b border-line p-5">

@@ -630,7 +630,9 @@ export function Intake() {
 
       {/* Decision modal */}
       {decisionTarget ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          role="dialog" aria-modal="true" aria-label="Quality decision"
+          onKeyDown={(e) => { if (e.key === 'Escape') setDecisionTarget(null); }}>
           <div
             className={`w-full max-w-lg rounded-2xl border bg-white p-6 shadow-xl ${
               decision === 'CONDITIONAL' ? 'border-amber-200' : 'border-slate-100'
