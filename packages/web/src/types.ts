@@ -43,8 +43,132 @@ export interface Vehicle {
   id: string;
   plateNo: string;
   vehicleType?: string | null;
+  capacityQt?: Dec | null;
   ownership: string;
+  status?: string | null;
+  purchaseDate?: string | null;
+  purchaseCostBirr?: Dec | null;
+  notes?: string | null;
   isActive: boolean;
+  _count?: { fleetTrips: number; fuelLogs: number };
+}
+
+/* ── Module 16: Fleet & Logistics ─────────────────────────────────────── */
+
+export interface VehicleContract {
+  id: string;
+  vehicleId: string;
+  vendor: string;
+  contractType: 'RENTAL_DAILY' | 'RENTAL_MONTHLY' | 'OWNED';
+  rateBirr: Dec;
+  startDate: string;
+  endDate?: string | null;
+  terms?: string | null;
+  status: 'ACTIVE' | 'EXPIRED' | 'TERMINATED';
+  vehicle?: Vehicle;
+}
+
+export interface DriverAssignment {
+  id: string;
+  vehicleId: string;
+  driverName: string;
+  licenseNo?: string | null;
+  licenseExpiry?: string | null;
+  assignedFrom: string;
+  assignedTo?: string | null;
+  status: 'ACTIVE' | 'ENDED';
+  notes?: string | null;
+  vehicle?: Vehicle;
+}
+
+export interface FleetTrip {
+  id: string;
+  vehicleId: string;
+  driverName?: string | null;
+  routeFrom?: string | null;
+  routeTo?: string | null;
+  cargoType?: 'FLOUR' | 'WHEAT' | 'BRAN' | 'OTHER' | null;
+  cargoQt?: Dec | null;
+  departureAt?: string | null;
+  arrivalAt?: string | null;
+  odometerStart?: Dec | null;
+  odometerEnd?: Dec | null;
+  status: 'PLANNED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
+  dispatchId?: string | null;
+  notes?: string | null;
+  vehicle?: Vehicle;
+}
+
+export interface FuelLog {
+  id: string;
+  vehicleId: string;
+  loggedAt: string;
+  liters: Dec;
+  costBirr: Dec;
+  odometer?: Dec | null;
+  station?: string | null;
+  vehicle?: Vehicle;
+}
+
+export interface FleetExpense {
+  id: string;
+  vehicleId: string;
+  expenseDate: string;
+  category: 'TOLL' | 'REPAIR_PARTS' | 'INSURANCE' | 'WASHING' | 'OTHER';
+  amountBirr: Dec;
+  description?: string | null;
+  vehicle?: Vehicle;
+}
+
+export interface FleetMaintenanceRecord {
+  id: string;
+  vehicleId: string;
+  serviceType: 'PREVENTIVE' | 'CORRECTIVE' | 'INSPECTION';
+  description: string;
+  serviceDate: string;
+  costBirr: Dec;
+  odometer?: Dec | null;
+  nextDueDate?: string | null;
+  performedBy?: string | null;
+  status: 'SCHEDULED' | 'COMPLETED';
+  vehicle?: Vehicle;
+}
+
+export interface FleetUtilization {
+  id?: string; // = vehicleId, for table row identity
+  vehicleId: string;
+  plateNo: string;
+  vehicleType: string | null;
+  ownership: string;
+  status: string;
+  tripCount: number;
+  completedTripCount: number;
+  totalKm: number;
+  cargoQt: number;
+  fuelLiters: number;
+  fuelCostBirr: number;
+  kmPerLiter: number | null;
+  activeDays: number;
+  periodDays: number;
+  utilizationPct: number;
+}
+
+export interface FleetSummary {
+  id?: string; // = vehicleId, for table row identity
+  vehicleId: string;
+  plateNo: string;
+  vehicleType: string | null;
+  ownership: string;
+  tripCount: number;
+  totalKm: number;
+  fuelLiters: number;
+  fuelCostBirr: number;
+  expenseCostBirr: number;
+  maintenanceCostBirr: number;
+  totalCostBirr: number;
+  kmPerLiter: number | null;
+  costPerKmBirr: number | null;
+  birrPerLiter: number | null;
 }
 
 export type WheatCategory = 'SOFT' | 'HARD' | 'FOREIGN';
@@ -279,16 +403,31 @@ export interface Capa {
   batch?: { batchNo: string } | null;
 }
 
+export type OrderStatus =
+  | 'DRAFT'
+  | 'CONFIRMED'
+  | 'PROCESSING'
+  | 'LOADING'
+  | 'DISPATCHED'
+  | 'DELIVERED'
+  | 'CANCELLED'
+  | 'OPEN'
+  | 'LOADED'
+  | 'INVOICED'
+  | 'CLOSED';
+
 export interface SalesOrder {
   id: string;
   orderNo: string;
   customerId: string;
+  customer?: { id: string; name: string } | null;
   orderDate: string;
   requestedDate?: string | null;
   productId: string;
   quintals: Dec;
   priceBirr: Dec;
-  status: 'OPEN' | 'LOADED' | 'INVOICED' | 'CLOSED';
+  status: OrderStatus | string;
+  lines?: SalesOrderLine[];
 }
 
 export interface DispatchLine {
@@ -312,6 +451,11 @@ export interface Dispatch {
   loadingLabor?: string | null;
   status: string;
   lines: DispatchLine[];
+  gateStatus?: string;
+  gateCheckedAt?: string | null;
+  sealNo?: string | null;
+  gateOfficer?: string | null;
+  gateNotes?: string | null;
 }
 
 export interface JournalLine {
@@ -354,6 +498,177 @@ export interface PayrollLine {
   trips: number;
   tripBirr: Dec;
   grossBirr: Dec;
+}
+
+// ─── Module 15: HR & Payroll ────────────────────────────────────
+
+export type PayrollModeCode = 'FIXED' | 'PIECE_RATE' | 'TRIP_BASED';
+
+export interface HrDepartment {
+  id: string;
+  code: string;
+  name: string;
+  parentId?: string | null;
+  description?: string | null;
+  isActive: boolean;
+  children?: HrDepartment[];
+  _count?: { employees: number; positions: number };
+}
+
+export interface HrPosition {
+  id: string;
+  code: string;
+  title: string;
+  departmentId?: string | null;
+  department?: HrDepartment | null;
+  grade?: string | null;
+  bandMin?: Dec | null;
+  bandMax?: Dec | null;
+  isActive: boolean;
+}
+
+export interface HrEmployee {
+  id: string;
+  employeeNo: string;
+  name: string;
+  phone?: string | null;
+  jobTitle: string;
+  department?: string | null;
+  departmentId?: string | null;
+  departmentRef?: HrDepartment | null;
+  positionId?: string | null;
+  position?: HrPosition | null;
+  payrollMode: PayrollModeCode;
+  baseSalary?: Dec | null;
+  bankName?: string | null;
+  bankAccount?: string | null;
+  zkPin?: string | null;
+  isActive: boolean;
+  hiredAt: string;
+}
+
+export interface AttendanceRecord {
+  id: string;
+  employeeId: string;
+  employee?: { id: string; employeeNo: string; name: string } | null;
+  date: string;
+  status: 'PRESENT' | 'LATE' | 'ABSENT' | 'LEAVE' | 'HALF_DAY';
+  checkIn?: string | null;
+  checkOut?: string | null;
+  workHours: Dec;
+  overtimeHours: Dec;
+  lateMinutes: number;
+  source: 'ZKTECO' | 'MANUAL' | 'CSV';
+  notes?: string | null;
+}
+
+export interface AttendanceSummary {
+  employee: { id: string; employeeNo: string; name: string };
+  present: number;
+  late: number;
+  absent: number;
+  leave: number;
+  overtimeHours: number;
+  lateMinutes: number;
+}
+
+export interface PieceRateWork {
+  id: string;
+  employeeId?: string | null;
+  employee?: { id: string; employeeNo: string; name: string } | null;
+  laborer: string;
+  stage: string;
+  bags: number;
+  quintals: Dec;
+  rateBirrPerQ: Dec;
+  payBirr: Dec;
+  workDate: string;
+  truckPlate?: string | null;
+  notes?: string | null;
+}
+
+export interface DriverTripPay {
+  id: string;
+  employeeId: string;
+  employee?: { id: string; employeeNo: string; name: string } | null;
+  year: number;
+  month: number;
+  trips: number;
+  rateBirrPerTrip: Dec;
+  allowanceBirr: Dec;
+  totalBirr: Dec;
+  notes?: string | null;
+}
+
+export interface AllowanceDeductionType {
+  id: string;
+  code: string;
+  name: string;
+  kind: 'ALLOWANCE' | 'DEDUCTION';
+  calc: 'FIXED' | 'PERCENT';
+  amount: Dec;
+  appliesTo: PayrollModeCode[];
+  recurrence: 'RECURRING' | 'ONE_TIME';
+  isActive: boolean;
+}
+
+export interface EmployeeAllowance {
+  id: string;
+  employeeId: string;
+  employee?: { id: string; employeeNo: string; name: string } | null;
+  typeId: string;
+  type?: AllowanceDeductionType | null;
+  oneTimeDate?: string | null;
+  overrideAmount?: Dec | null;
+  isActive: boolean;
+  notes?: string | null;
+}
+
+export interface HrPayrollLine {
+  id: string;
+  employeeId: string;
+  employee?: { id: string; employeeNo: string; name: string } | null;
+  mode: PayrollModeCode;
+  baseBirr: Dec;
+  overtimeHours: Dec;
+  overtimeBirr: Dec;
+  pieceQuintals: Dec;
+  pieceBirr: Dec;
+  trips: number;
+  tripBirr: Dec;
+  grossBirr: Dec;
+  allowanceBirr: Dec;
+  deductionBirr: Dec;
+  netBirr: Dec;
+}
+
+export interface HrPayrollRun {
+  id: string;
+  periodYear: number;
+  periodMonth: number;
+  status: 'DRAFT' | 'APPROVED' | 'POSTED';
+  createdAt: string;
+  createdById?: string | null;
+  approvedById?: string | null;
+  approvedAt?: string | null;
+  postedAt?: string | null;
+  journalEntryId?: string | null;
+  lines?: HrPayrollLine[];
+  _count?: { lines: number };
+}
+
+export interface Payslip {
+  id: string;
+  payrollRunId: string;
+  employeeId: string;
+  employee?: HrEmployee | null;
+  payrollRun?: HrPayrollRun | null;
+  grossBirr: Dec;
+  allowanceBirr: Dec;
+  deductionBirr: Dec;
+  netBirr: Dec;
+  breakdown: Record<string, string | number | null>;
+  generatedAt: string;
 }
 
 export interface QcThreshold {
@@ -1626,4 +1941,400 @@ export interface ByproductBalanceType {
   outflowQ: number;
   netQ: number;
   onHandQ: number;
+}
+
+// ─── Module 14: Finance & Accounting expansion ──────────────────
+// (Dec is declared once at the top of this file; no duplicate needed.)
+
+export interface ChartOfAccount {
+  id: string;
+  code: string;
+  name: string;
+  type: 'ASSET' | 'LIABILITY' | 'EQUITY' | 'REVENUE' | 'EXPENSE';
+  parentId?: string | null;
+  isActive: boolean;
+}
+
+export interface LedgerRow {
+  id: string;
+  entryId: string;
+  entryNo: string;
+  entryDate: string;
+  memo?: string | null;
+  module: string;
+  debit: number;
+  credit: number;
+  balance: number;
+}
+
+export interface LedgerReport {
+  account: { id: string; code: string; name: string; type: string };
+  openingBalance: number;
+  lines: LedgerRow[];
+  totals: { debit: number; credit: number; closingBalance: number };
+}
+
+export type VoucherKind = 'PAYMENT' | 'RECEIPT';
+export type VoucherStatus = 'DRAFT' | 'APPROVED' | 'POSTED' | 'CANCELLED';
+
+export interface FinanceVoucher {
+  id: string;
+  voucherNo: string;
+  kind: VoucherKind;
+  counterparty: string;
+  amountBirr: Dec;
+  method: string;
+  reference?: string | null;
+  cashBankAccountId?: string | null;
+  cashBankAccount?: CashBankAccount | null;
+  debitAccountCode: string;
+  creditAccountCode: string;
+  memo?: string | null;
+  status: VoucherStatus;
+  approvedById?: string | null;
+  approvedAt?: string | null;
+  postedAt?: string | null;
+  createdById?: string | null;
+  createdAt: string;
+}
+
+export interface ExpenseCategory {
+  id: string;
+  name: string;
+  glAccountCode?: string | null;
+  isActive: boolean;
+}
+
+export type ClaimStatus = 'DRAFT' | 'SUBMITTED' | 'APPROVED' | 'REJECTED' | 'PAID';
+
+export interface ExpenseClaim {
+  id: string;
+  claimNo: string;
+  title: string;
+  categoryId: string;
+  category?: ExpenseCategory | null;
+  amountBirr: Dec;
+  glAccountCode: string;
+  status: ClaimStatus;
+  notes?: string | null;
+  approvedAt?: string | null;
+  createdAt: string;
+}
+
+export interface CashBankAccount {
+  id: string;
+  name: string;
+  kind: 'CASH' | 'BANK';
+  bankName?: string | null;
+  accountNo?: string | null;
+  glAccountCode: string;
+  isActive: boolean;
+  balance?: number;
+  glAccountName?: string;
+  createdAt: string;
+}
+
+export interface CashTransfer {
+  id: string;
+  transferNo: string;
+  fromAccountId: string;
+  toAccountId: string;
+  fromAccount?: CashBankAccount | null;
+  toAccount?: CashBankAccount | null;
+  amountBirr: Dec;
+  transferDate: string;
+  memo?: string | null;
+  createdAt: string;
+}
+
+export interface ArRow {
+  id: string;
+  invoiceNo: string;
+  customerId: string;
+  customerName: string;
+  total: number;
+  paid: number;
+  balance: number;
+  status: string;
+  issuedAt: string;
+  daysOpen: number;
+  bucket: string;
+}
+
+export interface ArReport {
+  rows: ArRow[];
+  summary: {
+    totalInvoiced: number;
+    totalPaid: number;
+    totalOutstanding: number;
+    buckets: Record<string, { count: number; total: number }>;
+  };
+}
+
+export interface ApRow {
+  id: string;
+  invoiceNo: string;
+  supplierId: string;
+  total: number;
+  paid: number;
+  balance: number;
+  status: string;
+  issuedAt: string;
+  dueDate?: string | null;
+  daysOpen: number;
+  bucket: string;
+}
+
+export interface ApSummary {
+  rows: ApRow[];
+  summary: { totalInvoiced: number; totalPaid: number; totalOutstanding: number; openCount: number };
+}
+
+export interface FinancePayrollRun {
+  id: string;
+  periodYear: number;
+  periodMonth: number;
+  status: string;
+  lineCount: number;
+  totalBirr: number;
+  journalPosted: boolean;
+  journalEntryId?: string | null;
+  journalEntryNo?: string | null;
+}
+
+// ─── Sales & Distribution — Module 13 expansion ───
+
+export interface SalesOrderLine {
+  id: string;
+  orderId: string;
+  productId: string;
+  product?: { id: string; name: string } | null;
+  packagingSizeId?: string | null;
+  packagingSize?: { id: string; label: string; kg: Dec } | null;
+  bags: number;
+  quintals: Dec;
+  priceBirr: Dec;
+}
+
+export interface PackagingSize {
+  id: string;
+  label: string;
+  kg: Dec;
+  isActive: boolean;
+}
+
+export interface PriceTier {
+  minBags: number;
+  discountPct?: number;
+  priceBirr?: number;
+}
+
+export interface SalesAgreementLine {
+  id: string;
+  agreementId: string;
+  productId: string;
+  product?: { id: string; name: string } | null;
+  packagingSizeId?: string | null;
+  packagingSize?: { id: string; label: string } | null;
+  priceBirr: Dec;
+  tiers?: PriceTier[] | null;
+}
+
+export interface SalesAgreement {
+  id: string;
+  agreementNo: string;
+  customerId: string;
+  customer?: { id: string; name: string } | null;
+  name: string;
+  validFrom: string;
+  validTo: string;
+  discountPct: Dec;
+  status: 'DRAFT' | 'ACTIVE' | 'EXPIRED' | 'SUSPENDED' | string;
+  notes?: string | null;
+  lines?: SalesAgreementLine[];
+}
+
+export interface AdvanceApplication {
+  id: string;
+  advanceId: string;
+  invoiceId: string;
+  amountBirr: Dec;
+  appliedAt: string;
+  invoice?: { id: string; invoiceNo: string } | null;
+}
+
+export interface AdvancePayment {
+  id: string;
+  customerId: string;
+  amountBirr: Dec;
+  appliedAmountBirr?: Dec;
+  status?: string;
+  paidAt: string;
+  applications?: AdvanceApplication[];
+}
+
+export interface AdvanceBalance {
+  balance: { total: number; applied: number; available: number };
+  advances: AdvancePayment[];
+}
+
+export interface TruckLoadItem {
+  id: string;
+  loadId: string;
+  orderId: string;
+  order?: SalesOrder | null;
+  bags: number;
+  quintals: Dec;
+}
+
+export interface TruckLoad {
+  id: string;
+  loadNo: string;
+  vehicleId?: string | null;
+  vehicle?: { id: string; plateNo: string } | null;
+  route: string;
+  capacityQuintals: Dec;
+  status: 'BUILDING' | 'READY' | 'LOADED' | 'DISPATCHED' | 'CANCELLED' | string;
+  notes?: string | null;
+  createdAt: string;
+  items?: TruckLoadItem[];
+}
+
+export interface DeliveryTrip {
+  id: string;
+  tripNo: string;
+  vehicleId: string;
+  vehicle?: { id: string; plateNo: string } | null;
+  driverName?: string | null;
+  area: string;
+  status: 'PLANNED' | 'DEPARTED' | 'ARRIVED' | 'POD_CONFIRMED' | 'CANCELLED' | string;
+  departedAt?: string | null;
+  arrivedAt?: string | null;
+  podReceivedAt?: string | null;
+  podSignedBy?: string | null;
+  dispatchId?: string | null;
+  dispatch?: Dispatch | null;
+  notes?: string | null;
+  createdAt: string;
+}
+
+export interface AgentStockSettlement {
+  id: string;
+  placementId: string;
+  bags: number;
+  quintals: Dec;
+  amountBirr: Dec;
+  settledAt: string;
+  notes?: string | null;
+}
+
+export interface AgentStockPlacement {
+  id: string;
+  placementNo: string;
+  customerId: string;
+  customer?: { id: string; name: string } | null;
+  productId: string;
+  product?: { id: string; name: string } | null;
+  packagingSizeId?: string | null;
+  packagingSize?: { id: string; label: string } | null;
+  bags: number;
+  quintals: Dec;
+  unitPriceBirr: Dec;
+  status: 'PLACED' | 'PARTIALLY_SETTLED' | 'SETTLED' | 'RETURNED' | string;
+  placedAt: string;
+  settledAt?: string | null;
+  notes?: string | null;
+  settlements?: AgentStockSettlement[];
+}
+
+export interface SalesInvoiceLine {
+  id: string;
+  invoiceId: string;
+  orderId?: string | null;
+  productId: string;
+  product?: { id: string; name: string } | null;
+  packagingSizeId?: string | null;
+  packagingSize?: { id: string; label: string } | null;
+  bags: number;
+  quintals: Dec;
+  unitPriceBirr: Dec;
+  lineTotalBirr: Dec;
+}
+
+export interface CashReceiptRow {
+  id: string;
+  receiptNo: string;
+  customerId: string;
+  invoiceId?: string | null;
+  amountBirr: Dec;
+  receivedAt: string;
+}
+
+export interface SalesInvoice {
+  id: string;
+  invoiceNo: string;
+  dispatchId?: string | null;
+  customerId: string;
+  amountBirr: Dec;
+  status: 'PLACEMENT' | 'INVOICED' | 'PAID' | string;
+  invoicedAt?: string | null;
+  createdAt: string;
+  source?: string;
+  orderIds?: string[];
+  lines?: SalesInvoiceLine[];
+  receipts?: CashReceiptRow[];
+  applications?: AdvanceApplication[];
+}
+
+export interface CashReconciliation {
+  id: string;
+  reconDate: string;
+  expectedBirr: Dec;
+  collectedBirr: Dec;
+  varianceBirr: Dec;
+  status: 'BALANCED' | 'VARIANCE_OPEN' | 'RESOLVED' | string;
+  depositRef?: string | null;
+  depositedAt?: string | null;
+  notes?: string | null;
+}
+
+export interface SalesSummaryReport {
+  byProduct: Array<{ productId: string; productName: string; quintals: number; bags: number }>;
+  byCustomer: Array<{ customerId: string; customerName: string; orders: number; quintals: number }>;
+  byDestination: Array<{ area: string; dispatches: number }>;
+  byInvoiceStatus: Array<{ status: string; count: number; amountBirr: number }>;
+  byPackSize: Array<{ packSizeId: string | null; label: string; bags: number }>;
+  revenueByMonth: Array<{ month: string; amountBirr: number }>;
+}
+
+export interface DeliveryPerformanceReport {
+  totals: { dispatches: number; onTime: number; late: number; noDate: number };
+  onTimePct: number;
+  rows: Array<{
+    id: string;
+    exitNoteNo: string;
+    plateNo: string | null;
+    area: string;
+    dispatchedAt: string;
+    requestedDate: string | null;
+    verdict: 'ON_TIME' | 'LATE' | 'NO_DATE';
+    gateStatus: string;
+    status: string;
+    quintals: number;
+  }>;
+}
+
+export interface AgentSettlementReportRow {
+  id: string;
+  placementNo: string;
+  agentName: string;
+  productName: string;
+  placedQuintals: number;
+  placedBags: number;
+  unitPriceBirr: number;
+  settledQuintals: number;
+  settledAmountBirr: number;
+  outstandingQuintals: number;
+  status: string;
+  placedAt: string;
 }

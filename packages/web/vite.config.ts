@@ -26,6 +26,8 @@ export default defineConfig({
       },
       workbox: {
         navigateFallback: 'index.html',
+        // App bundle exceeds the 2 MiB workbox default — raise for the full ERP PWA.
+        maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
         runtimeCaching: [
           {
             urlPattern: ({ url }) => url.pathname.startsWith('/api/'),

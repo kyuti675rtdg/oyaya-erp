@@ -15,13 +15,16 @@ export function DataTable<T extends { id?: string }>({
   rows,
   keyOf,
   emptyTitle = 'No records found',
-  emptySub
+  emptySub,
+  onRowClick
 }: {
   columns: Column<T>[];
   rows: T[];
   keyOf?: (row: T, index: number) => string;
   emptyTitle?: string;
   emptySub?: string;
+  /** Optional: makes rows clickable (adds pointer cursor + click handler). */
+  onRowClick?: (row: T) => void;
 }) {
   if (rows.length === 0) {
     return (
@@ -48,7 +51,10 @@ export function DataTable<T extends { id?: string }>({
           {rows.map((row, i) => (
             <tr
               key={keyOf ? keyOf(row, i) : (row.id ?? String(i))}
-              className="border-t border-line hover:bg-alabaster"
+              className={`border-t border-line hover:bg-alabaster ${
+                onRowClick ? 'cursor-pointer' : ''
+              }`}
+              onClick={onRowClick ? () => onRowClick(row) : undefined}
             >
               {columns.map((c) => (
                 <td

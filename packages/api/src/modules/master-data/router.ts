@@ -28,6 +28,21 @@ function requireUid(req: Request): string {
 const view = requirePermission('master:view');
 const manage = requirePermission('master:manage');
 
+// Module 18 (admin worker): never expose passwordHash / mfaSecret to clients.
+const userPublicSelect = {
+  id: true,
+  email: true,
+  name: true,
+  phone: true,
+  isActive: true,
+  companyId: true,
+  roleId: true,
+  mfaEnabled: true,
+  createdAt: true,
+  updatedAt: true,
+  role: { select: { id: true, name: true, isSystem: true } },
+} as const;
+
 const idParam = z.object({ id: z.string().min(1) });
 const LIST_TAKE = 500;
 
@@ -115,7 +130,7 @@ const updateUserSchema = z.object({
 router.get('/users', view, ah(async (_req, res) => {
   res.json(
     await prisma.user.findMany({
-      include: { role: true },
+      select: userPublicSelect,
       orderBy: { name: 'asc' },
       take: LIST_TAKE,
     }),
@@ -144,7 +159,7 @@ router.post(
           companyId: body.companyId,
           isActive: body.isActive ?? true,
         },
-        include: { role: true },
+        select: userPublicSelect,
       });
       await audit(tx, { userId: uid, action: 'CREATE', entityType: 'User', entityId: created.id });
       return created;
@@ -182,7 +197,7 @@ router.put(
           companyId: body.companyId,
           isActive: body.isActive,
         },
-        include: { role: true },
+        select: userPublicSelect,
       });
       await audit(tx, {
         userId: uid,
@@ -206,7 +221,7 @@ router.delete(
     const { id } = idParam.parse(req.params);
     const uid = requireUid(req);
     const user = await prisma.$transaction(async (tx) => {
-      const updated = await tx.user.update({ where: { id }, data: { isActive: false }, include: { role: true } });
+      const updated = await tx.user.update({ where: { id }, data: { isActive: false }, select: userPublicSelect });
       await audit(tx, { userId: uid, action: 'DELETE', entityType: 'User', entityId: id, changes: { isActive: false } });
       return updated;
     });

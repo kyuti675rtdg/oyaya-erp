@@ -145,6 +145,25 @@ function svgIcon(name: string, className: string): ReactNode {
 
 const NAV: NavGroup[] = [
   {
+    title: 'Business Intelligence',
+    icon: 'dashboard',
+    items: [
+      { to: '/bi/production', label: 'Production BI', claim: ['production:view'], icon: 'factory' },
+      { to: '/bi/quality', label: 'Quality BI', claim: ['qc:view'], icon: 'qc' },
+      { to: '/bi/procurement', label: 'Procurement BI', claim: ['procurement:view'], icon: 'truck' },
+      { to: '/bi/inventory', label: 'Inventory BI', claim: ['storage:view'], icon: 'package' },
+      { to: '/bi/sales', label: 'Sales BI', claim: ['sales:view'], icon: 'sales' },
+      { to: '/bi/finance', label: 'Finance BI', claim: ['finance:view'], icon: 'finance' },
+      { to: '/bi/hr', label: 'HR & Payroll BI', claim: ['payroll:view'], icon: 'payroll' },
+      {
+        to: '/bi/report-builder',
+        label: 'Report Builder',
+        claim: ['production:view', 'qc:view', 'procurement:view', 'storage:view', 'sales:view', 'finance:view', 'payroll:view'],
+        icon: 'dashboard'
+      }
+    ]
+  },
+  {
     title: 'Procurement & Vendor Management',
     icon: 'truck',
     items: [
@@ -270,23 +289,96 @@ const NAV: NavGroup[] = [
     ]
   },
   {
+    title: 'Fleet & Logistics',
+    icon: 'truck',
+    items: [
+      { to: '/fleet/vehicles', label: 'Vehicle Registry', claim: ['fleet:view'], icon: 'truck' },
+      { to: '/fleet/contracts', label: 'Owned & Rented Vehicles', claim: ['fleet:view'], icon: 'finance' },
+      { to: '/fleet/drivers', label: 'Driver Assignment', claim: ['fleet:view'], icon: 'payroll' },
+      { to: '/fleet/trips', label: 'Delivery Trips', claim: ['fleet:view'], icon: 'monitor' },
+      { to: '/fleet/utilization', label: 'Availability & Utilization', claim: ['fleet:view'], icon: 'dashboard' },
+      { to: '/fleet/fuel', label: 'Fuel & Expenses', claim: ['fleet:view'], icon: 'intake' },
+      { to: '/fleet/maintenance', label: 'Fleet Maintenance', claim: ['fleet:view'], icon: 'factory' },
+      { to: '/fleet/reports', label: 'Fleet Reports', claim: ['fleet:view'], icon: 'sales' }
+    ]
+  },
+  {
+    title: 'Product Traceability',
+    icon: 'qc',
+    items: [
+      { to: '/trace/intake', label: 'Intake Traceability', claim: ['traceability:read'], icon: 'intake' },
+      { to: '/trace/tanks', label: 'Tank & Lot Tracking', claim: ['traceability:read'], icon: 'tanks' },
+      { to: '/trace/batches', label: 'Batch History', claim: ['traceability:read'], icon: 'batches' },
+      { to: '/trace/finished', label: 'Finished Product Trace', claim: ['traceability:read'], icon: 'package' },
+      { to: '/trace/quality', label: 'Quality & CAPA History', claim: ['traceability:read'], icon: 'qc' },
+      { to: '/trace/recall', label: 'Batch Recall', claim: ['traceability:read'], icon: 'capa' },
+      { to: '/trace/search', label: 'Traceability Search', claim: ['traceability:read'], icon: 'dashboard' }
+    ]
+  },
+  {
     title: 'Sales & Distribution',
     icon: 'sales',
-    items: [{ to: '/sales', label: 'Sales & Dispatch', claim: ['sales:read'], icon: 'sales' }]
+    items: [
+      { to: '/sales', label: 'Customer Orders', claim: ['sales:read'], icon: 'sales' },
+      { to: '/sales/agreements', label: 'Price Agreements', claim: ['sales:read'], icon: 'finance' },
+      { to: '/sales/advances', label: 'Advance Payments', claim: ['sales:read'], icon: 'finance' },
+      { to: '/sales/loading', label: 'Loading', claim: ['sales:read'], icon: 'package' },
+      { to: '/sales/consolidation', label: 'Load Consolidation', claim: ['sales:read'], icon: 'truck' },
+      { to: '/sales/trips', label: 'Delivery Trips', claim: ['sales:read'], icon: 'truck' },
+      { to: '/sales/agents', label: 'Agent Stock', claim: ['sales:read'], icon: 'shifts' },
+      { to: '/sales/invoices', label: 'Invoices', claim: ['sales:read'], icon: 'finance' },
+      { to: '/sales/cash', label: 'Cash Reconciliation', claim: ['sales:read'], icon: 'finance' },
+      { to: '/sales/reports', label: 'Sales Reports', claim: ['sales:read'], icon: 'monitor' }
+    ]
   },
   {
     title: 'Finance & Accounting',
     icon: 'finance',
     items: [
       { to: '/finance', label: 'Finance', claim: ['finance:read'], icon: 'finance' },
+      { to: '/finance/chart-of-accounts', label: 'Chart of Accounts', claim: ['finance:read'], icon: 'finance' },
+      { to: '/finance/ledger', label: 'General Ledger', claim: ['finance:read'], icon: 'finance' },
+      { to: '/finance/accounts-payable', label: 'Accounts Payable', claim: ['finance:read'], icon: 'finance' },
+      { to: '/finance/accounts-receivable', label: 'Accounts Receivable', claim: ['finance:read'], icon: 'finance' },
+      { to: '/finance/cash-bank', label: 'Cash & Bank', claim: ['finance:read'], icon: 'finance' },
+      { to: '/finance/vouchers', label: 'Payment & Receipt Vouchers', claim: ['finance:read'], icon: 'finance' },
+      { to: '/finance/expenses', label: 'Expenses', claim: ['finance:read'], icon: 'finance' },
+      { to: '/finance/payroll-journal', label: 'Payroll Journal', claim: ['finance:read'], icon: 'finance' },
+      { to: '/finance/trial-balance', label: 'Trial Balance', claim: ['finance:read'], icon: 'finance' },
+      { to: '/finance/income-statement', label: 'Income Statement', claim: ['finance:read'], icon: 'finance' },
+      { to: '/finance/balance-sheet', label: 'Balance Sheet', claim: ['finance:read'], icon: 'finance' },
+      { to: '/finance/reports', label: 'Financial Reports', claim: ['finance:read'], icon: 'finance' },
       { to: '/payroll', label: 'Payroll', claim: ['payroll:read'], icon: 'payroll' }
+    ]
+  },
+  {
+    title: 'HR & Payroll',
+    icon: 'payroll',
+    items: [
+      { to: '/hr/employees', label: 'Employees', claim: ['hr:read'], icon: 'payroll' },
+      { to: '/hr/departments', label: 'Departments', claim: ['hr:read'], icon: 'settings' },
+      { to: '/hr/attendance', label: 'Attendance', claim: ['hr:read'], icon: 'shifts' },
+      { to: '/hr/fixed-payroll', label: 'Fixed Salary & OT', claim: ['hr:read'], icon: 'finance' },
+      { to: '/hr/piece-rate', label: 'Piece-Rate Payroll', claim: ['hr:read'], icon: 'dashboard' },
+      { to: '/hr/driver-payroll', label: 'Driver Payroll', claim: ['hr:read'], icon: 'truck' },
+      { to: '/hr/allowances', label: 'Allowances', claim: ['hr:read'], icon: 'sales' },
+      { to: '/hr/payroll-run', label: 'Payroll Processing', claim: ['hr:read'], icon: 'monitor' },
+      { to: '/hr/payslips', label: 'Payslips & Reports', claim: ['hr:read'], icon: 'qc' }
     ]
   },
   {
     title: 'Administration & Governance',
     icon: 'settings',
     items: [
-      { to: '/settings', label: 'Settings', claim: ['settings:read'], icon: 'settings' }
+      { to: '/settings', label: 'Settings', claim: ['settings:read'], icon: 'settings' },
+      { to: '/admin/users', label: 'User Management', claim: ['settings:read'], icon: 'payroll' },
+      { to: '/admin/roles', label: 'Roles & Permissions', claim: ['settings:read'], icon: 'capa' },
+      { to: '/admin/security', label: 'Security & MFA', claim: ['settings:read'], icon: 'settings' },
+      { to: '/admin/api-health', label: 'API Health', claim: ['settings:read'], icon: 'monitor' },
+      { to: '/admin/webhooks', label: 'Webhooks', claim: ['settings:read'], icon: 'modules' },
+      { to: '/admin/notifications', label: 'Notifications & SMS', claim: ['settings:read'], icon: 'support' },
+      { to: '/admin/audit-logs', label: 'Audit Logs', claim: ['settings:read'], icon: 'intake' },
+      { to: '/admin/backup', label: 'Backup & Data', claim: ['settings:read'], icon: 'package' }
     ]
   }
 ];
