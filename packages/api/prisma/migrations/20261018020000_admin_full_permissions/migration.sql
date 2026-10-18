@@ -2,8 +2,8 @@
 -- This grants every permission code to admin roles
 
 -- Get all permission IDs and grant them to System Administrator
-INSERT INTO "RolePermission" ("roleId", "permissionId", "createdAt")
-SELECT r.id, p.id, NOW()
+INSERT INTO "RolePermission" ("roleId", "permissionId")
+SELECT r.id, p.id
 FROM "Role" r
 CROSS JOIN "Permission" p
 WHERE r.name IN ('System Administrator', 'Owner / CEO')
