@@ -6,8 +6,24 @@ import { ensureDatabase } from './lib/ensureDatabase';
 import { pingRedis, redisConnection } from './lib/redis';
 import { initSocket } from './lib/socket';
 
+async function ensureDatabaseBestEffort(): Promise<void> {
+  // The oyayaerp logical database already exists; this bootstrap must never
+  // be fatal. Retry a few times (shared free Postgres can be slow to accept
+  // the maintenance-DB connection), then continue with a warning.
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      await ensureDatabase();
+      return;
+    } catch (err) {
+      console.warn(`[api] ensureDatabase attempt ${attempt} failed:`, (err as Error)?.message ?? err);
+      if (attempt < 3) await new Promise((r) => setTimeout(r, 5000));
+    }
+  }
+  console.warn('[api] continuing without ensureDatabase — database already exists');
+}
+
 async function main(): Promise<void> {
-  await ensureDatabase();
+  await ensureDatabaseBestEffort();
   await prisma.$connect();
   console.log('[api] connected to PostgreSQL');
   // pingRedis races a timeout: a bare ping() hangs forever when Redis is down.
